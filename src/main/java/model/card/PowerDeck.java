@@ -16,9 +16,9 @@ public class PowerDeck {
         String des = "...";
         for(int i=0;i<2;i++) {
             for (int j = 0; j <na.size(); j++) {
-                powerups.add(new Powerup(na.get(j), des, AmmoColor.red, j + 1));
-                powerups.add(new Powerup(na.get(j), des, AmmoColor.blue, j + 1));
-                powerups.add(new Powerup(na.get(j), des, AmmoColor.yellow, j + 1));
+                powerups.add(new Powerup(na.get(j), des, AmmoColor.RED, j + 1));
+                powerups.add(new Powerup(na.get(j), des, AmmoColor.BLUE, j + 1));
+                powerups.add(new Powerup(na.get(j), des, AmmoColor.YELLOW, j + 1));
             }
         }
     }

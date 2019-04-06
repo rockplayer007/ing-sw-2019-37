@@ -1,8 +1,5 @@
 package model.card;
 
-import model.card.AmmoCard;
-import model.card.AmmoColor;
-
 import java.util.ArrayList;
 
 public class AmmoDeck {
@@ -13,22 +10,22 @@ public class AmmoDeck {
          AmmoColor ammoColor= null ;
         ammoCards = new ArrayList<AmmoCard>();
         for (int i = 0; i < 4; i++) {
-            ammoCards.add(new AmmoCard(ammoColor.red, ammoColor.blue));
-            ammoCards.add(new AmmoCard(ammoColor.yellow, ammoColor.blue));
-            ammoCards.add(new AmmoCard(ammoColor.yellow, ammoColor.red));
+            ammoCards.add(new AmmoCard(ammoColor.red, ammoColor.BLUE));
+            ammoCards.add(new AmmoCard(ammoColor.YELLOW, ammoColor.BLUE));
+            ammoCards.add(new AmmoCard(ammoColor.YELLOW, ammoColor.red));
         }
         for (int i=0;i<2;i++){
             ammoCards.add(new AmmoCard(ammoColor.red, ammoColor.red));
-            ammoCards.add(new AmmoCard(ammoColor.blue, ammoColor.blue));
-            ammoCards.add(new AmmoCard(ammoColor.yellow, ammoColor.yellow));
+            ammoCards.add(new AmmoCard(ammoColor.BLUE, ammoColor.BLUE));
+            ammoCards.add(new AmmoCard(ammoColor.YELLOW, ammoColor.YELLOW));
         }
         for (int i=0;i<3;i++){
-            ammoCards.add(new AmmoCard(ammoColor.red, ammoColor.red, ammoColor.blue));
-            ammoCards.add(new AmmoCard(ammoColor.red, ammoColor.red, ammoColor.yellow));
-            ammoCards.add(new AmmoCard(ammoColor.yellow, ammoColor.yellow, ammoColor.blue));
-            ammoCards.add(new AmmoCard(ammoColor.yellow, ammoColor.yellow, ammoColor.red));
-            ammoCards.add(new AmmoCard(ammoColor.blue, ammoColor.blue, ammoColor.red));
-            ammoCards.add(new AmmoCard(ammoColor.blue, ammoColor.blue, ammoColor.yellow));
+            ammoCards.add(new AmmoCard(ammoColor.red, ammoColor.red, ammoColor.BLUE));
+            ammoCards.add(new AmmoCard(ammoColor.red, ammoColor.red, ammoColor.YELLOW));
+            ammoCards.add(new AmmoCard(ammoColor.YELLOW, ammoColor.YELLOW, ammoColor.BLUE));
+            ammoCards.add(new AmmoCard(ammoColor.YELLOW, ammoColor.YELLOW, ammoColor.red));
+            ammoCards.add(new AmmoCard(ammoColor.BLUE, ammoColor.BLUE, ammoColor.red));
+            ammoCards.add(new AmmoCard(ammoColor.BLUE, ammoColor.BLUE, ammoColor.YELLOW));
         }
     }
 
