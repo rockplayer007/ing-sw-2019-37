@@ -6,13 +6,15 @@ import java.util.*;
  */
 public class Hero {
 
-    public String nome;
-    public String descrizione;
+    public String name;
+    public String description;
 
     /**
      * Default constructor
      */
-    public Hero() {
+    public Hero(String name,String description) {
+        this.name=name;
+        this.description=description;
     }
 
 
