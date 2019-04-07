@@ -2,7 +2,7 @@ package model.card;
 
 import java.util.ArrayList;
 
-public class AmmoCard {
+public class AmmoCard extends Card{
     public ArrayList<AmmoColor> ammo;
     public boolean hasPowerup;
 

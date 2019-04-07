@@ -2,11 +2,13 @@ package model.card;
 
 import java.util.ArrayList;
 
-public class PowerDeck {
+public class PowerDeck implements Deck{
 
     private ArrayList<Powerup> powerups;
 
-    public PowerDeck(){
+    public PowerDeck(){}
+
+    public void CreateDeck(){
         powerups = new ArrayList<Powerup>();
         ArrayList<String> na= new ArrayList<String>();
         na.add("Mirino");
@@ -22,7 +24,14 @@ public class PowerDeck {
             }
         }
     }
-        public Powerup getPowerup () { //ritorna una carta Powerup dal mazzo e la rimuove
+        public Powerup getPowerup () {
+            Powerup powerup;
+            powerup = powerups.get(0);
+            powerups.remove(0);
+            return powerup;
+        }
+
+        public Card getCard(){ //returns a Powerup from the deck and removes it
             Powerup powerup;
             powerup = powerups.get(0);
             powerups.remove(0);

@@ -5,8 +5,7 @@ public class Powerup extends Card {
     private AmmoColor ammo;
 
     public Powerup (String name, String description, AmmoColor ammo, int key){
-        this.name=name;
-        this.description=description;
+        super(name,description);
         this.ammo=ammo;
         this.key=key;
     }
@@ -20,20 +19,20 @@ public class Powerup extends Card {
 
     public void operation(){
         switch (key){
-            case 1: //eseguire quando stai attaccando
-                    //metodo per pagare cubo munizioni, serve la plancia del giocatore
-                    //metodo scegli bersaglio
-                    //metodo infliggi 1 danno
+            case 1: //it can only be activated when attacking
+                    //method for paying ammunition cube
+                    //method choose target
+                    //method of dealing 1 damage
                     break;
-            case 2: //può essere usato nel proprio turno esclusivamente
-                    //metodo scegli bersaglio
-                    //metodo muovi bersaglio (1,2 quadrati in una direzione)
+            case 2: //can be used on its own only
+                    //method choose target
+                    //method move target (1.2 squares in one direction)
                     break;
-            case 3: //quando ricevi danno da giocatore che PUOI VEDERE
-                    //metodo dai danno
+            case 3: //when you receive player damage that you CAN SEE
+                    //damage
                     break;
-            case 4: //può essere usato nel proprio turno esclusivamente
-                    //muovi bersaglio
+            case 4: //can be used on its own only
+                    //method move target
                     break;
             default:;
         }
