@@ -20,6 +20,12 @@ public abstract class Square {
     public void addNextSquare(Square next){
         nextSquare.add(next);
     }
+    public Color getColor(){
+        return squareColor;
+    }
+    public String getType(){
+        return type;
+    }
 
 
 }

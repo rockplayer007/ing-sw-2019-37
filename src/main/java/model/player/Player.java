@@ -1,7 +1,7 @@
 package model.player;
 import model.board.Square;
+import model.card.AmmoCard;
 import model.card.Powerup;
-import model.card.Ammo;
 import model.card.Weapon;
 import java.util.*;
 
@@ -14,7 +14,7 @@ public class Player {
     public Hero hero;
     public Square position;
     public PlayerBoard board;
-    public Arraylist<Ammo> ammo;
+    public ArrayList<AmmoCard> ammo;
     public ArrayList<Weapon> weapons;
     public ArrayList<Powerup> powerups;
     public Actions actionStatus;

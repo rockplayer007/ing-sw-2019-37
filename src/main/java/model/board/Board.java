@@ -24,12 +24,20 @@ public class Board {
             createMap();
         }
 
-        private ArrayList<GenerationSquare> createMap(){
-            ArrayList<GenerationSquare> 
-            return ;
-        }
-        public Square giveGenerationPoint(Color color){
+        private void createMap(){
+            //load from file
+            //choose map
 
+        }
+
+
+        public Square giveGenerationPoint(Color color){
+            for(Square gen: genPoints){
+                if(color.equals(gen.getColor())){
+                    return gen;
+                }
+            }
+            return null;
         }
     }
 
