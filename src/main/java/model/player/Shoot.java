@@ -13,8 +13,8 @@ public class Shoot implements Command {
     }
 
 
-
-    public void execute() {
+    @Override
+    public void execute(Player player, Object o) {
         // TODO implement here
     }
 
