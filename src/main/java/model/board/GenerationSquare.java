@@ -4,13 +4,14 @@ import model.card.AmmoCard;
 import model.card.Weapon;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GenerationSquare extends Square{
 
-    private ArrayList<Weapon> weaponDeck;
+    private List<Weapon> weaponDeck;
 
 
-    public GenerationSquare(Color color, String type, int x, int y, ArrayList<Weapon> weaponCards){
+    public GenerationSquare(Color color, boolean type, int x, int y, List<Weapon> weaponCards){
         super(color, type, x, y);
         this.weaponDeck = weaponCards;
     }

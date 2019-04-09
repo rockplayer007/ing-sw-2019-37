@@ -1,0 +1,113 @@
+<?xml version="1.0" ?>
+<!-- 0-0 is the top left, 1-0 the one right to it, 0-1 under -->
+<!-- go from left to right, from top to bottom -->
+<!-- type can be only generationSquare and ammoSquare -->
+<!-- colors can be only RED, BLUE, YELLOW, GREEN, PURPLE, WHITE -->
+<!-- squares in the same room have the same colo-->
+<maps>
+
+    <board n="0" description ="good for 3-4 players">
+
+        <square n="0">
+            <color>BLUE</color>
+            <xy>0-0</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <xy>0-1</xy>
+                <xy>1-0</xy>
+            </connection>
+        </square>
+        <square n="1">
+            <color>BLUE</color>
+            <xy>1-0</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <xy>0-0</xy>
+                <xy>2-0</xy>
+            </connection>
+        </square>
+        <square n="2">
+            <color>BLUE</color>
+            <xy>2-0</xy>
+            <type>generationSquare</type>
+            <connection>
+                <xy>1-0</xy>
+                <xy>2-1</xy>
+            </connection>
+        </square>
+
+        <square n="3">
+            <color>RED</color>
+            <xy>0-1</xy>
+            <type>generationSquare</type>
+            <connection>
+                <xy>0-0</xy>
+                <xy>1-1</xy>
+            </connection>
+        </square>
+        <square n="4">
+            <color>RED</color>
+            <xy>1-1</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <xy>0-1</xy>
+                <xy>2-1</xy>
+                <xy>1-2</xy>
+            </connection>
+        </square>
+        <square n="5">
+            <color>RED</color>
+            <xy>2-1</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <xy>2-1</xy>
+                <xy>3-1</xy>
+            </connection>
+        </square>
+
+        <square n="6">
+            <color>YELLOW</color>
+            <xy>3-1</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <xy>2-1</xy>
+                <xy>3-2</xy>
+            </connection>
+        </square>
+
+        <square n="7">
+            <color>WHITE</color>
+            <xy>2-1</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <xy>1-1</xy>
+                <xy>2-2</xy>
+            </connection>
+        </square>
+        <square n="8">
+            <color>WHITE</color>
+            <xy>2-2</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <xy>2-1</xy>
+                <xy>3-2</xy>
+            </connection>
+        </square>
+
+        <square n="9">
+            <color>YELLOW</color>
+            <xy>3-2</xy>
+            <type>generationSquare</type>
+            <connection>
+                <xy>2-2</xy>
+                <xy>3-1</xy>
+            </connection>
+        </square>
+
+    </board>
+
+    <board n="1" description="good for test">
+
+    </board>
+
+</maps>
