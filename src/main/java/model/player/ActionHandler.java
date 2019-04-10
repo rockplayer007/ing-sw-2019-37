@@ -72,9 +72,8 @@ public class ActionHandler {
      * 
      */
     public void grab(Player player, Card card, Board board) {
-        String type=player.getPosition().getType();
-        if (!player.getPosition().getType()){
-            player.addWeapon((Weapon)Card)
+        if (!player.getPosition().getType()) {
+            player.addWeapon((Weapon) card);
         }
         else {
             ((AmmoCard)card).getAmmoList().stream()
