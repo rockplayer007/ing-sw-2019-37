@@ -10,6 +10,6 @@ public interface Command {
     /**
      * 
      */
-    public void execute(Player player, Object o);
+    public void execute();
 
 }

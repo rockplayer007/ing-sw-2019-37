@@ -1,5 +1,6 @@
 package model.player;
 
+import model.board.Board;
 import model.board.Square;
 import model.card.Powerup;
 import model.card.AmmoColor;
@@ -16,7 +17,7 @@ public class Player {
     private Hero hero;
     private Square position;
     private PlayerBoard board;
-    private ArrayList<AmmoColor> ammo;
+    private  Map<AmmoColor,Integer> ammo;
     private ArrayList<Weapon> weapons;
     private ArrayList<Powerup> powerups;
     private Actions actionStatus;
@@ -57,7 +58,7 @@ public class Player {
         return board;
     }
 
-    public ArrayList<AmmoColor> getAmmo() {
+    public  Map<AmmoColor,Integer> getAmmo() {
         return ammo;
     }
 
@@ -69,10 +70,19 @@ public class Player {
         return actionStatus;
     }
 
-
-
+    public void addAmmo(AmmoColor ammoColor){
+        if (ammo.get(ammoColor)<3)
+            ammo.put(ammoColor,ammo.get(ammoColor)+1);
+    }
+    public void addPowerup(Powerup powerup){
+            powerups.add(powerup);
+    }
+    public void addWeapon(Weapon weapon){
+        weapons.add(weapon);
+    }
     public void turn() {
         // TODO implement here
     }
+
 
 }
