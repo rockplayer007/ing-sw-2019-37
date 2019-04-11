@@ -11,9 +11,7 @@ public abstract class Card {
         this.description=description;
     }
 
-
-
-    public String getname(){
+    public String getName(){
         return name;
     }
     public String getDescription(){

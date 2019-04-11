@@ -1,8 +1,17 @@
 package model.card;
-import model.card.Card;
+import java.util.Collections;
+import java.util.Stack;
 
-public interface Deck {
+public abstract class Deck {
+    static Stack<AmmoCard> ammoCards= new Stack<AmmoCard>();
+    static Stack<Powerup> powerups = new Stack<Powerup>();
+    Deck(){}
 
-    void CreateDeck();
-    Card getCard();
+    public void mixDeck(){
+        Collections.shuffle(ammoCards);
+        Collections.shuffle(powerups);
+    }
+
+    public abstract Card getCard();
+
 }

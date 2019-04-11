@@ -18,7 +18,7 @@ public class PowerupTest {
 
     @Test
     public void powTest() {
-        assertEquals("Mirino", powerup.getname());
+        assertEquals("Mirino", powerup.getName());
         assertEquals("descption", powerup.getDescription());
         assertEquals("RED", powerup.getAmmoColor().name());
     }
