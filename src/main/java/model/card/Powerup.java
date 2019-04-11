@@ -1,7 +1,7 @@
 package model.card;
 
 public class Powerup extends Card {
-    private int key; //Mirino key=1,Raggio 2, Granata 3 , Teletr. 4
+    private int key; //Targeting Scope=1,Newton=2,Tagback Grenade=3,Teleporter=4
     private AmmoColor ammo;
 
     public Powerup (String name, String description, AmmoColor ammo, int key){
