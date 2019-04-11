@@ -6,6 +6,7 @@
 
     <groupId>it.polimi.ingsw</groupId>
     <artifactId>ing-sw-2019-37</artifactId>
+    <!-- token SonarQube mvn sonar:sonar -Dsonar.projectKey=ing-sw-2019-37 -Dsonar.host.url=http://localhost:9000 -Dsonar.login=566df457e9ca6e8feb79e9539a85918e505d8906 -->
     <version>1.0-SNAPSHOT</version>
 
 

@@ -12,15 +12,17 @@ public class PowerDeck extends Deck{
         String des = "...";
         for(int i=0;i<2;i++) {
             for (int j = 0; j < na.size(); j++) {
-                powerups.push(new Powerup(na.get(j), des, AmmoColor.RED, j + 1));
-                powerups.push(new Powerup(na.get(j), des, AmmoColor.BLUE, j + 1));
-                powerups.push(new Powerup(na.get(j), des, AmmoColor.YELLOW, j + 1));
+                addCard(new Powerup(na.get(j), des, AmmoColor.RED, j + 1));
+                addCard(new Powerup(na.get(j), des, AmmoColor.BLUE, j + 1));
+                addCard(new Powerup(na.get(j), des, AmmoColor.YELLOW, j + 1));
             }
         }
     }
+    /*
     @Override
     public Card getCard() {
         Powerup powerup = powerups.pop();
         return powerup;
     }
+    */
 }

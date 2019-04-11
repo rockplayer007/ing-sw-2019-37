@@ -1,8 +1,8 @@
 package model.card;
 
 public abstract class Card {
-    public String name;
-    public String description;
+    private String name;
+    private String description;
 
     public Card() {
     }

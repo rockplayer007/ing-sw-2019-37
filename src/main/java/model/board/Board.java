@@ -21,11 +21,11 @@ public class Board {
     private PowerDeck powerDeck = new PowerDeck();
     private WeaponDeck weaponDeck = new WeaponDeck();
 
-    public BoardMap map = new BoardMap();
+    private BoardMap map = new BoardMap();
     private SkullBoard skullBoard = new SkullBoard();
 
-    public Board(){
-
+    public BoardMap getMap(){
+        return map;
     }
 
 
@@ -33,7 +33,54 @@ public class Board {
 
         List<GenerationSquare> genPoints = new ArrayList<>();
         Map<Integer,Square> allSquares = new HashMap<>();
+        Map<Integer, String> availableMaps = new HashMap<>();
 
+        private NodeList openMapFile(){
+            NodeList boards = null;
+            try{
+
+                File inputFile = new File("./src/main/resources/map.xml");
+
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                Document doc = dBuilder.parse(inputFile);
+                doc.getDocumentElement().normalize();
+
+                boards  = doc.getElementsByTagName("board");
+
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+
+            return boards;
+        }
+
+        public void loadMaps(){
+
+            try{
+                NodeList boards  = openMapFile();
+
+                for( int i = 0; i < boards.getLength(); i++){
+                    Node board = boards.item(i);
+
+                    availableMaps.put(Integer.valueOf(((Element) board).getAttribute("n")),
+                            ((Element) board).getAttribute("description"));
+                }
+
+            }
+            catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+        public int chooseMap(){
+            availableMaps.forEach((k,v)-> System.out.println("Map number " + k + " " + v));
+            System.out.println("Select map: ");
+            Scanner reader = new Scanner(System.in);
+            return reader.nextInt();
+
+        }
 
         public void createMap(int mapNumber){
 
@@ -83,55 +130,6 @@ public class Board {
             catch (Exception e){
                 e.printStackTrace();
             }
-        }
-        public void loadMaps(){
-            Map<Integer, String> avaiableMaps = new HashMap<>();
-            try{
-
-
-
-                NodeList boards  = openMapFile();
-
-                for( int i = 0; i < boards.getLength(); i++){
-                    Node board = boards.item(i);
-
-                    avaiableMaps.put(Integer.valueOf(((Element) board).getAttribute("n")),
-                            ((Element) board).getAttribute("description"));
-                }
-
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
-        }
-
-        public int chooseMap(Map<Integer, String> maps){
-            maps.forEach((k,v)-> System.out.println("Map number " + k + " " + v));
-            System.out.println("Select map: ");
-            Scanner reader = new Scanner(System.in);
-            return reader.nextInt();
-
-        }
-
-        private NodeList openMapFile(){
-            NodeList boards = null;
-            try{
-
-                File inputFile = new File("./src/main/resources/map.xml");
-
-                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                Document doc = dBuilder.parse(inputFile);
-                doc.getDocumentElement().normalize();
-
-                boards  = doc.getElementsByTagName("board");
-
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
-
-            return boards;
         }
 
         public Square giveGenerationPoint(Color color){

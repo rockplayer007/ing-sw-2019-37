@@ -8,9 +8,9 @@ public class BoardTest {
     public void boardCreationTest(){
 
         Board board = new Board();
-        board.map.loadMaps();
-        board.map.createMap(0);
-        System.out.println("color is: " + board.map.giveGenerationPoint(Color.BLUE).getX());
+        board.getMap().loadMaps();
+        board.getMap().createMap(0);
+        System.out.println("color is: " + board.getMap().giveGenerationPoint(Color.BLUE).getX());
 
 
     }

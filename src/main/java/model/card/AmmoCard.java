@@ -1,9 +1,10 @@
 package model.card;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AmmoCard extends Card{
-    public ArrayList<AmmoColor> ammo= new ArrayList<AmmoColor>();
-    public boolean hasPowerup;
+    private List<AmmoColor> ammo= new ArrayList<>();
+    private boolean hasPowerup;
 
     public AmmoCard(AmmoColor a,AmmoColor b, AmmoColor c){
         ammo.add(a);
@@ -17,7 +18,7 @@ public class AmmoCard extends Card{
         hasPowerup=true;
     }
 
-    public ArrayList<AmmoColor> getAmmoList(){ //metodo che ritorna la lista delle munizioni per ogni AmmoCard
+    public List<AmmoColor> getAmmoList(){ //metodo che ritorna la lista delle munizioni per ogni AmmoCard
         return ammo;
     }
 
