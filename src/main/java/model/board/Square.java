@@ -8,14 +8,15 @@ import java.util.List;
 public abstract class Square {
 
     private Color squareColor;
+    private int id;
     private int x;
-
     private int y;
-    private List<Square> neighbourSquare = new ArrayList<Square>();
+    private List<Square> neighbourSquare = new ArrayList<>();
     private List<Player> playersOnSquare = new ArrayList<>();
     private boolean generationPoint;
 
-    public Square(Color color, boolean type, int x, int y ){
+    public Square(int id, Color color, boolean type, int x, int y ){
+        this.id = id;
         this.squareColor = color;
         this.generationPoint = type;
         this.x = x;

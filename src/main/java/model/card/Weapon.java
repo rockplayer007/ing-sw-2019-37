@@ -1,4 +1,4 @@
 package model.card;
 
-public class Weapon {
+public class Weapon extends Card {
 }

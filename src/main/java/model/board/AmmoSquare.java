@@ -7,8 +7,8 @@ public class AmmoSquare extends Square {
     private AmmoCard ammoCard;
 
 
-    public AmmoSquare(Color color, boolean type, int x, int y, AmmoCard card){
-        super(color, type, x, y);
+    public AmmoSquare(int id, Color color, int x, int y, AmmoCard card){
+        super(id, color, false, x, y);
         this.ammoCard = card;
     }
 }

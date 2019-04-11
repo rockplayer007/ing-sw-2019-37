@@ -5,7 +5,9 @@ import java.util.ArrayList;
 public class AmmoDeck implements Deck{
     private ArrayList<AmmoCard> ammoCards;
 
-    public  AmmoDeck(){}
+    public  AmmoDeck(){
+        CreateDeck();
+    }
     public void CreateDeck() {
         AmmoColor ammoColor = null;
         ammoCards = new ArrayList<AmmoCard>();
