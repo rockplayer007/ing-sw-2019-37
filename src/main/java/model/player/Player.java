@@ -17,12 +17,17 @@ public class Player {
     private Square position;
     private PlayerBoard board;
     private  Map<AmmoColor,Integer> ammo;
-    private ArrayList<Weapon> weapons;
-    private ArrayList<Powerup> powerups;
+    private List<Weapon> weapons;
+    private List<Powerup> powerups;
     private Actions actionStatus;
 
     public Player(String nickname) {
         this.nickname = nickname;
+        ammo = new HashMap<>();
+        for (AmmoColor c : AmmoColor.values()) {
+            ammo.put(c, 0);
+        }
+
     }
 
     public void setHero(Hero hero) {
@@ -61,7 +66,7 @@ public class Player {
         return ammo;
     }
 
-    public ArrayList<Weapon> getWeapons() {
+    public List<Weapon> getWeapons() {
         return weapons;
     }
 
@@ -69,18 +74,18 @@ public class Player {
         return actionStatus;
     }
 
-    public void addAmmo(AmmoColor ammoColor){
+    void addAmmo(AmmoColor ammoColor){
         if (ammo.get(ammoColor)<3)
             ammo.put(ammoColor,ammo.get(ammoColor)+1);
     }
-    public void addPowerup(Powerup powerup){
-            powerups.add(powerup);
+    void addPowerup(Powerup powerup){
+        powerups.add(powerup);
     }
-    public void addWeapon(Weapon weapon){
+    void addWeapon(Weapon weapon){
         weapons.add(weapon);
     }
-    public void turn() {
-        // TODO implement here
+    public List<Powerup> getPowerups(){
+        return this.powerups;
     }
 
 

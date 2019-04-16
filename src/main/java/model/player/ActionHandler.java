@@ -1,12 +1,10 @@
 package model.player;
 
 import model.board.Board;
+import model.board.GenerationSquare;
 import model.board.Square;
 
-import model.card.AmmoCard;
-import model.card.Card;
-import model.card.Powerup;
-import model.card.Weapon;
+import model.card.*;
 
 
 import java.util.*;
@@ -72,30 +70,47 @@ public class ActionHandler {
     }
 
     /**
-     * 
+     * add WeaponCard in player only if he has less than 3 weapons
+     * @param
      */
-    public void grab(Player player, Card card, Board board) {
-        if (!player.getPosition().getType()) {
-            player.addWeapon((Weapon) card);
+    public void grab(Player player,Weapon card) {
+        List<Weapon>cards=player.getWeapons();
+        if(cards.size()<3)
+            player.addWeapon(card);
+//        else {
+//            System.out.println("you need choose one Weapon, to drop and put it in the empty space left by the weapon you are grabbing.");
+//            System.out.println("choose one of these:");
+//            int i;
+//            for (i=0; i<3; i++){
+//                System.out.println((i+1)+"."+cards.get(i).getName());
+//            }
+//            do{
+//                System.out.println("Write the number of the card");
+//                Scanner sc = new Scanner(System.in);
+//                i=sc.nextInt();
+//            }while (i>3||i<0);
+//            player.getPosition().addwepon(cards.get(i));
+//            cards.remove(cards.get(i));
+//
+
         }
-        else {
-            ((AmmoCard)card).getAmmoList().stream()
-                    .forEach(i ->player.addAmmo(i));
-            if (((AmmoCard)card).hasPowerup())
-                player.addPowerup((Powerup) board.getPowerDeck().getCard());
+    }
 
-
+    /**
+     * grab AmmoCard and add the Ammos and Powerup in player
+     */
+    public void grab(Player player, AmmoCard card, Board board) {
+        card.getAmmoList().forEach(player::addAmmo);
+        if (card.hasPowerup() && player.getPowerups().size() < 3) {
+            player.addPowerup((Powerup) board.getPowerDeck().getCard());
         }
-
     }
 
     /**
      * 
      */
-    public void reload() {
-        // TODO implement here
-
-
+    public void reload(Weapon card ) {
+        card.setCharged(true);
     }
 
 }
