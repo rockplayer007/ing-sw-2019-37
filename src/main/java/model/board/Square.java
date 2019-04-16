@@ -7,6 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Class that defines a single square of the board
+ */
 public abstract class Square {
 
     private Color squareColor;
@@ -17,6 +20,14 @@ public abstract class Square {
     private List<Player> playersOnSquare = new ArrayList<>();
     private boolean generationPoint;
 
+    /**
+     * Constructor of the class
+     * @param id Number of the square
+     * @param color Color of the square
+     * @param type enerationPoint true AmmoSquare false
+     * @param x x coordinate of the square
+     * @param y y coordinate of the square
+     */
     public Square(int id, Color color, boolean type, int x, int y ){
         this.id = id;
         this.squareColor = color;
@@ -25,28 +36,57 @@ public abstract class Square {
         this.y = y;
     }
 
+    /**
+     * Adds a square that has distance 1 from the current square
+     * @param next Near square
+     */
     public void addNextSquare(Square next){
         neighbourSquare.add(next);
     }
+
+    /**
+     * Gives the color of the square
+     * @return Color of the square
+     */
     public Color getColor(){
         return squareColor;
     }
+
+    /**
+     * Tells if the square is a GenerationSquare or an AmmoSquare
+     * @return True if it is a GenerationSquare or false if AmmoSquare
+     */
     public boolean getType(){
         return generationPoint;
     }
+
+    /**
+     * Gives x coordinate of the square
+     * @return x coordinate
+     */
     public int getX() {
         return x;
     }
+
+    /**
+     * Gives y coordinate of the square
+     * @return y coordinate
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     * Given a distance it returns the squares that have
+     * this distance from the current square
+     * @param maxDistance Distance from the square
+     * @return All the squares with that distance
+     */
     public Set<Square> getValidPosition(int maxDistance){
         Set<Square> positions = new HashSet<>();
         if(maxDistance != 0){
-
-            neighbourSquare.forEach((x)-> positions.addAll(x.getValidPosition(maxDistance-1)));
-
+            neighbourSquare.forEach(squares-> positions.
+                    addAll(squares.getValidPosition(maxDistance-1)));
         }
         else {
             positions.add(this);
@@ -54,9 +94,19 @@ public abstract class Square {
 
         return positions;
     }
+
+    /**
+     * Places a player to the current square
+     * @param player Player that has to be placed
+     */
     public void addPlayer(Player player){
         playersOnSquare.add(player);
     }
+
+    /**
+     * Removes a player from the current square
+     * @param player Player that has to be removed
+     */
     public void removePlayer(Player player){
         playersOnSquare.remove(player);
     }

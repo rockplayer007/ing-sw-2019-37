@@ -17,7 +17,9 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.util.*;
 
-
+/**
+ * Class for managing the cards and the boards
+ */
 public class Board {
 
     private AmmoDeck ammoDeck = new AmmoDeck();
@@ -27,26 +29,54 @@ public class Board {
     private BoardMap map = new BoardMap();
     private SkullBoard skullBoard = new SkullBoard();
 
+    /**
+     * Gives the map of the game where the players are playing
+     * @return Map of the game
+     */
     public BoardMap getMap(){
         return map;
     }
 
+    /**
+     * Gives the current deck of ammo
+     * @return The ammo deck
+     */
     public AmmoDeck getAmmoDeck() {
         return ammoDeck;
     }
+
+    /**
+     * Gives the current deck of powerup cards
+     * @return The powerup deck
+     */
     public PowerDeck getPowerDeck(){
         return powerDeck;
     }
+
+    /**
+     * Gives the current deck of weapon cards
+     * @return The weapon deck
+     */
     public WeaponDeck getWeaponDeck() {
         return weaponDeck;
     }
 
+    /**
+     * Class for managing the player board
+     */
     public class BoardMap {
 
         List<GenerationSquare> genPoints = new ArrayList<>();
         Map<Integer,Square> allSquares = new HashMap<>();
         Map<Integer, String> availableMaps = new HashMap<>();
 
+        /**
+         * Opens the file with all the boards
+         * @return A NodeList with all the boards
+         * @throws ParserConfigurationException
+         * @throws SAXException
+         * @throws IOException
+         */
         private NodeList openMapFile ()throws ParserConfigurationException, SAXException, IOException {
 
             File inputFile = new File("./src/main/resources/map.xml");
@@ -61,6 +91,9 @@ public class Board {
 
         }
 
+        /**
+         * Creates a list with all the available boards
+         */
         public void loadMaps(){
 
             try{
@@ -79,6 +112,10 @@ public class Board {
             }
         }
 
+        /**
+         * Lets the user choose the board where to play
+         * @return The chosen board
+         */
         public int chooseMap(){
             availableMaps.forEach((k,v)-> System.out.println("Map number " + k + " " + v));
             System.out.println("Select map: ");
@@ -87,6 +124,10 @@ public class Board {
 
         }
 
+        /**
+         * Builds a new map given a chosen one
+         * @param mapNumber Number of the map to choose
+         */
         public void createMap(int mapNumber){
 
             try {
@@ -137,6 +178,11 @@ public class Board {
             }
         }
 
+        /**
+         * Gives the generation point given a color
+         * @param color Color of the generation point
+         * @return Generation point
+         */
         public Square getGenerationPoint(Color color){
             for(Square gen: genPoints){
                 if(color.equals(gen.getColor())){
@@ -145,6 +191,12 @@ public class Board {
             }
             return null;
         }
+
+        /**
+         * Gives the square with the specified id
+         * @param id Id of the square
+         * @return The square with that id
+         */
         public Square getSquare(int id){
             return allSquares.get(id);
         }

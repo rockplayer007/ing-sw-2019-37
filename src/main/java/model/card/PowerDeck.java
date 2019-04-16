@@ -4,7 +4,7 @@ import java.util.*;
 public class PowerDeck extends Deck{
 
     public PowerDeck(){
-        ArrayList<String> na= new ArrayList<String>();
+        ArrayList<String> na= new ArrayList<>();
         na.add("Targeting Scope");
         na.add("Newton");
         na.add("Tagback Grenade");

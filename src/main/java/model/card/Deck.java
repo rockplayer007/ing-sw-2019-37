@@ -7,6 +7,7 @@ import java.util.Stack;
 public abstract class Deck {
     //static Stack<AmmoCard> ammoCards= new Stack<AmmoCard>();
     //static Stack<Powerup> powerups = new Stack<Powerup>();
+
     private Stack<Card> cardDeck = new Stack<>();
     Deck(){}
 
