@@ -1,11 +1,10 @@
 package model.player;
 
-import model.board.Board;
-import model.board.Square;
-import model.card.Powerup;
 import model.card.AmmoColor;
+import model.board.Square;
 import model.card.Weapon;
-
+import model.card.Card;
+import model.card.Powerup;
 import java.util.*;
 
 /**

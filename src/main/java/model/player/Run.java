@@ -1,6 +1,5 @@
 package model.player;
 
-import model.board.Square;
 import java.util.*;
 
 /**
