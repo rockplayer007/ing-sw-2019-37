@@ -2,15 +2,11 @@ package model.player;
 
 import model.board.Board;
 import model.board.Square;
-<<<<<<< HEAD
-=======
+
 import model.card.AmmoCard;
 import model.card.Card;
 import model.card.Powerup;
->>>>>>> 408d94a3a12ab46056b156d0041957cb1a3e6ed1
 import model.card.Weapon;
-import model.card.Card;
-import model.card.AmmoCard;
 
 
 import java.util.*;
