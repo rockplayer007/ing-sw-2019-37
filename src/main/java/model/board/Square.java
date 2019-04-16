@@ -3,7 +3,9 @@ package model.board;
 import model.player.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public abstract class Square {
 
@@ -39,17 +41,24 @@ public abstract class Square {
         return y;
     }
 
-    public ArrayList<Square> getValidPosition(int maxDistance){
+    public Set<Square> getValidPosition(int maxDistance){
+        Set<Square> positions = new HashSet<>();
+        if(maxDistance != 0){
 
-        //TODO
-        return null;//@roland per non lasciare un errore ho messo questo.
+            neighbourSquare.forEach((x)-> positions.addAll(x.getValidPosition(maxDistance-1)));
+
+        }
+        else {
+            positions.add(this);
+        }
+
+        return positions;
     }
     public void addPlayer(Player player){
-
+        playersOnSquare.add(player);
     }
     public void removePlayer(Player player){
-
+        playersOnSquare.remove(player);
     }
-
 
 }

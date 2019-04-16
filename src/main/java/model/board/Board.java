@@ -5,13 +5,16 @@ import model.card.*;
 import java.io.File;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 
+import java.io.IOException;
 import java.util.*;
 
 
@@ -28,10 +31,15 @@ public class Board {
         return map;
     }
 
+    public AmmoDeck getAmmoDeck() {
+        return ammoDeck;
+    }
     public PowerDeck getPowerDeck(){
         return powerDeck;
     }
-
+    public WeaponDeck getWeaponDeck() {
+        return weaponDeck;
+    }
 
     public class BoardMap {
 
@@ -39,25 +47,18 @@ public class Board {
         Map<Integer,Square> allSquares = new HashMap<>();
         Map<Integer, String> availableMaps = new HashMap<>();
 
-        private NodeList openMapFile(){
-            NodeList boards = null;
-            try{
+        private NodeList openMapFile ()throws ParserConfigurationException, SAXException, IOException {
 
-                File inputFile = new File("./src/main/resources/map.xml");
+            File inputFile = new File("./src/main/resources/map.xml");
 
-                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                Document doc = dBuilder.parse(inputFile);
-                doc.getDocumentElement().normalize();
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(inputFile);
+            doc.getDocumentElement().normalize();
 
-                boards  = doc.getElementsByTagName("board");
+            return doc.getElementsByTagName("board");
 
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
 
-            return boards;
         }
 
         public void loadMaps(){
@@ -143,6 +144,9 @@ public class Board {
                 }
             }
             return null;
+        }
+        public Square getSquare(int id){
+            return allSquares.get(id);
         }
     }
 
