@@ -28,6 +28,10 @@ public class Board {
         return map;
     }
 
+    public PowerDeck getPowerDeck(){
+        return powerDeck;
+    }
+
 
     public class BoardMap {
 
@@ -132,7 +136,7 @@ public class Board {
             }
         }
 
-        public Square giveGenerationPoint(Color color){
+        public Square getGenerationPoint(Color color){
             for(Square gen: genPoints){
                 if(color.equals(gen.getColor())){
                     return gen;

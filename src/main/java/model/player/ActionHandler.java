@@ -4,6 +4,7 @@ import model.board.Board;
 import model.board.Square;
 import model.card.AmmoCard;
 import model.card.Card;
+import model.card.Powerup;
 import model.card.Weapon;
 
 import java.util.*;
@@ -78,8 +79,8 @@ public class ActionHandler {
         else {
             ((AmmoCard)card).getAmmoList().stream()
                     .forEach(i ->player.addAmmo(i));
-            if (((AmmoCard)card).hasPowerup)
-                player.addPowerup(board.getPowerdeck.getCard());
+            if (((AmmoCard)card).hasPowerup())
+                player.addPowerup((Powerup) board.getPowerDeck().getCard());
 
         }
 

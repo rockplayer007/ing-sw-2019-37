@@ -14,6 +14,7 @@ public class Shoot implements Command {
 
 
     @Override
+    public void execute(){}
     public void execute(Player player, Object o) {
         // TODO implement here
     }
