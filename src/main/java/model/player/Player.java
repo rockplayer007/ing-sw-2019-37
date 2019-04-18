@@ -16,7 +16,7 @@ public class Player {
     private Hero hero;
     private Square position;
     private PlayerBoard board;
-    private  Map<AmmoColor,Integer> ammo;
+    private Map<AmmoColor,Integer> ammo;
     private List<Weapon> weapons;
     private List<Powerup> powerups;
     private Actions actionStatus;

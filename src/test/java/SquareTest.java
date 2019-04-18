@@ -32,7 +32,7 @@ public class SquareTest {
         squares = map.getSquare(0).getValidPosition(2);
         assertTrue(squares.contains(map.getSquare(2)));
         assertTrue(squares.contains(map.getSquare(4)));
-        assertTrue(squares.contains(map.getSquare(0)));
+        assertTrue(squares.contains(map.getSquare(0 )));
 
     }
 

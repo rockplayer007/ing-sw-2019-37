@@ -3,7 +3,7 @@ package model.gameHandler;
 import model.board.Board;
 import model.player.Player;
 
-import java.lang.Exception
+import java.lang.Exception;
 import java.util.ArrayList;
 import java.util.List;
 

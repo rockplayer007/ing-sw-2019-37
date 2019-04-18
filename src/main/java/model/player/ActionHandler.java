@@ -93,18 +93,20 @@ public class ActionHandler {
 //            cards.remove(cards.get(i));
 //
 
-        }
+//        }
     }
 
     /**
      * grab AmmoCard and add the Ammos and Powerup in player
      */
+
     public void grab(Player player, AmmoCard card, Board board) {
         card.getAmmoList().forEach(player::addAmmo);
         if (card.hasPowerup() && player.getPowerups().size() < 3) {
             player.addPowerup((Powerup) board.getPowerDeck().getCard());
         }
     }
+
 
     /**
      * 
