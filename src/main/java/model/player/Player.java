@@ -3,8 +3,8 @@ package model.player;
 import model.card.AmmoColor;
 import model.board.Square;
 import model.card.Weapon;
-import model.card.Card;
 import model.card.Powerup;
+import model.exceptions.*;
 import java.util.*;
 
 /**
@@ -15,17 +15,17 @@ public class Player {
     private String nickname;
     private Hero hero;
     private Square position;
-    private PlayerBoard board;
-    private  Map<AmmoColor,Integer> ammo;
+    private PlayerBoard playerBoard;
+    private Map<AmmoColor,Integer> ammos;
     private List<Weapon> weapons;
     private List<Powerup> powerups;
     private Actions actionStatus;
 
     public Player(String nickname) {
         this.nickname = nickname;
-        ammo = new HashMap<>();
+        ammos = new EnumMap<>(AmmoColor.class);
         for (AmmoColor c : AmmoColor.values()) {
-            ammo.put(c, 0);
+            ammos.put(c, 0);
         }
 
     }
@@ -38,8 +38,8 @@ public class Player {
         this.position = position;
     }
 
-    public void setBoard(PlayerBoard board) {
-        this.board = board;
+    public void setPlayerBoard(PlayerBoard board) {
+        this.playerBoard = board;
     }
 
     public void setActionStatus(Actions actionStatus) {
@@ -58,12 +58,12 @@ public class Player {
         return position;
     }
 
-    public PlayerBoard getBoard() {
-        return board;
+    public PlayerBoard getPlayerBoard() {
+        return playerBoard;
     }
 
-    public  Map<AmmoColor,Integer> getAmmo() {
-        return ammo;
+    public  Map<AmmoColor,Integer> getAmmos() {
+        return ammos;
     }
 
     public List<Weapon> getWeapons() {
@@ -74,14 +74,27 @@ public class Player {
         return actionStatus;
     }
 
-    void addAmmo(AmmoColor ammoColor){
-        if (ammo.get(ammoColor)<3)
-            ammo.put(ammoColor,ammo.get(ammoColor)+1);
+    public void addAmmo(AmmoColor ammoColor){
+        if (ammos.get(ammoColor)<3)
+            ammos.put(ammoColor, ammos.get(ammoColor)+1);
+
     }
-    void addPowerup(Powerup powerup){
+
+    public void removeAmmo(AmmoColor ammoColor)throws AmmoException{
+        if (ammos.get(ammoColor)>0)
+            ammos.put(ammoColor, ammos.get(ammoColor)-1);
+        else
+            throw new AmmoException("error! you haven't enough ammo"+ammoColor);
+    }
+
+    public void addPowerup(Powerup powerup){
         powerups.add(powerup);
     }
-    void addWeapon(Weapon weapon){
+
+    public void removePowerup(int i){
+        powerups.remove(i);
+    }
+    public void addWeapon(Weapon weapon){
         weapons.add(weapon);
     }
 
@@ -90,9 +103,37 @@ public class Player {
     }
 
     public Boolean limitWeapon(){
-        if (weapons.size()<3)
-            return false;
-        else
-            return true;
+            return (weapons.size()<3);
+
     }
+
+    public List<AmmoColor> powerupAsAmmo(){
+        ArrayList<AmmoColor> bullets=new ArrayList<>();
+        powerups.forEach(i->bullets.add(i.getAmmoColor()));
+        return bullets;
+    }
+
+    public boolean usePowerupAsAmmo(AmmoColor ammoColor){
+        return powerupAsAmmo().contains(ammoColor);
+    }
+
+    public Map<AmmoColor,Integer> allAmmos(){
+        Map<AmmoColor,Integer> bullets=new EnumMap<>(AmmoColor.class);
+        bullets.putAll(getAmmos());
+        powerups.forEach(i->bullets.put(i.getAmmoColor(), bullets.get(i.getAmmoColor())+1));
+        return bullets;
+    }
+
+    public Boolean enoughAmmos(List<AmmoColor> cost){
+        Map<AmmoColor,Integer> bullets=allAmmos();
+        for (AmmoColor c:cost){
+            if (bullets.get(c)>0)
+                bullets.put(c,bullets.get(c)-1);
+            else
+                return false;
+        }
+        return true;
+    }
+
+
 }
