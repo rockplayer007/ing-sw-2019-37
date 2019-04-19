@@ -84,9 +84,15 @@ public class Player {
     void addWeapon(Weapon weapon){
         weapons.add(weapon);
     }
+
     public List<Powerup> getPowerups(){
         return this.powerups;
     }
 
-
+    public Boolean limitWeapon(){
+        if (weapons.size()<3)
+            return false;
+        else
+            return true;
+    }
 }

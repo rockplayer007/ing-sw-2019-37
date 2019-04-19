@@ -56,7 +56,7 @@ public abstract class Square {
      * Tells if the square is a GenerationSquare or an AmmoSquare
      * @return True if it is a GenerationSquare or false if AmmoSquare
      */
-    public boolean getType(){
+    public boolean GetGenerationPoint(){
         return generationPoint;
     }
 
@@ -109,6 +109,13 @@ public abstract class Square {
      */
     public void removePlayer(Player player){
         playersOnSquare.remove(player);
+    }
+
+    public Boolean isThisSquare(int x,int y){
+        if (getX()==x&&getY()==y)
+            return true;
+        else
+            return false;
     }
 
 }
