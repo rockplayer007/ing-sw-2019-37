@@ -2,8 +2,7 @@ package model.gameHandler;
 
 import model.board.Board;
 import model.player.Player;
-
-import java.lang.Exception;
+import model.exceptions.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,11 +23,11 @@ public class Room {
         return players;
     }
 
-    public void addPlayer(Player player) throws Exception {
-        if(players.size()<6)
+    public void addPlayer(Player player) throws TooPlayerException {
+        if(players.size()<5)
             players.add(player);
         else
-            throw new Exception("cant add the 6 player");
+            throw new TooPlayerException("cant add the 6th player");
     }
 
     public Player getCurrentPlayer() {

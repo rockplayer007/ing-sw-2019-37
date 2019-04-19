@@ -112,7 +112,7 @@ public abstract class Square {
     }
 
     public Boolean isThisSquare(int x,int y){
-        if (getX()==x&&getY()==y)
+        if (getX()==x && getY()==y)
             return true;
         else
             return false;
