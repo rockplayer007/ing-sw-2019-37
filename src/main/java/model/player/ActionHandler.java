@@ -75,7 +75,7 @@ public class ActionHandler {
     public void grab(Room room) {
         Player player = room.getCurrentPlayer();
         if (!player.getPosition().GetGenerationPoint())
-            grabAmmo(player, ((AmmoSquare) player.getPosition()).getAmmoCard(), room.getBoard());
+            grabAmmo(player,((AmmoSquare) player.getPosition()).getAmmoCard(),room.getBoard());
         else {
             while (true) {
                 Weapon weapon = ((GenerationSquare) player.getPosition()).getWeapon();
@@ -126,7 +126,7 @@ public class ActionHandler {
      * @param player current player
      * @param  card weapon need to add in the player's hand
      */
-    public void grabWeapon(Player player, Weapon card) {
+    private void grabWeapon(Player player, Weapon card) {
         int c = 0;
         int i;
         ArrayList<AmmoColor> cost = card.getChargeCost();
