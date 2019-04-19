@@ -1,0 +1,50 @@
+package network.server;
+
+import network.server.rmi.ServerRMI;
+
+import java.net.InetAddress;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class Server {
+
+    private List<String> clients = new ArrayList<>();
+    private ServerRMI serverRMI;
+
+    private Server(){
+        this.serverRMI = new ServerRMI(this);
+    }
+
+    public static void main(String[] args) throws Exception{
+
+        InetAddress inetAddress = InetAddress.getLocalHost();
+        System.out.println("Connect your client here: " + inetAddress.getHostAddress());
+        System.out.println("Host Name:- " + inetAddress.getHostName());
+
+        try {
+            Server server = new Server();
+            server.startServer(1099);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+
+
+    }
+
+    private void startServer(int rmiPort) throws RemoteException {
+        System.out.println("new server");
+        serverRMI.startServer(rmiPort);
+
+    }
+
+    public void addClient(String name){
+        clients.add(name);
+    }
+
+    public List<String> getClients(){
+        return this.clients;
+    }
+}

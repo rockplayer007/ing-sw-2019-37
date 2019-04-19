@@ -5,7 +5,7 @@ import model.board.Board;
 import model.board.GenerationSquare;
 import model.board.Square;
 import model.card.*;
-import model.gamehandler.Room;
+import model.gameHandler.Room;
 
 import java.util.*;
 
@@ -149,12 +149,14 @@ public class ActionHandler {
      * @param player current player
      * @param  card Ammocard need to analize
      */
+
     public void grabAmmo(Player player, AmmoCard card, Board board) {
         card.getAmmoList().forEach(player::addAmmo);
         if (card.hasPowerup() && player.getPowerups().size() < 3) {
             player.addPowerup((Powerup) board.getPowerDeck().getCard());
         }
     }
+
 
     /**
      * reload the weapon

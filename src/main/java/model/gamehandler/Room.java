@@ -1,4 +1,4 @@
-package model.gamehandler;
+package model.gameHandler;
 
 import model.board.Board;
 import model.player.Player;
