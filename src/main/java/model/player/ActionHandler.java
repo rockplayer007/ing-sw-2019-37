@@ -10,7 +10,7 @@ import model.gameHandler.Room;
 import java.util.*;
 
 /**
- *
+ * contain the min actions t
  */
 public class ActionHandler {
 
@@ -77,7 +77,7 @@ public class ActionHandler {
         if (!player.getPosition().GetGenerationPoint())
             grabAmmo(player,((AmmoSquare) player.getPosition()).getAmmoCard(),room.getBoard());
         else {
-            while (true) {
+            while (((GenerationSquare) player.getPosition()).getWeaponDeck().stream().anyMatch(i->player.enoughAmmos(i.getBuyCost()))){
                 Weapon weapon = ((GenerationSquare) player.getPosition()).getWeapon();
                 List<AmmoColor> cost = weapon.getBuyCost();
                 if (player.enoughAmmos(cost)) {
@@ -90,10 +90,9 @@ public class ActionHandler {
                         grabWeapon(player, weapon);
                     }
                     break;
-                }else {
-                    System.out.println("you can't brab this Weapon, because you haven't enough ammo");//
-                    if (!choice(1, "choose another Weapon"))
-                        break;
+                } else {
+                    System.out.println("you can't brab this Weapon, because you haven't enough ammo");//TODO da stampare sul view del player
+                    choice(1, "choose another Weapon");
                 }
             }
         }
@@ -167,20 +166,17 @@ public class ActionHandler {
         int c=0;
         Player player = room.getCurrentPlayer();
         List<Weapon> weapons=player.getWeapons();
-        while (true) {
+        while (player.getWeapons().stream().anyMatch(Weapon::getCharged)) {
             i = chooseCard(weapons, "charge");
             Weapon weapon = weapons.get(i);
             if (!weapon.getCharged()) {
                 ArrayList<AmmoColor> cost = weapon.getChargeCost();
                 if (player.enoughAmmos(cost)) {
-                    while (cost.stream().distinct().anyMatch(player::usePowerupAsAmmo)) {//if the player has the powerups that can use as ammo
-                        if (choice(c,"use a weapon as a ammo")) {
-                            i = chooseCard(player.getPowerups(), "use as ammo");
+                    while (cost.stream().distinct().anyMatch(player::usePowerupAsAmmo)&&choice(c, "use a weapon as a ammo")) {//if the player has the powerups that can use as ammo
+                            i = chooseCard(player.getPowerups(), "use as ammo");                                                //and ask the player if he want to use or no.
                             cost.remove(player.getPowerups().get(i).getAmmoColor());
                             player.removePowerup(i);
                             c++;
-                        } else
-                            break;
                     }
                     cost.forEach(x -> player.removeAmmo(x));
                     weapon.setCharged(true);
@@ -188,13 +184,16 @@ public class ActionHandler {
                 break;
             } else {
                 System.out.println("it is already charged");//TODO da stampare sul view del player
-                if (!choice(1,"choose another Weapon"))
-                     break;
             }
         }
 
     }
-
+    /**
+     * general way to let player chooses the yes or no
+     * @param i for in the case need a loop of request
+     * @param message is the target of question
+     * @return a Boonlean in base yes or no, chosen by player
+     */
     public Boolean choice(int i, String message){
         if (i==0)
             System.out.println("You can still "+message+",do you want?");

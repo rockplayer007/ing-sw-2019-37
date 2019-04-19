@@ -16,16 +16,16 @@ public class Player {
     private Hero hero;
     private Square position;
     private PlayerBoard playerBoard;
-    private Map<AmmoColor,Integer> ammos;
+    private Map<AmmoColor,Integer> ammo;
     private List<Weapon> weapons;
     private List<Powerup> powerups;
     private Actions actionStatus;
 
     public Player(String nickname) {
         this.nickname = nickname;
-        ammos = new EnumMap<>(AmmoColor.class);
+        ammo = new EnumMap<>(AmmoColor.class);
         for (AmmoColor c : AmmoColor.values()) {
-            ammos.put(c, 0);
+            ammo.put(c, 1);
         }
 
     }
@@ -62,8 +62,8 @@ public class Player {
         return playerBoard;
     }
 
-    public  Map<AmmoColor,Integer> getAmmos() {
-        return ammos;
+    public  Map<AmmoColor,Integer> getAmmo() {
+        return ammo;
     }
 
     public List<Weapon> getWeapons() {
@@ -75,14 +75,18 @@ public class Player {
     }
 
     public void addAmmo(AmmoColor ammoColor){
-        if (ammos.get(ammoColor)<3)
-            ammos.put(ammoColor, ammos.get(ammoColor)+1);
+        if (ammo.get(ammoColor)<3)
+            ammo.put(ammoColor, ammo.get(ammoColor)+1);
 
     }
 
+    /**
+     * @param ammoColor color of ammo to be removed (spend).
+     * @throws AmmoException if the player hasn't enough ammo
+     */
     public void removeAmmo(AmmoColor ammoColor)throws AmmoException{
-        if (ammos.get(ammoColor)>0)
-            ammos.put(ammoColor, ammos.get(ammoColor)-1);
+        if (ammo.get(ammoColor)>0)
+            ammo.put(ammoColor, ammo.get(ammoColor)-1);
         else
             throw new AmmoException("error! you haven't enough ammo"+ammoColor);
     }
@@ -102,30 +106,46 @@ public class Player {
         return this.powerups;
     }
 
+    /**
+     * @return true if player has less then 3 weapons
+     */
     public Boolean limitWeapon(){
             return (weapons.size()<3);
-
     }
 
+    /**
+     * @return a list of Ammocolor same as that player's powerups color
+     */
     public List<AmmoColor> powerupAsAmmo(){
         ArrayList<AmmoColor> bullets=new ArrayList<>();
         powerups.forEach(i->bullets.add(i.getAmmoColor()));
         return bullets;
     }
 
+    /**
+     * @param ammoColor the color of ammo request
+     * @return true if play has at least one powerup is same as that request, else no.
+     */
     public boolean usePowerupAsAmmo(AmmoColor ammoColor){
         return powerupAsAmmo().contains(ammoColor);
     }
 
-    public Map<AmmoColor,Integer> allAmmos(){
+    /**
+     * @return a map contain all ammos of player
+     */
+    public Map<AmmoColor,Integer> allAmmo(){
         Map<AmmoColor,Integer> bullets=new EnumMap<>(AmmoColor.class);
-        bullets.putAll(getAmmos());
+        bullets.putAll(getAmmo());
         powerups.forEach(i->bullets.put(i.getAmmoColor(), bullets.get(i.getAmmoColor())+1));
         return bullets;
     }
 
+    /**
+     * @param cost is the cost that the player need to be incurred
+     * @return true if the player can pay that cost, else no.
+     */
     public Boolean enoughAmmos(List<AmmoColor> cost){
-        Map<AmmoColor,Integer> bullets=allAmmos();
+        Map<AmmoColor,Integer> bullets= allAmmo();
         for (AmmoColor c:cost){
             if (bullets.get(c)>0)
                 bullets.put(c,bullets.get(c)-1);
