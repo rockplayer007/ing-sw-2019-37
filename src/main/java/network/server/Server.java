@@ -12,9 +12,11 @@ public class Server {
 
     private List<String> clients = new ArrayList<>();
     private ServerRMI serverRMI;
+    private WaitingRoom waitingRoom;
 
     private Server(){
         this.serverRMI = new ServerRMI(this);
+        this.waitingRoom = new WaitingRoom();
     }
 
     public static void main(String[] args) throws Exception{
@@ -41,6 +43,7 @@ public class Server {
 
     public void addClient(String name){
         clients.add(name);
+        waitingRoom.addClient(name);
     }
 
     public List<String> getClients(){
