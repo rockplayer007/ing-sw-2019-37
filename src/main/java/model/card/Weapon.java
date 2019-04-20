@@ -3,109 +3,112 @@ package model.card;
 import java.util.ArrayList;
 import java.util.List;
 import model.player.*;
+import model.gameHandler.Room;
 
 interface Effect  {
-    void applyOn(Player p);
+    void applyOn(Player p, Room room);
 }
-
 
 public class Weapon extends Card {
     private Boolean charged;
     private List<AmmoColor> buyCost=new ArrayList<>();
     private List<AmmoColor> chargeCost=new ArrayList<>();
-    private ArrayList<Effect> effects = new ArrayList<Effect>();
-    private ArrayList<Effect> alternativeeffects = new ArrayList<Effect>();
+    private List<Effect> effects = new ArrayList<>();
+    private List<Effect> alternativeeffects = new ArrayList<>();
+    private int minDist;
+    private int maxDist;
+    private int minMove;
+    private int maxMove;
+    private boolean sameRoom;
+    private boolean seeBefore;
+    private boolean seeAfter;
 
     public Weapon(String jsonName){
 
-        Effect eff1 = (p) -> {
-           // p.addWeapon("name");
+        //remove ammo red for additional / alternative effects
+        Effect removeRed = (p,room) -> {
+            p.removeAmmo(AmmoColor.RED);
         };
 
-        /**
-         *remove ammo for additional / alternative effects
-         */
-        Effect eff2 = (p) -> {
-           // p.removeAmmo();
+        //remove ammo yellow for additional / alternative effects
+        Effect removeYellow = (p,room) -> {
+            p.removeAmmo(AmmoColor.YELLOW);
         };
 
-        /**
-         *change the list of visible targets
-         */
-        Effect eff3 = (p) -> {
-           // p.returnVisibleTarget();
+        //remove ammo blue for additional / alternative effects
+        Effect removeBlue = (p,room) -> {
+            p.removeAmmo(AmmoColor.BLUE);
         };
 
-        /**
-         * select target from the list
-         */
-        Effect eff4 = (p) -> {
-            // p.selectTarget();
+         //change the list of visible targets
+        Effect visibletarget = (p,room) -> {
+         //   room.VisibleTarget(minDist,maxDist,sameRoom);
         };
 
-        /**
-         * damage the selected target
-         */
-        Effect eff5 = (p) -> {
-            // p.giveDamage();
+         // select target from the list
+
+        Effect selectTarget = (p,room) -> {
+           //  room.selectTarget();
         };
 
-        /**
-         * mark the selected target
-         */
-        Effect eff6 = (p) -> {
-            // p.giveMark();
+        //damage the selected target
+        Effect damage = (p,room) -> {
+           // room.giveDamage();
         };
 
-        /**
-         * remove target from the target list
-         */
-        Effect eff7 = (p) -> {
-            // p.removeTarget();
+
+         //mark the selected target
+
+        Effect mark = (p,room) -> {
+            // room.giveMark();
         };
 
-        /**
-         * add target to the list of those who received damage
-         */
-        Effect eff8 = (p) -> {
-            // p.addTargetedList();
-        };
-        /**
-         * select target from the targeted list
-         */
-        Effect eff9 = (p) -> {
-            // p.selectTargeted();
+
+        //remove target from the target list
+
+        Effect removeTarget = (p,room) -> {
+            // room.removeTarget();
         };
 
-        /**
-         * move player
-         */
-        Effect eff10 = (p) -> {
-            // p.move();
-        };
-        /**
-         * move target
-         */
-        Effect eff11 = (p) -> {
-            // p.moveTarget();
+
+        //add target to the list of those who received damage
+
+        Effect addTargted = (p,room) -> {
+           //  room.addTargetedList();
         };
 
-        /**
-         * get list of all targets for attack without visibility
-         */
-        Effect eff12 = (p) -> {
-            // p.getallplayers();
+         //select target from the targeted list
+
+        Effect selectTargted = (p,room) -> {
+            // room.selectTargeted();
+        };
+
+
+         //move player
+        Effect movePlayer = (p,room) -> {
+            // p.move(minMove,maxMove);
+        };
+
+         //move target
+        Effect moveTarget = (p,room) -> {
+           // room.moveTarget(minMove,maxMove,seeBefore,seeAfter);
+        };
+
+         //get list of all targets for attack without visibility
+
+        Effect invisibleTarget = (p,room) -> {
+             //room.getallplayers();
         };
 
 
 
 
 
-/**
- * read from file and add effects to weapons
- */
+
+ // read from file and add effects to weapons
+
        //effects.add(eff1);
-       // effects.add(eff2);
+        effects.add(removeRed);
 
 
     }
@@ -130,10 +133,10 @@ public class Weapon extends Card {
         cost.addAll(buyCost);
         return cost;
     }
-    public ArrayList<Effect> getEffects(){
+    public List<Effect> getEffects(){
         return  effects;
     }
-    public ArrayList<Effect> getAlternativeEffects(){
+    public List<Effect> getAlternativeEffects(){
         return  alternativeeffects;
     }
 }
