@@ -6,42 +6,45 @@ import view.CLI.CLI;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Scanner;
+import java.util.UUID;
 
 public class Client {
 
     private static String serverIp;
     private ConnectionInterface connection;
     private String username;
+    private static final String clientID =  UUID.randomUUID().toString();;
+
 
     public static void main(String[] args){
         System.out.println("localhost or remote?[L/R]");
         Scanner reader = new Scanner(System.in);
         String choice = reader.nextLine().toLowerCase();
         if(choice.equals("r")){
-            System.out.println("Write IP address:");
+            System.out.println("Write IP address of the server:");
             serverIp = reader.nextLine();
-
         }
         else {
             serverIp = "localhost";
         }
 
+
         Client client = new Client();
         CLI view = new CLI(client);
         try {
-            view.lauch();
+            view.launch();
         }catch (Exception e ){
 
         }
-
-
-
 
     }
 
     public void connect() throws RemoteException, NotBoundException {
         connection = new ConnectionRMI(this);
-        connection.registerClient(username);
+    }
+
+    public void sendCredentials(){
+        connection.registerClient(username, clientID);
     }
 
     public static String getServerIp() {
@@ -52,6 +55,9 @@ public class Client {
     }
     public String getUsername(){
         return username;
+    }
+    public static String getClientID(){
+        return clientID;
     }
 
 }

@@ -11,7 +11,7 @@ public class WeaponDeck extends Deck{
 
         //only for test purposes
         for (int i = 0; i< 20; i++){
-            addCard(new Weapon());
+            addCard(new Weapon(""));
         }
     }
 

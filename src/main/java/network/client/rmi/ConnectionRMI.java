@@ -21,14 +21,15 @@ public class ConnectionRMI implements ConnectionInterface {
         server = (ServerInterface) registry.lookup("Server");
         ClientImplementation client = new ClientImplementation(c);
 
+        //the server will be able to communicate with the client
         remoteClientRef = (ClientInterface) UnicastRemoteObject.exportObject(client, 0);
 
     }
 
     @Override
-    public void registerClient(String username) {
+    public void registerClient(String username, String clientID) {
         try {
-            server.register(username);
+            server.register(username, clientID, remoteClientRef);
         } catch (RemoteException e) {
             System.out.println(e.getMessage());
         }

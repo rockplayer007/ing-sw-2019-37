@@ -35,9 +35,8 @@ public class Server {
     }
 
     private void startServer(int rmiPort) throws RemoteException {
-        System.out.println("new server");
         serverRMI.startServer(rmiPort);
-
+        System.out.println("new rmi server");
     }
 
     public void addClient(String name){

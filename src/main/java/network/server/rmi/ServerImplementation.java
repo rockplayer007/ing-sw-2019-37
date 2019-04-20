@@ -1,5 +1,6 @@
 package network.server.rmi;
 
+import network.client.ClientInterface;
 import network.server.Server;
 
 import java.rmi.RemoteException;
@@ -14,8 +15,8 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     }
 
     @Override
-    public void register(String name) {
-        server.addClient(name);
-        System.out.println(name + " added to the server");
+    public void register(String username, String clientID, ClientInterface clientInterface) {
+        server.addClient(username);
+        System.out.println(username + " added to the server");
     }
 }

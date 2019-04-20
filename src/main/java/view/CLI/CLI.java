@@ -13,12 +13,19 @@ public class CLI {
         this.client = client;
     }
 
-    public void lauch() throws RemoteException, NotBoundException {
-        System.out.println("Write username");
+    public void launch() {
+        try{
+            client.connect();
+        }catch (RemoteException | NotBoundException e){
+            System.out.println("Unable to connect to server\n" + e.getMessage());
+        }
+        System.out.println("Connection successul!");
+
+        System.out.println("Write username to login:");
         Scanner reader = new Scanner(System.in);
         String username = reader.nextLine();
         client.setUsername(username);
 
-        client.connect();
+        client.sendCredentials();
     }
 }
