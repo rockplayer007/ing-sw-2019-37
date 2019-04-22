@@ -23,9 +23,17 @@ public class Weapon extends Card {
     private boolean seeBefore;
     private boolean seeAfter;
 
-    public Weapon(String jsonName){
+    public Weapon(String name, String description,int minDist, int maxDist, int minMove, int maxMove, boolean seeBefore, boolean seeAfter){
+        super(name,description);
+        this.minDist=minDist;
+        this.maxDist=maxDist;
+        this.minMove=minMove;
+        this.maxMove=maxMove;
+        //this.sameRoom=sameRoom;
+        this.seeBefore=seeBefore;
+        this.seeAfter=seeAfter;
 
-        //remove ammo red for additional / alternative effects
+    //remove ammo red for additional / alternative effects
         Effect removeRed = (p,room) -> {
             p.removeAmmo(AmmoColor.RED);
         };
@@ -42,13 +50,12 @@ public class Weapon extends Card {
 
          //change the list of visible targets
         Effect visibletarget = (p,room) -> {
-         //   room.VisibleTarget(minDist,maxDist,sameRoom);
+           room.VisibleTarget(minDist,maxDist);
         };
 
          // select target from the list
-
         Effect selectTarget = (p,room) -> {
-           //  room.selectTarget();
+            room.selectTarget();
         };
 
         //damage the selected target
@@ -56,33 +63,25 @@ public class Weapon extends Card {
            // room.giveDamage();
         };
 
-
          //mark the selected target
-
         Effect mark = (p,room) -> {
             // room.giveMark();
         };
 
-
         //remove target from the target list
-
         Effect removeTarget = (p,room) -> {
-            // room.removeTarget();
+             room.removeTarget();
         };
 
-
         //add target to the list of those who received damage
-
         Effect addTargted = (p,room) -> {
-           //  room.addTargetedList();
+            room.addTargetedList();
         };
 
          //select target from the targeted list
-
         Effect selectTargted = (p,room) -> {
-            // room.selectTargeted();
+             room.selectTargeted();
         };
-
 
          //move player
         Effect movePlayer = (p,room) -> {
@@ -95,20 +94,55 @@ public class Weapon extends Card {
         };
 
          //get list of all targets for attack without visibility
-
         Effect invisibleTarget = (p,room) -> {
-             //room.getallplayers();
+             //room.getInvisibleTarget();
+        };
+        
+        Effect selectTargetOnSameSquare = (p,room) -> {
+            room.selectTargetOnSameSquare();
         };
 
 
 
+        //only for test purposes then they will be added by reading the weapons file
 
+        if (name=="Whisper"){
+            effects.add(visibletarget);
+            effects.add(selectTarget);
+            effects.add(damage);
+            effects.add(damage);
+            effects.add(damage);
+            effects.add(mark);
+        }
 
+        if (name=="Hellion"){
+            effects.add(visibletarget);
+            effects.add(selectTarget);
+            effects.add(damage);
+            effects.add(mark);
+            effects.add(selectTargetOnSameSquare);
+            effects.add(mark);
+            effects.add(selectTargetOnSameSquare);
+            effects.add(mark);
+            effects.add(selectTargetOnSameSquare);
+            effects.add(mark);
 
- // read from file and add effects to weapons
-
-       //effects.add(eff1);
-        effects.add(removeRed);
+            alternativeeffects.add(removeRed);
+            alternativeeffects.add(visibletarget);
+            alternativeeffects.add(selectTarget);
+            alternativeeffects.add(damage);
+            alternativeeffects.add(mark);
+            alternativeeffects.add(mark);
+            alternativeeffects.add(selectTargetOnSameSquare);
+            alternativeeffects.add(mark);
+            alternativeeffects.add(mark);
+            alternativeeffects.add(selectTargetOnSameSquare);
+            alternativeeffects.add(mark);
+            alternativeeffects.add(mark);
+            alternativeeffects.add(selectTargetOnSameSquare);
+            alternativeeffects.add(mark);
+            alternativeeffects.add(mark);
+        }
 
 
     }

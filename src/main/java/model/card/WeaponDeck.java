@@ -10,9 +10,9 @@ public class WeaponDeck extends Deck{
     public WeaponDeck(){
 
         //only for test purposes
-        for (int i = 0; i< 20; i++){
-            addCard(new Weapon(""));
-        }
+        addCard(new Weapon("Whisper", "description",2,10,0,0,false,false));
+        addCard(new Weapon("Hellion", "description",1,10,0,0,false,false));
+
     }
 
 }
