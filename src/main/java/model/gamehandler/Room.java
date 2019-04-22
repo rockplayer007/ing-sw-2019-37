@@ -1,4 +1,4 @@
-package model.gameHandler;
+package model.gamehandler;
 
 import model.board.Board;
 import model.board.Square;
@@ -35,11 +35,30 @@ public class Room {
     }
 
     public Player getCurrentPlayer() {
-        return currentPlayer;
+        if (currentPlayer==null)
+            return getAndSetNextPlayer();
+        else
+            return currentPlayer;
     }
 
     public void setCurrentPlayer(Player currentPlayer) {
         this.currentPlayer = currentPlayer;
+    }
+
+    public void nextPlayer(){
+        if (players!=null) {
+            if (currentPlayer == null)
+                currentPlayer = players.get(0);
+            else if(players.indexOf(currentPlayer)<players.size())
+                currentPlayer=players.get(players.indexOf(currentPlayer)+1);
+            else
+                currentPlayer = players.get(0);
+        }
+    }
+
+    public Player getAndSetNextPlayer(){
+        nextPlayer();
+        return currentPlayer;
     }
 
     public Board getBoard() {

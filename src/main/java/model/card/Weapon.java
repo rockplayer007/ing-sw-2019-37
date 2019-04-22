@@ -3,7 +3,7 @@ package model.card;
 import java.util.ArrayList;
 import java.util.List;
 import model.player.*;
-import model.gameHandler.Room;
+import model.gamehandler.Room;
 
 interface Effect  {
     void applyOn(Player p, Room room);
@@ -97,7 +97,7 @@ public class Weapon extends Card {
         Effect invisibleTarget = (p,room) -> {
              //room.getInvisibleTarget();
         };
-        
+
         Effect selectTargetOnSameSquare = (p,room) -> {
             room.selectTargetOnSameSquare();
         };
