@@ -16,7 +16,8 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
 
     @Override
     public void register(String username, String clientID, ClientInterface clientInterface) {
+
+        System.out.println(username + " adding to the server");
         server.addClient(username);
-        System.out.println(username + " added to the server");
     }
 }

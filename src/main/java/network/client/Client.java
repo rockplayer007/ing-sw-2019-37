@@ -34,7 +34,7 @@ public class Client {
         try {
             view.launch();
         }catch (Exception e ){
-
+            System.out.println("Unable to connect to server\n" + e.getMessage());
         }
 
     }

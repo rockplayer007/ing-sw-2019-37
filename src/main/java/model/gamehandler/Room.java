@@ -83,6 +83,7 @@ public class Room {
                     for (int i = 0; i < neighbourSquare.size(); i++) {
                         if (neighbourSquare.get(i).getColor()==player.getPosition().getColor()&& dist>=minDist && dist <=maxDist)
                                         visblePlayers.add(player);
+
                     }
                 }
         }

@@ -6,10 +6,10 @@ import java.util.*;
  */
 public class PlayerBoard {
 
-    private Player hp[];
-    private int points[];
+    private Player[] hp;
+    private int[] points;
     private int deathPoint;
-    private ArrayList<Player> marks;
+    private List<Player> marks;
 
     public PlayerBoard() {
         this.hp=new Player[12];
@@ -25,7 +25,17 @@ public class PlayerBoard {
         return deathPoint;
     }
 
+    /**
+     * Sets the player that applied the damage on the board
+     * @param player
+     */
+    public void addDamage(Player player){
+        //TODO
+    }
 
+    public void addMark(Player player){
+        //TODO
+    }
 
 
 }
