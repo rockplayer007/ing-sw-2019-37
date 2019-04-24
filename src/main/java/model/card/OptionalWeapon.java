@@ -4,13 +4,13 @@ import java.util.List;
 
 public class OptionalWeapon extends Weapon {
 
-    List<Effect> basicMode;
+    List<Effect> basicEffect;
     List<Effect> alternativeMode;
 
     public OptionalWeapon(String name, String description, List<AmmoColor> buyCost,
-                          AmmoColor chargeCost, List<Effect> basicMode, List<Effect> alternativeMode){
+                          AmmoColor chargeCost, List<Effect> basicEffect, List<Effect> optionalEffect){
         super(name, description,buyCost, chargeCost);
-        this.basicMode = basicMode;
-        this.alternativeMode = alternativeMode;
+        this.basicEffect = basicEffect;
+        this.alternativeMode = optionalEffect;
     }
 }

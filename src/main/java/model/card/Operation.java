@@ -19,8 +19,10 @@ class VisiblePlayers implements Operation{
         Player currentPlayer = room.getCurrentPlayer();
         Set<Square> visible = currentPlayer.getPosition().visibleSquare();
         ArrayList<Player> visiblePlayers = new ArrayList<>();
+
         visible.forEach(x-> visiblePlayers.addAll(x.getPlayersOnSquare()));
         visiblePlayers.remove(currentPlayer);
+
         currentPlayer.setVisiblePlayers(visiblePlayers);
     }
 }
@@ -34,13 +36,6 @@ class SelectTargets implements Operation{
         //to set the currentPlayer.setSelectedTargets AND REMOVE FROM VISIBLE PLAYERS
     }
 
-}
-
-class MovePlayer implements Operation{
-
-    public void execute(Room room){
-
-    }
 }
 
 class Damage implements Operation{
@@ -75,6 +70,22 @@ class Mark implements Operation{
         for(int i = 0; i < points; i++){
             selectedPlayers.forEach(x->x.getPlayerBoard().addMark(currentPlayer));
         }
+
+    }
+}
+
+
+//TODO
+class MovePlayer implements Operation{
+
+    public void execute(Room room){
+
+    }
+}
+//TODO
+class requiredDistance implements Operation{
+    @Override
+    public void execute(Room room) {
 
     }
 }

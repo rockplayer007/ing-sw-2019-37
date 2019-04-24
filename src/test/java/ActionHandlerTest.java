@@ -13,9 +13,9 @@ import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ActionHandlerTest {
-    ActionHandler actionHandler;
-    Room room;
-    AmmoCard ammoCard;
+    private ActionHandler actionHandler;
+    private Room room;
+    private AmmoCard ammoCard;
 
 
     @BeforeEach

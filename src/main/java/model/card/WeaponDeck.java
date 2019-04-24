@@ -8,6 +8,16 @@ public class WeaponDeck extends Deck{
     List<Weapon> weaponDeck = new ArrayList<>();
 
     public WeaponDeck(){
+
+        weaponDeck.add(createLockRifle());
+
+        //only for test purposes
+        //addCard(new Weapon("Whisper", "description",2,10,0,0,false,false));
+        //addCard(new Weapon("Hellion", "description",1,10,0,0,false,false));
+
+    }
+
+    private Weapon createLockRifle(){
         String description = "basic effect: Deal 2 damage and 1 mark to 1 target  you can see." +
                 " with second lock: Deal 1 mark to a different target  you can see.\n";
         List<AmmoColor> buyCost = new ArrayList<>();
@@ -33,12 +43,7 @@ public class WeaponDeck extends Deck{
         extraCost.add(AmmoColor.RED);
         optionalEffect.add(new Effect(extraCost, extraOperations));
 
-        OptionalWeapon lock_rifle = new OptionalWeapon("LOCK RIFLE", description, buyCost, AmmoColor.BLUE,
+        return new OptionalWeapon("LOCK RIFLE", description, buyCost, AmmoColor.BLUE,
                 basicEffect, optionalEffect);
-        //only for test purposes
-        //addCard(new Weapon("Whisper", "description",2,10,0,0,false,false));
-        //addCard(new Weapon("Hellion", "description",1,10,0,0,false,false));
-
     }
-
 }
