@@ -61,6 +61,18 @@ public class Board {
         return weaponDeck;
     }
 
+    public void setAmmoDeck(AmmoDeck ammoDeck) {
+        this.ammoDeck = ammoDeck;
+    }
+
+    public void setPowerDeck(PowerDeck powerDeck) {
+        this.powerDeck = powerDeck;
+    }
+
+    public void setWeaponDeck(WeaponDeck weaponDeck) {
+        this.weaponDeck = weaponDeck;
+    }
+
     /**
      * Class for managing the player board
      */
