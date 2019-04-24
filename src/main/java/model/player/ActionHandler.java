@@ -29,9 +29,7 @@ public class ActionHandler {
     public void run(Room room, int distanceMax) {
         Player player = room.getCurrentPlayer();
         Square destination = chooseSquare(player, distanceMax);
-        player.getPosition().removePlayer(player);
-        destination.addPlayer(player);
-        player.setPosition(destination);
+        player.movePlayer(destination);
     }
     /**
      *  general way to let player chooses the Squere that he can go

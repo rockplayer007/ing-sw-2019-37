@@ -1,28 +1,35 @@
 package model.player;
+
 import java.util.*;
 
 /**
  * 
  */
 public class PlayerBoard {
-
-    private Player[] hp;
-    private int[] points;
-    private int deathPoint;
+    private  Player player;
+    private List<Player> hp;
+    private int[] pointArray;
+    private int points;
+    private int deathTimes;
     private List<Player> marks;
 
     public PlayerBoard() {
-        this.hp=new Player[12];
-        this.points=new int[6];
-        this.deathPoint=0;
+        this.hp=new ArrayList<>();
+        this.points=0;
+        this.deathTimes=0;
+        pointArray = new int[]{8, 6, 4, 2, 1, 1};
     }
     
-    public void setDeathPoint(int deathPoint) {
-        this.deathPoint = deathPoint;
+    public void setDeathTimes(int deathPoint) {
+        this.deathTimes = deathPoint;
     }
 
-    public int getDeathPoint() {
-        return deathPoint;
+    public int getDeathTimes() {
+        return deathTimes;
+    }
+
+    public int getPoints() {
+        return points;
     }
 
     /**
@@ -30,12 +37,111 @@ public class PlayerBoard {
      * @param player
      */
     public void addDamage(Player player){
-        //TODO
+        if (hp.size()<12)
+            hp.add(player);
+        int c=playerMarks(player);
+        removeMarks(player);
+        if (c!=0)
+            for (int i=0;i<c;i++) {
+                this.addDamage(player);
+            }
+        //TODO bisogna vedere come funziona con gli pattern observer
     }
 
+    /**
+     *  remove all marks of that player
+     * @param player that player's marks to remove
+     */
+    public void removeMarks(Player player){
+        int c=playerMarks(player);
+        if (c!=0)
+            for (int i=0;i<c;i++) {
+                marks.remove(player);
+            }
+    }
+
+    /**
+     * @param player the player to count how mark is his.
+     * @return  number of mark of that player marked
+     */
+    public int playerMarks( Player player){
+        int i=0;
+        for (Player p:marks){
+            if (p==player)
+                i++;
+        }
+        return i;
+    }
+
+    /**
+     * add a mark if "this" has less than 3 mark of that player
+     * @param player the player marked "this"
+     */
     public void addMark(Player player){
-        //TODO
+        if (playerMarks(player)<3)
+            marks.add(player);
     }
 
+    /**
+     *  add the point that "this" has get
+     * @param points number of point
+     */
+    public void addPoints(int points){
+        this.points+=points;
+    }
 
+    /**
+     * @return a List of player that attached "this"  and sorted in base hit numbers
+     */
+    private List<Player> listForLiquidation(){
+        Map<Player,Integer> mapofpoints=new TreeMap<>(hitNumberOfPlayers());
+        List<Map.Entry<Player,Integer>> sortmap=new ArrayList<>(mapofpoints.entrySet());
+        MapValueComparator c=new MapValueComparator();
+        sortmap.sort(c);
+        List<Player> list=new ArrayList<>();
+        sortmap.forEach(x->list.add(x.getKey()));
+        return list;
+    }
+
+    /**
+     * @return a Map whit player and his hit numbers
+     */
+    public Map<Player,Integer> hitNumberOfPlayers(){
+        Map<Player,Integer> map=new HashMap<>();
+        for (Player p:hp){
+            if (map.containsKey(p))
+                map.put(p,map.get(p)+1);
+            else
+                map.put(p,1);
+        }
+        return map;
+    }
+
+    /**
+     * liquidation when the hero dies, and give the point to others player
+     */
+    public void liquidation(){
+        List<Player> listForLiquidation=listForLiquidation();
+        int i=0;
+        for (Player p:listForLiquidation){
+            p.getPlayerBoard().addPoints(pointArray[deathTimes+i]);
+            i++;
+        }
+        if (hp.get(0)!=null)
+            hp.get(0).getPlayerBoard().addPoints(1);
+        if (hp.size()==12&&hp.get(11)!=null)
+            hp.get(11).getPlayerBoard().addMark(this.player);
+        hp=new ArrayList<>();
+
+    }
+
+}
+
+class MapValueComparator implements Comparator<Map.Entry<Player,Integer>> {
+
+
+    @Override
+    public int compare(Map.Entry<Player, Integer> m1, Map.Entry<Player, Integer> m2) {
+        return m2.getValue()-m1.getValue();
+    }
 }

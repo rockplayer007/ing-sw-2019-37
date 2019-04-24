@@ -22,6 +22,7 @@ public class Player {
     private List<Player> visiblePlayers;
     private List<Player> selectedTargets;
     private Actions actionStatus;
+    private Boolean live;
 
     public Player(String nickname) {
         this.nickname = nickname;
@@ -31,6 +32,7 @@ public class Player {
         }
         powerups=new ArrayList<>();
         weapons=new ArrayList<>();
+        playerBoard=new PlayerBoard();
 
     }
 
@@ -38,7 +40,7 @@ public class Player {
         this.hero = hero;
     }
 
-    public void setPosition(Square position) {
+    private void setPosition(Square position) {
         this.position = position;
     }
 
@@ -94,6 +96,11 @@ public class Player {
         return actionStatus;
     }
 
+    void movePlayer(Square square){
+        this.getPosition().removePlayer(this);
+        square.addPlayer(this);
+        this.setPosition(square);
+    }
 
     public void addAmmo(AmmoColor ammoColor){
         if (ammo.get(ammoColor)<3)

@@ -10,7 +10,7 @@ import java.util.Set;
 /**
  * Class that defines a single square of the board
  */
-public abstract class Square {
+public class Square {
 
     private Color squareColor;
     private int id;
@@ -20,6 +20,7 @@ public abstract class Square {
     private List<Player> playersOnSquare = new ArrayList<>();
     private boolean generationPoint;
 
+    public Square() {    }
     /**
      * Constructor of the class
      * @param id Number of the square
