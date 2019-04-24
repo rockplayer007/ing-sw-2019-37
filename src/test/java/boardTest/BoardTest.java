@@ -1,3 +1,5 @@
+package boardTest;
+
 import model.board.Board;
 import model.board.Color;
 import org.junit.jupiter.api.Test;

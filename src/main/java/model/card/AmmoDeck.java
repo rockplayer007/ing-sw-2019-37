@@ -3,32 +3,24 @@ public class AmmoDeck extends Deck{
 
 
     public  AmmoDeck(){
-        AmmoColor ammoColor=null;
         for (int i = 0; i < 4; i++) {
-
-            addCard(new AmmoCard(ammoColor.RED, ammoColor.BLUE));
-            addCard(new AmmoCard(ammoColor.YELLOW, ammoColor.BLUE));
-            addCard(new AmmoCard(ammoColor.YELLOW, ammoColor.RED));
+            addCard(new AmmoCard(AmmoColor.RED, AmmoColor.BLUE));
+            addCard(new AmmoCard(AmmoColor.YELLOW, AmmoColor.BLUE));
+            addCard(new AmmoCard(AmmoColor.YELLOW, AmmoColor.RED));
         }
         for (int i = 0; i < 2; i++) {
-            addCard(new AmmoCard(ammoColor.RED, ammoColor.RED));
-            addCard(new AmmoCard(ammoColor.BLUE, ammoColor.BLUE));
-            addCard(new AmmoCard(ammoColor.YELLOW, ammoColor.YELLOW));
+            addCard(new AmmoCard(AmmoColor.RED, AmmoColor.RED));
+            addCard(new AmmoCard(AmmoColor.BLUE, AmmoColor.BLUE));
+            addCard(new AmmoCard(AmmoColor.YELLOW, AmmoColor.YELLOW));
             }
        for (int i = 0; i < 3; i++) {
-            addCard(new AmmoCard(ammoColor.RED, ammoColor.RED, ammoColor.BLUE));
-            addCard(new AmmoCard(ammoColor.RED, ammoColor.RED, ammoColor.YELLOW));
-            addCard(new AmmoCard(ammoColor.YELLOW, ammoColor.YELLOW, ammoColor.BLUE));
-            addCard(new AmmoCard(ammoColor.YELLOW, ammoColor.YELLOW, ammoColor.RED));
-            addCard(new AmmoCard(ammoColor.BLUE, ammoColor.BLUE, ammoColor.RED));
-            addCard(new AmmoCard(ammoColor.BLUE, ammoColor.BLUE, ammoColor.YELLOW));
+            addCard(new AmmoCard(AmmoColor.RED, AmmoColor.RED, AmmoColor.BLUE));
+            addCard(new AmmoCard(AmmoColor.RED, AmmoColor.RED, AmmoColor.YELLOW));
+            addCard(new AmmoCard(AmmoColor.YELLOW, AmmoColor.YELLOW, AmmoColor.BLUE));
+            addCard(new AmmoCard(AmmoColor.YELLOW, AmmoColor.YELLOW, AmmoColor.RED));
+            addCard(new AmmoCard(AmmoColor.BLUE, AmmoColor.BLUE, AmmoColor.RED));
+            addCard(new AmmoCard(AmmoColor.BLUE, AmmoColor.BLUE, AmmoColor.YELLOW));
             }
     }
-/*
-    @Override
-    public Card getCard(){ // draw Ammo card from the deck and remove it
-        AmmoCard ammoCard = ammoCards.pop();
-        return ammoCard;
-    }
-*/
+
 }

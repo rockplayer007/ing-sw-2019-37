@@ -7,12 +7,14 @@ public class AmmoCard extends Card{
     private boolean hasPowerup;
 
     public AmmoCard(AmmoColor a,AmmoColor b, AmmoColor c){
+        super("Ammo tile", "Ammo tile with 3 cubes");
         ammo.add(a);
         ammo.add(b);
         ammo.add(c);
         this.hasPowerup=false;
     }
     public AmmoCard(AmmoColor a,AmmoColor b){
+        super("Ammo tile", "Ammo tile with 2 cubes and 1 powerup");
         ammo.add(a);
         ammo.add(b);
         hasPowerup=true;

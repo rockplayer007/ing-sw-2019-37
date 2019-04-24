@@ -72,7 +72,7 @@ public class ActionHandler {
      */
     public void grab(Room room) {
         Player player = room.getCurrentPlayer();
-        if (!player.getPosition().GetGenerationPoint())
+        if (!player.getPosition().getGenerationPoint())
             grabAmmo(player,((AmmoSquare) player.getPosition()).getAmmoCard(),room.getBoard());
         else {
             while (((GenerationSquare) player.getPosition()).getWeaponDeck().stream().anyMatch(i->player.enoughAmmos(i.getBuyCost()))){

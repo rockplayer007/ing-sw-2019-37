@@ -80,6 +80,7 @@ public class Board {
 
         List<GenerationSquare> genPoints = new ArrayList<>();
         Map<Integer,Square> allSquares = new HashMap<>();
+        Map<Color, ArrayList<Square>> squaresInRoom = new HashMap<>();
         Map<Integer, String> availableMaps = new HashMap<>();
 
         /**
@@ -141,7 +142,7 @@ public class Board {
          * @param mapNumber Number of the map to choose
          */
         public void createMap(int mapNumber){
-
+            //first parse all the squares in the room then connect them
             try {
 
 
@@ -158,17 +159,26 @@ public class Board {
                     int x = Integer.parseInt(xy[0]);
                     int y = Integer.parseInt(xy[1]);
 
+                    if(squaresInRoom.get(color) == null){
+                        squaresInRoom.put(color, new ArrayList<>());
+                    }
+
                     if(((Element) square).getElementsByTagName("type").item(0).getTextContent().equals("generationSquare")){
                         GenerationSquare genSquare = new GenerationSquare(id,color,x, y,(List<Weapon>)(List<?>) weaponDeck.getCard(3));
                         genPoints.add( genSquare);
                         allSquares.put(id, genSquare);
+
+                        squaresInRoom.get(color).add(genSquare);
                     }
                     else if(((Element) square).getElementsByTagName("type").item(0).getTextContent().equals("ammoSquare")) {
                         AmmoSquare ammoSquare = new AmmoSquare(id, color, x, y,(AmmoCard) ammoDeck.getCard() );
                         allSquares.put(id, ammoSquare);
+
+                        squaresInRoom.get(color).add(ammoSquare);
                     }
                 }
 
+                //conncection of the rooms
                 for (int i = 0; i < squares.getLength(); i++){
                     Node square = squares.item(i);
 

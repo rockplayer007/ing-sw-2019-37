@@ -5,11 +5,15 @@ import java.util.List;
 
 public class WeaponDeck extends Deck{
 
-    List<Weapon> weaponDeck = new ArrayList<>();
+    //List<Weapon> weaponDeck = new ArrayList<>();
 
     public WeaponDeck(){
 
-        weaponDeck.add(createLockRifle());
+        for(int i = 0; i < 20; i++){
+            //adding to the local deck (in the Deck class)
+            addCard(createLockRifle());
+        }
+
 
         //only for test purposes
         //addCard(new Weapon("Whisper", "description",2,10,0,0,false,false));

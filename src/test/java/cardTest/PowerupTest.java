@@ -1,3 +1,5 @@
+package cardTest;
+
 import model.card.AmmoColor;
 import model.card.Powerup;
 import org.junit.jupiter.api.Test;

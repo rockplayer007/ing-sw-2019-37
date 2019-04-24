@@ -27,11 +27,11 @@ public class Room {
         return players;
     }
 
-    public void addPlayer(Player player) throws TooPlayerException {
+    public void addPlayer(Player player) throws TooManyPlayerException {
         if(players.size()<5)
             players.add(player);
         else
-            throw new TooPlayerException("cant add the 6th player");
+            throw new TooManyPlayerException("cant add the 6th player");
     }
 
     public Player getCurrentPlayer() {
@@ -64,6 +64,25 @@ public class Room {
     public Board getBoard() {
         return board;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
      * Adds to the target list all the targets that are visible with the weapon
