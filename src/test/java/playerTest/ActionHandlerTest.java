@@ -1,3 +1,4 @@
+package playerTest;
 
 import model.board.Board;
 import model.card.AmmoCard;

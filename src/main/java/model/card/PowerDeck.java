@@ -18,11 +18,5 @@ public class PowerDeck extends Deck{
             }
         }
     }
-    /*
-    @Override
-    public Card getCard() {
-        Powerup powerup = powerups.pop();
-        return powerup;
-    }
-    */
+
 }

@@ -17,7 +17,8 @@ class VisiblePlayers implements Operation{
 
     public void execute(Room room){
         Player currentPlayer = room.getCurrentPlayer();
-        Set<Square> visible = currentPlayer.getPosition().visibleSquare();
+        Set<Square> visible = currentPlayer.getPosition()
+                .visibleSquare(room.getBoard().getMap());
         ArrayList<Player> visiblePlayers = new ArrayList<>();
 
         visible.forEach(x-> visiblePlayers.addAll(x.getPlayersOnSquare()));

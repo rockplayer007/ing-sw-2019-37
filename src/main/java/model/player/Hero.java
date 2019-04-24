@@ -6,8 +6,8 @@ import java.util.*;
  */
 public class Hero {
 
-    public String name;
-    public String description;
+    private String name;
+    private String description;
 
     /**
      * Default constructor

@@ -60,7 +60,7 @@ public abstract class Square {
      * Tells if the square is a GenerationSquare or an AmmoSquare
      * @return True if it is a GenerationSquare or false if AmmoSquare
      */
-    public boolean GetGenerationPoint(){
+    public boolean getGenerationPoint(){
         return generationPoint;
     }
 
@@ -104,12 +104,27 @@ public abstract class Square {
     }
 
     /**
-     * Gives squares that are visible from the current square
-     * @return squares visible from the current square
+     * Gives squares that are visible from a given square
+     * The rules say that enemies are visible from a square if:
+     * "The player is in the same room as you" and
+     * "If your square has a door, you can also see any player on
+     * any square in the room on the other side of the door"
+     * @return a set of squares visible from the current square
      */
-    public Set<Square> visibleSquare(){
-        //TODO
-        return null;
+    public Set<Square> visibleSquare(Board.BoardMap map){
+        Set<Square> positions = new HashSet<>();
+
+        /*
+        //adds to the visible positions the squares that are in the same room
+        positions.addAll(map.squaresInRoom.get(squareColor));
+
+        neighbourSquare.stream().filter(square -> square.getColor() != squareColor)
+                .forEach(x-> positions.addAll(map.squaresInRoom.get(x.squareColor)));
+        */
+        //adds all the squares that are in the same room or in a neighbour room
+        neighbourSquare.forEach(square -> positions.addAll(map.squaresInRoom.get(square.squareColor)));
+
+        return positions;
     }
     /**
      * Places a player to the current square
