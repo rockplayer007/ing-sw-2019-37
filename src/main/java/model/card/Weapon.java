@@ -5,14 +5,43 @@ import java.util.List;
 import model.player.*;
 import model.gamehandler.Room;
 
+
+/*
+public class Weapon {
+
+
+    List<AmmoColor> cost;
+    public Weapon(List<AmmoColor> cost){
+        this.cost = cost;
+    }
+}
+
+*/
+
+
+
+
+
+
+/*
 interface Effect  {
     void applyOn(Player p, Room room);
 }
-
+*/
 public class Weapon extends Card {
     private Boolean charged;
-    private List<AmmoColor> buyCost=new ArrayList<>();
-    private List<AmmoColor> chargeCost=new ArrayList<>();
+    private List<AmmoColor> buyCost;
+    private AmmoColor chargeCost;
+
+
+    Weapon(String name, String description, List<AmmoColor> buyCost, AmmoColor chargeCost){
+        super(name, description);
+        this.buyCost = buyCost;
+        this.chargeCost = chargeCost;
+        charged = true;
+    }
+
+   /*
     private List<Effect> effects = new ArrayList<>();
     private List<Effect> alternativeeffects = new ArrayList<>();
     private int minDist;
@@ -55,6 +84,7 @@ public class Weapon extends Card {
 
          // select target from the list
         Effect selectTarget = (p,room) -> {
+
             room.selectTarget();
         };
 
@@ -146,7 +176,7 @@ public class Weapon extends Card {
 
 
     }
-
+*/
 
 
     public Boolean getCharged(){
@@ -163,14 +193,16 @@ public class Weapon extends Card {
 
     public ArrayList<AmmoColor> getChargeCost() {
         ArrayList<AmmoColor>cost=new ArrayList<>();
-        cost.addAll(chargeCost);
+        cost.add(chargeCost);
         cost.addAll(buyCost);
         return cost;
     }
+/*
     public List<Effect> getEffects(){
         return  effects;
     }
     public List<Effect> getAlternativeEffects(){
         return  alternativeeffects;
     }
+    */
 }

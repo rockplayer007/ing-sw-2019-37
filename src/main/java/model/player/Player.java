@@ -19,6 +19,8 @@ public class Player {
     private Map<AmmoColor,Integer> ammo;
     private List<Weapon> weapons;
     private List<Powerup> powerups;
+    private List<Player> visiblePlayers;
+    private List<Player> selectedTargets;
     private Actions actionStatus;
 
     public Player(String nickname) {
@@ -72,9 +74,26 @@ public class Player {
         return weapons;
     }
 
+    public List<Player> getVisiblePlayers() {
+        return visiblePlayers;
+    }
+
+    public void setVisiblePlayers(List<Player> targetPlayers) {
+        this.visiblePlayers = targetPlayers;
+    }
+
+    public List<Player> getSelectedTargets() {
+        return selectedTargets;
+    }
+
+    public void setSelectedTargets(List<Player> selectedTargets) {
+        this.selectedTargets = selectedTargets;
+    }
+
     public Actions getActionStatus() {
         return actionStatus;
     }
+
 
     public void addAmmo(AmmoColor ammoColor){
         if (ammo.get(ammoColor)<3)

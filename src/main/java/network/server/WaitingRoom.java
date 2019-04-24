@@ -25,17 +25,19 @@ public class WaitingRoom {
 
             waitingClients.add(p);
 
-            if(waitingClients.size() == 2){
+            if(waitingClients.size() == 3){
                 //start timer
                 timer = new Timer();
                 startTimer();
             }
-            if (waitingClients.size() == 4){
+            if (waitingClients.size() == 5){
                 //remove timer
                 timer.cancel();
                 startGame();
             }
         }
+
+
 
     }
 

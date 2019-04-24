@@ -52,6 +52,10 @@ public abstract class Square {
         return squareColor;
     }
 
+    public List<Square> getNeighbourSquare(){
+        return neighbourSquare;
+    }
+
     /**
      * Tells if the square is a GenerationSquare or an AmmoSquare
      * @return True if it is a GenerationSquare or false if AmmoSquare
@@ -95,6 +99,18 @@ public abstract class Square {
         return positions;
     }
 
+    public List<Player> getPlayersOnSquare(){
+        return playersOnSquare;
+    }
+
+    /**
+     * Gives squares that are visible from the current square
+     * @return squares visible from the current square
+     */
+    public Set<Square> visibleSquare(){
+        //TODO
+        return null;
+    }
     /**
      * Places a player to the current square
      * @param player Player that has to be placed
