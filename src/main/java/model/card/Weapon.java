@@ -50,7 +50,7 @@ public class Weapon extends Card {
 
          //change the list of visible targets
         Effect visibletarget = (p,room) -> {
-           room.VisibleTarget(minDist,maxDist);
+//           room.VisibleTarget(minDist,maxDist);
         };
 
          // select target from the list

@@ -27,6 +27,8 @@ public class Player {
         for (AmmoColor c : AmmoColor.values()) {
             ammo.put(c, 1);
         }
+        powerups=new ArrayList<>();
+        weapons=new ArrayList<>();
 
     }
 

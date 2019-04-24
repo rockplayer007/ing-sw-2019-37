@@ -70,23 +70,23 @@ public class Room {
      * @param minDist       minimum distance that must be between player and target
      * @param maxDist       maximum distance that must be between player and target
      */
-    public void VisibleTarget(int minDist,int maxDist){
-        visblePlayers=new ArrayList<>();
-        Square position=currentPlayer.getPosition();
-        int dist;
-        for(Player player: players){
-                dist=Math.abs(currentPlayer.getPosition().getX()+currentPlayer.getPosition().getY()-player.getPosition().getX()-player.getPosition().getY());
-                if (position.getColor()== player.getPosition().getColor()&& dist>=minDist && dist <=maxDist)
-                    visblePlayers.add(player);
-                else {
-                    List<Square> neighbourSquare = position.getNeighbourSquare();
-                    for (int i = 0; i < neighbourSquare.size(); i++) {
-                        if (neighbourSquare.get(i).getColor()==player.getPosition().getColor()&& dist>=minDist && dist <=maxDist)
-                                        visblePlayers.add(player);
-                    }
-                }
-        }
-    }
+//    public void VisibleTarget(int minDist,int maxDist){
+//        visblePlayers=new ArrayList<>();
+//        Square position=currentPlayer.getPosition();
+//        int dist;
+//        for(Player player: players){
+//                dist=Math.abs(currentPlayer.getPosition().getX()+currentPlayer.getPosition().getY()-player.getPosition().getX()-player.getPosition().getY());
+//                if (position.getColor()== player.getPosition().getColor()&& dist>=minDist && dist <=maxDist)
+//                    visblePlayers.add(player);
+//                else {
+//                    List<Square> neighbourSquare = position.getNeighbourSquare();
+//                    for (int i = 0; i < neighbourSquare.size(); i++) {
+//                        if (neighbourSquare.get(i).getColor()==player.getPosition().getColor()&& dist>=minDist && dist <=maxDist)
+//                                        visblePlayers.add(player);
+//                    }
+//                }
+//        }
+//    }
 
     /**
      * Select the target from the visible list
