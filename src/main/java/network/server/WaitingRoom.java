@@ -1,5 +1,8 @@
 package network.server;
 
+import model.board.Board;
+import model.gamehandler.Room;
+import model.player.Player;
 import network.client.Client;
 import network.messages.BoardRequest;
 
@@ -68,12 +71,22 @@ public class WaitingRoom {
 
     private void startGame(){
 
+        Room playingRoom = new Room(new Board());
+
         for(ClientOnServer waitingClient : waitingClients){
-            //waitingClient.getClientInterface().notifyClient(new );
+            Player player = new Player(waitingClient.getUsername());
+            waitingClient.setPersonalPlayer(player);
+            playingRoom.addPlayer(player);
+
         }
 
         String all = waitingClients.stream().map(ClientOnServer::getUsername)
                 .collect(Collectors.joining(", "));
         logger.log(Level.INFO, "game has just started with these players: {0}", all);
+
+        waitingClients.clear();
+
+        playingRoom.startMatch();
+
     }
 }

@@ -13,6 +13,7 @@ public class Room {
     private List<Player> players;
     private Board board;
     private Player currentPlayer;
+    private Player startingPlayer;
     private List<Player> visiblePlayers;
     private Player selectedTarget;
     private List<Player> targetedList= new ArrayList<>();
@@ -20,30 +21,21 @@ public class Room {
 
     public Room(Board board) {
         this.board=board;
-        this.players= players;
+        this.players= new ArrayList<>();
     }
 
-    public List<Player> getPlayers() {
-        return players;
-    }
 
     public void addPlayer(Player player) throws TooManyPlayerException {
+        if(players.isEmpty()){
+            startingPlayer = player;
+            currentPlayer = player;
+        }
         if(players.size()<5)
             players.add(player);
         else
             throw new TooManyPlayerException("cant add the 6th player");
     }
 
-    public Player getCurrentPlayer() {
-        if (currentPlayer==null)
-            return getAndSetNextPlayer();
-        else
-            return currentPlayer;
-    }
-
-    public void setCurrentPlayer(Player currentPlayer) {
-        this.currentPlayer = currentPlayer;
-    }
 
     public void nextPlayer(){
         if (players!=null) {
@@ -56,28 +48,30 @@ public class Room {
         }
     }
 
-    public Player getAndSetNextPlayer(){
-        nextPlayer();
+    public void startMatch(){
+        //TODO add controller
+        //TODO tell first player to choose board
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public Player getCurrentPlayer() {
         return currentPlayer;
+    }
+
+    public void setCurrentPlayer(Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
     }
 
     public Board getBoard() {
         return board;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public Player getStartingPlayer() {
+        return startingPlayer;
+    }
 
 
 
