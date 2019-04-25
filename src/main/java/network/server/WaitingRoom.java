@@ -1,29 +1,34 @@
 package network.server;
 
-import model.player.Player;
 import network.client.Client;
+import network.messages.BoardRequest;
 
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * This class allows to store players and start a new match
  */
 public class WaitingRoom {
 
-    private Queue<String> waitingClients;
+    private Queue<ClientOnServer> waitingClients;
     private Timer timer;
+    private static final Logger logger = Logger.getLogger(WaitingRoom.class.getName());
 
     public WaitingRoom(){
         waitingClients = new LinkedList<>();
     }
 
-    public synchronized void addClient(String p){
+    public synchronized void addClient(ClientOnServer p){
         if(waitingClients.size() < 5){
 
             waitingClients.add(p);
+
 
             if(waitingClients.size() == 3){
                 //start timer
@@ -35,6 +40,9 @@ public class WaitingRoom {
                 timer.cancel();
                 startGame();
             }
+        }
+        else {
+            logger.log(Level.WARNING, "full room");
         }
 
 
@@ -59,7 +67,13 @@ public class WaitingRoom {
     }
 
     private void startGame(){
-        System.out.println("game has just started with these players");
-        waitingClients.forEach(x-> System.out.println(x));
+
+        for(ClientOnServer waitingClient : waitingClients){
+            //waitingClient.getClientInterface().notifyClient(new );
+        }
+
+        String all = waitingClients.stream().map(ClientOnServer::getUsername)
+                .collect(Collectors.joining(", "));
+        logger.log(Level.INFO, "game has just started with these players: {0}", all);
     }
 }

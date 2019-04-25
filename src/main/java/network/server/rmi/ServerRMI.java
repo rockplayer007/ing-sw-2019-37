@@ -19,8 +19,5 @@ public class ServerRMI {
         ServerImplementation serverImplementation = new ServerImplementation(server);
 
         registry.rebind("Server", serverImplementation);
-        System.out.println("RMI is running");
-
-
     }
 }

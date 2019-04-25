@@ -13,6 +13,7 @@ public class CLI {
         this.client = client;
     }
 
+
     public void launch() throws RemoteException, NotBoundException{
 
         client.connect();

@@ -13,14 +13,14 @@ public class Room {
     private List<Player> players;
     private Board board;
     private Player currentPlayer;
-    private List<Player> visblePlayers;
+    private List<Player> visiblePlayers;
     private Player selectedTarget;
     private List<Player> targetedList= new ArrayList<>();
 
 
     public Room(Board board) {
         this.board=board;
-        players=new ArrayList<>();
+        this.players= players;
     }
 
     public List<Player> getPlayers() {
@@ -90,18 +90,18 @@ public class Room {
      * @param maxDist       maximum distance that must be between player and target
      */
     public void VisibleTarget(int minDist,int maxDist){
-        visblePlayers=new ArrayList<>();
+        visiblePlayers =new ArrayList<>();
         Square position=currentPlayer.getPosition();
         int dist;
         for(Player player: players){
                 dist=Math.abs(currentPlayer.getPosition().getX()+currentPlayer.getPosition().getY()-player.getPosition().getX()-player.getPosition().getY());
                 if (position.getColor()== player.getPosition().getColor()&& dist>=minDist && dist <=maxDist)
-                    visblePlayers.add(player);
+                    visiblePlayers.add(player);
                 else {
                     List<Square> neighbourSquare = position.getNeighbourSquare();
                     for (int i = 0; i < neighbourSquare.size(); i++) {
                         if (neighbourSquare.get(i).getColor()==player.getPosition().getColor()&& dist>=minDist && dist <=maxDist)
-                                        visblePlayers.add(player);
+                                        visiblePlayers.add(player);
 
                     }
                 }
@@ -113,21 +113,21 @@ public class Room {
      */
     public void selectTarget(){
         System.out.println("Select player :");
-        for (int i=0;i<visblePlayers.size();i++){
-            System.out.println(visblePlayers.get(i).getNickname()+ "Code : "+i);
+        for (int i = 0; i< visiblePlayers.size(); i++){
+            System.out.println(visiblePlayers.get(i).getNickname()+ "Code : "+i);
         }
         Scanner reader = new Scanner(System.in);
         int choice =Integer.parseInt(reader.nextLine());
-        this.selectedTarget =visblePlayers.get(choice);
+        this.selectedTarget = visiblePlayers.get(choice);
     }
 
     /**
      * Removes the target from the visible list
      */
     public void removeTarget(){
-        for (int i=0;i<visblePlayers.size();i++){
-            if (visblePlayers.get(i)==selectedTarget)
-                        visblePlayers.remove(i);
+        for (int i = 0; i< visiblePlayers.size(); i++){
+            if (visiblePlayers.get(i)==selectedTarget)
+                        visiblePlayers.remove(i);
         }
     }
 
@@ -158,9 +158,9 @@ public class Room {
     public void selectTargetOnSameSquare(){
         Square position = selectedTarget.getPosition();
         removeTarget();
-        for (int i=0;i<visblePlayers.size();i++){
-            if (visblePlayers.get(i).getPosition()==position)
-                selectedTarget=visblePlayers.get(i);
+        for (int i = 0; i< visiblePlayers.size(); i++){
+            if (visiblePlayers.get(i).getPosition()==position)
+                selectedTarget= visiblePlayers.get(i);
         }
     }
 

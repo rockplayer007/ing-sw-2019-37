@@ -15,24 +15,18 @@ import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ActionHandlerTest {
-<<<<<<< HEAD
-    ActionHandler actionHandler;
-    Room room;
-    AmmoCard ammoCard,ammoCard1;
-=======
     private ActionHandler actionHandler;
     private Room room;
-    private AmmoCard ammoCard;
->>>>>>> c9140321a57e303c034dc06c0c67d264756362e9
+    private AmmoCard ammoCard, ammoCard1;
 
 
     @BeforeEach
     public void before(){
         actionHandler=new ActionHandler();
         Board board=new Board();
-        room=new Room(board);
         Player p1=new Player("p1");
         Player p2=new Player("p2");
+        room=new Room(board);
         ammoCard=new AmmoCard(AmmoColor.RED,AmmoColor.YELLOW,AmmoColor.BLUE);
         ammoCard1=new AmmoCard(AmmoColor.RED,AmmoColor.BLUE);
         room.getBoard().setPowerDeck(new PowerDeck());

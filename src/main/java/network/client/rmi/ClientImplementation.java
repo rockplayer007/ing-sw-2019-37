@@ -2,6 +2,7 @@ package network.client.rmi;
 
 import network.client.Client;
 import network.client.ClientInterface;
+import network.messages.Message;
 
 public class ClientImplementation implements ClientInterface {
     private Client client;
@@ -10,7 +11,7 @@ public class ClientImplementation implements ClientInterface {
     }
 
     @Override
-    public void notify(String message) {
+    public void notifyClient(Message message) {
 
         System.out.println("New notification");
     }
