@@ -4,6 +4,7 @@ import model.board.Board;
 import model.board.Square;
 import model.player.Player;
 import model.exceptions.*;
+import network.messages.serverToClient.BoardRequest;
 import network.messages.Message;
 import network.server.ClientOnServer;
 
@@ -16,7 +17,7 @@ public class Room {
 
     private List<Player> players;
     private Map<Player, ClientOnServer> connectionToClient = new HashMap<>();
-    private Board board;
+    private Board board = new Board();
     private Player currentPlayer;
     private Player startingPlayer;
     private List<Player> visiblePlayers;
@@ -73,10 +74,16 @@ public class Room {
 
     public void startMatch(){
         //TODO add controller
-        //TODO tell first player to choose board
+        //
+        Message boardRequest = new BoardRequest(board.getMap().getMaps());
+        sendMessage(startingPlayer, boardRequest);
+    }
 
+    public void createMap(int selection){
+        board.getMap().createMap(selection);
+        String description = board.getMap().getMaps().get(selection);
 
-
+        logger.log(Level.INFO, "selected board is {0}", description);
     }
 
     //move this somewhere else if needed (better controller probably)

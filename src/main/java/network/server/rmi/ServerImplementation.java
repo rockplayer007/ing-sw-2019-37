@@ -2,6 +2,7 @@ package network.server.rmi;
 
 import network.client.ClientInterface;
 import network.messages.Message;
+import network.messages.clientToServer.ClientToServer;
 import network.server.Server;
 
 import java.rmi.RemoteException;
@@ -16,7 +17,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
     }
 
     @Override
-    public void notifyServer(Message message) throws RemoteException{
+    public void notifyServer(ClientToServer message) throws RemoteException{
         server.handleMessage(message);
     }
 }

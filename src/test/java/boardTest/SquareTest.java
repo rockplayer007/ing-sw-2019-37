@@ -20,7 +20,6 @@ public class SquareTest {
     @BeforeEach
     public void createBoard(){
         board = new Board();
-        board.getMap().loadMaps();
         board.getMap().createMap(0);
         map = board.getMap();
     }

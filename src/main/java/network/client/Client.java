@@ -1,9 +1,11 @@
 package network.client;
 
 import network.client.rmi.ConnectionRMI;
-import network.messages.LoginRequest;
-import network.messages.LoginResponse;
-import network.messages.Message;
+import network.messages.*;
+import network.messages.clientToServer.BoardResponse;
+import network.messages.clientToServer.LoginRequest;
+import network.messages.serverToClient.BoardRequest;
+import network.messages.serverToClient.LoginResponse;
 import network.server.Server;
 import view.CLI.CLI;
 
@@ -57,6 +59,9 @@ public class Client {
         connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
 
     }
+    public void sendSelectedBoard(int board){
+        connection.sendMessage(new BoardResponse(username, clientID, board));
+    }
 
     public void handleMessage(Message message){
             switch (message.getContent()){
@@ -64,11 +69,12 @@ public class Client {
                 view.logIn(((LoginResponse) message).getStatus());
                 break;
             case BOARD_REQUEST:
-
+                view.chooseBoard(((BoardRequest) message).getBoards());
+                break;
+            default:
+                logger.log(Level.WARNING, "Unregistered message");
 
         }
-
-
     }
 
 

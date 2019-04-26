@@ -1,8 +1,10 @@
 package network.server;
 
-import network.messages.LoginRequest;
-import network.messages.LoginResponse;
-import network.messages.Message;
+import model.gamehandler.Room;
+import network.messages.clientToServer.BoardResponse;
+import network.messages.clientToServer.ClientToServer;
+import network.messages.clientToServer.LoginRequest;
+import network.messages.serverToClient.LoginResponse;
 import network.server.rmi.ServerRMI;
 
 import java.net.InetAddress;
@@ -14,10 +16,12 @@ import java.util.logging.Logger;
 
 public class Server {
 
-    private Map<String, ClientOnServer> oldClients= new HashMap<>();
+    //clientID and username
+    private Map<String, String> oldClients= new HashMap<>();
 
     private ServerRMI serverRMI;
     private WaitingRoom waitingRoom;
+    private Map<String, Room> usernameInRoom = new HashMap<>();
     private static final Logger logger = Logger.getLogger(Server.class.getName());
 
     private Server(){
@@ -49,28 +53,43 @@ public class Server {
         //TODO will add a starting socket server
     }
 
-    public void handleMessage(Message message){
+    public void handleMessage(ClientToServer message){
+        //verify that the user corresponds with clientID
+
+
         switch (message.getContent()){
             case LOGIN_REQUEST:
                 addClient((LoginRequest) message);
                 break;
+            case BOARD_RESPONSE:
+                usernameInRoom.get(message.getSender()).createMap(((BoardResponse) message).getSelectedBoard());
+                break;
+
+
             default:
                 logger.log(Level.WARNING, "Unhandled message");
 
         }
 
+
+
+
     }
+
+    //TODO
+    private boolean checkUser(ClientToServer message){
+        //not working when oldClients.get is null
+        return message.getSender().equals(oldClients.get(message.getClientID()));
+    }
+
 
     public void addClient(LoginRequest message){
         logger.log(Level.INFO, "{0} adding to the server", message.getSender());
         //TODO manage users that were already logged
         //consider a map that tells in which room the user is
-        if(oldClients.containsKey(message.getSender())){
+        if(oldClients.containsValue(message.getSender())){
             //contains username
-            System.out.println("here");
-
-
-            if (oldClients.get(message.getSender()).getClientID().equals(message.getClientID())){
+            if (oldClients.containsKey(message.getClientID())){
                 //client already exists
                 //let him continue
             }
@@ -91,7 +110,7 @@ public class Server {
             //add client to the waiting room
             ClientOnServer newClient = new ClientOnServer(message.getSender(), message.getClientInterface(),
                     message.getClientID());
-            oldClients.put(message.getSender(), newClient);
+            oldClients.put(message.getClientID(), message.getSender() );
             waitingRoom.addClient(newClient);
 
             try {
@@ -102,6 +121,8 @@ public class Server {
         }
     }
 
-
+    public void setUsernameInRoom(List<String> usernames, Room playingRoom){
+        usernames.forEach(name -> usernameInRoom.put(name, playingRoom));
+    }
 
 }

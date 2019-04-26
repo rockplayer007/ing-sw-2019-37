@@ -4,6 +4,7 @@ import network.client.Client;
 import network.client.ClientInterface;
 import network.client.ConnectionInterface;
 import network.messages.Message;
+import network.messages.clientToServer.ClientToServer;
 import network.server.rmi.ServerInterface;
 
 import java.rmi.NotBoundException;
@@ -33,7 +34,7 @@ public class ConnectionRMI implements ConnectionInterface {
     }
 
     @Override
-    public void sendMessage(Message message) {
+    public void sendMessage(ClientToServer message) {
         try {
             server.notifyServer(message);
         } catch (RemoteException e){

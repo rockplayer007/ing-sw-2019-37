@@ -1,6 +1,8 @@
-package network.messages;
+package network.messages.serverToClient;
 
-public class LoginResponse extends Message{
+import network.messages.Message;
+
+public class LoginResponse extends Message {
 
     private boolean status;
 

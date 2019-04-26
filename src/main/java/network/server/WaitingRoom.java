@@ -4,10 +4,7 @@ import model.board.Board;
 import model.gamehandler.Room;
 import model.player.Player;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -66,19 +63,20 @@ public class WaitingRoom {
                 }
             }
 
-        }, 1*60*1000);
+        }, 1*5*1000);
 
     }
 
     private void startGame(){
 
         Room playingRoom = new Room(new Board());
+        List<String> usernames = new ArrayList<>();
 
         for(ClientOnServer waitingClient : waitingClients){
             Player player = new Player(waitingClient.getUsername());
             waitingClient.setPersonalPlayer(player);
             playingRoom.addPlayer(waitingClient);
-
+            usernames.add(waitingClient.getUsername());
         }
 
         String all = waitingClients.stream().map(ClientOnServer::getUsername)
@@ -88,6 +86,7 @@ public class WaitingRoom {
 
 
         waitingClients.clear();
+        server.setUsernameInRoom(usernames, playingRoom);
 
         playingRoom.startMatch();
 

@@ -78,10 +78,16 @@ public class Board {
      */
     public class BoardMap {
 
-        List<GenerationSquare> genPoints = new ArrayList<>();
-        Map<Integer,Square> allSquares = new HashMap<>();
-        Map<Color, ArrayList<Square>> squaresInRoom = new HashMap<>();
-        Map<Integer, String> availableMaps = new HashMap<>();
+        private List<GenerationSquare> genPoints = new ArrayList<>();
+        private Map<Integer,Square> allSquares = new HashMap<>();
+        private Map<Color, ArrayList<Square>> squaresInRoom = new HashMap<>();
+        private Map<Integer, String> availableMaps = new HashMap<>();
+
+
+        public BoardMap(){
+            super();
+            loadMaps();
+        }
 
         /**
          * Opens the file with all the boards
@@ -107,7 +113,7 @@ public class Board {
         /**
          * Creates a list with all the available boards
          */
-        public void loadMaps(){
+        private void loadMaps(){
 
             try{
                 NodeList boards  = openMapFile();
@@ -135,6 +141,10 @@ public class Board {
             Scanner reader = new Scanner(System.in);
             return reader.nextInt();
 
+        }
+
+        public Map<Integer, String> getMaps(){
+            return availableMaps;
         }
 
         /**
@@ -221,6 +231,10 @@ public class Board {
          */
         public Square getSquare(int id){
             return allSquares.get(id);
+        }
+
+        public Map<Color, ArrayList<Square>> getSquaresInRoom(){
+            return squaresInRoom;
         }
     }
 

@@ -4,6 +4,7 @@ import network.client.Client;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.Map;
 import java.util.Scanner;
 
 public class CLI {
@@ -36,4 +37,12 @@ public class CLI {
         }
 
     }
+
+    public void chooseBoard(Map<Integer, String> maps){
+        maps.forEach((k,v)-> System.out.println("Map number " + k + " " + v));
+        System.out.println("Select map: ");
+        Scanner reader = new Scanner(System.in);
+        client.sendSelectedBoard(reader.nextInt());
+    }
+
 }

@@ -123,7 +123,7 @@ public class Square {
                 .forEach(x-> positions.addAll(map.squaresInRoom.get(x.squareColor)));
         */
         //adds all the squares that are in the same room or in a neighbour room
-        neighbourSquare.forEach(square -> positions.addAll(map.squaresInRoom.get(square.squareColor)));
+        neighbourSquare.forEach(square -> positions.addAll(map.getSquaresInRoom().get(square.squareColor)));
 
         return positions;
     }
