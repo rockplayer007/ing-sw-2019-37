@@ -4,13 +4,18 @@ import model.board.Board;
 import model.board.Square;
 import model.player.Player;
 import model.exceptions.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import network.messages.Message;
+import network.server.ClientOnServer;
+
+import java.rmi.RemoteException;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Room {
 
     private List<Player> players;
+    private Map<Player, ClientOnServer> connectionToClient = new HashMap<>();
     private Board board;
     private Player currentPlayer;
     private Player startingPlayer;
@@ -18,8 +23,11 @@ public class Room {
     private Player selectedTarget;
     private List<Player> targetedList= new ArrayList<>();
 
+    private static final Logger logger = Logger.getLogger(Room.class.getName());
+
 
     public Room(Board board) {
+        super();
         this.board=board;
         this.players= new ArrayList<>();
     }
@@ -32,6 +40,21 @@ public class Room {
         }
         if(players.size()<5)
             players.add(player);
+        else
+            throw new TooManyPlayerException("cant add the 6th player");
+    }
+
+    //needed for starting a new room from waitingRoom
+    public void addPlayer(ClientOnServer client){
+        if(players.isEmpty()){
+            startingPlayer = client.getPersonalPlayer();
+            currentPlayer = client.getPersonalPlayer();
+        }
+        if(players.size()<5){
+            players.add(client.getPersonalPlayer());
+            connectionToClient.put(client.getPersonalPlayer(), client);
+        }
+
         else
             throw new TooManyPlayerException("cant add the 6th player");
     }
@@ -51,6 +74,20 @@ public class Room {
     public void startMatch(){
         //TODO add controller
         //TODO tell first player to choose board
+
+
+
+    }
+
+    //move this somewhere else if needed (better controller probably)
+    public void sendMessage(Player player, Message message){
+        try{
+            connectionToClient.get(player).getClientInterface()
+                    .notifyClient(message);
+        }catch (RemoteException e){
+            logger.log(Level.WARNING, "Connection error", e);
+        }
+
     }
 
     public List<Player> getPlayers() {

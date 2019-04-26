@@ -2,6 +2,7 @@ package network.client;
 
 import network.client.rmi.ConnectionRMI;
 import network.messages.LoginRequest;
+import network.messages.LoginResponse;
 import network.messages.Message;
 import network.server.Server;
 import view.CLI.CLI;
@@ -20,8 +21,9 @@ public class Client {
     private String username;
     private static final String clientID =  UUID.randomUUID().toString();
     private ClientInterface clientInterface;
-    private static final Logger logger = Logger.getLogger(Server.class.getName());
+    private static CLI view;
 
+    private static final Logger logger = Logger.getLogger(Server.class.getName());
 
     public static void main(String[] args){
         System.out.println("localhost or remote?[L/R]");
@@ -37,7 +39,7 @@ public class Client {
 
 
         Client client = new Client();
-        CLI view = new CLI(client);
+         view = new CLI(client);
         try {
             view.launch();
         }catch (Exception e ){
@@ -52,13 +54,18 @@ public class Client {
     }
 
     public void sendCredentials(){
-        connection.sendMessage(new LoginRequest(username, clientInterface));
-        //connection.registerClient(username, clientID);
+        connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
+
     }
 
     public void handleMessage(Message message){
-        switch (message.getContent()){
+            switch (message.getContent()){
+            case LOGIN_RESPONSE:
+                view.logIn(((LoginResponse) message).getStatus());
+                break;
             case BOARD_REQUEST:
+
+
         }
 
 

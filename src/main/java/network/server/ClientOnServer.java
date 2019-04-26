@@ -8,11 +8,12 @@ public class ClientOnServer {
     private String username;
     private ClientInterface clientInterface;
     private Player personalPlayer;
+    private String clientID;
 
-    public ClientOnServer(String username, ClientInterface clientInterface){
+    public ClientOnServer(String username, ClientInterface clientInterface, String clientID){
         this.username = username;
         this.clientInterface = clientInterface;
-
+        this.clientID = clientID;
     }
 
     public String getUsername() {
@@ -28,5 +29,9 @@ public class ClientOnServer {
 
     public void setPersonalPlayer(Player personalPlayer) {
         this.personalPlayer = personalPlayer;
+    }
+
+    public String getClientID(){
+        return clientID;
     }
 }

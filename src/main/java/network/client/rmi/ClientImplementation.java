@@ -12,8 +12,8 @@ public class ClientImplementation implements ClientInterface {
 
     @Override
     public void notifyClient(Message message) {
+        client.handleMessage(message);
 
-        System.out.println("New notification");
     }
 
 }

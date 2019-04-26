@@ -3,8 +3,6 @@ package network.server;
 import model.board.Board;
 import model.gamehandler.Room;
 import model.player.Player;
-import network.client.Client;
-import network.messages.BoardRequest;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -21,10 +19,12 @@ public class WaitingRoom {
 
     private Queue<ClientOnServer> waitingClients;
     private Timer timer;
+    private Server server;
     private static final Logger logger = Logger.getLogger(WaitingRoom.class.getName());
 
-    public WaitingRoom(){
+    public WaitingRoom(Server server){
         waitingClients = new LinkedList<>();
+        this.server = server;
     }
 
     public synchronized void addClient(ClientOnServer p){
@@ -56,6 +56,7 @@ public class WaitingRoom {
         timer.schedule(new TimerTask() {
             @Override
             public void run(){
+
                 if(waitingClients.size() >=3 && waitingClients.size() <= 5){
                     startGame();
                 }
@@ -76,13 +77,15 @@ public class WaitingRoom {
         for(ClientOnServer waitingClient : waitingClients){
             Player player = new Player(waitingClient.getUsername());
             waitingClient.setPersonalPlayer(player);
-            playingRoom.addPlayer(player);
+            playingRoom.addPlayer(waitingClient);
 
         }
 
         String all = waitingClients.stream().map(ClientOnServer::getUsername)
                 .collect(Collectors.joining(", "));
-        logger.log(Level.INFO, "game has just started with these players: {0}", all);
+        logger.log(Level.INFO, "Game has just started with these players: {0}", all);
+
+
 
         waitingClients.clear();
 
