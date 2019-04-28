@@ -1,9 +1,8 @@
 package network.client.rmi;
 
-import network.client.Client;
+import network.client.MainClient;
 import network.client.ClientInterface;
 import network.client.ConnectionInterface;
-import network.messages.Message;
 import network.messages.clientToServer.ClientToServer;
 import network.server.rmi.ServerInterface;
 
@@ -21,9 +20,9 @@ public class ConnectionRMI implements ConnectionInterface {
     private ClientInterface remoteClientRef;
     private static final Logger logger = Logger.getLogger(ConnectionRMI.class.getName());
 
-    public ConnectionRMI(Client c) throws RemoteException, NotBoundException {
-        Registry registry = LocateRegistry.getRegistry(Client.getServerIp(), 1099);
-        server = (ServerInterface) registry.lookup("Server");
+    public ConnectionRMI(MainClient c) throws RemoteException, NotBoundException {
+        Registry registry = LocateRegistry.getRegistry(MainClient.getServerIp(), 1099);
+        server = (ServerInterface) registry.lookup("MainServer");
         ClientImplementation client = new ClientImplementation(c);
 
         //userful for the server to be able to communicate with the client

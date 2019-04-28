@@ -1,18 +1,18 @@
 package network.client.rmi;
 
-import network.client.Client;
+import network.client.MainClient;
 import network.client.ClientInterface;
 import network.messages.Message;
 
 public class ClientImplementation implements ClientInterface {
-    private Client client;
-    ClientImplementation(Client client){
-        this.client = client;
+    private MainClient mainClient;
+    ClientImplementation(MainClient mainClient){
+        this.mainClient = mainClient;
     }
 
     @Override
     public void notifyClient(Message message) {
-        client.handleMessage(message);
+        mainClient.handleMessage(message);
 
     }
 

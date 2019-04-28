@@ -16,10 +16,10 @@ public class WaitingRoom {
 
     private Queue<ClientOnServer> waitingClients;
     private Timer timer;
-    private Server server;
+    private MainServer server;
     private static final Logger logger = Logger.getLogger(WaitingRoom.class.getName());
 
-    public WaitingRoom(Server server){
+    public WaitingRoom(MainServer server){
         waitingClients = new LinkedList<>();
         this.server = server;
     }

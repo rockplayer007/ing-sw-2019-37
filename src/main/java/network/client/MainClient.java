@@ -1,36 +1,55 @@
 package network.client;
 
 import network.client.rmi.ConnectionRMI;
+import network.client.socket.ConnectionSOCKET;
 import network.messages.*;
 import network.messages.clientToServer.BoardResponse;
 import network.messages.clientToServer.LoginRequest;
 import network.messages.serverToClient.BoardRequest;
 import network.messages.serverToClient.LoginResponse;
-import network.server.Server;
+import network.server.MainServer;
 import view.CLI.CLI;
+import view.ViewInterface;
 
+import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.UnknownHostException;
 import java.util.Scanner;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Client {
+public class MainClient {
 
     private static String serverIp;
     private ConnectionInterface connection;
     private String username;
     private static final String clientID =  UUID.randomUUID().toString();
     private ClientInterface clientInterface;
-    private static CLI view;
 
-    private static final Logger logger = Logger.getLogger(Server.class.getName());
+    private static ViewInterface view;
+    private static boolean socket; //true uses socket false uses rmi
+
+    private static final Logger logger = Logger.getLogger(MainServer.class.getName());
 
     public static void main(String[] args){
-        System.out.println("localhost or remote?[L/R]");
         Scanner reader = new Scanner(System.in);
+
+        System.out.println("RMI or SOCKET?[R/S]");
         String choice = reader.nextLine().toLowerCase();
+
+        if(choice.equals("s")){
+            socket = true;
+        }
+        else {
+            socket = false;
+        }
+
+
+        System.out.println("localhost or remote?[L/R]");
+
+        choice = reader.nextLine().toLowerCase();
         if(choice.equals("r")){
             System.out.println("Write IP address of the server:");
             serverIp = reader.nextLine();
@@ -40,8 +59,8 @@ public class Client {
         }
 
 
-        Client client = new Client();
-         view = new CLI(client);
+        MainClient mainClient = new MainClient();
+         view = new CLI(mainClient);
         try {
             view.launch();
         }catch (Exception e ){
@@ -50,13 +69,25 @@ public class Client {
 
     }
 
-    public void connect() throws RemoteException, NotBoundException {
-        //TODO change the connection to socket if the client wants
-        connection = new ConnectionRMI(this);
+    public void connect() throws  NotBoundException, IOException {
+
+        if(socket){
+            connection = new ConnectionSOCKET(serverIp);
+        }
+        else{
+            connection = new ConnectionRMI(this);
+        }
+
     }
 
     public void sendCredentials(){
-        connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
+        if (socket) {
+            //TODO  special message for socket without clientInterface
+            connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
+        }
+        else {
+            connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
+        }
 
     }
     public void sendSelectedBoard(int board){

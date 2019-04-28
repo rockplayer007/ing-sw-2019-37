@@ -1,6 +1,6 @@
 package network.server.rmi;
 
-import network.server.Server;
+import network.server.MainServer;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -8,8 +8,8 @@ import java.rmi.registry.Registry;
 
 public class ServerRMI {
 
-    Server server;
-    public ServerRMI(Server server){
+    private MainServer server;
+    public ServerRMI(MainServer server){
         this.server = server;
     }
 
@@ -18,6 +18,6 @@ public class ServerRMI {
         Registry registry = LocateRegistry.createRegistry(port);
         ServerImplementation serverImplementation = new ServerImplementation(server);
 
-        registry.rebind("Server", serverImplementation);
+        registry.rebind("MainServer", serverImplementation);
     }
 }

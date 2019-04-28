@@ -6,7 +6,9 @@ import network.messages.clientToServer.ClientToServer;
 import network.messages.clientToServer.LoginRequest;
 import network.messages.serverToClient.LoginResponse;
 import network.server.rmi.ServerRMI;
+import network.server.socket.ServerSOCKET;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
@@ -14,19 +16,21 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Server {
+public class MainServer {
 
     //clientID and username
     private Map<String, String> oldClients= new HashMap<>();
 
     private ServerRMI serverRMI;
+    private ServerSOCKET serverSocket;
     private WaitingRoom waitingRoom;
     private Map<String, Room> usernameInRoom = new HashMap<>();
-    private static final Logger logger = Logger.getLogger(Server.class.getName());
+    private static final Logger logger = Logger.getLogger(MainServer.class.getName());
 
-    private Server(){
+    private MainServer(){
         super();
         this.serverRMI = new ServerRMI(this);
+        this.serverSocket = new ServerSOCKET(this);
         this.waitingRoom = new WaitingRoom(this);
     }
 
@@ -37,8 +41,8 @@ public class Server {
         logger.log(Level.INFO, "Host Name:- {0}", inetAddress.getHostName());
 
         try {
-            Server server = new Server();
-            server.startServer(1099);
+            MainServer server = new MainServer();
+            server.startServer(1099, 8000);
         }catch (Exception e){
             logger.log(Level.SEVERE, e.toString(), e);
         }
@@ -47,10 +51,15 @@ public class Server {
 
     }
 
-    private void startServer(int rmiPort) throws RemoteException {
+    private void startServer(int rmiPort, int socketPort) throws RemoteException, IOException {
         serverRMI.startServer(rmiPort);
         logger.log(Level.INFO, "new rmi server created");
         //TODO will add a starting socket server
+
+        //serverSocket = new ServerSOCKET(this, socketPort);
+        serverSocket.startServer(socketPort);
+        serverSocket.run();
+
     }
 
     public void handleMessage(ClientToServer message){

@@ -1,23 +1,25 @@
 package view.CLI;
 
-import network.client.Client;
+import network.client.MainClient;
+import view.ViewInterface;
 
+import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.Scanner;
 
-public class CLI {
+public class CLI implements ViewInterface {
 
-    private Client client;
-    public CLI(Client client){
-        this.client = client;
+    private MainClient mainClient;
+    public CLI(MainClient mainClient){
+        this.mainClient = mainClient;
     }
 
+    @Override
+    public void launch() throws NotBoundException, IOException {
 
-    public void launch() throws RemoteException, NotBoundException{
-
-        client.connect();
+        mainClient.connect();
         System.out.println("Connection successful!");
         logIn(true);
 
@@ -29,11 +31,11 @@ public class CLI {
             System.out.println("Write a username to login:");
             Scanner reader = new Scanner(System.in);
             String username = reader.nextLine();
-            client.setUsername(username);
-            client.sendCredentials();
+            mainClient.setUsername(username);
+            mainClient.sendCredentials();
         }
         else {
-            System.out.println("Welcome "+ client.getUsername());
+            System.out.println("Welcome "+ mainClient.getUsername());
         }
 
     }
@@ -42,7 +44,7 @@ public class CLI {
         maps.forEach((k,v)-> System.out.println("Map number " + k + " " + v));
         System.out.println("Select map: ");
         Scanner reader = new Scanner(System.in);
-        client.sendSelectedBoard(reader.nextInt());
+        mainClient.sendSelectedBoard(reader.nextInt());
     }
 
 }

@@ -1,18 +1,16 @@
 package network.server.rmi;
 
-import network.client.ClientInterface;
-import network.messages.Message;
 import network.messages.clientToServer.ClientToServer;
-import network.server.Server;
+import network.server.MainServer;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 public class ServerImplementation extends UnicastRemoteObject implements ServerInterface {
 
-    private transient Server server;
+    private transient MainServer server;
 
-    public ServerImplementation(Server server) throws RemoteException {
+    public ServerImplementation(MainServer server) throws RemoteException {
         this.server = server;
     }
 
