@@ -51,14 +51,14 @@ public class MainServer {
 
     }
 
-    private void startServer(int rmiPort, int socketPort) throws RemoteException, IOException {
+    private void startServer(int rmiPort, int socketPort) throws IOException {
+        serverSocket.startServer(socketPort);
+        serverSocket.start();
+
         serverRMI.startServer(rmiPort);
         logger.log(Level.INFO, "new rmi server created");
-        //TODO will add a starting socket server
 
-        //serverSocket = new ServerSOCKET(this, socketPort);
-        serverSocket.startServer(socketPort);
-        serverSocket.run();
+
 
     }
 

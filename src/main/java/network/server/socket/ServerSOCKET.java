@@ -11,7 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class ServerSOCKET {
+public class ServerSOCKET extends Thread{
 
     private MainServer server;
     private final ExecutorService pool;
@@ -31,11 +31,17 @@ public class ServerSOCKET {
         logger.log(Level.INFO, "Listening on port {0}", port);
     }
 
-    public void run() throws IOException{
+    @Override
+    public void run(){
         while (keepWakeup) {
-            Socket clientSocket = connectionSocket.accept();
-            logger.log(Level.INFO, "New connection with client {0}", clientSocket.getRemoteSocketAddress());
-            pool.submit(new ClientHandler(clientSocket, server));
+            try{
+                Socket clientSocket = connectionSocket.accept();
+                logger.log(Level.INFO, "New connection with client {0}", clientSocket.getRemoteSocketAddress());
+                pool.submit(new ClientHandler(clientSocket, server));
+            }catch (IOException e){
+                logger.log(Level.WARNING, e.toString(), e);
+            }
+
         }
     }
 
