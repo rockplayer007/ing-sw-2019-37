@@ -19,10 +19,12 @@ public class Player {
     private Map<AmmoColor,Integer> ammo;
     private List<Weapon> weapons;
     private List<Powerup> powerups;
-    private List<Player> visiblePlayers;
+    private List<Player> PossibleTargets;
+    private List<Player> targetsToShot;
     private List<Player> selectedTargets;
     private Actions actionStatus;
     private Boolean live;
+    private Square effectSquare;
 
     public Player(String nickname) {
         this.nickname = nickname;
@@ -73,15 +75,23 @@ public class Player {
     }
 
     public List<Weapon> getWeapons() {
-        return weapons;
+        return Collections.unmodifiableList(weapons);
     }
 
-    public List<Player> getVisiblePlayers() {
-        return visiblePlayers;
+    public List<Player> getPossibleTargets() {
+        return PossibleTargets;
     }
 
-    public void setVisiblePlayers(List<Player> targetPlayers) {
-        this.visiblePlayers = targetPlayers;
+    public void setPossibleTargets(List<Player> targetPlayers) {
+        this.PossibleTargets = targetPlayers;
+    }
+
+    public List<Player> getTargetsToShot() {
+        return targetsToShot;
+    }
+
+    public void setTargetsToShot(List<Player> targetsToShot) {
+        this.targetsToShot = targetsToShot;
     }
 
     public List<Player> getSelectedTargets() {
@@ -96,7 +106,15 @@ public class Player {
         return actionStatus;
     }
 
-    void movePlayer(Square square){
+    public Square getEffectSquare() {
+        return effectSquare;
+    }
+
+    public void setEffectSquare(Square effectSquare) {
+        this.effectSquare = effectSquare;
+    }
+
+    public void movePlayer(Square square){
         this.getPosition().removePlayer(this);
         square.addPlayer(this);
         this.setPosition(square);

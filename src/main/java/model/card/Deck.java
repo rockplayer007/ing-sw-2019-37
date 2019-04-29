@@ -1,16 +1,13 @@
 package model.card;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public abstract class Deck {
 
-    private Stack<Card> cardDeck = new Stack<>();
+    private Deque<Card> cardDeck = new LinkedList<>();
     Deck(){}
 
     public void mixDeck(){
-        Collections.shuffle(cardDeck);
+        Collections.shuffle((List<?>) cardDeck);
     }
 
     public Card getCard(){

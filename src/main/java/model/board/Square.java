@@ -2,10 +2,7 @@ package model.board;
 
 import model.player.Player;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Class that defines a single square of the board
@@ -150,4 +147,80 @@ public class Square {
             return false;
     }
 
+    public Map<String,Set<Square>> directions(int distance){
+        Map<String,Set<Square>> map=new HashMap<>();
+        for (Square s:neighbourSquare){
+            if (s.getY()<this.getY())
+                map.put("Down",this.oneDirection(Direction.DOWN,distance));
+            else if (s.getY()>this.getY())
+                map.put("Top",this.oneDirection(Direction.TOP,distance));
+            else if (s.getX()>this.getX())
+                map.put("Right",this.oneDirection(Direction.RIGHT,distance));
+            else if (s.getX()<this.getX())
+                map.put("Left",this.oneDirection(Direction.LEFT,distance));
+        }
+        return map;
+    }
+
+    public Square getOneofNeighbour(int x,int y){
+        Square square=null;
+        for (Square s:neighbourSquare){
+            if (s.getY()==y&&s.getX()==x)
+                square=s;
+        }
+        return square;
+    }
+
+    public Set<Square> oneDirection(Direction direction, int distance){
+        Set<Square> set = new HashSet<>();
+        if (distance>0) {
+            if (direction == Direction.LEFT&&x!=0&&neighbourSquare.stream().anyMatch(s->s.getX()<this.getX()))
+                set.addAll(getOneofNeighbour(x-1,y).oneDirection(direction,distance-1));
+            else if (direction == Direction.RIGHT&&x!=3&&neighbourSquare.stream().anyMatch(s->s.getX()>this.getX()))
+                set.addAll(getOneofNeighbour(x+1,y).oneDirection(direction,distance-1));
+            else if (direction == Direction.DOWN&&y!=0&&neighbourSquare.stream().anyMatch(s->s.getY()<this.getY()))
+                set.addAll(getOneofNeighbour(x,y-1).oneDirection(direction,distance-1));
+            else if (direction == Direction.TOP&&y!=2&&neighbourSquare.stream().anyMatch(s->s.getY()>this.getY()))
+                set.addAll(getOneofNeighbour(x,y+1).oneDirection(direction,distance-1));
+        }
+        set.add(this);
+        return set;
+    }
+
+    public Map<String,Set<Square>> directionAbsolute(Board.BoardMap boardMap){
+        Map<String,Set<Square>> map=new HashMap<>();
+        if (x!=0)
+            map.put("Left",oneDirectionAbsolute(Direction.LEFT,boardMap));
+        if (x!=3)
+            map.put("Right",oneDirectionAbsolute(Direction.RIGHT,boardMap));
+        if (y!=0)
+            map.put("Top",oneDirectionAbsolute(Direction.TOP,boardMap));
+        if (y!=2)
+            map.put("Down",oneDirectionAbsolute(Direction.DOWN,boardMap));
+
+
+        return  map;
+    }
+
+
+    public Set<Square> oneDirectionAbsolute(Direction direction,Board.BoardMap boardMap){
+        Set<Square> set = new HashSet<>();
+        if (direction == Direction.LEFT&x!=0)
+            set.addAll(boardMap.getSquare(x-1,y).oneDirectionAbsolute(direction,boardMap));
+        else if (direction == Direction.RIGHT&&x!=3)
+            set.addAll(boardMap.getSquare(x+1,y).oneDirectionAbsolute(direction,boardMap));
+        else if (direction == Direction.DOWN&&y!=0)
+            set.addAll(boardMap.getSquare(x,y-1).oneDirectionAbsolute(direction,boardMap));
+        else if (direction == Direction.TOP&&y!=2)
+            set.addAll(boardMap.getSquare(x,y+1).oneDirectionAbsolute(direction,boardMap));
+        set.add(this);
+        return set;
+    }
+
+
+}
+
+
+enum Direction {
+    TOP,DOWN,LEFT,RIGHT
 }

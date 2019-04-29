@@ -236,8 +236,13 @@ public class Board {
         public Map<Color, ArrayList<Square>> getSquaresInRoom(){
             return squaresInRoom;
         }
-    }
 
+        public Square getSquare(int x,int y){
+//      TODO
+            return null;
+        }
+
+    }
 
 
 }

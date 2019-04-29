@@ -23,22 +23,21 @@ public class ActionHandler {
 
     /**
      * run actions let current player to changes position
-     * @param room room of the game
+     * @param player that do this action.
      * @param  distanceMax Max distance that the player can move
      */
-    public void run(Room room, int distanceMax) {
-        Player player = room.getCurrentPlayer();
-        Square destination = chooseSquare(player, distanceMax);
+    public static void run( Player player, int distanceMax) {
+        Set<Square> validPositions = player.getPosition().getValidPosition(distanceMax);
+        Square destination = chooseSquare(player, validPositions);
         player.movePlayer(destination);
     }
     /**
      *  general way to let player chooses the Squere that he can go
      * @param player current player
-     * @param  distanceMax Max distance that the player can move
+     * @param  validPositions all ssquare that you can choose.
      * @return the Square that the player choose to move
      */
-    public Square chooseSquare(Player player, int distanceMax) {
-        Set<Square> validPositions = player.getPosition().getValidPosition(distanceMax);
+    public static Square chooseSquare(Player player,Set<Square> validPositions) {
         System.out.println("there are valid points:");
         validPositions.forEach(i -> System.out.println("X:" + i.getX() + "Y:" + i.getY()));
         Scanner sc = new Scanner(System.in);
@@ -61,19 +60,19 @@ public class ActionHandler {
      * @param
      * @return
      */
-    public void shoot() {
+    public static void shoot() {
         // TODO implement here
 
     }
 
     /**
      * basic grab method let player to grab all card that they can
-     * @param room room of the game
+     * @param player that do this action.
+     * @param board that the player play.
      */
-    public void grab(Room room) {
-        Player player = room.getCurrentPlayer();
+    public static void grab( Player player,Board board) {
         if (!player.getPosition().getGenerationPoint())
-            grabAmmo(player,((AmmoSquare) player.getPosition()).getAmmoCard(),room.getBoard());
+            grabAmmo(player,((AmmoSquare) player.getPosition()).getAmmoCard(),board);
         else {
             while (((GenerationSquare) player.getPosition()).getWeaponDeck().stream().anyMatch(i->player.enoughAmmos(i.getBuyCost()))){
                 Weapon weapon = ((GenerationSquare) player.getPosition()).getWeapon();
@@ -102,7 +101,7 @@ public class ActionHandler {
      * @param reason why go to this choose
      * @return position of card choose in the List
      */
-    public int chooseCard(List<? extends Card> cards, String reason) {
+    public static int chooseCard(List<? extends Card> cards, String reason) {
         System.out.println("you need choose one card,to " + reason);
         System.out.println("choose one of these:");
         int i;
@@ -123,7 +122,7 @@ public class ActionHandler {
      * @param player current player
      * @param  card weapon need to add in the player's hand
      */
-    private void grabWeapon(Player player, Weapon card) {
+    private static void grabWeapon(Player player, Weapon card) {
         int c = 0;
         int i;
         ArrayList<AmmoColor> cost = card.getChargeCost();
@@ -147,7 +146,7 @@ public class ActionHandler {
      * @param  card Ammocard need to analize
      */
 
-    public void grabAmmo(Player player, AmmoCard card, Board board) {
+    public static void grabAmmo(Player player, AmmoCard card, Board board) {
         card.getAmmoList().forEach(player::addAmmo);
         if (card.hasPowerup() && player.getPowerups().size() < 3) {
             player.addPowerup((Powerup) board.getPowerDeck().getCard());
@@ -157,12 +156,11 @@ public class ActionHandler {
 
     /**
      * reload the weapon
-     * @param room room of the game
+     * @param player that do this action
      */
-    public void reload(Room room) {
+    public static void reload(Player player) {
         int i;
         int c=0;
-        Player player = room.getCurrentPlayer();
         List<Weapon> weapons=player.getWeapons();
         while (player.getWeapons().stream().anyMatch(Weapon::getCharged)) {
             i = chooseCard(weapons, "charge");
@@ -192,7 +190,7 @@ public class ActionHandler {
      * @param message is the target of question
      * @return a Boonlean in base yes or no, chosen by player
      */
-    public Boolean choice(int i, String message){
+    public static Boolean choice(int i, String message){
         if (i==0)
             System.out.println("You can still "+message+",do you want?");
         else
