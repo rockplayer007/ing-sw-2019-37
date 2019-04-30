@@ -3,7 +3,7 @@ package network.server;
 import model.gamehandler.Room;
 import network.messages.clientToServer.BoardResponse;
 import network.messages.clientToServer.ClientToServer;
-import network.messages.clientToServer.LoginRmiRequest;
+import network.messages.clientToServer.LoginRequest;
 import network.messages.serverToClient.LoginResponse;
 import network.server.rmi.ServerRMI;
 import network.server.socket.ServerSOCKET;
@@ -69,7 +69,7 @@ public class MainServer {
 
         switch (message.getContent()){
             case LOGIN_REQUEST:
-                addClient((LoginRmiRequest) message);
+                addClient((LoginRequest) message);
                 break;
             case BOARD_RESPONSE:
                 usernameInRoom.get(message.getSender()).createMap(((BoardResponse) message).getSelectedBoard());
@@ -82,20 +82,20 @@ public class MainServer {
         }
 
 
-
-
     }
 
     //TODO
     private boolean checkUser(ClientToServer message){
         //not working when oldClients.get is null
+
         return message.getSender().equals(oldClients.get(message.getClientID()));
     }
 
 
-    public void addClient(LoginRmiRequest message){
+    public void addClient(LoginRequest message){
         logger.log(Level.INFO, "{0} adding to the server", message.getSender());
         //TODO manage users that were already logged
+        //
         //consider a map that tells in which room the user is
         if(oldClients.containsValue(message.getSender())){
             //contains username
@@ -107,7 +107,7 @@ public class MainServer {
 
                 //username already exists
                 try {
-                    message.getClientInterface().notifyClient(new LoginResponse(true));
+                    message.getClientInterface().notifyClient(new LoginResponse(true, ""));
                 }catch (RemoteException e){
                     logger.log(Level.WARNING, "Connection error", e);
                 }
@@ -118,13 +118,15 @@ public class MainServer {
         else{
             //username doesnt exist
             //add client to the waiting room
-            ClientOnServer newClient = new ClientOnServer(message.getSender(), message.getClientInterface(),
-                    message.getClientID());
-            oldClients.put(message.getClientID(), message.getSender() );
+            //gives an UUID to each new client
+            String clientID = UUID.randomUUID().toString();
+            ClientOnServer newClient = new ClientOnServer(message.getSender(),
+                    message.getClientInterface(), clientID);
+            oldClients.put(clientID, message.getSender());
             waitingRoom.addClient(newClient);
 
             try {
-                message.getClientInterface().notifyClient(new LoginResponse(false));
+                message.getClientInterface().notifyClient(new LoginResponse(false, clientID));
             }catch (RemoteException e){
                 logger.log(Level.WARNING, "Connection error", e);
             }

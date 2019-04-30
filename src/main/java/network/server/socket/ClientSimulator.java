@@ -3,7 +3,7 @@ package network.server.socket;
 import network.client.ClientInterface;
 import network.messages.Message;
 import network.messages.clientToServer.ClientToServer;
-import network.messages.clientToServer.LoginRmiRequest;
+import network.messages.clientToServer.LoginRequest;
 import network.messages.serverToClient.ServerToClient;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class ClientSimulator implements Runnable, ClientInterface{
             while (clientConnected){
                 ClientToServer message = (ClientToServer) in.readObject();
                 if(message.getContent() == Message.Content.LOGIN_REQUEST ){
-                    ((LoginRmiRequest) message).setClientInterface(this);
+                    ((LoginRequest) message).setClientInterface(this);
                 }
                 server.newMessage(message);
             }

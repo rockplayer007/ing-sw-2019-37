@@ -3,8 +3,7 @@ package network.client;
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
 import network.messages.clientToServer.BoardResponse;
-import network.messages.clientToServer.LoginRmiRequest;
-import network.messages.clientToServer.LoginSocketRequest;
+import network.messages.clientToServer.LoginRequest;
 import network.messages.serverToClient.BoardRequest;
 import network.messages.serverToClient.LoginResponse;
 import network.messages.serverToClient.ServerToClient;
@@ -15,7 +14,6 @@ import view.ViewInterface;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.util.Scanner;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,7 +22,7 @@ public class MainClient {
     private static String serverIp;
     private ConnectionInterface connection;
     private String username;
-    private static final String clientID =  UUID.randomUUID().toString();
+    private String clientID;
     private ClientInterface clientInterface;
 
     private static ViewInterface view;
@@ -81,13 +79,13 @@ public class MainClient {
 
     public void sendCredentials(){
         if (socket) {
-            connection.sendMessage(new LoginRmiRequest(username, null, clientID));
+            connection.sendMessage(new LoginRequest(username, null, ""));
             //TODO rename the login request
             //connection.sendMessage(new LoginSocketRequest(username, clientID));
 
         }
         else {
-            connection.sendMessage(new LoginRmiRequest(username, clientInterface, clientID));
+            connection.sendMessage(new LoginRequest(username, clientInterface, ""));
         }
 
     }
@@ -98,6 +96,7 @@ public class MainClient {
     public void handleMessage(ServerToClient message){
             switch (message.getContent()){
             case LOGIN_RESPONSE:
+                clientID = ((LoginResponse) message).getClientID();
                 view.logIn(((LoginResponse) message).getStatus());
                 break;
             case BOARD_REQUEST:
@@ -119,9 +118,6 @@ public class MainClient {
     }
     public String getUsername(){
         return username;
-    }
-    public static String getClientID(){
-        return clientID;
     }
     public void setClientInterface(ClientInterface clientInterface){
         this.clientInterface = clientInterface;
