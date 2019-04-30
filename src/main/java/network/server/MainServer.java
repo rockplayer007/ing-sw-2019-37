@@ -3,7 +3,7 @@ package network.server;
 import model.gamehandler.Room;
 import network.messages.clientToServer.BoardResponse;
 import network.messages.clientToServer.ClientToServer;
-import network.messages.clientToServer.LoginRequest;
+import network.messages.clientToServer.LoginRmiRequest;
 import network.messages.serverToClient.LoginResponse;
 import network.server.rmi.ServerRMI;
 import network.server.socket.ServerSOCKET;
@@ -37,8 +37,9 @@ public class MainServer {
     public static void main(String[] args) throws UnknownHostException {
 
         InetAddress inetAddress = InetAddress.getLocalHost();
-        logger.log(Level.INFO, "Connect your client here: {0}", inetAddress.getHostAddress());
-        logger.log(Level.INFO, "Host Name:- {0}", inetAddress.getHostName());
+        logger.log(Level.INFO, "Connect your client here: {0}\n Host Name: {1}",
+                new String[]{inetAddress.getHostAddress(), inetAddress.getHostName()});
+        //logger.log(Level.INFO, "Host Name:- {0}", inetAddress.getHostName());
 
         try {
             MainServer server = new MainServer();
@@ -54,11 +55,11 @@ public class MainServer {
     private void startServer(int rmiPort, int socketPort) throws IOException {
         serverSocket.startServer(socketPort);
         serverSocket.start();
+        logger.log(Level.INFO, "new socket server created");
 
         serverRMI.startServer(rmiPort);
+
         logger.log(Level.INFO, "new rmi server created");
-
-
 
     }
 
@@ -68,7 +69,7 @@ public class MainServer {
 
         switch (message.getContent()){
             case LOGIN_REQUEST:
-                addClient((LoginRequest) message);
+                addClient((LoginRmiRequest) message);
                 break;
             case BOARD_RESPONSE:
                 usernameInRoom.get(message.getSender()).createMap(((BoardResponse) message).getSelectedBoard());
@@ -92,7 +93,7 @@ public class MainServer {
     }
 
 
-    public void addClient(LoginRequest message){
+    public void addClient(LoginRmiRequest message){
         logger.log(Level.INFO, "{0} adding to the server", message.getSender());
         //TODO manage users that were already logged
         //consider a map that tells in which room the user is

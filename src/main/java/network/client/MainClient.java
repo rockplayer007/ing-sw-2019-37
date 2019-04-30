@@ -2,19 +2,18 @@ package network.client;
 
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
-import network.messages.*;
 import network.messages.clientToServer.BoardResponse;
-import network.messages.clientToServer.LoginRequest;
+import network.messages.clientToServer.LoginRmiRequest;
+import network.messages.clientToServer.LoginSocketRequest;
 import network.messages.serverToClient.BoardRequest;
 import network.messages.serverToClient.LoginResponse;
+import network.messages.serverToClient.ServerToClient;
 import network.server.MainServer;
 import view.CLI.CLI;
 import view.ViewInterface;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.UnknownHostException;
 import java.util.Scanner;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -60,7 +59,7 @@ public class MainClient {
 
 
         MainClient mainClient = new MainClient();
-         view = new CLI(mainClient);
+        view = new CLI(mainClient);
         try {
             view.launch();
         }catch (Exception e ){
@@ -72,7 +71,7 @@ public class MainClient {
     public void connect() throws  NotBoundException, IOException {
 
         if(socket){
-            connection = new ConnectionSOCKET(serverIp);
+            connection = new ConnectionSOCKET(this);
         }
         else{
             connection = new ConnectionRMI(this);
@@ -82,11 +81,13 @@ public class MainClient {
 
     public void sendCredentials(){
         if (socket) {
-            //TODO  special message for socket without clientInterface
-            connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
+            connection.sendMessage(new LoginRmiRequest(username, null, clientID));
+            //TODO rename the login request
+            //connection.sendMessage(new LoginSocketRequest(username, clientID));
+
         }
         else {
-            connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
+            connection.sendMessage(new LoginRmiRequest(username, clientInterface, clientID));
         }
 
     }
@@ -94,7 +95,7 @@ public class MainClient {
         connection.sendMessage(new BoardResponse(username, clientID, board));
     }
 
-    public void handleMessage(Message message){
+    public void handleMessage(ServerToClient message){
             switch (message.getContent()){
             case LOGIN_RESPONSE:
                 view.logIn(((LoginResponse) message).getStatus());

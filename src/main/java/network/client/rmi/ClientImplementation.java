@@ -2,7 +2,7 @@ package network.client.rmi;
 
 import network.client.MainClient;
 import network.client.ClientInterface;
-import network.messages.Message;
+import network.messages.serverToClient.ServerToClient;
 
 public class ClientImplementation implements ClientInterface {
     private MainClient mainClient;
@@ -11,7 +11,7 @@ public class ClientImplementation implements ClientInterface {
     }
 
     @Override
-    public void notifyClient(Message message) {
+    public void notifyClient(ServerToClient message) {
         mainClient.handleMessage(message);
 
     }

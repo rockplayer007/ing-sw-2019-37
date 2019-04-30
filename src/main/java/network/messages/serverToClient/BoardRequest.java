@@ -1,15 +1,13 @@
 package network.messages.serverToClient;
 
-import network.messages.Message;
-
 import java.util.Map;
 
-public class BoardRequest extends Message {
+public class BoardRequest extends ServerToClient {
 
     private Map<Integer, String> boards;
 
     public BoardRequest(Map<Integer, String> boards){
-        super("server", Content.BOARD_REQUEST);
+        super(Content.BOARD_REQUEST);
         this.boards = boards;
     }
 

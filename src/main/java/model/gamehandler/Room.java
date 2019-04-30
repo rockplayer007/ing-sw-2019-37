@@ -4,8 +4,10 @@ import model.board.Board;
 import model.board.Square;
 import model.player.Player;
 import model.exceptions.*;
+import network.messages.clientToServer.ClientToServer;
 import network.messages.serverToClient.BoardRequest;
 import network.messages.Message;
+import network.messages.serverToClient.ServerToClient;
 import network.server.ClientOnServer;
 
 import java.rmi.RemoteException;
@@ -75,7 +77,9 @@ public class Room {
     public void startMatch(){
         //TODO add controller
         //
-        Message boardRequest = new BoardRequest(board.getMap().getMaps());
+
+        //ask first player
+        ServerToClient boardRequest = new BoardRequest(board.getMap().getMaps());
         sendMessage(startingPlayer, boardRequest);
     }
 
@@ -87,7 +91,7 @@ public class Room {
     }
 
     //move this somewhere else if needed (better controller probably)
-    public void sendMessage(Player player, Message message){
+    public void sendMessage(Player player, ServerToClient message){
         try{
             connectionToClient.get(player).getClientInterface()
                     .notifyClient(message);

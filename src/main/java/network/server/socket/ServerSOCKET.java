@@ -1,5 +1,6 @@
 package network.server.socket;
 
+import network.messages.clientToServer.ClientToServer;
 import network.server.MainServer;
 
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class ServerSOCKET extends Thread{
             try{
                 Socket clientSocket = connectionSocket.accept();
                 logger.log(Level.INFO, "New connection with client {0}", clientSocket.getRemoteSocketAddress());
-                pool.submit(new ClientHandler(clientSocket, server));
+                pool.submit(new ClientSimulator(clientSocket, this));
             }catch (IOException e){
                 logger.log(Level.WARNING, e.toString(), e);
             }
@@ -45,6 +46,9 @@ public class ServerSOCKET extends Thread{
         }
     }
 
+    public void newMessage(ClientToServer message){
+        server.handleMessage(message);
+    }
 
     public void closeServerSocket() throws IOException {
         connectionSocket.close();
