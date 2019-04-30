@@ -33,11 +33,11 @@ public class WeaponDeck extends Deck{
 
         //basic operations
         basicOperations.add(new VisiblePlayers());
-        basicOperations.add(new SelectTargets());
+       // basicOperations.add(new SelectTargets());
         basicOperations.add(new Damage(2));
         basicOperations.add(new Mark(1));
         //second list of operations for the effect
-        extraOperations.add(new SelectTargets());
+       // extraOperations.add(new SelectTargets());
         extraOperations.add(new Mark(1));
 
         //setup cost and operations in the effect
