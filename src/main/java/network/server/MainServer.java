@@ -56,8 +56,6 @@ public class MainServer {
             logger.log(Level.SEVERE, e.toString(), e);
         }
 
-
-
     }
 
     /**

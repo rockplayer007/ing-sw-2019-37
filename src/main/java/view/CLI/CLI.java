@@ -28,11 +28,31 @@ public class CLI implements ViewInterface {
     @Override
     public void launch() throws NotBoundException, IOException {
 
+        chooseConnection();
         mainClient.connect();
 
         System.out.println("Connection successful!");
         logIn(true);
 
+    }
+
+    private void chooseConnection(){
+        System.out.println("RMI or SOCKET?[R/S]");
+        Scanner reader = new Scanner(System.in);
+        String choice = reader.nextLine().toLowerCase();
+
+        //if true its socket
+        mainClient.setSocket(choice.equals("s"));
+
+        System.out.println("localhost or remote?[L/R]");
+
+        choice = reader.nextLine().toLowerCase();
+        if (choice.equals("r")) {
+            System.out.println("Write IP address of the server:");
+            mainClient.setServerIp(reader.nextLine());
+        } else {
+            mainClient.setServerIp("localhost");
+        }
     }
 
     /**
@@ -50,7 +70,6 @@ public class CLI implements ViewInterface {
         else {
             System.out.println("Welcome "+ mainClient.getUsername());
         }
-
     }
 
     /**
@@ -63,5 +82,4 @@ public class CLI implements ViewInterface {
         Scanner reader = new Scanner(System.in);
         mainClient.sendSelectedBoard(reader.nextInt());
     }
-
 }

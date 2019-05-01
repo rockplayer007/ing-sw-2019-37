@@ -14,13 +14,7 @@ import view.ViewInterface;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
-<<<<<<< HEAD
-import java.rmi.RemoteException;
-import java.rmi.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
-=======
->>>>>>> a3a0e3e51d687ea5c920d0108ee08b5fa6499629
+
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,7 +29,7 @@ public class MainClient {
     private ConnectionInterface connection;
     private String username;
     private String clientID = "";
-    private ClientInterface clientInterface;
+    private ClientInterface clientInterface = null;
 
     private static ViewInterface view;
     private static boolean socket; //true uses socket false uses rmi
@@ -47,15 +41,10 @@ public class MainClient {
         System.out.println("CLI or GUI?[C/G]");
         String choice = reader.nextLine().toLowerCase();
 
-        if (choice.equals("g")) {
-            MainClient mainClient = new MainClient();
-            view = new GUI(mainClient);
+        MainClient mainClient = new MainClient();
 
-            try {
-                view.launch();
-            } catch (Exception e) {
-                logger.log(Level.WARNING, "Unable to connect to server", e);
-            }
+        if (choice.equals("g")) {
+            view = new GUI(mainClient);
             /*
             //usato solo per test
             Map<Integer,String> map = new HashMap<>();
@@ -63,50 +52,17 @@ public class MainClient {
             map.put(  2,"ideale per 3/4 giocatori" );
           map.put(  3,"third" );
             map.put(  0,"quarto" );
-            view.chooseBoard(map);*/
+            view.chooseBoard(map);
+            */
         }
         else {
+            view = new CLI(mainClient);
+        }
 
-
-            System.out.println("RMI or SOCKET?[R/S]");
-            choice = reader.nextLine().toLowerCase();
-
-            if (choice.equals("s")) {
-                socket = true;
-            } else {
-                socket = false;
-            }
-
-
-<<<<<<< HEAD
-            System.out.println("localhost or remote?[L/R]");
-=======
-        MainClient mainClient = new MainClient();
-        view = new CLI(mainClient);
         try {
             view.launch();
-        }catch (Exception e ){
+        } catch (Exception e) {
             logger.log(Level.WARNING, "Unable to connect to server", e);
-        }
->>>>>>> a3a0e3e51d687ea5c920d0108ee08b5fa6499629
-
-            choice = reader.nextLine().toLowerCase();
-            if (choice.equals("r")) {
-                System.out.println("Write IP address of the server:");
-                serverIp = reader.nextLine();
-            } else {
-                serverIp = "localhost";
-            }
-
-
-            MainClient mainClient = new MainClient();
-            view = new CLI(mainClient);
-            try {
-                view.launch();
-            } catch (Exception e) {
-                logger.log(Level.WARNING, "Unable to connect to server", e);
-            }
-
         }
     }
 
@@ -130,15 +86,16 @@ public class MainClient {
      * Sends the user's username and {@link ClientInterface} in case of RMI connection
      */
     public void sendCredentials(){
+        /*
         if (socket) {
             connection.sendMessage(new LoginRequest(username, null, clientID));
-            //TODO rename the login request
-            //connection.sendMessage(new LoginSocketRequest(username, clientID));
-
         }
         else {
             connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
         }
+
+         */
+        connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
 
     }
 
@@ -173,6 +130,9 @@ public class MainClient {
 
     public static String getServerIp() {
         return serverIp;
+    }
+    public void setServerIp(String serverIp){
+        this.serverIp = serverIp;
     }
     public void setUsername(String username){
         this.username = username;
