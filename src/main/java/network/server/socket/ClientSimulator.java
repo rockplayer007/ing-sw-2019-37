@@ -13,6 +13,9 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Virtual view to manage the client from the server
+ */
 public class ClientSimulator implements Runnable, ClientInterface{
 
     private Socket socket;
@@ -23,6 +26,12 @@ public class ClientSimulator implements Runnable, ClientInterface{
 
     private static final Logger logger = Logger.getLogger(ClientSimulator.class.getName());
 
+    /**
+     * Constructor where the input and output stream is initialized
+     * @param socket
+     * @param server
+     * @throws IOException
+     */
     public ClientSimulator(Socket socket, ServerSOCKET server) throws IOException {
         this.socket = socket;
         this.server = server;
@@ -34,6 +43,9 @@ public class ClientSimulator implements Runnable, ClientInterface{
     }
 
 
+    /**
+     * Manages the messages that arrive from the client will be handle here
+     */
     @Override
     public void run(){
         try {
@@ -49,6 +61,10 @@ public class ClientSimulator implements Runnable, ClientInterface{
         }
     }
 
+    /**
+     * Sends messages to the client
+     * @param message
+     */
     @Override
     public void notifyClient(ServerToClient message)  {
         try {

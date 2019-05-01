@@ -16,6 +16,11 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The main server is being created only once and creates a server for RMI connection
+ * and one for socket connections. Then it waits for clients to connect.
+ * The message that arrive are transferred to the {@link Room} where the user is playing.
+ */
 public class MainServer {
 
     //clientID and username
@@ -27,6 +32,9 @@ public class MainServer {
     private Map<String, Room> usernameInRoom = new HashMap<>();
     private static final Logger logger = Logger.getLogger(MainServer.class.getName());
 
+    /**
+     * Constructor that creates RMI and Socket classes
+     */
     private MainServer(){
         super();
         this.serverRMI = new ServerRMI(this);
@@ -52,6 +60,12 @@ public class MainServer {
 
     }
 
+    /**
+     * Starts RMI and Socket servers
+     * @param rmiPort
+     * @param socketPort
+     * @throws IOException
+     */
     private void startServer(int rmiPort, int socketPort) throws IOException {
         serverSocket.startServer(socketPort);
         serverSocket.start();
@@ -63,6 +77,10 @@ public class MainServer {
 
     }
 
+    /**
+     * All messages that arrive from the client are managed here and sent where they need to go
+     * @param message
+     */
     public void handleMessage(ClientToServer message){
         //verify that the user corresponds with clientID
 
@@ -91,7 +109,10 @@ public class MainServer {
         return message.getSender().equals(oldClients.get(message.getClientID()));
     }
 
-
+    /**
+     * Adds clients to a waiting queue if they never logged in, otherwise reconnects the disconnected clients
+     * @param message
+     */
     public void addClient(LoginRequest message){
         logger.log(Level.INFO, "{0} adding to the server", message.getSender());
         //TODO manage users that were already logged
@@ -133,6 +154,11 @@ public class MainServer {
         }
     }
 
+    /**
+     * Defines which user is in which room
+     * @param usernames
+     * @param playingRoom
+     */
     public void setUsernameInRoom(List<String> usernames, Room playingRoom){
         usernames.forEach(name -> usernameInRoom.put(name, playingRoom));
     }

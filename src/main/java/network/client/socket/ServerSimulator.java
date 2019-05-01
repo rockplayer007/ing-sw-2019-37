@@ -3,7 +3,7 @@ package network.client.socket;
 import network.client.ClientInterface;
 import network.messages.clientToServer.ClientToServer;
 import network.messages.serverToClient.ServerToClient;
-import network.server.socket.ServerInterface;
+import network.server.ServerInterface;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,6 +12,9 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Simulates a server on the client's side
+ */
 public class ServerSimulator implements ServerInterface {
 
     private ClientInterface client;
@@ -23,6 +26,13 @@ public class ServerSimulator implements ServerInterface {
 
     private static final Logger logger = Logger.getLogger(ServerSimulator.class.getName());
 
+    /**
+     * Constructor where the input and output stream is initialized
+     * @param client
+     * @param serverIp
+     * @param port
+     * @throws IOException
+     */
     public ServerSimulator(ClientInterface client, String serverIp, int port) throws IOException{
         this.client = client;
         connection = new Socket(serverIp, port);
@@ -34,6 +44,9 @@ public class ServerSimulator implements ServerInterface {
         receiveMessages();
     }
 
+    /**
+     * Creates a thread to receive messages
+     */
     public void receiveMessages(){
         receiver = new Thread(
                 () -> {
@@ -56,6 +69,12 @@ public class ServerSimulator implements ServerInterface {
         receiver.start();
     }
 
+    /**
+     * Sends a message to the {@link network.server.MainServer}
+     * through the output stream
+     * @param message message that arrives from the {@link network.client.MainClient}
+     *                and is sent to the {@link MainServer}
+     */
     @Override
     public synchronized void notifyServer(ClientToServer message) {
 

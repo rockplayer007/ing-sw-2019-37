@@ -9,6 +9,10 @@ import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.Scanner;
 
+
+/**
+ * Command Line Interface for the user
+ */
 public class CLI implements ViewInterface {
 
     private MainClient mainClient;
@@ -16,6 +20,11 @@ public class CLI implements ViewInterface {
         this.mainClient = mainClient;
     }
 
+    /**
+     * Connects the chosen network and then allows him to log in
+     * @throws NotBoundException
+     * @throws IOException
+     */
     @Override
     public void launch() throws NotBoundException, IOException {
 
@@ -26,7 +35,10 @@ public class CLI implements ViewInterface {
 
     }
 
-    //if ask is true then ask the username
+    /**
+     * Allows the user to set a username
+     * @param ask if true asks for the username, if false welcomes the user
+     */
     public void logIn(boolean ask){
         if (ask){
             System.out.println("Write a username to login:");
@@ -41,6 +53,10 @@ public class CLI implements ViewInterface {
 
     }
 
+    /**
+     * Allows the user to choose a board
+     * @param maps possible boards to choose from
+     */
     public void chooseBoard(Map<Integer, String> maps){
         maps.forEach((k,v)-> System.out.println("Map number  " + k + " " + v));
         System.out.println("Select map: ");

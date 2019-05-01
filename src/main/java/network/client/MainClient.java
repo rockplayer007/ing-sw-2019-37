@@ -17,12 +17,16 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Allows to create a new Client who can choose GUI or CLI as interface
+ * and handles connection and messages
+ */
 public class MainClient {
 
     private static String serverIp;
     private ConnectionInterface connection;
     private String username;
-    private String clientID;
+    private String clientID = "";
     private ClientInterface clientInterface;
 
     private static ViewInterface view;
@@ -66,6 +70,11 @@ public class MainClient {
 
     }
 
+    /**
+     * Connects the client to the server depending on which connection the Client chose
+     * @throws NotBoundException
+     * @throws IOException
+     */
     public void connect() throws  NotBoundException, IOException {
 
         if(socket){
@@ -77,22 +86,34 @@ public class MainClient {
 
     }
 
+    /**
+     * Sends the user's username and {@link ClientInterface} in case of RMI connection
+     */
     public void sendCredentials(){
         if (socket) {
-            connection.sendMessage(new LoginRequest(username, null, ""));
+            connection.sendMessage(new LoginRequest(username, null, clientID));
             //TODO rename the login request
             //connection.sendMessage(new LoginSocketRequest(username, clientID));
 
         }
         else {
-            connection.sendMessage(new LoginRequest(username, clientInterface, ""));
+            connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
         }
 
     }
+
+    /**
+     * Sends a message with the selected board to the server
+     * @param board
+     */
     public void sendSelectedBoard(int board){
         connection.sendMessage(new BoardResponse(username, clientID, board));
     }
 
+    /**
+     * New messages that arrive from the server are managed here
+     * @param message
+     */
     public void handleMessage(ServerToClient message){
             switch (message.getContent()){
             case LOGIN_RESPONSE:

@@ -11,7 +11,9 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+/**
+ * Allows to create a thread that manages new connections with the clients
+ */
 public class ServerSOCKET extends Thread{
 
     private MainServer server;
@@ -27,11 +29,20 @@ public class ServerSOCKET extends Thread{
         pool = Executors.newCachedThreadPool();
     }
 
+    /**
+     * Creates a new socket on a specified port
+     * @param port
+     * @throws IOException
+     */
     public void startServer(int port) throws IOException {
         connectionSocket = new ServerSocket(port);
         logger.log(Level.INFO, "Listening on port {0}", port);
     }
 
+    /**
+     * Every time a new connection with a new Client is established a new
+     * thread is created to manage it
+     */
     @Override
     public void run(){
         while (keepWakeup) {
@@ -46,10 +57,18 @@ public class ServerSOCKET extends Thread{
         }
     }
 
+    /**
+     * Sends a new arrived message to the {@link MainServer}
+     * @param message
+     */
     public void newMessage(ClientToServer message){
         server.handleMessage(message);
     }
 
+    /**
+     * Closes all the connections and interrupts all the working threads
+     * @throws IOException
+     */
     public void closeServerSocket() throws IOException {
         connectionSocket.close();
         pool.shutdown();
