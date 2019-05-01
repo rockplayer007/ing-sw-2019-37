@@ -2,11 +2,11 @@ package network.client;
 
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
-import network.messages.*;
 import network.messages.clientToServer.BoardResponse;
 import network.messages.clientToServer.LoginRequest;
 import network.messages.serverToClient.BoardRequest;
 import network.messages.serverToClient.LoginResponse;
+import network.messages.serverToClient.ServerToClient;
 import network.server.MainServer;
 import view.CLI.CLI;
 import view.GUI.GUI;
@@ -14,12 +14,14 @@ import view.ViewInterface;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
+<<<<<<< HEAD
 import java.rmi.RemoteException;
 import java.rmi.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+=======
+>>>>>>> a3a0e3e51d687ea5c920d0108ee08b5fa6499629
 import java.util.Scanner;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +30,7 @@ public class MainClient {
     private static String serverIp;
     private ConnectionInterface connection;
     private String username;
-    private static final String clientID =  UUID.randomUUID().toString();
+    private String clientID;
     private ClientInterface clientInterface;
 
     private static ViewInterface view;
@@ -72,7 +74,17 @@ public class MainClient {
             }
 
 
+<<<<<<< HEAD
             System.out.println("localhost or remote?[L/R]");
+=======
+        MainClient mainClient = new MainClient();
+        view = new CLI(mainClient);
+        try {
+            view.launch();
+        }catch (Exception e ){
+            logger.log(Level.WARNING, "Unable to connect to server", e);
+        }
+>>>>>>> a3a0e3e51d687ea5c920d0108ee08b5fa6499629
 
             choice = reader.nextLine().toLowerCase();
             if (choice.equals("r")) {
@@ -97,7 +109,7 @@ public class MainClient {
     public void connect() throws  NotBoundException, IOException {
 
         if(socket){
-            connection = new ConnectionSOCKET(serverIp);
+            connection = new ConnectionSOCKET(this);
         }
         else{
             connection = new ConnectionRMI(this);
@@ -107,11 +119,13 @@ public class MainClient {
 
     public void sendCredentials(){
         if (socket) {
-            //TODO  special message for socket without clientInterface
-            connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
+            connection.sendMessage(new LoginRequest(username, null, ""));
+            //TODO rename the login request
+            //connection.sendMessage(new LoginSocketRequest(username, clientID));
+
         }
         else {
-            connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
+            connection.sendMessage(new LoginRequest(username, clientInterface, ""));
         }
 
     }
@@ -119,9 +133,10 @@ public class MainClient {
         connection.sendMessage(new BoardResponse(username, clientID, board));
     }
 
-    public void handleMessage(Message message){
+    public void handleMessage(ServerToClient message){
             switch (message.getContent()){
             case LOGIN_RESPONSE:
+                clientID = ((LoginResponse) message).getClientID();
                 view.logIn(((LoginResponse) message).getStatus());
                 break;
             case BOARD_REQUEST:
@@ -143,9 +158,6 @@ public class MainClient {
     }
     public String getUsername(){
         return username;
-    }
-    public static String getClientID(){
-        return clientID;
     }
     public void setClientInterface(ClientInterface clientInterface){
         this.clientInterface = clientInterface;

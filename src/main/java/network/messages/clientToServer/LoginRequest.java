@@ -1,7 +1,6 @@
 package network.messages.clientToServer;
 
 import network.client.ClientInterface;
-import network.messages.Message;
 
 public class LoginRequest extends ClientToServer {
 
@@ -17,6 +16,9 @@ public class LoginRequest extends ClientToServer {
 
     public ClientInterface getClientInterface() {
         return clientInterface;
+    }
+    public void setClientInterface(ClientInterface client){
+        clientInterface = client;
     }
 
     public String getClientID() {

@@ -1,17 +1,18 @@
 package network.messages.serverToClient;
 
-import network.messages.Message;
 
-public class LoginResponse extends Message {
+public class LoginResponse extends ServerToClient {
 
     private boolean status;
+    private String clientID;
 
-    public LoginResponse(boolean askAgain){
-        super("server", Content.LOGIN_RESPONSE);
+    public LoginResponse(boolean askAgain, String clientID){
+        super(Content.LOGIN_RESPONSE);
 
         //askAgain false the login was successful
         //askAgain true username already exists
         this.status = askAgain;
+        this.clientID = clientID;
 
     }
 
@@ -20,5 +21,7 @@ public class LoginResponse extends Message {
         return status;
     }
 
-
+    public String getClientID() {
+        return clientID;
+    }
 }

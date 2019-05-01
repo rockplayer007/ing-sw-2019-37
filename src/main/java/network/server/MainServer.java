@@ -37,8 +37,9 @@ public class MainServer {
     public static void main(String[] args) throws UnknownHostException {
 
         InetAddress inetAddress = InetAddress.getLocalHost();
-        logger.log(Level.INFO, "Connect your client here: {0}", inetAddress.getHostAddress());
-        logger.log(Level.INFO, "Host Name:- {0}", inetAddress.getHostName());
+        logger.log(Level.INFO, "Connect your client here: {0}\n Host Name: {1}",
+                new String[]{inetAddress.getHostAddress(), inetAddress.getHostName()});
+        //logger.log(Level.INFO, "Host Name:- {0}", inetAddress.getHostName());
 
         try {
             MainServer server = new MainServer();
@@ -54,11 +55,11 @@ public class MainServer {
     private void startServer(int rmiPort, int socketPort) throws IOException {
         serverSocket.startServer(socketPort);
         serverSocket.start();
+        logger.log(Level.INFO, "new socket server created");
 
         serverRMI.startServer(rmiPort);
+
         logger.log(Level.INFO, "new rmi server created");
-
-
 
     }
 
@@ -81,13 +82,12 @@ public class MainServer {
         }
 
 
-
-
     }
 
     //TODO
     private boolean checkUser(ClientToServer message){
         //not working when oldClients.get is null
+
         return message.getSender().equals(oldClients.get(message.getClientID()));
     }
 
@@ -95,6 +95,7 @@ public class MainServer {
     public void addClient(LoginRequest message){
         logger.log(Level.INFO, "{0} adding to the server", message.getSender());
         //TODO manage users that were already logged
+        //
         //consider a map that tells in which room the user is
         if(oldClients.containsValue(message.getSender())){
             //contains username
@@ -106,7 +107,7 @@ public class MainServer {
 
                 //username already exists
                 try {
-                    message.getClientInterface().notifyClient(new LoginResponse(true));
+                    message.getClientInterface().notifyClient(new LoginResponse(true, ""));
                 }catch (RemoteException e){
                     logger.log(Level.WARNING, "Connection error", e);
                 }
@@ -117,13 +118,15 @@ public class MainServer {
         else{
             //username doesnt exist
             //add client to the waiting room
-            ClientOnServer newClient = new ClientOnServer(message.getSender(), message.getClientInterface(),
-                    message.getClientID());
-            oldClients.put(message.getClientID(), message.getSender() );
+            //gives an UUID to each new client
+            String clientID = UUID.randomUUID().toString();
+            ClientOnServer newClient = new ClientOnServer(message.getSender(),
+                    message.getClientInterface(), clientID);
+            oldClients.put(clientID, message.getSender());
             waitingRoom.addClient(newClient);
 
             try {
-                message.getClientInterface().notifyClient(new LoginResponse(false));
+                message.getClientInterface().notifyClient(new LoginResponse(false, clientID));
             }catch (RemoteException e){
                 logger.log(Level.WARNING, "Connection error", e);
             }

@@ -20,6 +20,7 @@ public class CLI implements ViewInterface {
     public void launch() throws NotBoundException, IOException {
 
         mainClient.connect();
+
         System.out.println("Connection successful!");
         logIn(true);
 
@@ -41,7 +42,7 @@ public class CLI implements ViewInterface {
     }
 
     public void chooseBoard(Map<Integer, String> maps){
-        maps.forEach((k,v)-> System.out.println("Map number " + k + " " + v));
+        maps.forEach((k,v)-> System.out.println("Map number  " + k + " " + v));
         System.out.println("Select map: ");
         Scanner reader = new Scanner(System.in);
         mainClient.sendSelectedBoard(reader.nextInt());

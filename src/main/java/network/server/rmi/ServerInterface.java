@@ -1,6 +1,5 @@
 package network.server.rmi;
 
-import network.messages.Message;
 import network.messages.clientToServer.ClientToServer;
 
 import java.rmi.Remote;

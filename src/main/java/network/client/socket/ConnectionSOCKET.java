@@ -1,40 +1,32 @@
 package network.client.socket;
 
+import network.client.ClientInterface;
 import network.client.ConnectionInterface;
 import network.client.MainClient;
 import network.messages.clientToServer.ClientToServer;
+import network.messages.serverToClient.ServerToClient;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class ConnectionSOCKET implements ConnectionInterface {
+public class ConnectionSOCKET implements ConnectionInterface, ClientInterface {
 
-    private Socket connection;
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
+    private MainClient client;
+    private ServerSimulator serverSimulator;
 
-    private static final Logger logger = Logger.getLogger(ConnectionSOCKET.class.getName());
-
-    public ConnectionSOCKET(String ip) throws IOException {
-        this.connection = new Socket(ip, 8000);
-        this.out = new ObjectOutputStream(connection.getOutputStream());
-        this.in = new ObjectInputStream(connection.getInputStream());
-        System.out.println("connected");
-    }
-
-    public void sendMessage(ClientToServer message) {
-
-        try {
-            out.writeObject(message);
-        } catch (IOException e) {
-            logger.log(Level.WARNING, "Exception on network", e);
-        }
-
+    public ConnectionSOCKET(MainClient client) throws IOException {
+        this.client = client;
+        serverSimulator = new ServerSimulator(this, client.getServerIp(), 8000);
 
     }
+
+    @Override
+    public void notifyClient(ServerToClient message){
+        client.handleMessage(message);
+    }
+
+    @Override
+    public void sendMessage(ClientToServer message){
+        serverSimulator.notifyServer(message);
+    }
+
 }
