@@ -98,7 +98,9 @@ public class Board {
          */
         private NodeList openMapFile ()throws ParserConfigurationException, SAXException, IOException {
 
-            File inputFile = new File("./src/main/resources/map.xml");
+            String path = "."+ File.separatorChar + "src" + File.separatorChar+
+            "main" + File.separatorChar + "resources" + File.separatorChar +"map.xml";
+            File inputFile = new File(path);
 
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -238,8 +240,12 @@ public class Board {
         }
 
         public Square getSquare(int x,int y){
-//      TODO
-            return null;
+
+        Optional<Map.Entry<Integer, Square>>  temp =  allSquares.entrySet().stream().filter(a -> x == (a.getValue().getX())
+            && y == (a.getValue().getY())).findAny();
+
+        //no idea how to fix sonarlint warning
+        return temp.isPresent() ? temp.get().getValue() : null;
         }
 
     }

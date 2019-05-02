@@ -1,11 +1,10 @@
 package boardTest;
 
 import model.board.Board;
-import model.board.Color;
 import model.board.Square;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -14,12 +13,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SquareTest {
 
-    private Board board;
+    //private Board board;
     private Board.BoardMap map;
 
     @BeforeEach
     public void createBoard(){
-        board = new Board();
+        Board board = new Board();
         board.getMap().createMap(0);
         map = board.getMap();
     }
@@ -76,6 +75,20 @@ public class SquareTest {
             assertTrue(testVisibleSquare.contains(x));
         }
 
+    }
+
+    @Test
+    public void getSquareTest(){
+
+        assertEquals(map.getSquare(0,0), map.getSquare(0));
+        assertEquals(map.getSquare(1,0), map.getSquare(1));
+        assertEquals(map.getSquare(0,1), map.getSquare(3));
+
+        //last square
+        assertEquals(map.getSquare(3,2), map.getSquare(9));
+
+        //not existing square
+        assertNull(map.getSquare(0,2));
     }
 
 }

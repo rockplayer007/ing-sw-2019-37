@@ -5,7 +5,6 @@ import view.ViewInterface;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -69,6 +68,7 @@ public class CLI implements ViewInterface {
         }
         else {
             System.out.println("Welcome "+ mainClient.getUsername());
+
         }
     }
 
