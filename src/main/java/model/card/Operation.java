@@ -30,11 +30,11 @@ class VisiblePlayers implements Operation{
 }
 
 class SelectTargets implements Operation{
-    private int numberTragets;
+    private int numberTargets;
     Boolean distinctSquare;
 
     public SelectTargets(int number,Boolean distinctSquare){
-        numberTragets=number;
+        numberTargets =number;
         this.distinctSquare=distinctSquare;
     }
 
@@ -360,9 +360,9 @@ class NextSquareInDirection implements Operation{
         int diffy=currentPlayerPosiction.getY()-targetPosition.getY();
         Square nextSquare=null;
         if (diffx==0){
-            nextSquare=targetPosition.getOneofNeighbour(targetPosition.getX(),targetPosition.getY()-diffy);
+            nextSquare=targetPosition.getOneOfNeighbour(targetPosition.getX(),targetPosition.getY()-diffy);
         }else if (diffy==0){
-            nextSquare=targetPosition.getOneofNeighbour(targetPosition.getX()-diffx,targetPosition.getY());
+            nextSquare=targetPosition.getOneOfNeighbour(targetPosition.getX()-diffx,targetPosition.getY());
         }
         if (nextSquare!=null)
             currentPlayer.setEffectSquare(nextSquare);
