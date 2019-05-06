@@ -3,6 +3,8 @@ package view.GUI;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.logging.Level;
+import javax.swing.JComboBox;
 
 public class MapPanel extends JPanel{
     private JButton x0y0;
@@ -149,16 +151,18 @@ public class MapPanel extends JPanel{
 
     }
 
-    private void loadImage(Image img) {
+    private void loadImages(Image imga) {
         try {
             MediaTracker track = new MediaTracker(this);
-            track.addImage(img, 0);
-            track.waitForID(0);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            track.addImage(imga, 1);
+            track.waitForID(1);
+        } catch (InterruptedException err) {
+            err.printStackTrace();
+            //logger.log(Level.WARNING, "Unable to connect to server", e);
         }
     }
 
+    @Override
     protected void paintComponent(Graphics g) {
         setOpaque(false);
         g.drawImage(image, 0, 0, null);
@@ -167,7 +171,7 @@ public class MapPanel extends JPanel{
     public MapPanel()  {
         this.build();
         image = Toolkit.getDefaultToolkit().createImage("./src/main/resources/map1example.png");
-        loadImage(image);
+        loadImages(image);
     }
 
 
