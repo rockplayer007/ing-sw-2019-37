@@ -14,7 +14,7 @@ public class PlayerBoard {
     private List<Player> marks;
 
     public PlayerBoard() {
-        this.hp=new ArrayList<>();
+        this.hp=new ArrayList<>(12);
         this.points=0;
         this.deathTimes=0;
         pointArray = new int[]{8, 6, 4, 2, 1, 1};

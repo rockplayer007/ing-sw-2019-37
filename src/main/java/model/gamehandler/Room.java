@@ -3,7 +3,6 @@ package model.gamehandler;
 import model.board.Board;
 import model.player.Player;
 import model.exceptions.*;
-import network.messages.clientToServer.ClientToServer;
 import network.messages.serverToClient.BoardRequest;
 import network.messages.Message;
 import network.messages.serverToClient.ServerToClient;
@@ -28,7 +27,7 @@ public class Room {
     public Room(Board board) {
         super();
         this.board = board;
-        this.players = new ArrayList<>();
+        this.players = new ArrayList<>(5);
     }
 
 

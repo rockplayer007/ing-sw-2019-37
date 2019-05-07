@@ -31,9 +31,9 @@ class VisiblePlayers implements Operation{
 
 class SelectTargets implements Operation{
     private int numberTragets;
-    Boolean distinctSquare;
+    private Boolean distinctSquare;
 
-    public SelectTargets(int number,Boolean distinctSquare){
+    SelectTargets(int number,Boolean distinctSquare){
         numberTragets=number;
         this.distinctSquare=distinctSquare;
     }
@@ -41,22 +41,42 @@ class SelectTargets implements Operation{
     @Override
     public void execute(Room room){
         Player currentPlayer = room.getCurrentPlayer();
-        if (!distinctSquare) {
+        List<Player> possibleTargets =currentPlayer.getPossibleTargets();
+        List<Player> targets=new ArrayList<>();
+        if (distinctSquare) {
             //TODO ask player what target he wants
-            //available players in currentPlayer.getPossibleTargets
-            //to set the currentPlayer.setSelectedTargets AND REMOVE FROM VISIBLE PLAYERS
+
         }else {
 //            TODO the targets choice need be different square
         }
+        possibleTargets.removeAll(targets);
+        currentPlayer.setTargetsToShot(targets);
     }
 
+}
+
+class SelectFromSelectedTargets implements Operation{
+    private int numberTragets;
+    SelectFromSelectedTargets(int number) {
+        numberTragets = number;
+    }
+
+    @Override
+    public void execute(Room room) {
+        Player currentPlayer = room.getCurrentPlayer();
+        List<Player> selectedTargets =currentPlayer.getSelectedTargets();
+        List<Player> targets=new ArrayList<>();
+        //TODO
+        currentPlayer.setTargetsToShot(targets);
+
+    }
 }
 
 class Damage implements Operation{
 
     private int points;
 
-    public Damage(int points){
+    Damage(int points){
         this.points = points;
     }
 
@@ -74,18 +94,35 @@ class Mark implements Operation{
 
     private int points;
 
-    public Mark(int points){
+    Mark(int points){
         this.points = points;
     }
 
     @Override
     public void execute(Room room){
         Player currentPlayer = room.getCurrentPlayer();
-        List<Player> selectedPlayers = currentPlayer.getSelectedTargets();
+        List<Player> targets = currentPlayer.getTargetsToShot();
         for(int i = 0; i < points; i++){
-            selectedPlayers.forEach(x->x.getPlayerBoard().addMark(currentPlayer));
+            targets.forEach(x->x.getPlayerBoard().addMark(currentPlayer));
         }
 
+    }
+}
+
+
+class SetTargetToSelected implements Operation{
+    @Override
+    public void execute(Room room) {
+        Player currentPlayer = room.getCurrentPlayer();
+        List<Player> targets =new ArrayList<>(currentPlayer.getTargetsToShot());
+        List<Player> selectedTargets = currentPlayer.getSelectedTargets();
+
+        for (Player p:targets) {
+            if (selectedTargets.contains(p))
+                selectedTargets.remove(p);
+            else
+                selectedTargets.add(p);
+        }
     }
 }
 
@@ -112,7 +149,7 @@ class MinOrMaxDistance implements Operation{
     private int distance;
     private Boolean isMaxDistance;
 
-    public MinOrMaxDistance(int distance,Boolean isMaxDistance){
+    MinOrMaxDistance(int distance,Boolean isMaxDistance){
         this.distance=distance;
         this.isMaxDistance = isMaxDistance;
     }
@@ -145,11 +182,11 @@ class SameSquare implements Operation{
 /**
  * if yourSquare is false need launch first "VisiblePlayers"
  */
-class AddPossibleTargetBeforeMove implements Operation{
+class  AddPossibleTargetBeforeMove implements Operation{
     private int distance;
     private Boolean yourSquare;
 
-    public AddPossibleTargetBeforeMove (int distance,Boolean yourSquare){
+    AddPossibleTargetBeforeMove (int distance,Boolean yourSquare){
         this.distance=distance;
         this.yourSquare=yourSquare;
     }
@@ -179,7 +216,7 @@ class AddPossibleTargetBeforeMove implements Operation{
 class  MoveTargetToVisible implements Operation{
     private int distance;
 
-    public MoveTargetToVisible(int distance){
+    MoveTargetToVisible(int distance){
         this.distance = distance;
     }
 
@@ -194,14 +231,29 @@ class  MoveTargetToVisible implements Operation{
     }
 }
 
-class Vortex implements Operation{
+
+class SetPlayerPositionAsEffectSquare implements Operation{
+    @Override
+    public void execute(Room room) {
+        Player currentPlayer = room.getCurrentPlayer();
+        currentPlayer.setEffectSquare(currentPlayer.getPosition());
+    }
+}
+
+
+class SelectEffectSquare implements Operation{
+    private int zone; // if zone=1 "vortex", if zone=0 "select effect square"
+
+    SelectEffectSquare(int zone){
+        this.zone=zone;
+    }
     @Override
     public void execute(Room room) {
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> possibleTargets = new ArrayList<>();
         Set<Square> visibleSquare=currentPlayer.getPosition().visibleSquare(room.getBoard().getMap())
                 .stream()
-                .filter(x->x.getValidPosition(1).stream().anyMatch(p->p.getPlayersOnSquare().size()>0))
+                .filter(x->x.getValidPosition(zone).stream().anyMatch(p->!p.getPlayersOnSquare().isEmpty()))
                 .collect(Collectors.toSet());
         Square vortex=ActionHandler.chooseSquare(currentPlayer,visibleSquare);//TODO DA controllare.
         vortex.getValidPosition(1).forEach(x-> possibleTargets.addAll(x.getPlayersOnSquare()));
@@ -221,7 +273,7 @@ class MoveTargetToEffevtSquare implements Operation{
 class Furance implements Operation{
     Boolean selectSquare;
 
-    public Furance(Boolean selectSquare){
+    Furance(Boolean selectSquare){
         this.selectSquare=selectSquare;
     }
     @Override
@@ -256,22 +308,32 @@ class Heatseekker implements Operation{
     }
 }
 
-class Flamethorwer implements Operation{
+/**
+ *
+ */
+class DirectionTargets implements Operation{
     private int distance;
+    Boolean penetrate;
 
-    public Flamethorwer(int distance){
+    DirectionTargets(int distance, Boolean penetrate){
         this.distance=distance;
+        this.penetrate=penetrate;
     }
     @Override
     public void execute(Room room) {
         Player currentPlayer = room.getCurrentPlayer();
-        Map<String,Set<Square>> map= currentPlayer.getPosition().directions(distance);
+        Map<String,Set<Square>> map;
+        if (!penetrate)
+            map = currentPlayer.getPosition().directions(distance);
+        else
+            map= currentPlayer.getPosition().directionAbsolute(room.getBoard().getMap());
         Set<String> direction=map.keySet();
         //Todo da vedere con messagio per fare la scelta;
         String choise="";
 
         Set<Square> squares=map.get(choise);
-        squares.remove(currentPlayer.getPosition());
+//        if (!penetrate) // solo per weapon FLAMETHROWER
+//            squares.remove(currentPlayer.getPosition());
         List<Player> possibleTargets=new ArrayList<>();
         squares.forEach(x->possibleTargets.addAll(x.getPlayersOnSquare()));
         currentPlayer.setPossibleTargets(possibleTargets);
@@ -279,11 +341,13 @@ class Flamethorwer implements Operation{
 }
 
 
+
+
 class SelectAllTarget implements Operation{
     @Override
     public void execute(Room room) {
         Player currentPlayer = room.getCurrentPlayer();
-        currentPlayer.setTargetsToShot(currentPlayer.getPossibleTargets());
+        currentPlayer.setTargetsToShot(new ArrayList<>(currentPlayer.getPossibleTargets()));
         currentPlayer.setPossibleTargets(new ArrayList<>());
     }
 }
@@ -320,7 +384,7 @@ class SetTargetPositionAsEffectSquare implements Operation{
     }
 }
 
-class TargetonEffectSquare implements Operation{
+class TargetOnEffectSquare implements Operation{
     @Override
     public void execute(Room room) {
         Player currentPlayer = room.getCurrentPlayer();
@@ -331,9 +395,10 @@ class TargetonEffectSquare implements Operation{
     }
 }
 
-class RaingunTrgets implements Operation{
-    int index;
-    public RaingunTrgets(int index){
+
+class ThorTargets implements Operation{
+    private int index;
+    ThorTargets(int index){
         this.index=index;
     }
     @Override
@@ -372,8 +437,6 @@ class NextSquareInDirection implements Operation{
     }
 }
 
-
-//边走边打，。
 
 
 
