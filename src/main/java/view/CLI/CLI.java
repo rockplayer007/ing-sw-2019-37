@@ -1,10 +1,14 @@
 package view.CLI;
 
 import network.client.MainClient;
+import network.messages.clientToServer.ClientToServer;
+import network.messages.serverToClient.AnswerRequest;
 import view.ViewInterface;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -15,8 +19,10 @@ import java.util.Scanner;
 public class CLI implements ViewInterface {
 
     private MainClient mainClient;
+    private QueryClient printer;
     public CLI(MainClient mainClient){
         this.mainClient = mainClient;
+        printer = new QueryClient();
     }
 
     /**
@@ -36,21 +42,21 @@ public class CLI implements ViewInterface {
     }
 
     private void chooseConnection(){
-        System.out.println("RMI or SOCKET?[R/S]");
+        System.out.println("RMI or SOCKET?[R/S] (default RMI)");
         Scanner reader = new Scanner(System.in);
         String choice = reader.nextLine().toLowerCase();
 
         //if true its socket
-        mainClient.setSocket(choice.equals("s"));
+        MainClient.setSocket(choice.equals("s"));
 
-        System.out.println("localhost or remote?[L/R]");
+        System.out.println("localhost or remote?[L/R] (default localhost)");
 
         choice = reader.nextLine().toLowerCase();
         if (choice.equals("r")) {
             System.out.println("Write IP address of the server:");
-            mainClient.setServerIp(reader.nextLine());
+            MainClient.setServerIp(reader.nextLine());
         } else {
-            mainClient.setServerIp("localhost");
+            MainClient.setServerIp("localhost");
         }
     }
 
@@ -77,9 +83,9 @@ public class CLI implements ViewInterface {
      * @param maps possible boards to choose from
      */
     public void chooseBoard(Map<Integer, String> maps){
-        maps.forEach((k,v)-> System.out.println("Map number  " + k + " " + v));
-        System.out.println("Select map: ");
-        Scanner reader = new Scanner(System.in);
-        mainClient.sendSelectedBoard(reader.nextInt());
+
+        printer.displayRequest(new ArrayList<>(maps.values()), board -> mainClient.sendSelectedBoard(board));
+
     }
+
 }

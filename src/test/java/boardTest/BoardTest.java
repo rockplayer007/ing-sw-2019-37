@@ -1,6 +1,7 @@
 package boardTest;
 
 import model.board.Board;
+import model.board.BoardMap;
 import model.board.Color;
 import org.junit.jupiter.api.Test;
 
@@ -13,9 +14,10 @@ public class BoardTest {
     public void boardCreationTest(){
 
         Board board = new Board();
+        BoardMap boardMap = new BoardMap(board);
 
-        board.getMap().createMap(0);
-        System.out.println("color is: " + board.getMap().getGenerationPoint(Color.BLUE).getX());
+        boardMap.createMap(0);
+        System.out.println("color is: " + boardMap.getGenerationPoint(Color.BLUE).getX());
 
 
     }

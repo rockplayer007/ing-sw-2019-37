@@ -52,7 +52,7 @@ public class GUI implements ViewInterface {
             submitButton.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
                     mainClient.setUsername(loginPanel.getInsNickname());
-                    mainClient.setSocket(loginPanel.getConnection());
+                    MainClient.setSocket(loginPanel.getConnection());
                     mainClient.sendCredentials();
                     login.setVisible(false);
                 }});

@@ -9,6 +9,7 @@ import network.messages.serverToClient.LoginResponse;
 import network.messages.serverToClient.ServerToClient;
 import network.server.MainServer;
 import view.CLI.CLI;
+import view.CLI.QueryClient;
 import view.GUI.GUI;
 import view.ViewInterface;
 
@@ -112,16 +113,18 @@ public class MainClient {
      * @param message
      */
     public void handleMessage(ServerToClient message){
-            switch (message.getContent()){
-            case LOGIN_RESPONSE:
-                clientID = ((LoginResponse) message).getClientID();
-                view.logIn(((LoginResponse) message).getStatus());
-                break;
-            case BOARD_REQUEST:
-                view.chooseBoard(((BoardRequest) message).getBoards());
-                break;
-            default:
-                logger.log(Level.WARNING, "Unregistered message");
+
+
+        switch (message.getContent()){
+        case LOGIN_RESPONSE:
+            clientID = ((LoginResponse) message).getClientID();
+            view.logIn(((LoginResponse) message).getStatus());
+            break;
+        case BOARD_REQUEST:
+            view.chooseBoard(((BoardRequest) message).getBoards());
+            break;
+        default:
+            logger.log(Level.WARNING, "Unregistered message");
 
         }
     }
@@ -131,8 +134,8 @@ public class MainClient {
     public static String getServerIp() {
         return serverIp;
     }
-    public void setServerIp(String serverIp){
-        this.serverIp = serverIp;
+    public static void setServerIp(String serverIp){
+        MainClient.serverIp = serverIp;
     }
     public void setUsername(String username){
         this.username = username;
@@ -143,7 +146,7 @@ public class MainClient {
     public void setClientInterface(ClientInterface clientInterface){
         this.clientInterface = clientInterface;
     }
-    public void setSocket(Boolean connection){
-        this.socket=connection;
+    public static void setSocket(Boolean connection){
+        socket = connection;
     }
 }

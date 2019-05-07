@@ -2,8 +2,6 @@ package model.card;
 
 import java.util.ArrayList;
 import java.util.List;
-import model.player.*;
-import model.gamehandler.Room;
 
 
 /*

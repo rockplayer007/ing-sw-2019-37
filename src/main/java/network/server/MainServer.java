@@ -1,7 +1,7 @@
 package network.server;
 
 import model.gamehandler.Room;
-import network.messages.clientToServer.BoardResponse;
+import network.messages.Message;
 import network.messages.clientToServer.ClientToServer;
 import network.messages.clientToServer.LoginRequest;
 import network.messages.serverToClient.LoginResponse;
@@ -82,21 +82,16 @@ public class MainServer {
     public void handleMessage(ClientToServer message){
         //verify that the user corresponds with clientID
 
+        //TODO send the message to the right roomController
+        //TODO move this to the roomController
 
-        switch (message.getContent()){
-            case LOGIN_REQUEST:
-                addClient((LoginRequest) message);
-                break;
-            case BOARD_RESPONSE:
-                usernameInRoom.get(message.getSender()).createMap(((BoardResponse) message).getSelectedBoard());
-                break;
-
-
-            default:
-                logger.log(Level.WARNING, "Unhandled message");
-
+        if(message.getContent().equals(Message.Content.LOGIN_REQUEST)){
+            addClient((LoginRequest) message);
         }
-
+        else {
+            //security check player
+            usernameInRoom.get(message.getSender()).handleMessages(message);
+        }
 
     }
 
@@ -148,6 +143,7 @@ public class MainServer {
                 message.getClientInterface().notifyClient(new LoginResponse(false, clientID));
             }catch (RemoteException e){
                 logger.log(Level.WARNING, "Connection error", e);
+
             }
         }
     }

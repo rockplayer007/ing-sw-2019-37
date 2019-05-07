@@ -109,7 +109,7 @@ public class Square {
      * any square in the room on the other side of the door"
      * @return a set of squares visible from the current square
      */
-    public Set<Square> visibleSquare(Board.BoardMap map){
+    public Set<Square> visibleSquare(BoardMap map){
         Set<Square> positions = new HashSet<>();
         //adds all the squares that are in the same room or in a neighbour room
         neighbourSquare.forEach(square -> positions.addAll(map.getSquaresInRoom().get(square.squareColor)));
@@ -176,7 +176,7 @@ public class Square {
         return set;
     }
 
-    public Map<String,Set<Square>> directionAbsolute(Board.BoardMap boardMap){
+    public Map<String,Set<Square>> directionAbsolute(BoardMap boardMap){
         Map<String,Set<Square>> map=new HashMap<>();
         if (x!=0)
             map.put("Left",oneDirectionAbsolute(Direction.LEFT,boardMap));
@@ -190,8 +190,7 @@ public class Square {
         return  map;
     }
 
-
-    public Set<Square> oneDirectionAbsolute(Direction direction,Board.BoardMap boardMap){
+    public Set<Square> oneDirectionAbsolute(Direction direction, BoardMap boardMap){
         Set<Square> set = new HashSet<>();
         if (direction == Direction.LEFT && x!=0)
             set.addAll(boardMap.getSquare(x-1,y).oneDirectionAbsolute(direction,boardMap));

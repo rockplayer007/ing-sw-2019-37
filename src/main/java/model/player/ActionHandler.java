@@ -5,7 +5,6 @@ import model.board.Board;
 import model.board.GenerationSquare;
 import model.board.Square;
 import model.card.*;
-import model.gamehandler.Room;
 
 import java.util.*;
 

@@ -1,36 +1,50 @@
 package model.gamehandler;
 
 import model.board.Board;
+import model.board.BoardMap;
 import model.player.Player;
 import model.exceptions.*;
+import network.messages.clientToServer.BoardResponse;
 import network.messages.clientToServer.ClientToServer;
 import network.messages.serverToClient.BoardRequest;
-import network.messages.Message;
 import network.messages.serverToClient.ServerToClient;
 import network.server.ClientOnServer;
 
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Room {
 
     private List<Player> players;
-    private Map<Player, ClientOnServer> connectionToClient = new HashMap<>();
+    private Map<Player, ClientOnServer> connectionToClient;
     private Board board;
+    private BoardMap boardMap;
     private Player currentPlayer;
     private Player startingPlayer;
 
     private static final Logger logger = Logger.getLogger(Room.class.getName());
 
 
-    public Room(Board board) {
-        super();
-        this.board = board;
-        this.players = new ArrayList<>();
+    public Room() {
+        board = new Board();
+        boardMap = new BoardMap(board);
+        players = new ArrayList<>();
+        connectionToClient = new HashMap<>();
     }
 
+    public void handleMessages(ClientToServer message) {
+        switch (message.getContent()) {
+            case BOARD_RESPONSE:
+                createMap(((BoardResponse) message).getSelectedBoard());
+                break;
+
+            default:
+                logger.log(Level.WARNING, "Unhandled message");
+        }
+    }
 
     public void addPlayer(Player player) throws TooManyPlayerException {
         if (players.isEmpty()) {
@@ -57,34 +71,75 @@ public class Room {
     }
 
 
-    public void nextPlayer() {
+    public void setNextPlayer() {
+
         if (players != null) {
             if (currentPlayer == null)
                 currentPlayer = players.get(0);
-            else if (players.indexOf(currentPlayer) < players.size())
+            else if (players.indexOf(currentPlayer) < players.size() - 1)
                 currentPlayer = players.get(players.indexOf(currentPlayer) + 1);
             else
                 currentPlayer = players.get(0);
         }
     }
 
-    public void startMatch() {
+    //asks the board
+    public void matchSetup() {
         //TODO add controller
         //
 
         //ask first player
-        ServerToClient boardRequest = new BoardRequest(board.getMap().getMaps());
-        sendMessage(startingPlayer, boardRequest);
+        ServerToClient boardRequest = new BoardRequest(boardMap.getMaps());
+
+        Thread temp = new Thread(() -> sendMessage(currentPlayer, boardRequest));
+        temp.start();
+        try {
+
+            TimeUnit.SECONDS.sleep(15); //15 seconds
+        }catch (InterruptedException e){
+            logger.log(Level.WARNING, "timer stopped", e);
+        }
+        if(board.getMap() == null){
+            //send a timeout message to current player
+            //set next current player
+            matchSetup();
+        }
+        else {
+            //notify all the clients about the chosen board
+        }
+
+
+/*
+        while (board.getMap() == null){
+
+            Thread temp = new Thread(() -> sendMessage(currentPlayer, boardRequest));
+            temp.start();
+            try {
+                System.out.println("ciaoooooooooooooo");
+                TimeUnit.SECONDS.sleep(15); //15 seconds
+            }catch (InterruptedException e){
+                logger.log(Level.WARNING, "timer stopped", e);
+            }
+            temp.interrupt();
+            setNextPlayer();
+        }
+
+ */
+
+        //TimeUnit.MINUTES.sleep(1);
+
+        //if timer ends or message connection error ask somebody else
     }
 
     public void createMap(int selection) {
-        board.getMap().createMap(selection);
-        String description = board.getMap().getMaps().get(selection);
+        boardMap.createMap(selection);
+        String description = boardMap.getMaps().get(selection);
+        board.setMap(boardMap);
 
         logger.log(Level.INFO, "selected board is {0}", description);
-    }
 
-    //move this somewhere else if needed (better controller probably)
+        //TODO add update all message
+    }
 
     public void sendMessage(Player player, ServerToClient message){
         try{
@@ -95,6 +150,11 @@ public class Room {
         }
 
     }
+
+    public void sendMessageToAll(ServerToClient message){
+        players.forEach(x -> sendMessage(x, message));
+    }
+
 
     public List<Player> getPlayers() {
         return Collections.unmodifiableList(players);
@@ -116,4 +176,3 @@ public class Room {
         return startingPlayer;
     }
 }
-
