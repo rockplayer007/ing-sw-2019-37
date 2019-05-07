@@ -4,8 +4,10 @@ import model.board.Board;
 import model.board.BoardMap;
 import model.player.Player;
 import model.exceptions.*;
+
 import network.messages.clientToServer.BoardResponse;
 import network.messages.clientToServer.ClientToServer;
+
 import network.messages.serverToClient.BoardRequest;
 import network.messages.serverToClient.ServerToClient;
 import network.server.ClientOnServer;
@@ -33,6 +35,7 @@ public class Room {
         boardMap = new BoardMap(board);
         players = new ArrayList<>();
         connectionToClient = new HashMap<>();
+
     }
 
     public void handleMessages(ClientToServer message) {

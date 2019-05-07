@@ -204,8 +204,13 @@ public class Square {
         return set;
     }
 
+    @Override
+    public String toString () {
+        return "X:" + x + " Y:" + y + " Color: " + squareColor;
+    }
     public enum Direction {
         TOP,DOWN,LEFT,RIGHT
+
     }
 
 }

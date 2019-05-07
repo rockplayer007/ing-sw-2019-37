@@ -20,6 +20,7 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 /**
  * Allows to create a new Client who can choose GUI or CLI as interface
  * and handles connection and messages
@@ -46,15 +47,17 @@ public class MainClient {
 
         if (choice.equals("g")) {
             view = new GUI(mainClient);
-            /*
+
+          /*
             //usato solo per test
-            Map<Integer,String> map = new HashMap<>();
-          map.put( 1 , "ideale per 3/4 giocatori");
-            map.put(  2,"ideale per 3/4 giocatori" );
-          map.put(  3,"third" );
-            map.put(  0,"quarto" );
+            Map<Integer, String> map = new HashMap<>();
+            map.put(1, "ideale per 3/4 giocatori");
+            map.put(2, "ideale per 3/4 giocatori");
+            map.put(3, "third");
+            map.put(0, "quarto");
             view.chooseBoard(map);
             */
+
         }
         else {
             view = new CLI(mainClient);
