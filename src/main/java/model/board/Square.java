@@ -111,14 +111,6 @@ public class Square {
      */
     public Set<Square> visibleSquare(Board.BoardMap map){
         Set<Square> positions = new HashSet<>();
-
-        /*
-        //adds to the visible positions the squares that are in the same room
-        positions.addAll(map.squaresInRoom.get(squareColor));
-
-        neighbourSquare.stream().filter(square -> square.getColor() != squareColor)
-                .forEach(x-> positions.addAll(map.squaresInRoom.get(x.squareColor)));
-        */
         //adds all the squares that are in the same room or in a neighbour room
         neighbourSquare.forEach(square -> positions.addAll(map.getSquaresInRoom().get(square.squareColor)));
 
@@ -141,10 +133,7 @@ public class Square {
     }
 
     public Boolean isThisSquare(int x,int y){
-        if (getX()==x && getY()==y)
-            return true;
-        else
-            return false;
+        return (getX()==x && getY()==y);
     }
 
     public Map<String,Set<Square>> directions(int distance){
@@ -162,7 +151,7 @@ public class Square {
         return map;
     }
 
-    public Square getOneofNeighbour(int x,int y){
+    public Square getOneOfNeighbour(int x, int y){
         Square square=null;
         for (Square s:neighbourSquare){
             if (s.getY()==y&&s.getX()==x)
@@ -175,13 +164,13 @@ public class Square {
         Set<Square> set = new HashSet<>();
         if (distance>0) {
             if (direction == Direction.LEFT&&x!=0&&neighbourSquare.stream().anyMatch(s->s.getX()<this.getX()))
-                set.addAll(getOneofNeighbour(x-1,y).oneDirection(direction,distance-1));
+                set.addAll(getOneOfNeighbour(x-1,y).oneDirection(direction,distance-1));
             else if (direction == Direction.RIGHT&&x!=3&&neighbourSquare.stream().anyMatch(s->s.getX()>this.getX()))
-                set.addAll(getOneofNeighbour(x+1,y).oneDirection(direction,distance-1));
+                set.addAll(getOneOfNeighbour(x+1,y).oneDirection(direction,distance-1));
             else if (direction == Direction.DOWN&&y!=0&&neighbourSquare.stream().anyMatch(s->s.getY()<this.getY()))
-                set.addAll(getOneofNeighbour(x,y-1).oneDirection(direction,distance-1));
+                set.addAll(getOneOfNeighbour(x,y-1).oneDirection(direction,distance-1));
             else if (direction == Direction.TOP&&y!=2&&neighbourSquare.stream().anyMatch(s->s.getY()>this.getY()))
-                set.addAll(getOneofNeighbour(x,y+1).oneDirection(direction,distance-1));
+                set.addAll(getOneOfNeighbour(x,y+1).oneDirection(direction,distance-1));
         }
         set.add(this);
         return set;
@@ -198,33 +187,34 @@ public class Square {
         if (y!=2)
             map.put("Down",oneDirectionAbsolute(Direction.DOWN,boardMap));
 
-
         return  map;
     }
 
 
     public Set<Square> oneDirectionAbsolute(Direction direction,Board.BoardMap boardMap){
         Set<Square> set = new HashSet<>();
-        if (direction == Direction.LEFT&x!=0)
+        if (direction == Direction.LEFT && x!=0)
             set.addAll(boardMap.getSquare(x-1,y).oneDirectionAbsolute(direction,boardMap));
-        else if (direction == Direction.RIGHT&&x!=3)
+        else if (direction == Direction.RIGHT && x!=3)
             set.addAll(boardMap.getSquare(x+1,y).oneDirectionAbsolute(direction,boardMap));
-        else if (direction == Direction.DOWN&&y!=0)
+        else if (direction == Direction.DOWN && y!=0)
             set.addAll(boardMap.getSquare(x,y-1).oneDirectionAbsolute(direction,boardMap));
-        else if (direction == Direction.TOP&&y!=2)
+        else if (direction == Direction.TOP && y!=2)
             set.addAll(boardMap.getSquare(x,y+1).oneDirectionAbsolute(direction,boardMap));
         set.add(this);
         return set;
     }
 
     @Override
-    public String toString (){
-        return "X:"+x+" Y:"+y+" Color: "+squareColor;
+    public String toString () {
+        return "X:" + x + " Y:" + y + " Color: " + squareColor;
+    }
+    public enum Direction {
+        TOP,DOWN,LEFT,RIGHT
+
     }
 
 }
 
 
-enum Direction {
-    TOP,DOWN,LEFT,RIGHT
-}
+

@@ -3,6 +3,9 @@ package network.server;
 import model.player.Player;
 import network.client.ClientInterface;
 
+/**
+ * Class to store all client's data
+ */
 public class ClientOnServer {
 
     private String username;

@@ -24,6 +24,11 @@ public class WaitingRoom {
         this.server = server;
     }
 
+    /**
+     * Takes a {@link ClientOnServer} and puts him in a waiting queue. A timer starts when there are
+     * 3 players. The game starts when there are 5 players.
+     * @param p Client to add to the queue
+     */
     public synchronized void addClient(ClientOnServer p){
         if(waitingClients.size() < 5){
 
@@ -49,6 +54,9 @@ public class WaitingRoom {
 
     }
 
+    /**
+     * Starts a timer when there are enough players and starts a game when the timer finishes
+     */
     private void startTimer(){
         timer.schedule(new TimerTask() {
             @Override
@@ -67,6 +75,9 @@ public class WaitingRoom {
 
     }
 
+    /**
+     * Creates a new room where the players can play
+     */
     private void startGame(){
 
         Room playingRoom = new Room(new Board());

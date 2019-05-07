@@ -24,8 +24,9 @@ public class GUI implements ViewInterface {
     @Override
     public void launch() throws NotBoundException, IOException {
 
-        mainClient.connect();
+
         logIn(true);
+        mainClient.connect();
 
     }
 
@@ -36,12 +37,9 @@ public class GUI implements ViewInterface {
             login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             login.setBackground(Color.DARK_GRAY);
             LoginPanel loginPanel = new LoginPanel();
-            login.getContentPane().add(loginPanel);
-            login.setVisible(true);
             JButton submitButton = new JButton("START THE GAME");
             Font f=new Font("Phosphate", Font.PLAIN, 20);
             submitButton.setFont(f);
-
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx=2;
             gbc.gridy=8;
@@ -49,11 +47,25 @@ public class GUI implements ViewInterface {
             gbc.insets = new Insets(50, 0, 0, 3);
             submitButton.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
-                    mainClient.setUsername(loginPanel.getInsNickname());
-                    mainClient.sendCredentials();
+                    if(loginPanel.getInsNickname().equals("")){
+                        loginPanel.setNicknameError(true);
+                    }
+                    else loginPanel.setNicknameError(false);
+
+                    if (loginPanel.getConnSelected().equals("null")){
+                        loginPanel.setConnectionError(true);
+                    }  else loginPanel.setConnectionError(false);
+
+                    if (loginPanel.getConnectionErr()&&loginPanel.getNicknameErr()) {
+                        mainClient.setUsername(loginPanel.getInsNickname());
+                        mainClient.setSocket(loginPanel.getConnection());
+                        mainClient.sendCredentials();
+                        login.setVisible(false);
+                    }
                 }});
             loginPanel.add(submitButton, gbc);
             login.getContentPane().add(loginPanel);
+            login.setVisible(true);
 
         } else {
             //System.out.println("Welcome " + mainClient.getUsername());
@@ -64,59 +76,26 @@ public class GUI implements ViewInterface {
 
     @Override
     public void chooseBoard(Map<Integer, String> possibleBoards) {
-
-    }
-}
-
-   /*
-public static void main(String args[])
-    {
-        JFrame login;
-        JFrame map;
-        login = new JFrame("ADRENALINA");
-        map = new JFrame("ADRENALINA");
-        //exit = new JFrame("");
-        login.setSize(1280,1024);
-        //login.setResizable(false);
-        map.setSize(1280,1024);
-        Object[] options = {"Yes", "No"};
-        int n =JOptionPane.showOptionDialog(exit, "Are you sure you want to exit the game?",
-                "Exit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
-                null, options, options[2]);
-        if (n == JOptionPane.YES_OPTION){
-            System.out.println( "Selezionata opzione " + options[0] ); }
-        else if (n == JOptionPane.NO_OPTION){
-            System.out.println( "Selezionata opzione " + options[1] );
-
-        login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        map.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        login.setBackground(Color.DARK_GRAY);
-        LoginPanel loginPanel = new LoginPanel();
-
-        JButton submitButton = new JButton("START THE GAME");
+        JFrame selectMap = new JFrame();
+        selectMap.setSize(1280, 1024);
+        selectMap.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        SelectMapPanel slmp = new SelectMapPanel(possibleBoards);
+        selectMap.getContentPane().add(slmp);
+        JButton submit = new JButton("USE MAP");
         Font f=new Font("Phosphate", Font.PLAIN, 20);
-        submitButton.setFont(f);
-
+        submit.setFont(f);
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx=2;
-        gbc.gridy=8;
-        gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(50, 0, 0, 3);
-        submitButton.addActionListener(new ActionListener(){
+        gbc.gridy=4;
+        submit.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-               // System.out.println("start");
-                System.out.println(loginPanel.getInsNickname());
-                System.out.println(loginPanel.getConnection());
+                //mainClient.sendSelectedBoard(slmp.getMapSelected());
+                System.out.println(slmp.getMapSelected());
+                selectMap.setVisible(false);
             }});
-        loginPanel.add(submitButton, gbc);
-        login.getContentPane().add(loginPanel);
-        //add(submitButton, gbc);
-     //   System.out.println(loginPanel.getInsNickname());
-       // MapPanel mapPanel = new MapPanel();
-       // map.getContentPane().add(mapPanel);
-        login.setVisible(true);
-       // map.setVisible(true);
+        slmp.add(submit,gbc);
+        selectMap.getContentPane().add(slmp);
+        selectMap.setVisible(true);
     }
 }
-*/
+
 

@@ -425,9 +425,9 @@ class NextSquareInDirection implements Operation{
         int diffy=currentPlayerPosiction.getY()-targetPosition.getY();
         Square nextSquare=null;
         if (diffx==0){
-            nextSquare=targetPosition.getOneofNeighbour(targetPosition.getX(),targetPosition.getY()-diffy);
+            nextSquare=targetPosition.getOneOfNeighbour(targetPosition.getX(),targetPosition.getY()-diffy);
         }else if (diffy==0){
-            nextSquare=targetPosition.getOneofNeighbour(targetPosition.getX()-diffx,targetPosition.getY());
+            nextSquare=targetPosition.getOneOfNeighbour(targetPosition.getX()-diffx,targetPosition.getY());
         }
         if (nextSquare!=null)
             currentPlayer.setEffectSquare(nextSquare);
