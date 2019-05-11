@@ -1,16 +1,17 @@
 package view.CLI;
 
 import network.client.MainClient;
-import network.messages.clientToServer.ClientToServer;
-import network.messages.serverToClient.AnswerRequest;
 import view.ViewInterface;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.rmi.NotBoundException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -19,10 +20,13 @@ import java.util.Scanner;
 public class CLI implements ViewInterface {
 
     private MainClient mainClient;
-    private QueryClient printer;
+    private Printer printer;
+
+    private static final Logger logger = Logger.getLogger(CLI.class.getName());
+
     public CLI(MainClient mainClient){
         this.mainClient = mainClient;
-        printer = new QueryClient();
+        printer = new Printer();
     }
 
     /**
@@ -36,28 +40,35 @@ public class CLI implements ViewInterface {
         chooseConnection();
         mainClient.connect();
 
-        System.out.println("Connection successful!");
+        printer.print("Connection successful!");
         logIn(true);
 
     }
 
     private void chooseConnection(){
-        System.out.println("RMI or SOCKET?[R/S] (default RMI)");
-        Scanner reader = new Scanner(System.in);
-        String choice = reader.nextLine().toLowerCase();
+        printer.print("RMI or SOCKET?[R/S] (default RMI)");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        //if true its socket
-        MainClient.setSocket(choice.equals("s"));
+        try {
+            //Scanner reader = new Scanner(System.in);
+            String choice = reader.readLine().toLowerCase();
 
-        System.out.println("localhost or remote?[L/R] (default localhost)");
+            //if true its socket
+            MainClient.setSocket(choice.equals("s"));
 
-        choice = reader.nextLine().toLowerCase();
-        if (choice.equals("r")) {
-            System.out.println("Write IP address of the server:");
-            MainClient.setServerIp(reader.nextLine());
-        } else {
-            MainClient.setServerIp("localhost");
+            printer.print("localhost or remote?[L/R] (default localhost)");
+
+            choice = reader.readLine().toLowerCase();
+            if (choice.equals("r")) {
+                printer.print("Write IP address of the server:");
+                MainClient.setServerIp(reader.readLine());
+            } else {
+                MainClient.setServerIp("localhost");
+            }
+        }catch (IOException e){
+            logger.log(Level.WARNING, "Input error", e);
         }
+
     }
 
     /**
@@ -65,16 +76,21 @@ public class CLI implements ViewInterface {
      * @param ask if true asks for the username, if false welcomes the user
      */
     public void logIn(boolean ask){
+
         if (ask){
-            System.out.println("Write a username to login:");
-            Scanner reader = new Scanner(System.in);
-            String username = reader.nextLine();
+            printer.print("Write a username to login:");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            String username = null;
+            try {
+                username = reader.readLine();
+            } catch (IOException e) {
+                logger.log(Level.WARNING, "Input error", e);
+            }
             mainClient.setUsername(username);
             mainClient.sendCredentials();
         }
         else {
-            System.out.println("Welcome "+ mainClient.getUsername());
-
+            printer.print("Welcome "+ mainClient.getUsername());
         }
     }
 
@@ -83,9 +99,12 @@ public class CLI implements ViewInterface {
      * @param maps possible boards to choose from
      */
     public void chooseBoard(Map<Integer, String> maps){
-
         printer.displayRequest(new ArrayList<>(maps.values()), board -> mainClient.sendSelectedBoard(board));
+    }
 
+
+    public void timeout(){
+        printer.closeRequest();
     }
 
 }

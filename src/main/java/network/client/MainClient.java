@@ -9,7 +9,6 @@ import network.messages.serverToClient.LoginResponse;
 import network.messages.serverToClient.ServerToClient;
 import network.server.MainServer;
 import view.CLI.CLI;
-import view.CLI.QueryClient;
 import view.GUI.GUI;
 import view.ViewInterface;
 
@@ -97,7 +96,6 @@ public class MainClient {
         else {
             connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
         }
-
          */
         connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
 
@@ -119,15 +117,18 @@ public class MainClient {
 
 
         switch (message.getContent()){
-        case LOGIN_RESPONSE:
-            clientID = ((LoginResponse) message).getClientID();
-            view.logIn(((LoginResponse) message).getStatus());
-            break;
-        case BOARD_REQUEST:
-            view.chooseBoard(((BoardRequest) message).getBoards());
-            break;
-        default:
-            logger.log(Level.WARNING, "Unregistered message");
+            case TIMEOUT:
+                view.timeout();
+                break;
+            case LOGIN_RESPONSE:
+                clientID = ((LoginResponse) message).getClientID();
+                view.logIn(((LoginResponse) message).getStatus());
+                break;
+            case BOARD_REQUEST:
+                view.chooseBoard(((BoardRequest) message).getBoards());
+                break;
+            default:
+                logger.log(Level.WARNING, "Unregistered message");
 
         }
     }

@@ -97,6 +97,13 @@ public class GUI implements ViewInterface {
         selectMap.getContentPane().add(slmp);
         selectMap.setVisible(true);
     }
+
+    @Override
+    public void timeout() {
+        //TODO
+        //se non serve, lasciare vuoto
+        //viene chiamato quando è finito il tempo e non può più scegliere
+    }
 }
 
 

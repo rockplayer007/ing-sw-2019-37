@@ -19,7 +19,6 @@ public class BoardTest {
         boardMap.createMap(0);
         System.out.println("color is: " + boardMap.getGenerationPoint(Color.BLUE).getX());
 
-
     }
 
 }

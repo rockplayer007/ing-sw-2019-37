@@ -38,40 +38,6 @@ public class Room {
 
     }
 
-    public void handleMessages(ClientToServer message) {
-        switch (message.getContent()) {
-            case BOARD_RESPONSE:
-                createMap(((BoardResponse) message).getSelectedBoard());
-                break;
-
-            default:
-                logger.log(Level.WARNING, "Unhandled message");
-        }
-    }
-
-    public void addPlayer(Player player) throws TooManyPlayerException {
-        if (players.isEmpty()) {
-            startingPlayer = player;
-            currentPlayer = player;
-        }
-        if (players.size() < 5)
-            players.add(player);
-        else
-            throw new TooManyPlayerException("cant add the 6th player");
-    }
-
-    //needed for starting a new room from waitingRoom
-    public void addPlayer(ClientOnServer client) {
-        if (players.isEmpty()) {
-            startingPlayer = client.getPersonalPlayer();
-            currentPlayer = client.getPersonalPlayer();
-        }
-        if (players.size() < 5) {
-            players.add(client.getPersonalPlayer());
-            connectionToClient.put(client.getPersonalPlayer(), client);
-        } else
-            throw new TooManyPlayerException("cant add the 6th player");
-    }
 
 
     public void setNextPlayer() {
@@ -86,53 +52,6 @@ public class Room {
         }
     }
 
-    //asks the board
-    public void matchSetup() {
-        //TODO add controller
-        //
-
-        //ask first player
-        ServerToClient boardRequest = new BoardRequest(boardMap.getMaps());
-
-        Thread temp = new Thread(() -> sendMessage(currentPlayer, boardRequest));
-        temp.start();
-        try {
-
-            TimeUnit.SECONDS.sleep(15); //15 seconds
-        }catch (InterruptedException e){
-            logger.log(Level.WARNING, "timer stopped", e);
-        }
-        if(board.getMap() == null){
-            //send a timeout message to current player
-            //set next current player
-            matchSetup();
-        }
-        else {
-            //notify all the clients about the chosen board
-        }
-
-
-/*
-        while (board.getMap() == null){
-
-            Thread temp = new Thread(() -> sendMessage(currentPlayer, boardRequest));
-            temp.start();
-            try {
-                System.out.println("ciaoooooooooooooo");
-                TimeUnit.SECONDS.sleep(15); //15 seconds
-            }catch (InterruptedException e){
-                logger.log(Level.WARNING, "timer stopped", e);
-            }
-            temp.interrupt();
-            setNextPlayer();
-        }
-
- */
-
-        //TimeUnit.MINUTES.sleep(1);
-
-        //if timer ends or message connection error ask somebody else
-    }
 
     public void createMap(int selection) {
         boardMap.createMap(selection);
@@ -142,20 +61,6 @@ public class Room {
         logger.log(Level.INFO, "selected board is {0}", description);
 
         //TODO add update all message
-    }
-
-    public void sendMessage(Player player, ServerToClient message){
-        try{
-            connectionToClient.get(player).getClientInterface()
-                    .notifyClient(message);
-        } catch (RemoteException e) {
-            logger.log(Level.WARNING, "Connection error", e);
-        }
-
-    }
-
-    public void sendMessageToAll(ServerToClient message){
-        players.forEach(x -> sendMessage(x, message));
     }
 
 
@@ -171,11 +76,22 @@ public class Room {
         this.currentPlayer = currentPlayer;
     }
 
+    public BoardMap getBoardMap(){
+        return boardMap;
+    }
     public Board getBoard() {
         return board;
     }
 
+    public void setStartingPlayer(Player player){
+        startingPlayer = player;
+    }
+
     public Player getStartingPlayer() {
         return startingPlayer;
+    }
+
+    public void setPlayers(List<Player> player){
+        players.addAll(player);
     }
 }

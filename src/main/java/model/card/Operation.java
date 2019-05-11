@@ -227,6 +227,7 @@ class  MoveTargetToVisible implements Operation{
         Set<Square> visibleSquare=currentPlayer.getPosition().visibleSquare(room.getBoard().getMap());
         Set<Square> validSquare;
         validSquare=target.getPosition().getValidPosition(distance).stream().filter(visibleSquare::contains).collect(Collectors.toSet());
+
         target.movePlayer(ActionHandler.chooseSquare(currentPlayer,validSquare));//TODO DA controllare.
     }
 }

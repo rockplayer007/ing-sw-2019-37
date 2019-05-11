@@ -1,6 +1,6 @@
 package network.server;
 
-import model.gamehandler.Room;
+import controller.RoomController;
 import network.messages.Message;
 import network.messages.clientToServer.ClientToServer;
 import network.messages.clientToServer.LoginRequest;
@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 /**
  * The main server is being created only once and creates a server for RMI connection
  * and one for socket connections. Then it waits for clients to connect.
- * The message that arrive are transferred to the {@link Room} where the user is playing.
+ * The message that arrive are transferred to the {@link RoomController} where the user is playing.
  */
 public class MainServer {
 
@@ -29,7 +29,7 @@ public class MainServer {
     private ServerRMI serverRMI;
     private ServerSOCKET serverSocket;
     private WaitingRoom waitingRoom;
-    private Map<String, Room> usernameInRoom = new HashMap<>();
+    private Map<String, RoomController> usernameInRoom = new HashMap<>();
     private static final Logger logger = Logger.getLogger(MainServer.class.getName());
 
     /**
@@ -153,7 +153,7 @@ public class MainServer {
      * @param usernames
      * @param playingRoom
      */
-    public void setUsernameInRoom(List<String> usernames, Room playingRoom){
+    public void setUsernameInRoom(List<String> usernames, RoomController playingRoom){
         usernames.forEach(name -> usernameInRoom.put(name, playingRoom));
     }
 

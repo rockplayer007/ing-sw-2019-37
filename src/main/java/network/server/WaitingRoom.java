@@ -1,6 +1,6 @@
 package network.server;
 
-import model.gamehandler.Room;
+import controller.RoomController;
 import model.player.Player;
 
 import java.util.*;
@@ -79,7 +79,7 @@ public class WaitingRoom {
      */
     private void startGame(){
 
-        Room playingRoom = new Room();
+        RoomController playingRoom = new RoomController();
         List<String> usernames = new ArrayList<>();
 
         for(ClientOnServer waitingClient : waitingClients){

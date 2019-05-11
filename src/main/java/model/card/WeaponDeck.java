@@ -8,7 +8,11 @@ public class WeaponDeck extends Deck{
     List<Weapon> weaponDeck = new ArrayList<>();
 
     public WeaponDeck(){
-
+        for(int i = 0; i < 20; i++){
+            //adding to the local deck (in the Deck class)
+            //for test
+            addCard(null);
+        }
     }
 
     private void createLockRifle(){
