@@ -154,6 +154,7 @@ public class MapPanel extends JLayeredPane{
     }
 
     private String getUrlMap(int code){
+        /*
         switch (code){
             case 0: return "./src/main/resources/map0.png";
             case 1: return "./src/main/resources/map1.png";
@@ -161,6 +162,9 @@ public class MapPanel extends JLayeredPane{
             case 3: return "./src/main/resources/map3.png";
             default: return null;
         }
+
+         */
+        return "./src/main/resources/map" + code + ".png";
 
     }
 

@@ -1,6 +1,11 @@
 package controller;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import model.board.AmmoSquare;
+import model.board.GenerationSquare;
+import model.board.RuntimeTypeAdapterFactory;
+import model.board.Square;
 import model.exceptions.TooManyPlayerException;
 import model.gamehandler.Room;
 import model.player.Player;
@@ -126,7 +131,16 @@ public class RoomController {
 
         room.createMap(((BoardResponse) mockMessage).getSelectedBoard());
 
-        Gson gson = new Gson();
+        RuntimeTypeAdapterFactory<Square> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
+                .of(Square.class, "Square")
+                .registerSubtype(AmmoSquare.class, "AmmoSquare")
+                .registerSubtype(GenerationSquare.class, "GenerationSquare");
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapterFactory(runtimeTypeAdapterFactory)
+                .create();
+
+        //Gson gson = new Gson();
         sendMessageToAll(new BoardInfo(gson.toJson(room.getBoard().getMap())));
 
         System.out.println("board is: " + ((BoardResponse) mockMessage).getSelectedBoard());

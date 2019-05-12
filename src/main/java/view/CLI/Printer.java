@@ -126,7 +126,7 @@ public class Printer {
                                     }
                                     else {
                                         final int xx = x, yy = y;
-                                        if(tempSquare.getNeighbourSquare().stream().anyMatch(k -> k == board.getSquare(xx, yy - 1))){
+                                        if(tempSquare.getNeighbourId().stream().anyMatch(k -> k == board.getSquare(xx, yy - 1).getId())){
                                             print(colorToAnsi(tempSquare.getColor()) + "+|   |+");
                                         }
                                         else {
@@ -170,7 +170,7 @@ public class Printer {
                                     }
                                     else {
                                         final int xx = x, yy = y;
-                                        if(tempSquare.getNeighbourSquare().stream().anyMatch(k -> k == board.getSquare(xx - 1, yy))){
+                                        if(tempSquare.getNeighbourId().stream().anyMatch(k -> k == board.getSquare(xx - 1, yy).getId())){
                                             print(colorToAnsi(tempSquare.getColor()) + "= ");
                                         }
                                         else {
@@ -198,7 +198,7 @@ public class Printer {
                                     }
                                     else {
                                         final int xx = x, yy = y;
-                                        if(tempSquare.getNeighbourSquare().stream().anyMatch(k -> k == board.getSquare(xx + 1, yy))){
+                                        if(tempSquare.getNeighbourId().stream().anyMatch(k -> k == board.getSquare(xx + 1, yy).getId())){
                                             print(colorToAnsi(tempSquare.getColor()) + " =");
                                         }
                                         else {
@@ -239,7 +239,7 @@ public class Printer {
                                     }
                                     else {
                                         final int xx = x, yy = y;
-                                        if(tempSquare.getNeighbourSquare().stream().anyMatch(k -> k == board.getSquare(xx, yy + 1))){
+                                        if(tempSquare.getNeighbourId().stream().anyMatch(k -> k == board.getSquare(xx, yy + 1).getId())){
                                             print(colorToAnsi(tempSquare.getColor()) + "+|   |+");
                                         }
                                         else {

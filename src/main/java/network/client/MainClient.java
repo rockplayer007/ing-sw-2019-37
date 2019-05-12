@@ -1,7 +1,8 @@
 package network.client;
 
 import com.google.gson.Gson;
-import model.board.GameBoard;
+import com.google.gson.GsonBuilder;
+import model.board.*;
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
 import network.messages.clientToServer.BoardResponse;
@@ -131,7 +132,15 @@ public class MainClient {
                 view.chooseBoard(((BoardRequest) message).getBoards());
                 break;
             case BOARD_INFO:
-                Gson gson = new Gson();
+                RuntimeTypeAdapterFactory<Square> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
+                        .of(Square.class, "Square")
+                        .registerSubtype(AmmoSquare.class, "AmmoSquare")
+                        .registerSubtype(GenerationSquare.class, "GenerationSquare");
+
+                Gson gson = new GsonBuilder()
+                        .registerTypeAdapterFactory(runtimeTypeAdapterFactory)
+                        .create();
+                //Gson gson = new Gson();
                 view.updatedBoard(gson.fromJson(((BoardInfo) message).getBoard(), GameBoard.class));
                 break;
             default:

@@ -58,6 +58,10 @@ public class Square {
         return neighbourSquare;
     }
 
+    public List<Integer> getNeighbourId() {
+        return neighbourId;
+    }
+
     /**
      * Tells if the square is a GenerationSquare or an AmmoSquare
      * @return True if it is a GenerationSquare or false if AmmoSquare
