@@ -17,6 +17,7 @@ public class PowerDeck extends Deck{
                 addCard(new Powerup(na.get(j), des, AmmoColor.YELLOW, j + 1));
             }
         }
+        mixDeck();
     }
 
 }

@@ -1,5 +1,6 @@
 package model.player;
 
+import model.board.Color;
 import model.card.AmmoColor;
 import model.board.Square;
 import model.card.Weapon;
@@ -14,6 +15,7 @@ public class Player {
 
     private String nickname;
     private Hero hero;
+    private Color color;
     private Square position;
     private PlayerBoard playerBoard;
     private Map<AmmoColor,Integer> ammo;
@@ -61,6 +63,8 @@ public class Player {
     public Hero getHero() {
         return hero;
     }
+
+    public Color getColor(){ return color;}
 
     public Square getPosition() {
         return position;

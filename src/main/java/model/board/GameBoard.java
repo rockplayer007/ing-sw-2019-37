@@ -26,6 +26,10 @@ public class GameBoard {
         return id;
     }
 
+    public int numberOfSquares(){
+        return allSquares.size();
+    }
+
     public String getDescription() {
         return description;
     }
@@ -45,7 +49,13 @@ public class GameBoard {
      * @return The square with that id
      */
     public Square getSquare(int id){
-        return allSquares.get(id);
+        if(id < 0 || id > allSquares.size() - 1){
+            return null;
+        }
+        else {
+            return allSquares.get(id);
+        }
+
     }
 
     public Map<Color, ArrayList<Square>> getSquaresInRoom(){

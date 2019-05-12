@@ -60,6 +60,13 @@
             <version>2.8.5</version>
             <scope>compile</scope>
         </dependency>
+
+        <!--for colorful cli -->
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>1.17.1</version>
+        </dependency>
     </dependencies>
 
 

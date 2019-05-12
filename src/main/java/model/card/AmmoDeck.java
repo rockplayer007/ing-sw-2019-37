@@ -12,7 +12,7 @@ public class AmmoDeck extends Deck{
             addCard(new AmmoCard(AmmoColor.RED, AmmoColor.RED));
             addCard(new AmmoCard(AmmoColor.BLUE, AmmoColor.BLUE));
             addCard(new AmmoCard(AmmoColor.YELLOW, AmmoColor.YELLOW));
-            }
+        }
        for (int i = 0; i < 3; i++) {
             addCard(new AmmoCard(AmmoColor.RED, AmmoColor.RED, AmmoColor.BLUE));
             addCard(new AmmoCard(AmmoColor.RED, AmmoColor.RED, AmmoColor.YELLOW));
@@ -20,7 +20,9 @@ public class AmmoDeck extends Deck{
             addCard(new AmmoCard(AmmoColor.YELLOW, AmmoColor.YELLOW, AmmoColor.RED));
             addCard(new AmmoCard(AmmoColor.BLUE, AmmoColor.BLUE, AmmoColor.RED));
             addCard(new AmmoCard(AmmoColor.BLUE, AmmoColor.BLUE, AmmoColor.YELLOW));
-            }
+       }
+       mixDeck();
+
     }
 
 }

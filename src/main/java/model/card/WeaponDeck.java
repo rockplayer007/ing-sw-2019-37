@@ -12,6 +12,8 @@ public class WeaponDeck extends Deck{
             //adding to the local deck (in the Deck class)
             //for test
             addCard(null);
+
+            //mixDeck();
         }
     }
 

@@ -40,13 +40,13 @@ public class CLI implements ViewInterface {
         chooseConnection();
         mainClient.connect();
 
-        printer.print("Connection successful!");
+        printer.println("Connection successful!");
         logIn(true);
 
     }
 
     private void chooseConnection(){
-        printer.print("RMI or SOCKET?[R/S] (default RMI)");
+        printer.println("RMI or SOCKET?[R/S] (default RMI)");
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         try {
@@ -56,11 +56,11 @@ public class CLI implements ViewInterface {
             //if true its socket
             MainClient.setSocket(choice.equals("s"));
 
-            printer.print("localhost or remote?[L/R] (default localhost)");
+            printer.println("localhost or remote?[L/R] (default localhost)");
 
             choice = reader.readLine().toLowerCase();
             if (choice.equals("r")) {
-                printer.print("Write IP address of the server:");
+                printer.println("Write IP address of the server:");
                 MainClient.setServerIp(reader.readLine());
             } else {
                 MainClient.setServerIp("localhost");
@@ -78,7 +78,7 @@ public class CLI implements ViewInterface {
     public void logIn(boolean ask){
 
         if (ask){
-            printer.print("Write a username to login:");
+            printer.println("Write a username to login:");
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             String username = null;
             try {
@@ -90,7 +90,7 @@ public class CLI implements ViewInterface {
             mainClient.sendCredentials();
         }
         else {
-            printer.print("Welcome "+ mainClient.getUsername());
+            printer.println("Welcome "+ mainClient.getUsername());
         }
     }
 
@@ -109,7 +109,7 @@ public class CLI implements ViewInterface {
 
     @Override
     public void updatedBoard(GameBoard board) {
-        //print board
+        //println board
         printer.printBoard(board);
     }
 

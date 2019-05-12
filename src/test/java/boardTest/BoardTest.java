@@ -7,6 +7,7 @@ import model.board.Color;
 import model.board.GameBoard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import view.CLI.Printer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,6 +40,12 @@ public class BoardTest {
         assertEquals(gameBoard.getGenerationPoint(Color.BLUE).getX(), 2);
         assertEquals(gameBoard.getGenerationPoint(Color.BLUE).getY(), 0);
 
+    }
+
+    @Test
+    public void printBoardTest(){
+        Printer printer = new Printer();
+        printer.printBoard(map);
     }
 
 }
