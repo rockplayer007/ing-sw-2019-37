@@ -2,9 +2,10 @@ package view.GUI;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-
-public class LoginPanel extends JPanel implements ActionListener{
+public class LoginPanel extends JPanel implements ActionListener {
 
     private JLabel text;
     private JLabel text2;
@@ -115,6 +116,11 @@ public class LoginPanel extends JPanel implements ActionListener{
         return connSelected;
     }
 
+    public void setNicknameErr(String err){
+        this.nicknameError.setVisible(true);
+        this.connectionError.setText(err);
+    }
+
     public void setNicknameError(Boolean err){
         this.nicknameError.setVisible(err);
         this.nicknameErr=!err;
@@ -128,7 +134,7 @@ public class LoginPanel extends JPanel implements ActionListener{
     public boolean getConnectionErr(){
         return connectionErr;
     }
-    
+
     public boolean getNicknameErr(){
         return nicknameErr;
     }
