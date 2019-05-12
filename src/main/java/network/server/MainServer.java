@@ -1,7 +1,7 @@
 package network.server;
 
-import model.gamehandler.Room;
-import network.messages.clientToServer.BoardResponse;
+import controller.RoomController;
+import network.messages.Message;
 import network.messages.clientToServer.ClientToServer;
 import network.messages.clientToServer.LoginRequest;
 import network.messages.serverToClient.LoginResponse;
@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 /**
  * The main server is being created only once and creates a server for RMI connection
  * and one for socket connections. Then it waits for clients to connect.
- * The message that arrive are transferred to the {@link Room} where the user is playing.
+ * The message that arrive are transferred to the {@link RoomController} where the user is playing.
  */
 public class MainServer {
 
@@ -29,7 +29,7 @@ public class MainServer {
     private ServerRMI serverRMI;
     private ServerSOCKET serverSocket;
     private WaitingRoom waitingRoom;
-    private Map<String, Room> usernameInRoom = new HashMap<>();
+    private Map<String, RoomController> usernameInRoom = new HashMap<>();
     private static final Logger logger = Logger.getLogger(MainServer.class.getName());
 
     /**
@@ -82,21 +82,16 @@ public class MainServer {
     public void handleMessage(ClientToServer message){
         //verify that the user corresponds with clientID
 
+        //TODO send the message to the right roomController
+        //TODO move this to the roomController
 
-        switch (message.getContent()){
-            case LOGIN_REQUEST:
-                addClient((LoginRequest) message);
-                break;
-            case BOARD_RESPONSE:
-                usernameInRoom.get(message.getSender()).createMap(((BoardResponse) message).getSelectedBoard());
-                break;
-
-
-            default:
-                logger.log(Level.WARNING, "Unhandled message");
-
+        if(message.getContent().equals(Message.Content.LOGIN_REQUEST)){
+            addClient((LoginRequest) message);
         }
-
+        else {
+            //security check player
+            usernameInRoom.get(message.getSender()).handleMessages(message);
+        }
 
     }
 
@@ -148,6 +143,7 @@ public class MainServer {
                 message.getClientInterface().notifyClient(new LoginResponse(false, clientID));
             }catch (RemoteException e){
                 logger.log(Level.WARNING, "Connection error", e);
+
             }
         }
     }
@@ -157,7 +153,7 @@ public class MainServer {
      * @param usernames
      * @param playingRoom
      */
-    public void setUsernameInRoom(List<String> usernames, Room playingRoom){
+    public void setUsernameInRoom(List<String> usernames, RoomController playingRoom){
         usernames.forEach(name -> usernameInRoom.put(name, playingRoom));
     }
 

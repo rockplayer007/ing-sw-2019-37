@@ -2,8 +2,6 @@ package view.GUI;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 public class LoginPanel extends JPanel implements ActionListener {
 
@@ -142,9 +140,13 @@ public class LoginPanel extends JPanel implements ActionListener {
 
     public boolean getConnection(){
 
+        return connSelected.equals("SOCKET");
+        /*
         if  (connSelected.equals("SOCKET"))
             return  true;
         else
             return false;
+
+         */
     }
 }

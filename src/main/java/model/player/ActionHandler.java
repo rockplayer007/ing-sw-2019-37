@@ -5,7 +5,6 @@ import model.board.Board;
 import model.board.GenerationSquare;
 import model.board.Square;
 import model.card.*;
-import model.gamehandler.Room;
 
 import java.util.*;
 
@@ -71,7 +70,7 @@ public class ActionHandler {
      * @param board that the player play.
      */
     public static void grab( Player player,Board board) {
-        if (!player.getPosition().getGenerationPoint())
+        if (!player.getPosition().isGenerationPoint())
             grabAmmo(player,((AmmoSquare) player.getPosition()).getAmmoCard(),board);
         else {
             while (((GenerationSquare) player.getPosition()).getWeaponDeck().stream().anyMatch(i->player.enoughAmmos(i.getBuyCost()))){

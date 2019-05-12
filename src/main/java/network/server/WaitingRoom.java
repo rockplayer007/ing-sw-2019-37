@@ -1,7 +1,6 @@
 package network.server;
 
-import model.board.Board;
-import model.gamehandler.Room;
+import controller.RoomController;
 import model.player.Player;
 
 import java.util.*;
@@ -80,7 +79,7 @@ public class WaitingRoom {
      */
     private void startGame(){
 
-        Room playingRoom = new Room(new Board());
+        RoomController playingRoom = new RoomController();
         List<String> usernames = new ArrayList<>();
 
         for(ClientOnServer waitingClient : waitingClients){
@@ -99,7 +98,7 @@ public class WaitingRoom {
         waitingClients.clear();
         server.setUsernameInRoom(usernames, playingRoom);
 
-        playingRoom.startMatch();
+        playingRoom.matchSetup();
 
     }
 }

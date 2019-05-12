@@ -1,15 +1,12 @@
 package model.gamehandler;
 
 import model.board.Board;
+import model.board.BoardGenerator;
+import model.board.GameBoard;
 import model.player.Player;
-import model.exceptions.*;
-import network.messages.clientToServer.ClientToServer;
-import network.messages.serverToClient.BoardRequest;
-import network.messages.Message;
-import network.messages.serverToClient.ServerToClient;
+
 import network.server.ClientOnServer;
 
-import java.rmi.RemoteException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,84 +14,46 @@ import java.util.logging.Logger;
 public class Room {
 
     private List<Player> players;
-    private Map<Player, ClientOnServer> connectionToClient = new HashMap<>();
+    private Map<Player, ClientOnServer> connectionToClient;
     private Board board;
+    private BoardGenerator boardGenerator;
     private Player currentPlayer;
     private Player startingPlayer;
 
     private static final Logger logger = Logger.getLogger(Room.class.getName());
 
 
-    public Room(Board board) {
-        super();
-        this.board = board;
-        this.players = new ArrayList<>();
+    public Room() {
+        board = new Board();
+        boardGenerator = new BoardGenerator(board);
+        players = new ArrayList<>();
+        connectionToClient = new HashMap<>();
+
     }
 
+    public void setNextPlayer() {
 
-    public void addPlayer(Player player) throws TooManyPlayerException {
-        if (players.isEmpty()) {
-            startingPlayer = player;
-            currentPlayer = player;
-        }
-        if (players.size() < 5)
-            players.add(player);
-        else
-            throw new TooManyPlayerException("cant add the 6th player");
-    }
-
-    //needed for starting a new room from waitingRoom
-    public void addPlayer(ClientOnServer client) {
-        if (players.isEmpty()) {
-            startingPlayer = client.getPersonalPlayer();
-            currentPlayer = client.getPersonalPlayer();
-        }
-        if (players.size() < 5) {
-            players.add(client.getPersonalPlayer());
-            connectionToClient.put(client.getPersonalPlayer(), client);
-        } else
-            throw new TooManyPlayerException("cant add the 6th player");
-    }
-
-
-    public void nextPlayer() {
         if (players != null) {
             if (currentPlayer == null)
                 currentPlayer = players.get(0);
-            else if (players.indexOf(currentPlayer) < players.size())
+            else if (players.indexOf(currentPlayer) < players.size() - 1)
                 currentPlayer = players.get(players.indexOf(currentPlayer) + 1);
             else
                 currentPlayer = players.get(0);
         }
     }
 
-    public void startMatch() {
-        //TODO add controller
-        //
-
-        //ask first player
-        ServerToClient boardRequest = new BoardRequest(board.getMap().getMaps());
-        sendMessage(startingPlayer, boardRequest);
-    }
 
     public void createMap(int selection) {
-        board.getMap().createMap(selection);
-        String description = board.getMap().getMaps().get(selection);
+        GameBoard gameBoard = boardGenerator.createMap(selection);
+        String description = gameBoard.getDescription();
+        board.setMap(gameBoard);
 
         logger.log(Level.INFO, "selected board is {0}", description);
+
+        //TODO add update all message
     }
 
-    //move this somewhere else if needed (better controller probably)
-
-    public void sendMessage(Player player, ServerToClient message){
-        try{
-            connectionToClient.get(player).getClientInterface()
-                    .notifyClient(message);
-        } catch (RemoteException e) {
-            logger.log(Level.WARNING, "Connection error", e);
-        }
-
-    }
 
     public List<Player> getPlayers() {
         return Collections.unmodifiableList(players);
@@ -108,12 +67,23 @@ public class Room {
         this.currentPlayer = currentPlayer;
     }
 
+    public BoardGenerator getBoardGenerator(){
+        return boardGenerator;
+    }
     public Board getBoard() {
         return board;
+    }
+
+
+    public void setStartingPlayer(Player player){
+        startingPlayer = player;
     }
 
     public Player getStartingPlayer() {
         return startingPlayer;
     }
-}
 
+    public void setPlayers(List<Player> player){
+        players.addAll(player);
+    }
+}

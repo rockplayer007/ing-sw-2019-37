@@ -1,12 +1,17 @@
 package view.CLI;
 
+import model.board.GameBoard;
 import network.client.MainClient;
 import view.ViewInterface;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.rmi.NotBoundException;
+import java.util.ArrayList;
 import java.util.Map;
-import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -15,8 +20,13 @@ import java.util.Scanner;
 public class CLI implements ViewInterface {
 
     private MainClient mainClient;
+    private Printer printer;
+
+    private static final Logger logger = Logger.getLogger(CLI.class.getName());
+
     public CLI(MainClient mainClient){
         this.mainClient = mainClient;
+        printer = new Printer();
     }
 
     /**
@@ -30,28 +40,35 @@ public class CLI implements ViewInterface {
         chooseConnection();
         mainClient.connect();
 
-        System.out.println("Connection successful!");
+        printer.print("Connection successful!");
         logIn(true);
 
     }
 
     private void chooseConnection(){
-        System.out.println("RMI or SOCKET?[R/S]");
-        Scanner reader = new Scanner(System.in);
-        String choice = reader.nextLine().toLowerCase();
+        printer.print("RMI or SOCKET?[R/S] (default RMI)");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        //if true its socket
-        mainClient.setSocket(choice.equals("s"));
+        try {
+            //Scanner reader = new Scanner(System.in);
+            String choice = reader.readLine().toLowerCase();
 
-        System.out.println("localhost or remote?[L/R]");
+            //if true its socket
+            MainClient.setSocket(choice.equals("s"));
 
-        choice = reader.nextLine().toLowerCase();
-        if (choice.equals("r")) {
-            System.out.println("Write IP address of the server:");
-            mainClient.setServerIp(reader.nextLine());
-        } else {
-            mainClient.setServerIp("localhost");
+            printer.print("localhost or remote?[L/R] (default localhost)");
+
+            choice = reader.readLine().toLowerCase();
+            if (choice.equals("r")) {
+                printer.print("Write IP address of the server:");
+                MainClient.setServerIp(reader.readLine());
+            } else {
+                MainClient.setServerIp("localhost");
+            }
+        }catch (IOException e){
+            logger.log(Level.WARNING, "Input error", e);
         }
+
     }
 
     /**
@@ -59,16 +76,21 @@ public class CLI implements ViewInterface {
      * @param ask if true asks for the username, if false welcomes the user
      */
     public void logIn(boolean ask){
+
         if (ask){
-            System.out.println("Write a username to login:");
-            Scanner reader = new Scanner(System.in);
-            String username = reader.nextLine();
+            printer.print("Write a username to login:");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            String username = null;
+            try {
+                username = reader.readLine();
+            } catch (IOException e) {
+                logger.log(Level.WARNING, "Input error", e);
+            }
             mainClient.setUsername(username);
             mainClient.sendCredentials();
         }
         else {
-            System.out.println("Welcome "+ mainClient.getUsername());
-
+            printer.print("Welcome "+ mainClient.getUsername());
         }
     }
 
@@ -77,9 +99,18 @@ public class CLI implements ViewInterface {
      * @param maps possible boards to choose from
      */
     public void chooseBoard(Map<Integer, String> maps){
-        maps.forEach((k,v)-> System.out.println("Map number  " + k + " " + v));
-        System.out.println("Select map: ");
-        Scanner reader = new Scanner(System.in);
-        mainClient.sendSelectedBoard(reader.nextInt());
+        printer.displayRequest(new ArrayList<>(maps.values()), board -> mainClient.sendSelectedBoard(board));
     }
+
+
+    public void timeout(){
+        printer.closeRequest();
+    }
+
+    @Override
+    public void updatedBoard(GameBoard board) {
+        //print board
+        printer.printBoard(board);
+    }
+
 }

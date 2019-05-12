@@ -1,9 +1,12 @@
 package network.client;
 
+import com.google.gson.Gson;
+import model.board.GameBoard;
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
 import network.messages.clientToServer.BoardResponse;
 import network.messages.clientToServer.LoginRequest;
+import network.messages.serverToClient.BoardInfo;
 import network.messages.serverToClient.BoardRequest;
 import network.messages.serverToClient.LoginResponse;
 import network.messages.serverToClient.ServerToClient;
@@ -96,7 +99,6 @@ public class MainClient {
         else {
             connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
         }
-
          */
         connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
 
@@ -115,13 +117,22 @@ public class MainClient {
      * @param message
      */
     public void handleMessage(ServerToClient message){
-            switch (message.getContent()){
+
+
+        switch (message.getContent()){
+            case TIMEOUT:
+                view.timeout();
+                break;
             case LOGIN_RESPONSE:
                 clientID = ((LoginResponse) message).getClientID();
                 view.logIn(((LoginResponse) message).getStatus());
                 break;
             case BOARD_REQUEST:
                 view.chooseBoard(((BoardRequest) message).getBoards());
+                break;
+            case BOARD_INFO:
+                Gson gson = new Gson();
+                view.updatedBoard(gson.fromJson(((BoardInfo) message).getBoard(), GameBoard.class));
                 break;
             default:
                 logger.log(Level.WARNING, "Unregistered message");
@@ -134,8 +145,8 @@ public class MainClient {
     public static String getServerIp() {
         return serverIp;
     }
-    public void setServerIp(String serverIp){
-        this.serverIp = serverIp;
+    public static void setServerIp(String serverIp){
+        MainClient.serverIp = serverIp;
     }
     public void setUsername(String username){
         this.username = username;
@@ -146,7 +157,7 @@ public class MainClient {
     public void setClientInterface(ClientInterface clientInterface){
         this.clientInterface = clientInterface;
     }
-    public void setSocket(Boolean connection){
-        this.socket=connection;
+    public static void setSocket(Boolean connection){
+        socket = connection;
     }
 }

@@ -21,6 +21,8 @@ public class Message implements Serializable{
     }
 
     public enum Content{
-        LOGIN_REQUEST, LOGIN_RESPONSE, BOARD_REQUEST, BOARD_RESPONSE
+        TIMEOUT, LOGIN_REQUEST, LOGIN_RESPONSE, BOARD_REQUEST, BOARD_RESPONSE,
+        BOARD_INFO
     }
+
 }

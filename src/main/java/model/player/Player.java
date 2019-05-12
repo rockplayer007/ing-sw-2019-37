@@ -115,9 +115,11 @@ public class Player {
     }
 
     public void movePlayer(Square square){
-        this.getPosition().removePlayer(this);
-        square.addPlayer(this);
-        this.setPosition(square);
+        if (!square.equals(getPosition())) {
+            this.getPosition().removePlayer(this);
+            square.addPlayer(this);
+            this.setPosition(square);
+        }
     }
 
     public void addAmmo(AmmoColor ammoColor){
