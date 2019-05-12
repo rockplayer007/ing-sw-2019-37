@@ -1,7 +1,8 @@
 package boardTest;
 ;
 import model.board.Board;
-import model.board.BoardMap;
+import model.board.BoardGenerator;
+import model.board.GameBoard;
 import model.board.Square;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,13 +16,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SquareTest {
 
     //private Board board;
-    private BoardMap map;
+    private GameBoard map;
 
     @BeforeEach
     public void createBoard(){
         Board board = new Board();
-        map = new BoardMap(board);
-        map.createMap(0);
+        map = new BoardGenerator(board).createMap(0);
 
     }
 

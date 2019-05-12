@@ -1,20 +1,13 @@
 package model.gamehandler;
 
 import model.board.Board;
-import model.board.BoardMap;
+import model.board.BoardGenerator;
+import model.board.GameBoard;
 import model.player.Player;
-import model.exceptions.*;
 
-import network.messages.clientToServer.BoardResponse;
-import network.messages.clientToServer.ClientToServer;
-
-import network.messages.serverToClient.BoardRequest;
-import network.messages.serverToClient.ServerToClient;
 import network.server.ClientOnServer;
 
-import java.rmi.RemoteException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,7 +16,7 @@ public class Room {
     private List<Player> players;
     private Map<Player, ClientOnServer> connectionToClient;
     private Board board;
-    private BoardMap boardMap;
+    private BoardGenerator boardGenerator;
     private Player currentPlayer;
     private Player startingPlayer;
 
@@ -32,13 +25,11 @@ public class Room {
 
     public Room() {
         board = new Board();
-        boardMap = new BoardMap(board);
+        boardGenerator = new BoardGenerator(board);
         players = new ArrayList<>();
         connectionToClient = new HashMap<>();
 
     }
-
-
 
     public void setNextPlayer() {
 
@@ -54,9 +45,9 @@ public class Room {
 
 
     public void createMap(int selection) {
-        boardMap.createMap(selection);
-        String description = boardMap.getMaps().get(selection);
-        board.setMap(boardMap);
+        GameBoard gameBoard = boardGenerator.createMap(selection);
+        String description = gameBoard.getDescription();
+        board.setMap(gameBoard);
 
         logger.log(Level.INFO, "selected board is {0}", description);
 
@@ -76,12 +67,13 @@ public class Room {
         this.currentPlayer = currentPlayer;
     }
 
-    public BoardMap getBoardMap(){
-        return boardMap;
+    public BoardGenerator getBoardGenerator(){
+        return boardGenerator;
     }
     public Board getBoard() {
         return board;
     }
+
 
     public void setStartingPlayer(Player player){
         startingPlayer = player;

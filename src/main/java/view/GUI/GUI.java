@@ -1,4 +1,5 @@
 package view.GUI;
+import model.board.GameBoard;
 import network.client.MainClient;
 import view.ViewInterface;
 
@@ -101,8 +102,21 @@ public class GUI implements ViewInterface {
     @Override
     public void timeout() {
         //TODO
-        //se non serve, lasciare vuoto
+        //avvisa l'utente
         //viene chiamato quando è finito il tempo e non può più scegliere
+    }
+
+    @Override
+    public void updatedBoard(GameBoard board) {
+        //TODO
+        //per caricare la mappa la prima volt usa board.getId();
+
+        //per leggere i quadrati e creare la mappa dinamicamente usa questi
+        //board.getSquare(0).getX();
+        //board.getSquare(0).getY();
+
+        //questo ti permette di capire se è un generationPoint
+        //board.getSquare(0).isGenerationPoint();
     }
 }
 

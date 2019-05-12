@@ -19,7 +19,7 @@ import java.util.*;
 /**
  * Class for managing the player board
  */
-public class BoardMap {
+public class BoardGenerator {
 
     private List<GenerationSquare> genPoints = new ArrayList<>();
     private Map<Integer,Square> allSquares = new HashMap<>();
@@ -28,8 +28,10 @@ public class BoardMap {
     private int chosenMap;
     private Board board;
 
+    private GameBoard gameBoard;
 
-    public BoardMap(Board board){
+
+    public BoardGenerator(Board board){
         super();
         this.board = board;
         loadMaps();
@@ -79,27 +81,17 @@ public class BoardMap {
         }
     }
 
-    /**
-     * Lets the user choose the board where to play
-     * @return The chosen board
-     */
-    public int chooseMap(){
-        availableMaps.forEach((k,v)-> System.out.println("Map number " + k + " " + v));
-        System.out.println("Select map: ");
-        Scanner reader = new Scanner(System.in);
-        return reader.nextInt();
-
-    }
-
     public Map<Integer, String> getMaps(){
         return availableMaps;
     }
 
+
     /**
      * Builds a new map given a chosen one
      * @param mapNumber Number of the map to choose
+     * @return a map that has been generated to be used
      */
-    public void createMap(int mapNumber){
+    public GameBoard createMap(int mapNumber){
         //first parse all the squares in the room then connect them
         chosenMap = mapNumber;
         try {
@@ -157,41 +149,10 @@ public class BoardMap {
         catch (Exception e){
             e.printStackTrace();
         }
+
+        gameBoard = new GameBoard(genPoints, allSquares, squaresInRoom, chosenMap, availableMaps.get(chosenMap));
+        return gameBoard;
     }
 
-    /**
-     * Gives the generation point given a color
-     * @param color Color of the generation point
-     * @return Generation point
-     */
-    public Square getGenerationPoint(Color color){
-        for(Square gen: genPoints){
-            if(color.equals(gen.getColor())){
-                return gen;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Gives the square with the specified id
-     * @param id Id of the square
-     * @return The square with that id
-     */
-    public Square getSquare(int id){
-        return allSquares.get(id);
-    }
-
-    public Map<Color, ArrayList<Square>> getSquaresInRoom(){
-        return squaresInRoom;
-    }
-
-    public Square getSquare(int x,int y){
-
-        return  allSquares.entrySet().stream()
-                .filter(a -> x == (a.getValue().getX()) && y == (a.getValue().getY()))
-                .findAny().map(Map.Entry::getValue)
-                .orElse(null);
-    }
 
 }

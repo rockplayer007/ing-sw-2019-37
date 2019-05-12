@@ -1,5 +1,6 @@
 package view.CLI;
 
+import model.board.GameBoard;
 import network.client.MainClient;
 import view.ViewInterface;
 
@@ -9,7 +10,6 @@ import java.io.InputStreamReader;
 import java.rmi.NotBoundException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -105,6 +105,12 @@ public class CLI implements ViewInterface {
 
     public void timeout(){
         printer.closeRequest();
+    }
+
+    @Override
+    public void updatedBoard(GameBoard board) {
+        //print board
+        printer.printBoard(board);
     }
 
 }

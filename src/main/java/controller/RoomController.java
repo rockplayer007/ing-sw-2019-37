@@ -1,12 +1,12 @@
 package controller;
 
-import model.board.Board;
-import model.board.BoardMap;
+import com.google.gson.Gson;
 import model.exceptions.TooManyPlayerException;
 import model.gamehandler.Room;
 import model.player.Player;
 import network.messages.clientToServer.BoardResponse;
 import network.messages.clientToServer.ClientToServer;
+import network.messages.serverToClient.BoardInfo;
 import network.messages.serverToClient.BoardRequest;
 import network.messages.serverToClient.ServerToClient;
 import network.messages.serverToClient.TimeoutMessage;
@@ -14,7 +14,6 @@ import network.server.ClientOnServer;
 
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -71,10 +70,6 @@ public class RoomController {
             throw new TooManyPlayerException("cant add the 6th player");
     }
 
-
-
-
-    //asks the board
     public void matchSetup() {
 
         //add players to the room
@@ -100,14 +95,15 @@ public class RoomController {
     }
 
     private void askBoard(){
-        ServerToClient boardRequest = new BoardRequest(room.getBoardMap().getMaps());
+        ServerToClient boardRequest = new BoardRequest(room.getBoardGenerator().getMaps());
 
         mockMessage = null;
         askingThread = Thread.currentThread();
 
-        while (mockMessage == null){
+        sendMessage(room.getCurrentPlayer(), boardRequest);
+        expectedReceiver = room.getCurrentPlayer().getNickname();
 
-            sendMessage(room.getCurrentPlayer(), boardRequest);
+        while (mockMessage == null){
 
             try {
                 Thread.sleep(10000);  //10 seconds
@@ -115,21 +111,24 @@ public class RoomController {
             } catch (InterruptedException e) {
                 System.out.println("have been interrupted before finishing");
             }
-            if(mockMessage == null){
-                //first send timeout message
-                synchronized (this){
+            synchronized (this){
+                if(mockMessage == null){
+                    //first send timeout message
                     sendMessage(room.getCurrentPlayer(), new TimeoutMessage());
                     room.setNextPlayer();
                     expectedReceiver = room.getCurrentPlayer().getNickname();
+                    sendMessage(room.getCurrentPlayer(), boardRequest);
                 }
-
-
 
             }
 
         }
 
         room.createMap(((BoardResponse) mockMessage).getSelectedBoard());
+
+        Gson gson = new Gson();
+        sendMessageToAll(new BoardInfo(gson.toJson(room.getBoard().getMap())));
+
         System.out.println("board is: " + ((BoardResponse) mockMessage).getSelectedBoard());
     }
 

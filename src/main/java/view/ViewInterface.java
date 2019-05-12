@@ -1,6 +1,8 @@
 package view;
 
 
+import model.board.GameBoard;
+
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -36,4 +38,5 @@ public interface ViewInterface {
     void timeout();
 
 
+    void updatedBoard(GameBoard board);
 }

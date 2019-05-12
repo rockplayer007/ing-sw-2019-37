@@ -1,9 +1,12 @@
 package network.client;
 
+import com.google.gson.Gson;
+import model.board.GameBoard;
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
 import network.messages.clientToServer.BoardResponse;
 import network.messages.clientToServer.LoginRequest;
+import network.messages.serverToClient.BoardInfo;
 import network.messages.serverToClient.BoardRequest;
 import network.messages.serverToClient.LoginResponse;
 import network.messages.serverToClient.ServerToClient;
@@ -126,6 +129,10 @@ public class MainClient {
                 break;
             case BOARD_REQUEST:
                 view.chooseBoard(((BoardRequest) message).getBoards());
+                break;
+            case BOARD_INFO:
+                Gson gson = new Gson();
+                view.updatedBoard(gson.fromJson(((BoardInfo) message).getBoard(), GameBoard.class));
                 break;
             default:
                 logger.log(Level.WARNING, "Unregistered message");

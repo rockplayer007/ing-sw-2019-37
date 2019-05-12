@@ -11,7 +11,7 @@ public class Board {
     private PowerDeck powerDeck;
     private WeaponDeck weaponDeck;
 
-    private BoardMap map;
+    private GameBoard map;
     private SkullBoard skullBoard;
 
     public Board(){
@@ -19,7 +19,7 @@ public class Board {
         powerDeck = new PowerDeck();
         weaponDeck = new WeaponDeck();
 
-        //map = new BoardMap(this);
+        //map = new BoardGenerator(this);
         skullBoard = new SkullBoard();
     }
 
@@ -27,12 +27,12 @@ public class Board {
      * Gives the map of the game where the players are playing
      * @return Map of the game
      */
-    public BoardMap getMap(){
+    public GameBoard getMap(){
         return map;
     }
 
 
-    public void setMap(BoardMap map) {
+    public void setMap(GameBoard map) {
         this.map = map;
     }
 

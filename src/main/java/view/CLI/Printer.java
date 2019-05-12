@@ -1,5 +1,7 @@
 package view.CLI;
 
+import model.board.GameBoard;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -82,6 +84,10 @@ public class Printer {
 
     public void print(String toPrint){
         System.out.println(toPrint);
+    }
+
+    public void printBoard(GameBoard board){
+        print("chosen board is number "+ board.getId() + " " + board.getDescription());
     }
 
 
