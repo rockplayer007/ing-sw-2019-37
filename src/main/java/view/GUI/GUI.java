@@ -17,6 +17,7 @@ public class GUI implements ViewInterface {
 
     private MainClient mainClient;
     private JFrame login;
+    private boolean first=true;
 
     public GUI(MainClient mainClient) {
         this.mainClient = mainClient;
@@ -24,7 +25,6 @@ public class GUI implements ViewInterface {
 
     @Override
     public void launch() throws NotBoundException, IOException {
-
 
         logIn(true);
         mainClient.connect();
@@ -46,6 +46,8 @@ public class GUI implements ViewInterface {
             gbc.gridy=8;
             gbc.anchor = GridBagConstraints.CENTER;
             gbc.insets = new Insets(50, 0, 0, 3);
+            if(!first)
+                loginPanel.setNicknameErr("Please insert another Nickname");
             submitButton.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
 
@@ -62,6 +64,7 @@ public class GUI implements ViewInterface {
                         mainClient.setUsername(loginPanel.getInsNickname());
                         mainClient.setSocket(loginPanel.getConnection());
                         mainClient.sendCredentials();
+                        first=false;
                         login.setVisible(false);
                     }
                 }});
@@ -98,6 +101,23 @@ public class GUI implements ViewInterface {
         selectMap.getContentPane().add(slmp);
         selectMap.setVisible(true);
     }
+
+
+    public void map(){
+        JFrame map= new JFrame();
+        map.setSize(1280,1000);
+        map.setMaximumSize(new Dimension(1280,1000));
+        map.setMinimumSize(new Dimension(1280,1000));
+        map.setBackground(Color.darkGray);
+        map.setResizable(false);
+        map.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        MapPanel mapPanel = new MapPanel();
+        map.getContentPane().add(mapPanel);
+        map.getContentPane().setSize(1280,1000);
+        map.setVisible(true);
+
+    }
+
 
     @Override
     public void timeout() {

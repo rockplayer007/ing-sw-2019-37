@@ -50,16 +50,16 @@ public class MainClient {
         if (choice.equals("g")) {
             view = new GUI(mainClient);
 
-          /*
+        /*
             //usato solo per test
             Map<Integer, String> map = new HashMap<>();
             map.put(1, "ideale per 3/4 giocatori");
             map.put(2, "ideale per 3/4 giocatori");
             map.put(3, "third");
-            map.put(0, "quarto");
+            map.put(0, "zero");
             view.chooseBoard(map);
-            */
-
+        */
+            //((GUI) view).map();
         }
         else {
             view = new CLI(mainClient);
