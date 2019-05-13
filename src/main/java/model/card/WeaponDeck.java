@@ -11,7 +11,12 @@ public class WeaponDeck extends Deck{
         for(int i = 0; i < 20; i++){
             //adding to the local deck (in the Deck class)
             //for test
-            addCard(null);
+            ArrayList<AmmoColor> cost = new ArrayList<>();
+            cost.add(AmmoColor.BLUE);
+            cost.add(AmmoColor.YELLOW);
+            Weapon weapon = new Weapon("TestName", "lots of effects", AmmoColor.BLUE, cost);
+
+            addCard(weapon);
 
             //mixDeck();
         }

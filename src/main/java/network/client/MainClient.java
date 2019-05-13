@@ -132,6 +132,7 @@ public class MainClient {
                 view.chooseBoard(((BoardRequest) message).getBoards());
                 break;
             case BOARD_INFO:
+                //necessary to deserialize properly also the sub classes
                 RuntimeTypeAdapterFactory<Square> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
                         .of(Square.class, "Square")
                         .registerSubtype(AmmoSquare.class, "AmmoSquare")

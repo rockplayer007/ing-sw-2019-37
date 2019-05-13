@@ -6,7 +6,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import model.board.*;
-import model.card.Card;
+import model.card.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import view.CLI.Printer;
@@ -36,24 +36,38 @@ public class BoardTest {
     @Test
     public void serializeMapTest(){
 
-        RuntimeTypeAdapterFactory<Square> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
+        RuntimeTypeAdapterFactory<Square> rfSquare = RuntimeTypeAdapterFactory
                 .of(Square.class, "Square")
                 .registerSubtype(AmmoSquare.class, "AmmoSquare")
                 .registerSubtype(GenerationSquare.class, "GenerationSquare");
+        /*
+        RuntimeTypeAdapterFactory<Deck> rfDeck = RuntimeTypeAdapterFactory
+                .of(Deck.class, "Deck")
+                .registerSubtype(WeaponDeck.class, "Weapon")
+                .registerSubtype(PowerDeck.class, "GenerationSquare");
 
-        Gson gson2 = new GsonBuilder()
-                .registerTypeAdapterFactory(runtimeTypeAdapterFactory)
+        RuntimeTypeAdapterFactory<Card> rfCard = RuntimeTypeAdapterFactory
+                .of(Card.class, "Card")
+                .registerSubtype(Weapon.class, "Weapon")
+                .registerSubtype(Powerup.class, "GenerationSquare");
+
+         */
+
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapterFactory(rfSquare)
                 .create();
 
-        String mapJson = gson2.toJson(map);
+        String mapJson = gson.toJson(map);
 
-        Gson gson = new Gson();
+        //Gson gson = new Gson();
         GameBoard gameBoard = gson.fromJson(mapJson, GameBoard.class);
         assertEquals(gameBoard.getGenerationPoint(Color.BLUE).getX(), 2);
         assertEquals(gameBoard.getGenerationPoint(Color.BLUE).getY(), 0);
 
         Printer printer = new Printer();
         printer.printBoard(gameBoard);
+        printer.printWeaponsOnBoard(gameBoard);
 
     }
 

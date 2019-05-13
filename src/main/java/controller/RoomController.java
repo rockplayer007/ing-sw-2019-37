@@ -92,7 +92,8 @@ public class RoomController {
         try{
             connectionToClient.get(player).getClientInterface()
                     .notifyClient(message);
-            logger.log(Level.INFO, "Sending message to: {0}", player.getNickname());
+            logger.log(Level.INFO, "Sending message to: {0}, for {1}",
+                    new String[]{player.getNickname(), String.valueOf(message.getContent())});
         } catch (RemoteException e) {
             logger.log(Level.WARNING, "Connection error", e);
         }
@@ -131,6 +132,7 @@ public class RoomController {
 
         room.createMap(((BoardResponse) mockMessage).getSelectedBoard());
 
+        //necessary to serialize properly also the sub classes
         RuntimeTypeAdapterFactory<Square> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
                 .of(Square.class, "Square")
                 .registerSubtype(AmmoSquare.class, "AmmoSquare")
@@ -140,10 +142,9 @@ public class RoomController {
                 .registerTypeAdapterFactory(runtimeTypeAdapterFactory)
                 .create();
 
-        //Gson gson = new Gson();
         sendMessageToAll(new BoardInfo(gson.toJson(room.getBoard().getMap())));
 
-        System.out.println("board is: " + ((BoardResponse) mockMessage).getSelectedBoard());
+        logger.log(Level.INFO,"board is: {0}", ((BoardResponse) mockMessage).getSelectedBoard());
     }
 
 

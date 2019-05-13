@@ -20,7 +20,6 @@ public class Square {
     private List<Player> playersOnSquare = new ArrayList<>();
     private boolean generationPoint;
 
-    public Square() {    }
     /**
      * Constructor of the class
      * @param id Number of the square

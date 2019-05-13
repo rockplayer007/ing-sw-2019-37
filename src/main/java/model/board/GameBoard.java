@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class GameBoard {
 
-    private List<GenerationSquare> genPoints = new ArrayList<>();
-    private Map<Integer,Square> allSquares = new HashMap<>();
+    private List<GenerationSquare> genPoints;
+    private Map<Integer,Square> allSquares;
     private Map<Color, ArrayList<Square>> squaresInRoom = new HashMap<>();
     private int id;
     private String description;
@@ -41,6 +41,10 @@ public class GameBoard {
             }
         }
         return null;
+    }
+
+    public List<GenerationSquare> getGenPoints() {
+        return genPoints;
     }
 
     /**
