@@ -240,7 +240,6 @@ public class Board {
         }
 
         public Square getSquare(int x,int y){
-
         Optional<Map.Entry<Integer, Square>>  temp =  allSquares.entrySet().stream().filter(a -> x == (a.getValue().getX())
             && y == (a.getValue().getY())).findAny();
 
@@ -248,6 +247,13 @@ public class Board {
         return temp.isPresent() ? temp.get().getValue() : null;
         }
 
+
+        /**
+         * @return a list of all square in the Map
+         */
+        public Set<Square> allSquares(){
+            return (Set<Square>) allSquares.values();
+        }
     }
 
 

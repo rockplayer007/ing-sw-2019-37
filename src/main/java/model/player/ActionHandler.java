@@ -5,20 +5,20 @@ import model.board.Board;
 import model.board.GenerationSquare;
 import model.board.Square;
 import model.card.*;
-import model.gamehandler.Room;
+import model.exceptions.NotEnoughException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * contain the min actions t
  */
 public class ActionHandler {
 
-    /**
-     * Default constructor
-     */
-    public ActionHandler() {
+    private ActionHandler(){
+    throw new IllegalStateException("Utility class");
     }
+
 
 
     /**
@@ -74,23 +74,23 @@ public class ActionHandler {
         if (!player.getPosition().getGenerationPoint())
             grabAmmo(player,((AmmoSquare) player.getPosition()).getAmmoCard(),board);
         else {
-            while (((GenerationSquare) player.getPosition()).getWeaponDeck().stream().anyMatch(i->player.enoughAmmos(i.getBuyCost()))){
-                Weapon weapon = ((GenerationSquare) player.getPosition()).getWeapon();
-                List<AmmoColor> cost = weapon.getBuyCost();
-                if (player.enoughAmmos(cost)) {
-                    if (!player.limitWeapon())
-                        grabWeapon(player, weapon);
-                    else {
-                        int i = chooseCard(player.getWeapons(), "change");
-                        ((GenerationSquare) player.getPosition()).addWeapon(player.getWeapons().get(i));
-                        player.getWeapons().remove(i);
-                        grabWeapon(player, weapon);
-                    }
-                    break;
-                } else {
-                    System.out.println("you can't brab this Weapon, because you haven't enough ammo");//TODO da stampare sul view del player
-                    choice(1, "choose another Weapon");
+            List<Weapon> weapons=((GenerationSquare) player.getPosition()).getWeaponDeck().stream().
+                    filter(i->player.enoughAmmos(i.getBuyCost(),true))
+                    .collect(Collectors.toList());
+            while (!weapons.isEmpty()){
+                Weapon weapon = weapons.get(chooseCard(weapons,"to grab"));
+                if (player.limitWeapon()) {
+                    int i = chooseCard(player.getWeapons(), "change");
+                    ((GenerationSquare) player.getPosition()).addWeapon(player.getWeapons().get(i));
+                    player.getWeapons().remove(i);
                 }
+                try {
+                    grabWeapon(player, weapon);
+                    break;
+                } catch (NotEnoughException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
     }
@@ -122,21 +122,33 @@ public class ActionHandler {
      * @param player current player
      * @param  card weapon need to add in the player's hand
      */
-    private static void grabWeapon(Player player, Weapon card) {
-        int c = 0;
+    private static void grabWeapon(Player player, Weapon card) throws NotEnoughException{
+        List<AmmoColor> cost = card.getChargeCost();
+        decuction(player,cost);
+        player.addWeapon(card);
+    }
+
+    public static void decuction(Player player,List<AmmoColor> cost) throws NotEnoughException {
         int i;
-        ArrayList<AmmoColor> cost = card.getChargeCost();
-        if (player.enoughAmmos(cost)) {
+        int c=0;
+        List<Powerup> temp = new ArrayList<>();
+        List<Powerup> powerups = player.getPowerups();
+        if (player.enoughAmmos(cost, true)) {
             while (cost.stream().distinct().anyMatch(player::usePowerupAsAmmo)) {//if the player has the powerups that can use as ammo
-                if (choice(c, "use a weapon as a ammo")) {
-                    i = chooseCard(player.getPowerups(), "use as ammo");
-                    cost.remove(player.getPowerups().get(i).getAmmoColor());
+                if (choice(c, "use a powerup as a ammo")) {
+                    i = chooseCard(powerups, "use as ammo");
+                    cost.remove(powerups.get(i).getAmmo());
+                    temp.add(powerups.get(i));
                     c++;
                 } else
                     break;
             }
-            cost.forEach(x -> player.removeAmmo(x));
-            player.addWeapon(card);
+            if (player.enoughAmmos(cost, false)) {
+                temp.forEach(powerups::remove);
+                cost.forEach(player::removeAmmo);
+            } else
+                throw new NotEnoughException("haven't enough ammo.");
+
         }
     }
 
@@ -159,28 +171,17 @@ public class ActionHandler {
      * @param player that do this action
      */
     public static void reload(Player player) {
-        int i;
-        int c=0;
-        List<Weapon> weapons=player.getWeapons();
-        while (player.getWeapons().stream().anyMatch(Weapon::getCharged)) {
-            i = chooseCard(weapons, "charge");
-            Weapon weapon = weapons.get(i);
-            if (!weapon.getCharged()) {
-                ArrayList<AmmoColor> cost = weapon.getChargeCost();
-                if (player.enoughAmmos(cost)) {
-                    while (cost.stream().distinct().anyMatch(player::usePowerupAsAmmo)&&choice(c, "use a weapon as a ammo")) {//if the player has the powerups that can use as ammo
-                            i = chooseCard(player.getPowerups(), "use as ammo");                                                //and ask the player if he want to use or no.
-                            cost.remove(player.getPowerups().get(i).getAmmoColor());
-                            player.removePowerup(i);
-                            c++;
-                    }
-                    cost.forEach(x -> player.removeAmmo(x));
+        List<Weapon> weapons=player.getWeapons().stream().filter(x->!x.getCharged()).collect(Collectors.toList());
+        while (!weapons.isEmpty()) {
+            Weapon weapon = weapons.get(chooseCard(weapons, "charge"));
+                List<AmmoColor> cost = weapon.getChargeCost();
+                try {
+                    decuction(player,cost);
                     weapon.setCharged(true);
+                    break;
+                } catch (NotEnoughException e) {
+                    e.printStackTrace();
                 }
-                break;
-            } else {
-                System.out.println("it is already charged");//TODO da stampare sul view del player
-            }
         }
 
     }

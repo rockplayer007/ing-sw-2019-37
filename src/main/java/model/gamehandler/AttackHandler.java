@@ -3,19 +3,31 @@ package model.gamehandler;
 import model.board.Square;
 import model.player.Player;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AttackHandler {
-    private List<Player> PossibleTargets;
+    private List<Player> possibleTargets;
     private List<Player> targetsToShot;
     private List<Player> selectedTargets;
     private Square effectSquare;
+    private Map<Player,Integer> damaged;
+
+    AttackHandler() {
+        possibleTargets = new ArrayList<>();
+        targetsToShot = new ArrayList<>();
+        selectedTargets = new ArrayList<>();
+        damaged = new HashMap<>();
+    }
+
     public List<Player> getPossibleTargets() {
-        return PossibleTargets;
+        return possibleTargets;
     }
 
     public void setPossibleTargets(List<Player> targetPlayers) {
-        this.PossibleTargets = targetPlayers;
+        this.possibleTargets = targetPlayers;
     }
 
     public List<Player> getTargetsToShot() {
@@ -40,5 +52,21 @@ public class AttackHandler {
 
     public void setEffectSquare(Square effectSquare) {
         this.effectSquare = effectSquare;
+    }
+
+    public Map<Player, Integer> getDamaged() {
+        return damaged;
+    }
+
+    public void addDamage(Player player,int point){
+        if (damaged.containsKey(player))
+            damaged.put(player, damaged.get(player)+point);
+        else
+            damaged.put(player,point);
+    }
+
+    public void damage(Player player){
+        damaged.forEach((key, value) ->key.getPlayerBoard().addDamage(player,value));
+
     }
 }

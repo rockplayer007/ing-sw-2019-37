@@ -20,6 +20,7 @@ public class Room {
     private Board board;
     private Player currentPlayer;
     private Player startingPlayer;
+    private AttackHandler attackHandler=new AttackHandler();
 
     private static final Logger logger = Logger.getLogger(Room.class.getName());
 
@@ -109,6 +110,10 @@ public class Room {
 
     public Board getBoard() {
         return board;
+    }
+
+    public AttackHandler getAttackHandler() {
+        return attackHandler;
     }
 
     public Player getStartingPlayer() {
