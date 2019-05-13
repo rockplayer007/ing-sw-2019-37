@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 
+
 public class Weapon extends Card {
     private Boolean charged;
     private AmmoColor chargeCost;

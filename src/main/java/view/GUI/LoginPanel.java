@@ -3,8 +3,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-
-public class LoginPanel extends JPanel implements ActionListener{
+public class LoginPanel extends JPanel implements ActionListener {
 
     private JLabel text;
     private JLabel text2;
@@ -115,6 +114,11 @@ public class LoginPanel extends JPanel implements ActionListener{
         return connSelected;
     }
 
+    public void setNicknameErr(String err){
+        this.nicknameError.setVisible(true);
+        this.connectionError.setText(err);
+    }
+
     public void setNicknameError(Boolean err){
         this.nicknameError.setVisible(err);
         this.nicknameErr=!err;
@@ -128,7 +132,7 @@ public class LoginPanel extends JPanel implements ActionListener{
     public boolean getConnectionErr(){
         return connectionErr;
     }
-    
+
     public boolean getNicknameErr(){
         return nicknameErr;
     }
@@ -136,9 +140,13 @@ public class LoginPanel extends JPanel implements ActionListener{
 
     public boolean getConnection(){
 
+        return connSelected.equals("SOCKET");
+        /*
         if  (connSelected.equals("SOCKET"))
             return  true;
         else
             return false;
+
+         */
     }
 }

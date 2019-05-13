@@ -1,4 +1,5 @@
 package view.GUI;
+import model.board.GameBoard;
 import network.client.MainClient;
 import view.ViewInterface;
 
@@ -16,6 +17,7 @@ public class GUI implements ViewInterface {
 
     private MainClient mainClient;
     private JFrame login;
+    private boolean first=true;
 
     public GUI(MainClient mainClient) {
         this.mainClient = mainClient;
@@ -23,7 +25,6 @@ public class GUI implements ViewInterface {
 
     @Override
     public void launch() throws NotBoundException, IOException {
-
 
         logIn(true);
         mainClient.connect();
@@ -45,8 +46,11 @@ public class GUI implements ViewInterface {
             gbc.gridy=8;
             gbc.anchor = GridBagConstraints.CENTER;
             gbc.insets = new Insets(50, 0, 0, 3);
+            if(!first)
+                loginPanel.setNicknameErr("Please insert another Nickname");
             submitButton.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
+
                     if(loginPanel.getInsNickname().equals("")){
                         loginPanel.setNicknameError(true);
                     }
@@ -60,6 +64,7 @@ public class GUI implements ViewInterface {
                         mainClient.setUsername(loginPanel.getInsNickname());
                         mainClient.setSocket(loginPanel.getConnection());
                         mainClient.sendCredentials();
+                        first=false;
                         login.setVisible(false);
                     }
                 }});
@@ -95,6 +100,43 @@ public class GUI implements ViewInterface {
         slmp.add(submit,gbc);
         selectMap.getContentPane().add(slmp);
         selectMap.setVisible(true);
+    }
+
+
+    public void map(){
+        JFrame map= new JFrame();
+        map.setSize(1280,1000);
+        map.setMaximumSize(new Dimension(1280,1000));
+        map.setMinimumSize(new Dimension(1280,1000));
+        map.setBackground(Color.darkGray);
+        map.setResizable(false);
+        map.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        MapPanel mapPanel = new MapPanel();
+        map.getContentPane().add(mapPanel);
+        map.getContentPane().setSize(1280,1000);
+        map.setVisible(true);
+
+    }
+
+
+    @Override
+    public void timeout() {
+        //TODO
+        //avvisa l'utente
+        //viene chiamato quando è finito il tempo e non può più scegliere
+    }
+
+    @Override
+    public void updatedBoard(GameBoard board) {
+        //TODO
+        //per caricare la mappa la prima volt usa board.getId();
+
+        //per leggere i quadrati e creare la mappa dinamicamente usa questi
+        //board.getSquare(0).getX();
+        //board.getSquare(0).getY();
+
+        //questo ti permette di capire se è un generationPoint
+        //board.getSquare(0).isGenerationPoint();
     }
 }
 

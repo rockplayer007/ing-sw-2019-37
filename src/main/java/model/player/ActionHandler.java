@@ -5,7 +5,9 @@ import model.board.Board;
 import model.board.GenerationSquare;
 import model.board.Square;
 import model.card.*;
+
 import model.exceptions.NotEnoughException;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -71,7 +73,7 @@ public class ActionHandler {
      * @param board that the player play.
      */
     public static void grab( Player player,Board board) {
-        if (!player.getPosition().getGenerationPoint())
+        if (!player.getPosition().isGenerationPoint())
             grabAmmo(player,((AmmoSquare) player.getPosition()).getAmmoCard(),board);
         else {
             List<Weapon> weapons=((GenerationSquare) player.getPosition()).getWeaponDeck().stream().

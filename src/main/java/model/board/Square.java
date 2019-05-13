@@ -13,11 +13,13 @@ public class Square {
     private int id;
     private int x;
     private int y;
-    private List<Square> neighbourSquare = new ArrayList<>();
+    //needs to be transient otherwhise serialization doesnt work
+    private transient List<Square> neighbourSquare = new ArrayList<>();
+    private List<Integer> neighbourId = new ArrayList<>();
+
     private List<Player> playersOnSquare = new ArrayList<>();
     private boolean generationPoint;
 
-    public Square() {    }
     /**
      * Constructor of the class
      * @param id Number of the square
@@ -40,6 +42,7 @@ public class Square {
      */
     public void addNextSquare(Square next){
         neighbourSquare.add(next);
+        neighbourId.add(next.getId());
     }
 
     /**
@@ -54,11 +57,15 @@ public class Square {
         return neighbourSquare;
     }
 
+    public List<Integer> getNeighbourId() {
+        return neighbourId;
+    }
+
     /**
      * Tells if the square is a GenerationSquare or an AmmoSquare
      * @return True if it is a GenerationSquare or false if AmmoSquare
      */
-    public boolean getGenerationPoint(){
+    public boolean isGenerationPoint(){
         return generationPoint;
     }
 
@@ -76,6 +83,10 @@ public class Square {
      */
     public int getY() {
         return y;
+    }
+
+    public int getId() {
+        return id;
     }
 
     /**
@@ -109,7 +120,7 @@ public class Square {
      * any square in the room on the other side of the door"
      * @return a set of squares visible from the current square
      */
-    public Set<Square> visibleSquare(Board.BoardMap map){
+    public Set<Square> visibleSquare(GameBoard map){
         Set<Square> positions = new HashSet<>();
         //adds all the squares that are in the same room or in a neighbour room
         neighbourSquare.forEach(square -> positions.addAll(map.getSquaresInRoom().get(square.squareColor)));
@@ -176,38 +187,37 @@ public class Square {
         return set;
     }
 
-    public Map<String,Set<Square>> directionAbsolute(Board.BoardMap boardMap){
+    public Map<String,Set<Square>> directionAbsolute(GameBoard gameBoard){
         Map<String,Set<Square>> map=new HashMap<>();
         if (x!=0)
-            map.put("Left",oneDirectionAbsolute(Direction.LEFT,boardMap));
+            map.put("Left",oneDirectionAbsolute(Direction.LEFT, gameBoard));
         if (x!=3)
-            map.put("Right",oneDirectionAbsolute(Direction.RIGHT,boardMap));
+            map.put("Right",oneDirectionAbsolute(Direction.RIGHT, gameBoard));
         if (y!=0)
-            map.put("Top",oneDirectionAbsolute(Direction.TOP,boardMap));
+            map.put("Top",oneDirectionAbsolute(Direction.TOP, gameBoard));
         if (y!=2)
-            map.put("Down",oneDirectionAbsolute(Direction.DOWN,boardMap));
+            map.put("Down",oneDirectionAbsolute(Direction.DOWN, gameBoard));
 
         return  map;
     }
 
-
-    public Set<Square> oneDirectionAbsolute(Direction direction,Board.BoardMap boardMap){
+    public Set<Square> oneDirectionAbsolute(Direction direction, GameBoard gameBoard){
         Set<Square> set = new HashSet<>();
         if (direction == Direction.LEFT && x!=0)
-            set.addAll(boardMap.getSquare(x-1,y).oneDirectionAbsolute(direction,boardMap));
+            set.addAll(gameBoard.getSquare(x-1,y).oneDirectionAbsolute(direction, gameBoard));
         else if (direction == Direction.RIGHT && x!=3)
-            set.addAll(boardMap.getSquare(x+1,y).oneDirectionAbsolute(direction,boardMap));
+            set.addAll(gameBoard.getSquare(x+1,y).oneDirectionAbsolute(direction, gameBoard));
         else if (direction == Direction.DOWN && y!=0)
-            set.addAll(boardMap.getSquare(x,y-1).oneDirectionAbsolute(direction,boardMap));
+            set.addAll(gameBoard.getSquare(x,y-1).oneDirectionAbsolute(direction, gameBoard));
         else if (direction == Direction.TOP && y!=2)
-            set.addAll(boardMap.getSquare(x,y+1).oneDirectionAbsolute(direction,boardMap));
+            set.addAll(gameBoard.getSquare(x,y+1).oneDirectionAbsolute(direction, gameBoard));
         set.add(this);
         return set;
     }
 
     @Override
     public String toString () {
-        return "X:" + x + " Y:" + y + " Color: " + squareColor;
+        return "X: " + x + " Y: " + y + " Color: " + squareColor;
     }
     public enum Direction {
         TOP,DOWN,LEFT,RIGHT

@@ -1,6 +1,8 @@
 package view;
 
 
+import model.board.GameBoard;
+
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -25,9 +27,16 @@ public interface ViewInterface {
     void logIn(boolean ask);
 
     /**
-     * makes the first logged in player choose the board
+     * Makes the first logged in player choose the board
      * @param possibleBoards boards to chose from
      */
     void chooseBoard(java.util.Map<Integer,String> possibleBoards);
 
+    /**
+     * Notifies the user that the time for his action is finished
+     */
+    void timeout();
+
+
+    void updatedBoard(GameBoard board);
 }

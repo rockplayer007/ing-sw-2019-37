@@ -1,9 +1,13 @@
 package network.client;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import model.board.*;
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
 import network.messages.clientToServer.BoardResponse;
 import network.messages.clientToServer.LoginRequest;
+import network.messages.serverToClient.BoardInfo;
 import network.messages.serverToClient.BoardRequest;
 import network.messages.serverToClient.LoginResponse;
 import network.messages.serverToClient.ServerToClient;
@@ -47,16 +51,16 @@ public class MainClient {
         if (choice.equals("g")) {
             view = new GUI(mainClient);
 
-          /*
+        /*
             //usato solo per test
             Map<Integer, String> map = new HashMap<>();
             map.put(1, "ideale per 3/4 giocatori");
             map.put(2, "ideale per 3/4 giocatori");
             map.put(3, "third");
-            map.put(0, "quarto");
+            map.put(0, "zero");
             view.chooseBoard(map);
-            */
-
+        */
+            //((GUI) view).map();
         }
         else {
             view = new CLI(mainClient);
@@ -96,7 +100,6 @@ public class MainClient {
         else {
             connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
         }
-
          */
         connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
 
@@ -115,13 +118,31 @@ public class MainClient {
      * @param message
      */
     public void handleMessage(ServerToClient message){
-            switch (message.getContent()){
+
+
+        switch (message.getContent()){
+            case TIMEOUT:
+                view.timeout();
+                break;
             case LOGIN_RESPONSE:
                 clientID = ((LoginResponse) message).getClientID();
                 view.logIn(((LoginResponse) message).getStatus());
                 break;
             case BOARD_REQUEST:
                 view.chooseBoard(((BoardRequest) message).getBoards());
+                break;
+            case BOARD_INFO:
+                //necessary to deserialize properly also the sub classes
+                RuntimeTypeAdapterFactory<Square> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
+                        .of(Square.class, "Square")
+                        .registerSubtype(AmmoSquare.class, "AmmoSquare")
+                        .registerSubtype(GenerationSquare.class, "GenerationSquare");
+
+                Gson gson = new GsonBuilder()
+                        .registerTypeAdapterFactory(runtimeTypeAdapterFactory)
+                        .create();
+                //Gson gson = new Gson();
+                view.updatedBoard(gson.fromJson(((BoardInfo) message).getBoard(), GameBoard.class));
                 break;
             default:
                 logger.log(Level.WARNING, "Unregistered message");
@@ -134,8 +155,8 @@ public class MainClient {
     public static String getServerIp() {
         return serverIp;
     }
-    public void setServerIp(String serverIp){
-        this.serverIp = serverIp;
+    public static void setServerIp(String serverIp){
+        MainClient.serverIp = serverIp;
     }
     public void setUsername(String username){
         this.username = username;
@@ -146,7 +167,7 @@ public class MainClient {
     public void setClientInterface(ClientInterface clientInterface){
         this.clientInterface = clientInterface;
     }
-    public void setSocket(Boolean connection){
-        this.socket=connection;
+    public static void setSocket(Boolean connection){
+        socket = connection;
     }
 }

@@ -32,7 +32,7 @@ public class PowerDeck extends Deck{
                 addCard(new Powerup("TELEPORTER",teleporterDes,teleporter,color));
             }
         }
-
+        mixDeck();
 
     }
 

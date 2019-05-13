@@ -1,12 +1,13 @@
 package model.card;
 
+import model.gamehandler.Room;
 import model.board.Color;
 import model.board.Square;
 import model.exceptions.InterruptOperationException;
 import model.exceptions.NotEnoughException;
 import model.exceptions.NullTargetsException;
 import model.gamehandler.AttackHandler;
-import model.gamehandler.Room;
+
 import model.player.ActionHandler;
 import model.player.Player;
 
@@ -238,6 +239,7 @@ class  MoveTargetToVisible implements Operation{
         Set<Square> visibleSquare=currentPlayer.getPosition().visibleSquare(room.getBoard().getMap());
         Set<Square> validSquare;
         validSquare=target.getPosition().getValidPosition(distance).stream().filter(visibleSquare::contains).collect(Collectors.toSet());
+
         target.movePlayer(ActionHandler.chooseSquare(currentPlayer,validSquare));//TODO DA controllare.
     }
 }

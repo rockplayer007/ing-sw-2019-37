@@ -20,11 +20,13 @@ public abstract class Deck {
         }
         return cards;
     }
+
     public  void addCard(Card card){cardDeck.push(card);
     }
 
     public void addAll(List<? extends Card> cards){
         cardDeck.addAll(cards);
+
     }
 
 }

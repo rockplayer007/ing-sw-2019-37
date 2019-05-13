@@ -1,155 +1,233 @@
 package view.GUI;
 
+import model.player.Player;
+import model.player.Hero;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.logging.Level;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JComboBox;
-
-public class MapPanel extends JPanel{
-    private JButton x0y0;
-    private JButton x1y0;
-    private JButton x2y0;
-    private JButton x3y0;
-    private JButton x0y1;
-    private JButton x1y1;
-    private JButton x2y1;
-    private JButton x3y1;
-    private JButton x0y2;
-    private JButton x1y2;
-    private JButton x2y2;
-    private JButton x3y2;
-    private Image image;
-    private JButton run;
-    private JButton grab;
-    private JButton playerboard;
-    private JTextArea shoo;
-    private JComboBox comboBox;
+import javax.swing.border.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 
-    private void build() {
+public class MapPanel extends JLayeredPane{
+    private  Image image;
+    private JMapButton [] room = new JMapButton[12];
+    private List<JPlayerButton> playerIcon = new ArrayList<>() ;
+
+    public MapPanel()  {
+        JButton run;
+        JButton grab;
+        JButton playerboard;
         this.setLayout(null);
-        GridBagConstraints gbc = new GridBagConstraints();
+        image = Toolkit.getDefaultToolkit().createImage(getUrlMap(3)); //aggiungere numero di mappa ricevuto
+        loadImages(image);
+        /* colorare bordi bottone
+        Border border= BorderFactory.createLineBorder(Color.red);
+        mapButtons[0].setBorder (border);
+        mapButtons[0].setBorderPainted (true);*/
+        int c=0;
+        for(int i=0;i<3;i++){
+            for(int j=0;j<4;j++) {
+                room[c] = new JMapButton(j, i);
+                room[c].setOpaque(false);
+                room[c].setSize(149,116);
+                Border border= BorderFactory.createLineBorder(Color.red);
+                room[c].setBorder (border);
+                room[c].setBorderPainted (true);
+                room[c].addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.out.println("bottone room premuto");
+                    }
+                });
+                c++;
+            }
+        }
 
-        this.x0y0=new JButton("button 1");
-        this.x0y0.setSize(260,228);
-        this.x0y0.setLocation(2,0);
-        this.x0y0.setBorder(null);
-        this.x0y0.setOpaque(false);
-        x0y0.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("start");
-                //method to launch game
-            }});
-        this.add(this.x0y0, gbc);
+        room[0].setLocation(166,175);
+        room[1].setLocation(352,175);
+        room[2].setLocation(532,175);
+        room[3].setLocation(700,175);
+        room[4].setLocation(166,335);
+        room[5].setLocation(352,335);
+        room[6].setLocation(532,335);
+        room[7].setLocation(700,335);
+        room[8].setLocation(166,515);
+        room[9].setLocation(352,515);
+        room[10].setLocation(532,515);
+        room[11].setLocation(700,515);
 
-        this.x1y0=new JButton("button 2");
-        this.x1y0.setSize(260,228);
-        this.x1y0.setLocation(264,0);
-        this.x1y0.setBorder(null);
-        this.x1y0.setOpaque(false);
-        this.add(this.x1y0, gbc);
+        for(int i=0;i<12;i++){
+            this.add(this.room[i]);
+        }
+/*
+        //test
+        ArrayList<Player> players=new ArrayList<>();
 
-        this.x2y0=new JButton("but3");
-        this.x2y0.setSize(260,228);
-        this.x2y0.setLocation(524,0);
-        this.x2y0.setBorder(null);
-        this.x2y0.setOpaque(false);
-        this.add(this.x2y0, gbc);
+        Player p = new Player("antonio");
+        p.setHero(new Hero("Violet",""));
+        players.add(p);
+        Player p2 = new Player("luigi");
+        p2.setHero(new Hero("Banshee",""));
+        players.add(p2);
 
-        this.x3y0=new JButton("but4");
-        this.x3y0.setSize(243,228);
-        this.x3y0.setLocation(784,0);
-        this.x3y0.setBorder(null);
-        this.x3y0.setOpaque(false);
-        this.add(this.x3y0, gbc);
+        Player p3 = new Player("antonello");
+        p3.setHero(new Hero("Di-Struct-Or",""));
+        players.add(p3);
 
-        this.x0y1=new JButton("but5");
-        this.x0y1.setSize(260,228);
-        this.x0y1.setLocation(2,238);
-        this.x0y1.setBorder(null);
-        this.x0y1.setOpaque(false);
-        this.add(this.x0y1, gbc);
+        Player p4 = new Player("giovanni");
+        p4.setHero(new Hero("Sprog",""));
+        players.add(p4);
 
-        this.x1y1=new JButton("but6");
-        this.x1y1.setSize(260,228);
-        this.x1y1.setLocation(264,238);
-        this.x1y1.setBorder(null);
-        this.x1y1.setOpaque(false);
-        this.add(this.x1y1, gbc);
+        Player p5 = new Player("michele");
+        p5.setHero(new Hero("Dozer",""));
+        players.add(p5);
 
-        this.x2y1=new JButton("but7");
-        this.x2y1.setSize(260,228);
-        this.x2y1.setLocation(524,238);
-        this.x2y1.setBorder(null);
-        this.x2y1.setOpaque(false);
-        this.add(this.x2y1, gbc);
+        createIconPlayers(players);
+        //setPlayerIcon();
+        //resetRooms();
+        movePlayer(3,p);
+        movePlayer(3,p2);
+        movePlayer(3,p3);
+        movePlayer(3,p4);
+        movePlayer(3,p5);
+      //  playerIcon.get(0).setEnabled(false);
 
-        this.x3y1=new JButton("but8");
-        this.x3y1.setSize(243,228);
-        this.x3y1.setLocation(784,238);
-        this.x3y1.setBorder(null);
-        this.x3y1.setOpaque(false);
-        this.add(this.x3y1, gbc);
+*/
 
-        this.x0y2=new JButton("but9");
-        this.x0y2.setSize(260,228);
-        this.x0y2.setLocation(2,476);
-        this.x0y2.setBorder(null);
-        this.x0y2.setOpaque(false);
-        this.add(this.x0y2, gbc);
+        run =new JButton("RUN");
+        run.setSize(250,70);
+        run.setLocation(1030,0);
+        run.setOpaque(false);
+        add(run);
 
-        this.x1y2=new JButton("but10");
-        this.x1y2.setSize(260,228);
-        this.x1y2.setLocation(264,476);
-        this.x1y2.setBorder(null);
-        this.x1y2.setOpaque(false);
-        this.add(this.x1y2, gbc);
+        grab =new JButton("GRAB");
+        grab.setSize(250,70);
+        grab.setLocation(1030,72);
+        grab.setOpaque(false);
+        add(grab);
 
-        this.x2y2=new JButton("but11");
-        this.x2y2.setSize(260,228);
-        this.x2y2.setLocation(524,476);
-        this.x2y2.setBorder(null);
-        this.x2y2.setOpaque(false);
-        this.add(this.x2y2, gbc);
-
-        this.x3y2=new JButton("but12");
-        this.x3y2.setSize(243,228);
-        this.x3y2.setLocation(784,476);
-        this.x3y2.setBorder(null);
-        this.x3y2.setOpaque(false);
-        this.add(this.x3y2, gbc);
-
-        this.run =new JButton("RUN");
-        this.run.setSize(250,70);
-        this.run.setLocation(1030,0);
-        this.run.setOpaque(false);
-        this.add(this.run, gbc);
-
-        this.grab =new JButton("GRAB");
-        this.grab.setSize(250,70);
-        this.grab.setLocation(1030,72);
-        this.grab.setOpaque(false);
-        this.add(this.grab, gbc);
-
-        this.playerboard =new JButton("SHOW MY PLAYERBOARD");
-        this.playerboard.setSize(250,70);
-        this.playerboard.setLocation(1030,144);
-        this.playerboard.setOpaque(false);
-        this.add(this.playerboard, gbc);
-
-        this.comboBox=new JComboBox();
-        comboBox.addItem("Player1");
-        comboBox.addItem("Player2");
-        comboBox.addItem("Player3");
-        comboBox.addItem("Player4");
-        comboBox.setSize(250,70);
-        this.comboBox.setLocation(1030,196);
-        this.comboBox.setOpaque(false);
-        this.add(this.comboBox, gbc);
-
+        playerboard =new JButton("SHOW MY PLAYERBOARD");
+        playerboard.setSize(250,70);
+        playerboard.setLocation(1030,144);
+        playerboard.setOpaque(false);
+        add(playerboard);
 
     }
+    
+    private void createIconPlayers(ArrayList <Player> players){
+        for(int i=0;i<players.size();i++){
+            Player p=players.get(i);
+            JPlayerButton playerButton=new JPlayerButton(p);
+            playerButton.setSize(46,68);
+            playerButton.setContentAreaFilled(false);
+            playerButton.setBorder(null);
+            playerButton.setFocusPainted(false);
+            playerButton.setIcon(new ImageIcon(getHeroIcon(p.getHero().getName())));
+            //playerButton.setPressedIcon(new ImageIcon(p.getHero().getName())));
+            playerButton.setOpaque(false);
+            playerButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("bottone premuto");
+                }
+            });
+            playerButton.setVisible(true);
+            playerIcon.add(playerButton);
+            this.add(playerIcon.get(i));
+        }
+    }
+
+    private String getHeroIcon (String name){
+
+        switch (name){
+            case "Violet": return "./src/main/resources/violeticon.png";
+            case "Banshee" : return "./src/main/resources/bansheeicon.png";
+            case "Di-Struct-Or" : return "./src/main/resources/distructoricon.png";
+            case "Dozer" : return "./src/main/resources/dozericon.png";
+            case "Sprog" : return "./src/main/resources/sprogicon.png";
+            default: return null;
+        }
+    }
+
+    private String getUrlMap(int code){
+        /*
+        switch (code){
+            case 0: return "./src/main/resources/map0.png";
+            case 1: return "./src/main/resources/map1.png";
+            case 2: return "./src/main/resources/map2.png";
+            case 3: return "./src/main/resources/map3.png";
+            default: return null;
+        }
+
+         */
+        return "./src/main/resources/map" + code + ".png";
+
+    }
+
+    public void setEnabledPlayer(ArrayList<Player> players){
+                resetPlayersEnabled();
+                for (int i=0;i<players.size();i++){
+                    for(int j = 0; j< playerIcon.size(); j++){
+                        if(players.get(i).getNickname().equals(playerIcon.get(j).getPlayer().getNickname()))
+                            playerIcon.get(j).setEnabled(true);
+                    }
+                }
+    }
+
+    private void resetPlayersEnabled(){
+        for (int i = 0; i<playerIcon.size(); i++){
+            playerIcon.get(i).setEnabled(false);
+        }
+    }
+
+    public void resetRooms(){
+        for(int i=0;i<12;i++) {
+            room[i].setEnabled(false);
+            room[i].setVisible(false);
+        }
+    }
+
+
+    public void movePlayer(int cell, Player player){
+        //aggiungere controllo se si muove nella stessa cella
+        boolean occupato=false;
+        int c=0;
+        int k=0;
+        int j=0;
+        int x=0;
+        Point [] positions = new Point[5];
+        positions[0]=new Point(room[cell].getX(),room[cell].getY()-14);
+        positions[1]=new Point(room[cell].getX()+51,room[cell].getY()-14);
+        positions[2]=new Point(room[cell].getX()+101,room[cell].getY()-14);
+        positions[3]=new Point(room[cell].getX(),room[cell].getY()+60);
+        positions[4]=new Point(room[cell].getX()+51,room[cell].getY()+60);
+
+        for(int i=0;i<playerIcon.size();i++){
+          if(player.getNickname().equals(playerIcon.get(i).getPlayer().getNickname())){
+              c=i;
+
+              while (x<5 && !occupato) {
+                  for (j = 0; j < playerIcon.size(); j++) {
+                      if (playerIcon.get(j).getLocation().equals(positions[x]))
+                          occupato = true;
+                  }
+                  if (!occupato){
+                      k = x;
+                  occupato = true;
+              }
+                  else occupato=false;
+         x++;
+          }
+
+              playerIcon.get(c).setLocation(positions[k]);
+          }
+        }
+
+        }
 
     private void loadImages(Image imga) {
         try {
@@ -168,11 +246,8 @@ public class MapPanel extends JPanel{
         g.drawImage(image, 0, 0, null);
         super.paintComponent(g);
     }
-    public MapPanel()  {
-        this.build();
-        image = Toolkit.getDefaultToolkit().createImage("./src/main/resources/map1example.png");
-        loadImages(image);
-    }
+
+
 
 
 }

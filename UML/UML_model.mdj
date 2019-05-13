@@ -20281,7 +20281,7 @@
 											"top": 2574,
 											"width": 183,
 											"height": 13,
-											"text": "(from Controller)"
+											"text": "(from controller)"
 										},
 										{
 											"_type": "LabelView",
@@ -20476,7 +20476,7 @@
 											"top": 2574,
 											"width": 135,
 											"height": 13,
-											"text": "(from Controller)"
+											"text": "(from controller)"
 										},
 										{
 											"_type": "LabelView",
@@ -20652,7 +20652,7 @@
 											"top": 2574,
 											"width": 151,
 											"height": 13,
-											"text": "(from Controller)"
+											"text": "(from controller)"
 										},
 										{
 											"_type": "LabelView",
@@ -20828,7 +20828,7 @@
 											"top": 2566,
 											"width": 167,
 											"height": 13,
-											"text": "(from Controller)"
+											"text": "(from controller)"
 										},
 										{
 											"_type": "LabelView",
@@ -25240,7 +25240,7 @@
 			"_parent": {
 				"$ref": "AAAAAAFF+h6SjaM2Hec="
 			},
-			"name": "Controller",
+			"name": "controller",
 			"ownedElements": [
 				{
 					"_type": "UMLClassDiagram",
