@@ -4,6 +4,9 @@ import java.util.*;
 public class PowerDeck extends Deck{
 
     public PowerDeck(){
+        createPowerupDeck();
+    }
+    private void createPowerupDeck(){
         ArrayList<String> na= new ArrayList<>();
         na.add("Targeting Scope");
         na.add("Newton");
@@ -18,6 +21,14 @@ public class PowerDeck extends Deck{
             }
         }
         mixDeck();
+    }
+
+    @Override
+    public Card getCard(){
+        if(getDeck().size() == 0){
+            createPowerupDeck();
+        }
+        return super.getCard();
     }
 
 }

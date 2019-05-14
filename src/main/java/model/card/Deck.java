@@ -25,4 +25,7 @@ public abstract class Deck {
         cardDeck.push(card);
     }
 
+    public Deque<Card> getDeck() {
+        return cardDeck;
+    }
 }
