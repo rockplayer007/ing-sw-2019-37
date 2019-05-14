@@ -1,5 +1,7 @@
 package view.GUI;
+import model.board.AmmoSquare;
 import model.board.GameBoard;
+import model.board.GenerationSquare;
 import network.client.MainClient;
 import view.ViewInterface;
 
@@ -129,6 +131,27 @@ public class GUI implements ViewInterface {
     @Override
     public void updatedBoard(GameBoard board) {
         //TODO
+        board.getSquare(3).getY();
+        board.getSquare(0).getX();
+
+
+        board.getSquare(0).getPlayersOnSquare().get(0).getHero().getName();
+
+        if(board.getSquare(0).isGenerationPoint()){
+            GenerationSquare gen = (GenerationSquare) board.getSquare(0);
+            for(int x = 0; x < gen.getWeaponDeck().size(); x++){
+                gen.getWeaponDeck().get(0).getName();
+            }
+            gen.getWeaponDeck().stream().forEach(x ->{
+                x.getName();
+            });
+
+        }
+        else {
+            ((AmmoSquare) board.getSquare(0)).getAmmoCard().getName();
+        }
+
+
         //per caricare la mappa la prima volt usa board.getId();
 
         //per leggere i quadrati e creare la mappa dinamicamente usa questi

@@ -22,7 +22,7 @@ public class ServerRMI {
      * @throws RemoteException
      */
     public void startServer(int port) throws RemoteException {
-        System.setProperty("java.rmi.server.hostname", "localhost");
+        //System.setProperty("java.rmi.server.hostname", "localhost");
         Registry registry = LocateRegistry.createRegistry(port);
         ServerImplementation serverImplementation = new ServerImplementation(server);
 

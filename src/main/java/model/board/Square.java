@@ -2,12 +2,13 @@ package model.board;
 
 import model.player.Player;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Class that defines a single square of the board
  */
-public class Square {
+public class Square implements Serializable {
 
     private Color squareColor;
     private int id;

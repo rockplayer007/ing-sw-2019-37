@@ -6,10 +6,12 @@ import java.util.*;
  */
 public class FreneticAction1 implements Actions {
 
+
     /**
      * Default constructor
      */
     public FreneticAction1() {
+
     }
 
 

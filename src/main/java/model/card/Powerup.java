@@ -1,41 +1,20 @@
 package model.card;
 
 public class Powerup extends Card {
-    private int key; //Targeting Scope=1,Newton=2,Tagback Grenade=3,Teleporter=4
+    private Effect effect;
     private AmmoColor ammo;
 
-    public Powerup (String name, String description, AmmoColor ammo, int key){
+    public Powerup (String name, String description, Effect effect, AmmoColor ammo){
         super(name,description);
+        this.effect=effect;
         this.ammo=ammo;
-        this.key=key;
     }
-    public AmmoColor getAmmoColor(){
+    public AmmoColor getAmmo(){
         return ammo;
     }
 
-    public int getKey(){
-        return key;
+    public Effect getEffect() {
+        return effect;
     }
 
-    public void operation(){
-        switch (key){
-            case 1: //it can only be activated when attacking
-                    //method for paying ammunition cube
-                    //method choose target
-                    //method of dealing 1 damage
-                    break;
-            case 2: //can be used on its own only
-                    //method choose target
-                    //method move target (1.2 squares in one direction)
-                    break;
-            case 3: //when you receive player damage that you CAN SEE
-                    //damage
-                    break;
-            case 4: //can be used on its own only
-                    //method move target
-                    break;
-            default:;
-        }
-
-    }
 }

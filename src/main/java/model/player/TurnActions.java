@@ -6,11 +6,15 @@ import java.util.*;
  */
 public class TurnActions implements Actions {
 
+    private int count;
+
     /**
      * Default constructor
      */
     public TurnActions() {
+
     }
+
 
 
 

@@ -1,21 +1,27 @@
 package model.card;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 
-public class Weapon extends Card {
+public class Weapon  extends Card {
     private Boolean charged;
     private AmmoColor chargeCost;
     private List<AmmoColor> buyCost;
+    private Boolean optional;
+    private transient Map<Effect,Integer> effects;
 
 
-    Weapon(String name, String description, AmmoColor chargeCost, List<AmmoColor> buyCost){
+    Weapon(String name, String description, AmmoColor chargeCost, List<AmmoColor> buyCost,Boolean optional,Map<Effect,Integer> effects){
         super(name, description);
         this.buyCost = buyCost;
         this.chargeCost = chargeCost;
         charged = true;
+        this.optional=optional;
+        this.effects=effects;
     }
 
 
@@ -31,18 +37,18 @@ public class Weapon extends Card {
         return buyCost;
     }
 
-    public ArrayList<AmmoColor> getChargeCost() {
-        ArrayList<AmmoColor>cost=new ArrayList<>();
+    public List<AmmoColor> getChargeCost() {
+        List<AmmoColor>cost=new ArrayList<>();
         cost.add(chargeCost);
         cost.addAll(buyCost);
         return cost;
     }
-/*
-    public List<Effect> getEffects(){
-        return  effects;
+
+    public Boolean getOptional() {
+        return optional;
     }
-    public List<Effect> getAlternativeEffects(){
-        return  alternativeeffects;
+
+    public Map<Effect, Integer> getEffects() {
+        return effects;
     }
-    */
 }

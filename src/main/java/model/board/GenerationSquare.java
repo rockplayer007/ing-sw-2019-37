@@ -39,8 +39,4 @@ public class GenerationSquare extends Square {
 
     }
 
-    public Weapon getWeapon() {
-        //TODO
-        return null;
-    }
 }
