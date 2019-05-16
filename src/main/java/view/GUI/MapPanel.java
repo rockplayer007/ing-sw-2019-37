@@ -1,12 +1,13 @@
 package view.GUI;
 
+import model.card.AmmoColor;
+import model.card.Weapon;
 import model.player.Player;
 import model.player.Hero;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JComboBox;
 import javax.swing.border.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,13 +17,17 @@ public class MapPanel extends JLayeredPane{
     private  Image image;
     private JMapButton [] room = new JMapButton[12];
     private List<JPlayerButton> playerIcon = new ArrayList<>() ;
-
+    private List<WeaponButton> weaponIcon = new ArrayList<>();
+    private List<JButton> infoWeapon = new ArrayList<>();
     public MapPanel()  {
         JButton run;
         JButton grab;
-        JButton playerboard;
+        JButton playerboards;
+        JButton shoot;
+        JButton adrenaline1;
+        JButton adrenaline2;
         this.setLayout(null);
-        image = Toolkit.getDefaultToolkit().createImage(getUrlMap(3)); //aggiungere numero di mappa ricevuto
+        image = Toolkit.getDefaultToolkit().createImage(getUrlMap(2)); //aggiungere numero di mappa ricevuto
         loadImages(image);
         /* colorare bordi bottone
         Border border= BorderFactory.createLineBorder(Color.red);
@@ -63,27 +68,27 @@ public class MapPanel extends JLayeredPane{
         for(int i=0;i<12;i++){
             this.add(this.room[i]);
         }
-/*
+
         //test
         ArrayList<Player> players=new ArrayList<>();
 
         Player p = new Player("antonio");
-        p.setHero(new Hero("Violet",""));
+        p.setHero(new Hero("Violet","", model.board.Color.YELLOW));
         players.add(p);
         Player p2 = new Player("luigi");
-        p2.setHero(new Hero("Banshee",""));
+        p2.setHero(new Hero("Banshee","",model.board.Color.YELLOW));
         players.add(p2);
 
         Player p3 = new Player("antonello");
-        p3.setHero(new Hero("Di-Struct-Or",""));
+        p3.setHero(new Hero("Di-Struct-Or","",model.board.Color.YELLOW));
         players.add(p3);
 
         Player p4 = new Player("giovanni");
-        p4.setHero(new Hero("Sprog",""));
+        p4.setHero(new Hero("Sprog","",model.board.Color.YELLOW));
         players.add(p4);
 
         Player p5 = new Player("michele");
-        p5.setHero(new Hero("Dozer",""));
+        p5.setHero(new Hero("Dozer","",model.board.Color.YELLOW));
         players.add(p5);
 
         createIconPlayers(players);
@@ -91,12 +96,15 @@ public class MapPanel extends JLayeredPane{
         //resetRooms();
         movePlayer(3,p);
         movePlayer(3,p2);
-        movePlayer(3,p3);
-        movePlayer(3,p4);
+        movePlayer(6,p3);
+        movePlayer(2,p4);
         movePlayer(3,p5);
       //  playerIcon.get(0).setEnabled(false);
+        Weapon x= new Weapon("weapon","descrizione",AmmoColor.RED,null);
+        addWeapon(x);
+        Weapon y= new Weapon("weapon2","descrizione2",AmmoColor.RED,null);
+        addWeapon(y);
 
-*/
 
         run =new JButton("RUN");
         run.setSize(250,70);
@@ -110,11 +118,29 @@ public class MapPanel extends JLayeredPane{
         grab.setOpaque(false);
         add(grab);
 
-        playerboard =new JButton("SHOW MY PLAYERBOARD");
-        playerboard.setSize(250,70);
-        playerboard.setLocation(1030,144);
-        playerboard.setOpaque(false);
-        add(playerboard);
+        shoot= new JButton("SHOOT");
+        shoot.setSize(250,70);
+        shoot.setLocation(1030,144);
+        shoot.setOpaque(false);
+        add(shoot);
+
+        adrenaline1=new JButton("MOVE AND GRAB ");
+        adrenaline1.setSize(250,70);
+        adrenaline1.setLocation(1030,216);
+        adrenaline1.setOpaque(false);
+        add(adrenaline1);
+
+        adrenaline2=new JButton("MOVE AND SHOOT ");
+        adrenaline2.setSize(250,70);
+        adrenaline2.setLocation(1030,288);
+        adrenaline2.setOpaque(false);
+        add(adrenaline2);
+
+        playerboards =new JButton("SHOW PLAYERBOARDS");
+        playerboards.setSize(250,70);
+        playerboards.setLocation(1030,360);
+        playerboards.setOpaque(false);
+        add(playerboards);
 
     }
     
@@ -154,16 +180,7 @@ public class MapPanel extends JLayeredPane{
     }
 
     private String getUrlMap(int code){
-        /*
-        switch (code){
-            case 0: return "./src/main/resources/map0.png";
-            case 1: return "./src/main/resources/map1.png";
-            case 2: return "./src/main/resources/map2.png";
-            case 3: return "./src/main/resources/map3.png";
-            default: return null;
-        }
 
-         */
         return "./src/main/resources/map" + code + ".png";
 
     }
@@ -191,13 +208,60 @@ public class MapPanel extends JLayeredPane{
         }
     }
 
+    public void addWeapon(Weapon weapon){
+        WeaponButton weaponButton= new WeaponButton(weapon);
+        weaponButton.setSize(80,120);
+        int i=weaponIcon.size();
+        if(i>0){
+            weaponButton.setLocation(weaponIcon.get(i-1).getX()+82,432);}
+        else
+            weaponButton.setLocation(1030,432);
+        weaponButton.setContentAreaFilled(false);
+        weaponButton.setBorder(null);
+        weaponButton.setFocusPainted(false);
+        weaponButton.setIcon(new ImageIcon("./src/main/resources/" + weapon.getName() + ".png"));
+        //weaponButton.setPressedIcon(new ImageIcon(p.getHero().getName())));
+        weaponButton.setOpaque(false);
+        weaponIcon.add(weaponButton);
+        this.add(weaponButton);
+        JButton info = new JButton("info");
+        info.setSize(80,15);
+        info.setLocation(weaponButton.getX(),weaponButton.getY()+122);
+        info.setOpaque(false);
+        info.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFrame dialog = new JFrame();
+                dialog.setSize(300,300);
+                JDialog jDialog= new JDialog(dialog,weapon.getName());
+                JLabel l = new JLabel(weapon.getDescription());
+                jDialog.add(l);
+                jDialog.setSize(300, 300);
+                jDialog.setVisible(true);
+               // dialog.setVisible(true);
+            }
+        });
+        infoWeapon.add(info);
+        this.add(info);
+    }
+
+    public void removeWeapon(Weapon weapon){
+        for(int i=0;i<weaponIcon.size();i++){
+            if(weaponIcon.get(i).getWeapon().getName().equals(weapon.getName())){
+                weaponIcon.get(i).setVisible(false);
+                infoWeapon.get(i).setVisible(false);
+            }
+
+        }
+    }
+
 
     public void movePlayer(int cell, Player player){
         //aggiungere controllo se si muove nella stessa cella
-        boolean occupato=false;
-        int c=0;
+        boolean occupied=false;
+        int c;
         int k=0;
-        int j=0;
+        int j;
         int x=0;
         Point [] positions = new Point[5];
         positions[0]=new Point(room[cell].getX(),room[cell].getY()-14);
@@ -210,16 +274,16 @@ public class MapPanel extends JLayeredPane{
           if(player.getNickname().equals(playerIcon.get(i).getPlayer().getNickname())){
               c=i;
 
-              while (x<5 && !occupato) {
+              while (x<5 && !occupied) {
                   for (j = 0; j < playerIcon.size(); j++) {
                       if (playerIcon.get(j).getLocation().equals(positions[x]))
-                          occupato = true;
+                          occupied = true;
                   }
-                  if (!occupato){
+                  if (!occupied){
                       k = x;
-                  occupato = true;
+                  occupied = true;
               }
-                  else occupato=false;
+                  else occupied=false;
          x++;
           }
 

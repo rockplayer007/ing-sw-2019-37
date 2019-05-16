@@ -37,12 +37,5 @@ public class Weapon extends Card {
         cost.addAll(buyCost);
         return cost;
     }
-/*
-    public List<Effect> getEffects(){
-        return  effects;
-    }
-    public List<Effect> getAlternativeEffects(){
-        return  alternativeeffects;
-    }
-    */
+
 }

@@ -141,12 +141,5 @@ public class LoginPanel extends JPanel implements ActionListener {
     public boolean getConnection(){
 
         return connSelected.equals("SOCKET");
-        /*
-        if  (connSelected.equals("SOCKET"))
-            return  true;
-        else
-            return false;
-
-         */
     }
 }

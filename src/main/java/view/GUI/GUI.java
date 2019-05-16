@@ -93,8 +93,7 @@ public class GUI implements ViewInterface {
         gbc.gridy=4;
         submit.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
-                //mainClient.sendSelectedBoard(slmp.getMapSelected());
-                System.out.println(slmp.getMapSelected());
+                mainClient.sendSelectedBoard(slmp.getMapSelected());
                 selectMap.setVisible(false);
             }});
         slmp.add(submit,gbc);
@@ -105,11 +104,12 @@ public class GUI implements ViewInterface {
 
     public void map(){
         JFrame map= new JFrame();
-        map.setSize(1280,1000);
-        map.setMaximumSize(new Dimension(1280,1000));
-        map.setMinimumSize(new Dimension(1280,1000));
-        map.setBackground(Color.darkGray);
         map.setResizable(false);
+        map.setSize(1280,1000);
+        //map.setMaximumSize(new Dimension(1280,1000));
+        //map.setMinimumSize(new Dimension(1280,1000));
+        map.setBackground(Color.darkGray);
+
         map.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         MapPanel mapPanel = new MapPanel();
         map.getContentPane().add(mapPanel);
