@@ -20,9 +20,18 @@ public class Message implements Serializable{
         return content;
     }
 
+    public void setContent(Content content) {
+        this.content = content;
+    }
+
     public enum Content{
-        TIMEOUT, LOGIN_REQUEST, LOGIN_RESPONSE, BOARD_REQUEST, BOARD_RESPONSE,
-        BOARD_INFO
+        //ServerToClient
+        TIMEOUT, LOGIN_RESPONSE, BOARD_REQUEST, BOARD_INFO, CARD_REQUEST,
+        YESNO_REQUEST,
+        //ClientToServer
+        LOGIN_REQUEST, BOARD_RESPONSE, CARD_RESPONSE,
+        YESNO_RESPONSE
+
     }
 
 }

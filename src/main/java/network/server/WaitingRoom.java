@@ -34,7 +34,7 @@ public class WaitingRoom {
             waitingClients.add(p);
 
 
-            if(waitingClients.size() == 3){
+            if(waitingClients.size() == 1){
                 //start timer
                 timer = new Timer();
                 startTimer();
@@ -61,7 +61,7 @@ public class WaitingRoom {
             @Override
             public void run(){
 
-                if(waitingClients.size() >=3 && waitingClients.size() <= 5){
+                if(waitingClients.size() >=1 && waitingClients.size() <= 5){
                     startGame();
                 }
                 else{

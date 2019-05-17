@@ -20,7 +20,7 @@ public class Player {
     private PlayerBoard playerBoard;
     private Map<AmmoColor,Integer> ammo;
     private List<Weapon> weapons;
-    private List<Powerup> powerups;
+    private transient List<Powerup> powerups;
     private Actions actionStatus;
     private Boolean live;
 

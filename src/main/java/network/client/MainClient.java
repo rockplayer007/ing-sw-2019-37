@@ -5,12 +5,10 @@ import com.google.gson.GsonBuilder;
 import model.board.*;
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
-import network.messages.clientToServer.BoardResponse;
+import network.messages.Message;
+import network.messages.clientToServer.ListResponse;
 import network.messages.clientToServer.LoginRequest;
-import network.messages.serverToClient.BoardInfo;
-import network.messages.serverToClient.BoardRequest;
-import network.messages.serverToClient.LoginResponse;
-import network.messages.serverToClient.ServerToClient;
+import network.messages.serverToClient.*;
 import network.server.MainServer;
 import view.CLI.CLI;
 import view.GUI.GUI;
@@ -101,7 +99,7 @@ public class MainClient {
      * @param board
      */
     public void sendSelectedBoard(int board){
-        connection.sendMessage(new BoardResponse(username, clientID, board));
+        connection.sendMessage(new ListResponse(username, clientID, board, Message.Content.BOARD_RESPONSE));
     }
 
     /**
