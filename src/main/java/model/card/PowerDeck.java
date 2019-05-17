@@ -1,9 +1,14 @@
 package model.card;
 import java.util.*;
 
-public class PowerDeck extends Deck{
+public class PowerDeck extends Deck<Powerup>{
 
     public PowerDeck(){
+        createPowerups();
+        mixDeck();
+    }
+
+    private void createPowerups(){
         String targetingScopeDes ="You may play this card when you are dealing damage to one or more targets. Pay 1 ammo" +
                 "cube of any color. Choose 1 of those targets and give it an extra point of damage. Note: You" +
                 "cannot use this to do 1 damage to a target that is receiving only marks." ;
@@ -32,8 +37,6 @@ public class PowerDeck extends Deck{
                 addCard(new Powerup("TELEPORTER",teleporterDes,teleporter,color));
             }
         }
-        mixDeck();
-
     }
 
 }

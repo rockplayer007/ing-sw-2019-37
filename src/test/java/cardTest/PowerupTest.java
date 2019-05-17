@@ -13,7 +13,7 @@ public class PowerupTest {
     @BeforeEach
     public void before() {
         ammo = ammo.RED;
-        powerup = new Powerup("Mirino","descption",ammo,1);
+//        powerup = new Powerup("Mirino","descption",ammo,1);
 
     }
 

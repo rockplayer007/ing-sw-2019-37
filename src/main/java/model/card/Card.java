@@ -12,6 +12,7 @@ public abstract class Card {
     public String getName(){
         return name;
     }
+
     public String getDescription(){
         return description;
     }
