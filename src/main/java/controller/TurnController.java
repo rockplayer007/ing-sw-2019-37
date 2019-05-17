@@ -65,7 +65,8 @@ public class TurnController {
         currentPlayer.addPowerup(playerCard);
 
         //discard the second card
-        room.getBoard().getPowerDeck().usedCard(powerup.get(0));
+
+        room.getBoard().getPowerDeck().usedPowerups((Powerup) powerup.get(0));
 
 
         //put the player on the generation square
