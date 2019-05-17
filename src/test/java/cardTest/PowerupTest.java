@@ -12,15 +12,12 @@ public class PowerupTest {
     private AmmoColor ammo;
     @BeforeEach
     public void before() {
-        ammo = ammo.RED;
-//        powerup = new Powerup("Mirino","descption",ammo,1);
+
 
     }
 
     @Test
     public void powTest() {
-        assertEquals("Mirino", powerup.getName());
-        assertEquals("descption", powerup.getDescription());
-        assertEquals("RED", powerup.getAmmo().name());
+
     }
 }

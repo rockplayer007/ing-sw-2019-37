@@ -47,7 +47,7 @@ public class BoardGenerator {
     private NodeList openMapFile ()throws ParserConfigurationException, SAXException, IOException {
 
         String path = "."+ File.separatorChar + "src" + File.separatorChar+
-                "main" + File.separatorChar + "resources" + File.separatorChar +"map.xml";
+                "main" + File.separatorChar + "resources" + File.separatorChar + "map.xml";
         File inputFile = new File(path);
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

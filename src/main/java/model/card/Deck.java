@@ -38,10 +38,15 @@ public abstract class Deck <T extends Card>{
         mixDeck();
     }
 
+<<<<<<< HEAD
     /**
      * when the player use the powerup need add that card in usedPwerups for reuse.
      */
     public  void usedPwerups(T card){
         usedCard.add(card);
+=======
+    public Deque<Card> getDeck() {
+        return cardDeck;
+>>>>>>> 85ebbd65123aa92dbb2fd5c5f23ad375fa2dc403
     }
 }

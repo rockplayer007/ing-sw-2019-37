@@ -7,7 +7,25 @@ public class WeaponDeck extends Deck<Weapon>{
 
     public WeaponDeck(){
         this.addAll(generationWeapons());
+<<<<<<< HEAD
         mixDeck();
+=======
+        //mixDeck();
+        /*
+        for(int i = 0; i < 20; i++){
+            //adding to the local deck (in the Deck class)
+            //for test
+            ArrayList<AmmoColor> cost = new ArrayList<>();
+            cost.add(AmmoColor.BLUE);
+            cost.add(AmmoColor.YELLOW);
+            Weapon weapon = new Weapon("TestName", "lots of effects", AmmoColor.BLUE, cost,
+                    true, new HashMap<>());
+
+            addCard(weapon);
+        }
+
+         */
+>>>>>>> 85ebbd65123aa92dbb2fd5c5f23ad375fa2dc403
 
     }
 

@@ -9,20 +9,20 @@ import model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ActionHandlerTest {
+
     private Room room;
     private AmmoCard ammoCard, ammoCard1;
 
 
     @BeforeEach
     public void before(){
+
         Player p1=new Player("p1");
         Player p2=new Player("p2");
 
@@ -51,6 +51,7 @@ public class ActionHandlerTest {
     }
     @Test
     public void grabAmmoCard1(){
+
         ActionHandler.grabAmmo(room.getCurrentPlayer(),ammoCard1, room.getBoard());
         EnumMap<AmmoColor,Integer> map= (EnumMap<AmmoColor,Integer>) room.getCurrentPlayer().getAmmo();
 

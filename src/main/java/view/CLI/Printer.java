@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 
 import model.card.AmmoColor;
 import model.card.Weapon;
-import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 
 public class Printer {
@@ -278,15 +277,10 @@ public class Printer {
                 Weapon weapon = ((GenerationSquare) board.getGenerationPoint(color)).getWeaponDeck().get(i);
                 print(colorToAnsi(color) + (board.getGenerationPoint(color).getId() + 1) + ") ");
                 print(colorToAnsi(Color.WHITE) + weapon.getName() + " ");
-                print(colorToAnsi(Color.WHITE) + weapon.getDescription() + "\n");
+                println("");
                 print(colorToAnsi(Color.WHITE) + "   Reload cost: ");
                 for(int n = 0; n < weapon.getChargeCost().size(); n++){
                     print(colorToAnsi(weapon.getChargeCost().get(n)) + "O");
-                }
-                println("");
-                print(colorToAnsi(Color.WHITE) + "   Buy cost: ");
-                for(int n = 0; n < weapon.getBuyCost().size(); n++){
-                    print(colorToAnsi(weapon.getBuyCost().get(n)) + "O");
                 }
                 println("");
             }

@@ -6,7 +6,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import model.board.*;
-import model.card.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import view.CLI.Printer;
@@ -62,6 +61,7 @@ public class BoardTest {
 
         //Gson gson = new Gson();
         GameBoard gameBoard = gson.fromJson(mapJson, GameBoard.class);
+
         assertEquals(gameBoard.getGenerationPoint(Color.BLUE).getX(), 2);
         assertEquals(gameBoard.getGenerationPoint(Color.BLUE).getY(), 0);
 
