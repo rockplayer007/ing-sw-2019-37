@@ -6,12 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 
-<<<<<<< HEAD
-public class Weapon extends Card {
-=======
 
-public class Weapon  extends Card {
->>>>>>> 85ebbd65123aa92dbb2fd5c5f23ad375fa2dc403
+public class Weapon extends Card {
+
     private Boolean charged;
     private AmmoColor chargeCost;
     private List<AmmoColor> buyCost;

@@ -3,22 +3,12 @@ import java.util.*;
 
 public class PowerDeck extends Deck<Powerup>{
 
-    private PowerDeck usedCards;
-
     public PowerDeck(){
-<<<<<<< HEAD
         createPowerups();
         mixDeck();
     }
 
     private void createPowerups(){
-=======
-
-        createPowerupDeck();
-    }
-    private void createPowerupDeck(){
-
->>>>>>> 85ebbd65123aa92dbb2fd5c5f23ad375fa2dc403
         String targetingScopeDes ="You may play this card when you are dealing damage to one or more targets. Pay 1 ammo" +
                 "cube of any color. Choose 1 of those targets and give it an extra point of damage. Note: You" +
                 "cannot use this to do 1 damage to a target that is receiving only marks." ;
@@ -49,20 +39,5 @@ public class PowerDeck extends Deck<Powerup>{
             }
         }
     }
-
-    @Override
-    public Card getCard(){
-        if(getDeck().size() == 0){
-
-            //TODO when cards are finishe take from usedCards
-        }
-        return super.getCard();
-    }
-
-
-    public void usedCard(Card card){
-        usedCards.addCard(card);
-    }
-
 
 }
