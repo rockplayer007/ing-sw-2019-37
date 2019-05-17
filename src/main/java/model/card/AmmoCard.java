@@ -6,15 +6,15 @@ public class AmmoCard extends Card{
     private List<AmmoColor> ammo= new ArrayList<>();
     private boolean hasPowerup;
 
-    public AmmoCard(AmmoColor a,AmmoColor b, AmmoColor c){
-        super("Ammo tile", "Ammo tile with 3 cubes");
+    public AmmoCard(String id,AmmoColor a,AmmoColor b, AmmoColor c){
+        super(id, "");
         ammo.add(a);
         ammo.add(b);
         ammo.add(c);
         this.hasPowerup=false;
     }
-    public AmmoCard(AmmoColor a,AmmoColor b){
-        super("Ammo tile", "Ammo tile with 2 cubes and 1 powerup");
+    public AmmoCard(String id, AmmoColor a,AmmoColor b){
+        super(id, "");
         ammo.add(a);
         ammo.add(b);
         hasPowerup=true;

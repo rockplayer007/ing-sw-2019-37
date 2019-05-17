@@ -1,9 +1,11 @@
 package model.card;
 import java.util.*;
 
-public abstract class Deck {
+public abstract class Deck <T extends Card>{
 
-    private Deque<Card> cardDeck = new LinkedList<>();
+
+    private Deque<T> cardDeck = new LinkedList<>();
+    private List<T> usedCard = new ArrayList<>();
 
     public void mixDeck(){
         Collections.shuffle((List<?>) cardDeck);
@@ -21,15 +23,26 @@ public abstract class Deck {
         return cards;
     }
 
-    public  void addCard(Card card){cardDeck.push(card);
+    public void addCard(T card){cardDeck.push(card);
     }
 
-    public void addAll(List<? extends Card> cards){
+    public void addAll(List<T> cards){
         cardDeck.addAll(cards);
-
     }
 
-    public Deque<Card> getDeck() {
-        return cardDeck;
+    /**
+     * when the powerupDeck is empty reshuffle the deck.
+     */
+    public void reMix(){
+        addAll(usedCard);
+        mixDeck();
+    }
+
+    /**
+     * when the player use the powerup need add that card in usedPwerups for reuse.
+     */
+    public  void usedPwerups(T card){
+        usedCard.add(card);
+
     }
 }
