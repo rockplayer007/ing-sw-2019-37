@@ -11,4 +11,11 @@ public class JMapButton extends JButton {
         this.posy=y;
     }
 
+    public int getPosx() {
+        return posx;
+    }
+
+    public int getPosy() {
+        return posy;
+    }
 }

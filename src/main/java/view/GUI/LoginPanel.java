@@ -2,6 +2,7 @@ package view.GUI;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 
 public class LoginPanel extends JPanel implements ActionListener {
 
@@ -20,7 +21,7 @@ public class LoginPanel extends JPanel implements ActionListener {
     private boolean connectionErr;
 
  public LoginPanel()  {
-        image = Toolkit.getDefaultToolkit().createImage("./src/main/resources/backgroundimage.png");
+        image = Toolkit.getDefaultToolkit().createImage("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"backgroundimage.png");
         loadImage(image);
         this.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -115,8 +116,9 @@ public class LoginPanel extends JPanel implements ActionListener {
     }
 
     public void setNicknameErr(String err){
+
+        this.nicknameError.setText(err);
         this.nicknameError.setVisible(true);
-        this.connectionError.setText(err);
     }
 
     public void setNicknameError(Boolean err){
@@ -137,16 +139,8 @@ public class LoginPanel extends JPanel implements ActionListener {
         return nicknameErr;
     }
 
-
     public boolean getConnection(){
 
         return connSelected.equals("SOCKET");
-        /*
-        if  (connSelected.equals("SOCKET"))
-            return  true;
-        else
-            return false;
-
-         */
     }
 }
