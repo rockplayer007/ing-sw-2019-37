@@ -26,8 +26,8 @@ public class Message implements Serializable{
 
     public enum Content{
         //ServerToClient
-        TIMEOUT, LOGIN_RESPONSE, BOARD_REQUEST, BOARD_INFO, CARD_REQUEST,
-        YESNO_REQUEST,
+        LOGIN_RESPONSE, BOARD_REQUEST, CARD_REQUEST, ACTION_REQUEST, SQUARE_REQUEST,
+        YESNO_REQUEST, TIMEOUT, BOARD_INFO,
         //ClientToServer
         LOGIN_REQUEST, BOARD_RESPONSE, CARD_RESPONSE,
         YESNO_RESPONSE

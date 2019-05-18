@@ -1,17 +1,14 @@
 package controller;
 
-import com.google.gson.Gson;
 import model.board.Color;
 import model.card.Card;
 import model.card.Powerup;
 import model.gamehandler.Room;
 import model.player.Player;
 import network.messages.Message;
-import network.messages.clientToServer.GeneralResponse;
 import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -46,19 +43,19 @@ public class TurnController {
     public void firstRound(Player currentPlayer){
 
         List<Card> powerup = room.getBoard().getPowerDeck().getCard(2);
-        AnswerRequest message = new AnswerRequest(roomController.toJsonList(powerup), Message.Content.CARD_REQUEST);
+        AnswerRequest message = new AnswerRequest(roomController.toJsonCardList(powerup), Message.Content.CARD_REQUEST);
         //sends the cards and receives the chosen one
         //chosen card is the card to KEEP
         ListResponse chosenCard =(ListResponse) roomController.sendAndReceive(currentPlayer, message);
 
-        if(chosenCard.getSelectedItem() != powerup.size()){
-            //player is a cheater, set wrong card
-            //to manage
+        Powerup playerCard;
+        try{
+            //check if the size is not different
+            playerCard = (Powerup) powerup.get(chosenCard.getSelectedItem());
+        }catch (RuntimeException e){
             logger.log(Level.WARNING, "CHEATER DETECTED: {0}", currentPlayer.getNickname());
             return;
         }
-
-        Powerup playerCard = (Powerup) powerup.get(chosenCard.getSelectedItem());
         powerup.remove(chosenCard.getSelectedItem());
 
         //give the chosen card to the player
@@ -72,7 +69,6 @@ public class TurnController {
         //put the player on the generation square
         Color spawnColor = Color.valueOf(playerCard.getAmmo().toString());
         room.getBoard().getMap().getGenerationPoint(spawnColor).addPlayer(currentPlayer);
-
 
 
     }

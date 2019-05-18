@@ -33,6 +33,7 @@ public class Player {
         powerups=new ArrayList<>();
         weapons=new ArrayList<>();
         playerBoard=new PlayerBoard();
+        actionStatus = new TurnActions(this);
 
     }
 

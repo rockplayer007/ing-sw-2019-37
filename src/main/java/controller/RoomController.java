@@ -50,8 +50,9 @@ public class RoomController {
         switch (message.getContent()) {
             case BOARD_RESPONSE:
                 if(checkReceiver(message)) {
+
                     mockMessage = message;
-                    askingThread.interrupt();
+                    //askingThread.interrupt();
                 }
                 break;
 
@@ -104,6 +105,7 @@ public class RoomController {
     private void askBoard(){
         ServerToClient boardRequest = new BoardRequest(room.getBoardGenerator().getMaps());
 
+        /*
         mockMessage = null;
         askingThread = Thread.currentThread();
 
@@ -135,6 +137,11 @@ public class RoomController {
 
         room.createMap(((ListResponse) mockMessage).getSelectedItem());
 
+         */
+
+        ListResponse boardMessage = (ListResponse) sendAndReceive(room.getCurrentPlayer(), boardRequest);
+        room.createMap(boardMessage.getSelectedItem());
+
         //necessary to serialize properly also the sub classes
         RuntimeTypeAdapterFactory<Square> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
                 .of(Square.class, "Square")
@@ -148,7 +155,7 @@ public class RoomController {
         sendMessageToAll(new BoardInfo(gson.toJson(room.getBoard().getMap())));
 
 
-        logger.log(Level.INFO,"board is: {0}", ((ListResponse) mockMessage).getSelectedItem());
+        logger.log(Level.INFO,"board is: {0}", (boardMessage.getSelectedItem()));
         resetReceiver();
     }
 
@@ -158,7 +165,8 @@ public class RoomController {
     }
 
     public boolean checkReceiver(ClientToServer message) {
-        if ((message.getSender().equals(expectedReceiver) && message.getContent().equals(expectedType))){
+        //still no idea how to check this
+        if ((message.getSender().equals(expectedReceiver) /*&& message.getContent() == expectedType*/)){
             return true;
         }
         else{
@@ -170,10 +178,11 @@ public class RoomController {
     public ClientToServer sendAndReceive(Player player, ServerToClient message){
         mockMessage = null;
         expectedReceiver = player.getNickname();
-        expectedType = message.getContent();
+        //expectedType = message.getContent();
+        sendMessage(player, message);
         while (mockMessage == null){
             Thread.onSpinWait();
-            System.out.println("waiting");
+            //System.out.println("waiting");
         }
         ClientToServer answer = mockMessage;
         resetReceiver();
@@ -186,15 +195,32 @@ public class RoomController {
         expectedType = null;
     }
 
-    public List<String> toJsonList(List<? extends Card> cards){
+    public List<String> toJsonCardList(List<? extends Card> cards){
         List<String> list = new ArrayList<>();
         String stringed;
         Gson gson = new Gson();
+
+        cards.forEach(x -> list.add(gson.toJson(x)) );
+        /*
         for(Card card : cards){
             stringed = gson.toJson(card);
             list.add(stringed);
         }
+
+         */
         return list;
     }
+
+    public List<String> toJsonSquareList(Set<Square> squares){
+        List<String> list = new ArrayList<>();
+        String stringed;
+        //not making use of the adapter because no need in view
+        Gson gson = new Gson();
+
+        squares.forEach(x -> list.add(gson.toJson(x)) );
+
+        return list;
+    }
+
 
 }
