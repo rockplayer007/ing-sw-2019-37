@@ -6,10 +6,12 @@ import model.board.AmmoSquare;
 import model.board.GenerationSquare;
 import model.board.RuntimeTypeAdapterFactory;
 import model.board.Square;
+import model.card.Card;
 import model.exceptions.TooManyPlayerException;
 import model.gamehandler.Room;
 import model.player.Player;
-import network.messages.clientToServer.BoardResponse;
+import network.messages.Message;
+import network.messages.clientToServer.ListResponse;
 import network.messages.clientToServer.ClientToServer;
 import network.messages.serverToClient.BoardInfo;
 import network.messages.serverToClient.BoardRequest;
@@ -30,6 +32,7 @@ public class RoomController {
     private Room room;
     private ClientToServer mockMessage;
     private String expectedReceiver;
+    private Message.Content expectedType;
     private Thread askingThread;
 
     private static final Logger logger = Logger.getLogger(RoomController.class.getName());
@@ -43,19 +46,17 @@ public class RoomController {
     }
 
     public void handleMessages(ClientToServer message) {
-        if(checkReceiver(message)){
-            switch (message.getContent()) {
-                case BOARD_RESPONSE:
+
+        switch (message.getContent()) {
+            case BOARD_RESPONSE:
+                if(checkReceiver(message)) {
                     mockMessage = message;
                     askingThread.interrupt();
-                    break;
+                }
+                break;
 
-                default:
-                    logger.log(Level.WARNING, "Unhandled message");
-            }
-        }
-        else {
-            logger.log(Level.INFO, "Discarted message from {0} expected from {1}", new String[]{ message.getSender(), expectedReceiver});
+            default:
+                logger.log(Level.WARNING, "Unhandled message");
         }
 
     }
@@ -112,6 +113,7 @@ public class RoomController {
         while (mockMessage == null){
 
             try {
+
                 Thread.sleep(10000);  //10 seconds
 
             } catch (InterruptedException e) {
@@ -122,6 +124,7 @@ public class RoomController {
                     //first send timeout message
                     sendMessage(room.getCurrentPlayer(), new TimeoutMessage());
                     room.setNextPlayer();
+                    expectedType = Message.Content.BOARD_RESPONSE;
                     expectedReceiver = room.getCurrentPlayer().getNickname();
                     sendMessage(room.getCurrentPlayer(), boardRequest);
                 }
@@ -130,7 +133,7 @@ public class RoomController {
 
         }
 
-        room.createMap(((BoardResponse) mockMessage).getSelectedBoard());
+        room.createMap(((ListResponse) mockMessage).getSelectedItem());
 
         //necessary to serialize properly also the sub classes
         RuntimeTypeAdapterFactory<Square> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
@@ -144,7 +147,9 @@ public class RoomController {
 
         sendMessageToAll(new BoardInfo(gson.toJson(room.getBoard().getMap())));
 
-        logger.log(Level.INFO,"board is: {0}", ((BoardResponse) mockMessage).getSelectedBoard());
+
+        logger.log(Level.INFO,"board is: {0}", ((ListResponse) mockMessage).getSelectedItem());
+        resetReceiver();
     }
 
 
@@ -152,9 +157,44 @@ public class RoomController {
         players.forEach(x -> sendMessage(x, message));
     }
 
-    public boolean checkReceiver(ClientToServer message){
-        return message.getSender().equals(expectedReceiver);
+    public boolean checkReceiver(ClientToServer message) {
+        if ((message.getSender().equals(expectedReceiver) && message.getContent().equals(expectedType))){
+            return true;
+        }
+        else{
+            logger.log(Level.INFO, "Discarted message from {0} expected from {1}", new String[]{message.getSender(), expectedReceiver});
+            return false;
+        }
     }
 
+    public ClientToServer sendAndReceive(Player player, ServerToClient message){
+        mockMessage = null;
+        expectedReceiver = player.getNickname();
+        expectedType = message.getContent();
+        while (mockMessage == null){
+            Thread.onSpinWait();
+            System.out.println("waiting");
+        }
+        ClientToServer answer = mockMessage;
+        resetReceiver();
+
+        return answer;
+    }
+
+    public void resetReceiver(){
+        mockMessage = null;
+        expectedType = null;
+    }
+
+    public List<String> toJsonList(List<? extends Card> cards){
+        List<String> list = new ArrayList<>();
+        String stringed;
+        Gson gson = new Gson();
+        for(Card card : cards){
+            stringed = gson.toJson(card);
+            list.add(stringed);
+        }
+        return list;
+    }
 
 }

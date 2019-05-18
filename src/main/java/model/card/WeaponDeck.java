@@ -2,12 +2,12 @@ package model.card;
 
 import java.util.*;
 
-public class WeaponDeck extends Deck{
+public class WeaponDeck extends Deck<Weapon>{
 
 
     public WeaponDeck(){
         this.addAll(generationWeapons());
-        //mixDeck();
+        mixDeck();
         /*
         for(int i = 0; i < 20; i++){
             //adding to the local deck (in the Deck class)
@@ -25,6 +25,10 @@ public class WeaponDeck extends Deck{
 
     }
 
+
+    /**
+     * @return all weapons .
+     */
     private List<Weapon> generationWeapons(){
         List<Weapon> weapons = new ArrayList<>();
         List<Operation> operations;
@@ -61,7 +65,7 @@ public class WeaponDeck extends Deck{
         description=" with second lock: Deal 1 mark to a different target  you can see.\n";
         effects.put(new Effect(description, Collections.singletonList(AmmoColor.RED), operations),1);
 
-        weapons.add(new Weapon("LOCK RIFLE", "\n", AmmoColor.BLUE, Collections.singletonList(AmmoColor.BLUE),
+        weapons.add(new Weapon("LOCK RIFLE", "", AmmoColor.BLUE, Collections.singletonList(AmmoColor.BLUE),
                 true, effects));
 
 
@@ -78,7 +82,7 @@ public class WeaponDeck extends Deck{
         effects.put(new Effect(description, Collections.singletonList(AmmoColor.BLUE), operations), 1);
         description="Notes: If you deal both additional points of damage, they must be dealt to 2 different targets. " +
                 "If you see only 2 targets, you deal 2 to each if you use both optional effects. If you use the basic " +
-                "effect on only 1 target, you can still use the the turret tripod to give it 1 additional damage.";
+                "effect on only 1 target, you can still use the the turret tripod to give it 1 additional damage.\n";
 
         weapons.add(new Weapon("MACHINE GUN",description, AmmoColor.BLUE , Collections.singletonList(AmmoColor.RED),
                 true, effects ));
@@ -96,9 +100,9 @@ public class WeaponDeck extends Deck{
         operations= Arrays.asList(new ThorTargets(1), selectTarget1,damage2);
         effects.put(new Effect(description, Collections.singletonList(AmmoColor.BLUE), operations), 2);
         description="Notes: This card constrains the order in which you can use its effects. " +
-                "(Most cards don't.) Also note that each target must be a different player." ;
+                "(Most cards don't.) Also note that each target must be a different player.\n" ;
 
-        weapons.add(new Weapon("T.H.O.R", description, AmmoColor.RED, Collections.singletonList(AmmoColor.BLUE),
+        weapons.add(new Weapon("T.H.O.R", description, AmmoColor.BLUE, Collections.singletonList(AmmoColor.RED),
                 true, effects));
 
 
@@ -114,9 +118,9 @@ public class WeaponDeck extends Deck{
         effects.put(new Effect(description, Collections.singletonList(AmmoColor.BLUE), operations), 1);
         description = "Notes: The two moves have no ammo cost. You don't have to be able to see your target " +
                 "when you play the card. For example, you can move 2 squares and shoot a target you now see. " +
-                "You cannot use 1 move before shooting and 1 move after.";
+                "You cannot use 1 move before shooting and 1 move after.\n";
 
-        weapons.add(new Weapon("PLASMA GUN", description, AmmoColor.YELLOW, Collections.singletonList(AmmoColor.BLUE),
+        weapons.add(new Weapon("PLASMA GUN", description, AmmoColor.BLUE, Collections.singletonList(AmmoColor.YELLOW),
                 true, effects));
 
 
@@ -126,7 +130,7 @@ public class WeaponDeck extends Deck{
         effects.put(new Effect(description, Collections.emptyList(), operations), 0);
         description = "Notes: For example, in the 2-by-2 room, you cannot shoot a target on an adjacent square, " +
                 "but you can shoot a target on the diagonal. If you are beside a door, you can't shoot a target " +
-                "on the other side of the door, but you can shoot a target on a different square of that room.";
+                "on the other side of the door, but you can shoot a target on a different square of that room.\n";
 
         weapons.add(new Weapon("WHISPER", description, AmmoColor.BLUE, Arrays.asList(AmmoColor.BLUE, AmmoColor.YELLOW),
                 false, effects));
@@ -136,11 +140,11 @@ public class WeaponDeck extends Deck{
         description = "basic mode: Deal 1 damage to every other player on your square.\n";
         operations = Arrays.asList(sameSquare, selectAllTarget, damage1);
         effects.put(new Effect(description, Collections.emptyList(), operations), 0);
-        description = "in reaper mode: Deal 2 damage to every other player on your square.";
+        description = "in reaper mode: Deal 2 damage to every other player on your square.\n";
         operations = Arrays.asList(sameSquare, selectAllTarget, damage2);
         effects.put(new Effect(description, Arrays.asList(AmmoColor.BLUE, AmmoColor.RED), operations), 0);
 
-        weapons.add(new Weapon("ELECTROSCYTHE", "\n", AmmoColor.BLUE, Collections.emptyList(),
+        weapons.add(new Weapon("ELECTROSCYTHE", "", AmmoColor.BLUE, Collections.emptyList(),
                 false, effects));
 
 
@@ -155,7 +159,7 @@ public class WeaponDeck extends Deck{
                 selectTarget1, new SetPlayerPositionAsEffectSquare(), moveTargetToEffevtSquare, selectTarget1, damage1);
         effects.put(new Effect(description, Arrays.asList(AmmoColor.RED, AmmoColor.YELLOW), operations), 0);
         description = "Notes: You can move a target even if you can't see it. The target ends up in a place where you can see and " +
-                "damage it. The moves do not have to be in the same direction.";
+                "damage it. The moves do not have to be in the same direction.\n";
 
         weapons.add(new Weapon("TRACTOR BEAM", description, AmmoColor.BLUE, Collections.emptyList(),
                 false, effects));
@@ -171,21 +175,21 @@ public class WeaponDeck extends Deck{
         operations= Arrays.asList(selectTargets2, damage1);
         effects.put(new Effect(description, Collections.singletonList(AmmoColor.RED), operations), 1);
         description = "Notes: The 3 targets must be different, but some might start on the same square. It is legal " +
-                "to choose targets on your square, on the vortex, or even on squares you can't see. They all end up on the vortex.";
+                "to choose targets on your square, on the vortex, or even on squares you can't see. They all end up on the vortex.\n";
 
         weapons.add(new Weapon("VORTEX CANNON", description, AmmoColor.RED, Collections.singletonList(AmmoColor.BLUE),
                 true, effects));
 
 
         effects = new HashMap<>();
-        description = "basic mode: Choose a room you can see, but not the room you are in. Deal 1 damage to everyone in that room. ";
+        description = "basic mode: Choose a room you can see, but not the room you are in. Deal 1 damage to everyone in that room.\n ";
         operations=Arrays.asList(new Furance(false), selectAllTarget, damage1);
         effects.put(new Effect(description, Collections.emptyList(), operations), 0);
-        description = "in cozy fire mode: Choose a square exactly one move away. Deal 1 damage and 1 mark to everyone on that square.";
+        description = "in cozy fire mode: Choose a square exactly one move away. Deal 1 damage and 1 mark to everyone on that square.\n";
         operations = Arrays.asList(new Furance(true), selectAllTarget, damage1, mark1);
         effects.put(new Effect(description,Collections.emptyList(), operations), 0);
 
-        weapons.add(new Weapon("FURNACE", "\n", AmmoColor.RED, Collections.singletonList(AmmoColor.BLUE),
+        weapons.add(new Weapon("FURNACE", "", AmmoColor.RED, Collections.singletonList(AmmoColor.BLUE),
                 false, effects));
 
 
@@ -193,7 +197,7 @@ public class WeaponDeck extends Deck{
         description = "effect: Choose 1 target you cannot see and deal 3 damage to it.\n";
         operations = Arrays.asList(visiblePlayers, new Heatseekker(), selectTarget1, damage3);
         effects.put(new Effect(description, Collections.emptyList(), operations), 0);
-        description = "Notes: Yes, this can only hit targets you cannot see.";
+        description = "Notes: Yes, this can only hit targets you cannot see.\n";
 
         weapons.add(new Weapon("HEATSEEKER", description, AmmoColor.RED, Arrays.asList(AmmoColor.RED, AmmoColor.YELLOW),
                 false, effects));
@@ -206,12 +210,12 @@ public class WeaponDeck extends Deck{
                 setTargetPositionAsEffectSquare, targetOnEffectSquare, selectAllTarget, mark1);
         effects.put(new Effect(description, Collections.emptyList(), operations), 0);
         description = "in nano-tracer mode: Deal 1 damage to 1 target you can see at least 1 move away. " +
-                "Then give 2 marks to that target and everyone else on that square.";
+                "Then give 2 marks to that target and everyone else on that square.\n";
         operations = Arrays.asList(visiblePlayers, minDistance0, selectTarget1, damage1, mark1,
                 setTargetPositionAsEffectSquare, targetOnEffectSquare, selectAllTarget, mark2);
         effects.put(new Effect(description,Collections.singletonList(AmmoColor.RED), operations), 0);
 
-        weapons.add(new Weapon("HELLION", "\n", AmmoColor.RED, Collections.singletonList(AmmoColor.YELLOW),
+        weapons.add(new Weapon("HELLION", "", AmmoColor.RED, Collections.singletonList(AmmoColor.YELLOW),
                 false, effects));
 
 
@@ -227,7 +231,7 @@ public class WeaponDeck extends Deck{
         effects.put(new Effect(description, Arrays.asList(AmmoColor.YELLOW, AmmoColor.YELLOW), operations), 0);
         description = "Notes: This weapon cannot damage anyone in your square. However, it can sometimes damage " +
                 "a target you can't see – the flame won't go through walls, but it will go through doors. " +
-                "Think of it as a straight-line blast of flame that can travel 2 squares in a cardinal direction.";
+                "Think of it as a straight-line blast of flame that can travel 2 squares in a cardinal direction.\n";
 
         weapons.add(new Weapon("FLAMETHROWER", description, AmmoColor.RED, Collections.emptyList(),
                 false,effects));
@@ -245,7 +249,7 @@ public class WeaponDeck extends Deck{
         description = "Notes: For example, you can shoot a target, move it onto a square with other targets, " +
                 "then damage everyone including the first target. Or you can deal 2 to a main target, " +
                 "1 to everyone else on that square, then move the main target. Or you can deal 1 to an isolated target " +
-                "and 1 to everyone on a different square. If you target your own square, you will not be moved or damaged.";
+                "and 1 to everyone on a different square. If you target your own square, you will not be moved or damaged.\n";
 
         weapons.add(new Weapon("GRENADE LAUNCHER", description, AmmoColor.RED, Collections.singletonList(AmmoColor.RED),
                 false, effects));
@@ -265,7 +269,7 @@ public class WeaponDeck extends Deck{
         description = "Notes: If you use the rocket jump before the basic effect, you consider only your new square when " +
                 "determining if a target is legal. You can even move off a square so you can shoot someone on it. If you " +
                 "use the fragmenting warhead, you deal damage to everyone on the target's square before you move the target " +
-                "– your target will take 3 damage total.";
+                "– your target will take 3 damage total.\n";
 
         weapons.add(new Weapon("ROCKET LAUNCHER",description, AmmoColor.RED, Collections.singletonList(AmmoColor.RED),
                 false, effects));
@@ -282,7 +286,7 @@ public class WeaponDeck extends Deck{
                 "the other side of a wall – it could even be someone on your own square – but shooting through walls sure is fun. " +
                 "There are only 4 cardinal directions. You imagine facing one wall or door, square-on, and firing in that direction. " +
                 "Anyone on a square in that direction (including yours) is a valid target. In piercing mode, " +
-                "the 2 targets can be on the same square or on different squares.";
+                "the 2 targets can be on the same square or on different squares.\n";
 
         weapons.add(new Weapon("RAILGUN", description, AmmoColor.YELLOW, Arrays.asList(AmmoColor.YELLOW, AmmoColor.BLUE),
                 false, effects));
@@ -300,7 +304,7 @@ public class WeaponDeck extends Deck{
         operations= Arrays.asList(selectTarget1, damage2);
         effects.put(new Effect(description, Collections.singletonList(AmmoColor.YELLOW), operations), 1);
         description = "Notes: Combining all effects allows you to move onto a square and whack 2 people; " +
-                "or whack somebody, move, and whack somebody else; or whack 2 people and then move.";
+                "or whack somebody, move, and whack somebody else; or whack 2 people and then move.\n";
 
         weapons.add(new Weapon("CYBERBLADE", description, AmmoColor.YELLOW, Collections.singletonList(AmmoColor.RED),
                 true, effects));
@@ -314,7 +318,7 @@ public class WeaponDeck extends Deck{
         description = "in scanner mode: Choose up to 3 targets you can see and deal 1 mark to each.\n";
         operations = Arrays.asList(visiblePlayers, new SelectTargets(3,false), mark1);
         effects.put(new Effect(description,Collections.emptyList(), operations), 0);
-        description = "Notes: Remember that the 3 targets can be in 3 different rooms.";
+        description = "Notes: Remember that the 3 targets can be in 3 different rooms.\n";
 
         weapons.add(new Weapon("ZX-2", description, AmmoColor.YELLOW, Collections.singletonList(AmmoColor.RED),
                 false, effects));
@@ -324,12 +328,12 @@ public class WeaponDeck extends Deck{
         description = "basic mode: Deal 3 damage to 1 target on your square. If you want, you may then move the target 1 square.\n";
         operations=Arrays.asList(sameSquare,selectTarget1,damage3,moveTarget1);
         effects.put(new Effect(description,Collections.emptyList(), operations), 0);
-        description = "in long barrel mode: Deal 2 damage to 1 target on any square exactly one move away.";
+        description = "in long barrel mode: Deal 2 damage to 1 target on any square exactly one move away.\n";
         operations=Arrays.asList(maxDistance1,minDistance0,selectTarget1,damage2);
         effects.put(new Effect(description,Collections.emptyList(), operations), 0);
 
 
-        weapons.add(new Weapon("SHOTGUN", "\n", AmmoColor.YELLOW, Collections.singletonList(AmmoColor.YELLOW),
+        weapons.add(new Weapon("SHOTGUN", "", AmmoColor.YELLOW, Collections.singletonList(AmmoColor.YELLOW),
                 false,effects));
 
 
@@ -344,7 +348,7 @@ public class WeaponDeck extends Deck{
         operations = Arrays.asList(maxDistance1, minDistance0, selectTarget1, new NextSquareInDirection(),
                 moveToTarget, damage2, targetOnEffectSquare, selectTarget1, moveToTarget, damage2);
         effects.put(new Effect(description, Collections.emptyList(), operations), 0);
-        description = "Notes: In rocket fist mode, you're flying 2 squares in a straight line, punching 1 person per square.";
+        description = "Notes: In rocket fist mode, you're flying 2 squares in a straight line, punching 1 person per square.\n";
 
         weapons.add(new Weapon("POWER GLOVE", description, AmmoColor.YELLOW, Collections.singletonList(AmmoColor.BLUE),
                 false, effects));
@@ -355,11 +359,11 @@ public class WeaponDeck extends Deck{
                 "Deal 1 damage to each target.\n";
         operations = Arrays.asList(maxDistance1, minDistance0, new SelectTargets(3,true), damage1);
         effects.put(new Effect(description, Collections.emptyList(), operations), 0);
-        description = "in tsunami mode: Deal 1 damage to all targets that are exactly 1 move away.";
+        description = "in tsunami mode: Deal 1 damage to all targets that are exactly 1 move away.\n";
         operations = Arrays.asList(maxDistance1, minDistance0, selectAllTarget, damage1);
         effects.put(new Effect(description, Collections.emptyList(), operations), 0);
 
-        weapons.add(new Weapon("SHOCKWAVE", "\n", AmmoColor.YELLOW, Collections.emptyList(),
+        weapons.add(new Weapon("SHOCKWAVE", "", AmmoColor.YELLOW, Collections.emptyList(),
                 false, effects));
 
 
@@ -371,9 +375,10 @@ public class WeaponDeck extends Deck{
                 "or 2 squares in one direction.\n";
         operations=Arrays.asList(sameSquare,selectTarget1,damage3,new Repel(2));
         effects.put(new Effect(description,Collections.emptyList(), operations),0);
-        description = "Notes: Remember that moves go through doors, but not walls.";
+        description = "Notes: Remember that moves go through doors, but not walls.\n";
         weapons.add(new Weapon("SLEDGEHAMMER", description, AmmoColor.YELLOW, Collections.emptyList(),
                 false,effects));
+
 
 
         return weapons;

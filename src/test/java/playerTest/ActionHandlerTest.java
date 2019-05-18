@@ -9,10 +9,8 @@ import model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,8 +31,8 @@ public class ActionHandlerTest {
         room.setCurrentPlayer(p1);
         room.setPlayers(Arrays.asList(p1,p2));
 
-        ammoCard=new AmmoCard(AmmoColor.RED,AmmoColor.YELLOW,AmmoColor.BLUE);
-        ammoCard1=new AmmoCard(AmmoColor.RED,AmmoColor.BLUE);
+        ammoCard=new AmmoCard("",AmmoColor.RED,AmmoColor.YELLOW,AmmoColor.BLUE);
+        ammoCard1=new AmmoCard("",AmmoColor.RED,AmmoColor.BLUE);
         room.getBoard().setPowerDeck(new PowerDeck());
     }
 

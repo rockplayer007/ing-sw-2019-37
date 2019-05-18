@@ -7,7 +7,8 @@ import java.util.Map;
 
 
 
-public class Weapon  extends Card {
+public class Weapon extends Card {
+
     private Boolean charged;
     private AmmoColor chargeCost;
     private List<AmmoColor> buyCost;
@@ -52,4 +53,16 @@ public class Weapon  extends Card {
     public Map<Effect, Integer> getEffects() {
         return effects;
     }
+
+    /**
+     * @return description of the card
+     */
+    @Override
+    public String getDescription() {
+        String description = effects.keySet().stream().map(Effect::getDescription).reduce("",(a,b)->a+b);
+        description = description + super.getDescription();
+        return description;
+    }
+
+
 }
