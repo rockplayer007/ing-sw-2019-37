@@ -41,7 +41,7 @@ public abstract class Deck <T extends Card>{
     /**
      * when the player use the powerup need add that card in usedPwerups for reuse.
      */
-    public  void usedPwerups(T card){
+    public void usedPowerups(T card){
         usedCard.add(card);
 
     }

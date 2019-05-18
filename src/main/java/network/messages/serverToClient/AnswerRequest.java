@@ -8,8 +8,8 @@ public class AnswerRequest extends ServerToClient {
 
     List<String> requests;
 
-    public AnswerRequest(List<String> requests){
-        super(Message.Content.BOARD_REQUEST);
+    public AnswerRequest(List<String> requests, Content content){
+        super(content);
         this.requests = requests;
     }
 
