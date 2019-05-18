@@ -21,7 +21,7 @@ public class Player {
     private Map<AmmoColor,Integer> ammo;
     private List<Weapon> weapons;
     private List<Powerup> powerups;
-    private Actions actionStatus;
+    private ActionState actionStatus;
     private Boolean live;
 
     public Player(String nickname) {
@@ -48,7 +48,7 @@ public class Player {
         this.playerBoard = board;
     }
 
-    public void setActionStatus(Actions actionStatus) {
+    public void setActionStatus(ActionState actionStatus) {
         this.actionStatus = actionStatus;
     }
 
@@ -78,7 +78,7 @@ public class Player {
         return Collections.unmodifiableList(weapons);
     }
 
-    public Actions getActionStatus() {
+    public ActionState getActionStatus() {
         return actionStatus;
     }
 
