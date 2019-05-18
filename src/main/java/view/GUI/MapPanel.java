@@ -10,6 +10,7 @@ import model.player.Hero;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.border.*;
@@ -18,7 +19,7 @@ import java.awt.event.ActionListener;
 
 
 public class MapPanel extends JLayeredPane{
-    private  Image image;
+    private  transient  Image image;
     private List<JMapButton> roomButton = new ArrayList<>();
     private List<JPlayerButton> playerIcon = new ArrayList<>() ;
     private List<WeaponButton> weaponIcon = new ArrayList<>();
@@ -105,7 +106,7 @@ public class MapPanel extends JLayeredPane{
 
     private String getUrlMap(int code){
 
-        return "./src/main/resources/map" + code + ".png";
+        return "."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"maps"+File.separatorChar+ "map" + code + ".png";
 
     }
 
@@ -143,7 +144,7 @@ public class MapPanel extends JLayeredPane{
         weaponButton.setContentAreaFilled(false);
         weaponButton.setBorder(null);
         weaponButton.setFocusPainted(false);
-        weaponButton.setIcon(new ImageIcon("./src/main/resources/" + weapon.getName() + ".png"));
+        weaponButton.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar + weapon.getName() + ".png"));
         weaponButton.setOpaque(false);
         weaponIcon.add(weaponButton);
         this.add(weaponButton);
@@ -302,9 +303,10 @@ public class MapPanel extends JLayeredPane{
                 ammo.setBorder(null);
                 ammo.setFocusPainted(false);
                 if(ammoSquare.getAmmoCard().getAmmoList().isEmpty())
-                    ammo.setIcon(new ImageIcon("./src/main/resources/"+ammoSquare.getAmmoCard().getName()+".png"));
+                    ammo.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"ammocard"+File.separatorChar+ ammoSquare.getAmmoCard().getName() + ".png"));
+
                 else
-                    ammo.setIcon(new ImageIcon("./src/main/resources/ammo.png"));
+                    ammo.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"ammocard"+File.separatorChar+"ammo.png"));
                 ammo.setOpaque(false);
                 ammo.setLocation(roomButton.get(i).getX()+101,roomButton.get(i).getY()+60);
                 this.add(ammo);
