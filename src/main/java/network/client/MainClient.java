@@ -60,7 +60,8 @@ public class MainClient {
             map.put(0, "zero");
             view.chooseBoard(map);
         */
-            ((GUI) view).map();
+           // ((GUI) view).map();
+
         }
         else {
             view = new CLI(mainClient);

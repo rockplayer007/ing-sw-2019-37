@@ -6,6 +6,7 @@ import java.util.*;
  */
 public class FreneticAction2 implements Actions {
 
+
     /**
      * Default constructor
      */

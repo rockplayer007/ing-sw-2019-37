@@ -16,8 +16,9 @@ public class GUI implements ViewInterface {
 
 
     private MainClient mainClient;
-    private JFrame login;
+    private JFrame frame = new JFrame("ADRENALINE");
     private boolean first=true;
+    private boolean firstUpdate=true;
 
     public GUI(MainClient mainClient) {
         this.mainClient = mainClient;
@@ -33,11 +34,12 @@ public class GUI implements ViewInterface {
 
     public void logIn(boolean ask) {
         if (ask) {
-            login = new JFrame("ADRENALINA");
-            login.setSize(1280, 1024);
-            login.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            login.setBackground(Color.DARK_GRAY);
+            frame.getContentPane().removeAll();
+            frame.setSize(1280, 1024);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setBackground(Color.DARK_GRAY);
             LoginPanel loginPanel = new LoginPanel();
+            frame.getContentPane().add(loginPanel);
             JButton submitButton = new JButton("START THE GAME");
             Font f=new Font("Phosphate", Font.PLAIN, 20);
             submitButton.setFont(f);
@@ -46,8 +48,9 @@ public class GUI implements ViewInterface {
             gbc.gridy=8;
             gbc.anchor = GridBagConstraints.CENTER;
             gbc.insets = new Insets(50, 0, 0, 3);
-            if(!first)
+            if(!first) {
                 loginPanel.setNicknameErr("Please insert another Nickname");
+            }
             submitButton.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {
 
@@ -61,31 +64,34 @@ public class GUI implements ViewInterface {
                     }  else loginPanel.setConnectionError(false);
 
                     if (loginPanel.getConnectionErr()&&loginPanel.getNicknameErr()) {
+                        first=false;
+                        frame.getContentPane().removeAll();
+                        LoadingPanel loadingPanel = new LoadingPanel();
+                        frame.getContentPane().add(loadingPanel);
                         mainClient.setUsername(loginPanel.getInsNickname());
                         mainClient.setSocket(loginPanel.getConnection());
                         mainClient.sendCredentials();
-                        first=false;
-                        login.setVisible(false);
                     }
                 }});
             loginPanel.add(submitButton, gbc);
-            login.getContentPane().add(loginPanel);
-            login.setVisible(true);
+            frame.getContentPane().add(loginPanel);
+            frame.setVisible(true);
 
         } else {
-            //System.out.println("Welcome " + mainClient.getUsername());
-            //fare pagina di caricamento
+            frame.getContentPane().removeAll();
+            LoadingPanel loadingPanel = new LoadingPanel();
+            frame.getContentPane().add(loadingPanel);
+            frame.setVisible(true);
         }
 
     }
 
     @Override
     public void chooseBoard(Map<Integer, String> possibleBoards) {
-        JFrame selectMap = new JFrame();
-        selectMap.setSize(1280, 1024);
-        selectMap.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setBackground(Color.DARK_GRAY);
+        frame.getContentPane().removeAll();
         SelectMapPanel slmp = new SelectMapPanel(possibleBoards);
-        selectMap.getContentPane().add(slmp);
+        slmp.setName("chooseBoard");
         JButton submit = new JButton("USE MAP");
         Font f=new Font("Phosphate", Font.PLAIN, 20);
         submit.setFont(f);
@@ -94,49 +100,53 @@ public class GUI implements ViewInterface {
         submit.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
                 mainClient.sendSelectedBoard(slmp.getMapSelected());
-                selectMap.setVisible(false);
+                frame.getContentPane().removeAll();
+                LoadingPanel loadingPanel = new LoadingPanel();
+                loadingPanel.setName("loading");
+                frame.getContentPane().add(loadingPanel);
+                frame.setVisible(true);
+
             }});
         slmp.add(submit,gbc);
-        selectMap.getContentPane().add(slmp);
-        selectMap.setVisible(true);
+        frame.getContentPane().add(slmp);
+        frame.setVisible(true);
     }
-
-
-    public void map(){
-        JFrame map= new JFrame();
-        map.setResizable(false);
-        map.setSize(1280,1000);
-        //map.setMaximumSize(new Dimension(1280,1000));
-        //map.setMinimumSize(new Dimension(1280,1000));
-        map.setBackground(Color.darkGray);
-
-        map.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        MapPanel mapPanel = new MapPanel();
-        map.getContentPane().add(mapPanel);
-        map.getContentPane().setSize(1280,1000);
-        map.setVisible(true);
-
-    }
-
 
     @Override
     public void timeout() {
-        //TODO
-        //avvisa l'utente
-        //viene chiamato quando è finito il tempo e non può più scegliere
+        JDialog jDialog= new JDialog(frame,"TIMEOUT");
+        JLabel label = new JLabel("The time to perform the action has expired.");
+        jDialog.add(label);
+        jDialog.setSize(300, 100);
+        jDialog.setLocation(500,10);
+        jDialog.setVisible(true);
+        Component component =frame.getContentPane().getComponent(0);
+        if (component.getName().equals("chooseBoard")){
+            frame.getContentPane().removeAll();
+            LoadingPanel loadingPanel= new LoadingPanel();
+            frame.getContentPane().add(loadingPanel);
+            frame.setVisible(true);
+        }
+        if ((component.getName().equals("mapPanel"))){
+            MapPanel mapPanel = (MapPanel) component;
+            //mapPanel.blockAll; devo implementarlo
+        }
+
     }
 
     @Override
     public void updatedBoard(GameBoard board) {
-        //TODO
-        //per caricare la mappa la prima volt usa board.getId();
-
-        //per leggere i quadrati e creare la mappa dinamicamente usa questi
-        //board.getSquare(0).getX();
-        //board.getSquare(0).getY();
-
-        //questo ti permette di capire se è un generationPoint
-        //board.getSquare(0).isGenerationPoint();
+        frame.getContentPane().removeAll();
+        frame.setResizable(false);
+        MapPanel mapPanel = new MapPanel(board);
+        mapPanel.setName("mapPanel");
+        if(firstUpdate) {
+            mapPanel.createMapButton();
+            firstUpdate=false;
+        }
+        mapPanel.updBoardGui(board);
+        frame.getContentPane().add(mapPanel);
+        frame.setVisible(true);
     }
 }
 

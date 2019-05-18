@@ -5,7 +5,6 @@ public abstract class Deck {
 
     private Deque<Card> cardDeck = new LinkedList<>();
 
-
     public void mixDeck(){
         Collections.shuffle((List<?>) cardDeck);
     }
@@ -21,8 +20,16 @@ public abstract class Deck {
         }
         return cards;
     }
-    public void addCard(Card card){
-        cardDeck.push(card);
+
+    public  void addCard(Card card){cardDeck.push(card);
     }
 
+    public void addAll(List<? extends Card> cards){
+        cardDeck.addAll(cards);
+
+    }
+
+    public Deque<Card> getDeck() {
+        return cardDeck;
+    }
 }

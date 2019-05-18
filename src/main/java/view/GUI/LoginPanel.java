@@ -115,8 +115,9 @@ public class LoginPanel extends JPanel implements ActionListener {
     }
 
     public void setNicknameErr(String err){
+
+        this.nicknameError.setText(err);
         this.nicknameError.setVisible(true);
-        this.connectionError.setText(err);
     }
 
     public void setNicknameError(Boolean err){
@@ -136,7 +137,6 @@ public class LoginPanel extends JPanel implements ActionListener {
     public boolean getNicknameErr(){
         return nicknameErr;
     }
-
 
     public boolean getConnection(){
 

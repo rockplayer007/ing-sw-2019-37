@@ -1,9 +1,13 @@
 package view.GUI;
 
-import model.card.AmmoColor;
+import model.board.AmmoSquare;
+import model.board.GameBoard;
+import model.board.GenerationSquare;
+import model.board.Square;
 import model.card.Weapon;
 import model.player.Player;
 import model.player.Hero;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -15,95 +19,28 @@ import java.awt.event.ActionListener;
 
 public class MapPanel extends JLayeredPane{
     private  Image image;
-    private JMapButton [] room = new JMapButton[12];
+    private List<JMapButton> roomButton = new ArrayList<>();
     private List<JPlayerButton> playerIcon = new ArrayList<>() ;
     private List<WeaponButton> weaponIcon = new ArrayList<>();
     private List<JButton> infoWeapon = new ArrayList<>();
-    public MapPanel()  {
+    private int [] positionX = new int[4];
+    private int [] positionY = new int[3];
+    private GameBoard board;
+    public MapPanel(GameBoard board)  {
         JButton run;
         JButton grab;
-        JButton playerboards;
+        JButton pBoards;
         JButton shoot;
         JButton adrenaline1;
         JButton adrenaline2;
         this.setLayout(null);
-        image = Toolkit.getDefaultToolkit().createImage(getUrlMap(2)); //aggiungere numero di mappa ricevuto
+        this.board=board;
+        image = Toolkit.getDefaultToolkit().createImage(getUrlMap(board.getId())); //aggiungere numero di mappa ricevuto
         loadImages(image);
-        /* colorare bordi bottone
-        Border border= BorderFactory.createLineBorder(Color.red);
-        mapButtons[0].setBorder (border);
-        mapButtons[0].setBorderPainted (true);*/
-        int c=0;
-        for(int i=0;i<3;i++){
-            for(int j=0;j<4;j++) {
-                room[c] = new JMapButton(j, i);
-                room[c].setOpaque(false);
-                room[c].setSize(149,116);
-                Border border= BorderFactory.createLineBorder(Color.red);
-                room[c].setBorder (border);
-                room[c].setBorderPainted (true);
-                room[c].addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        System.out.println("bottone room premuto");
-                    }
-                });
-                c++;
-            }
-        }
+        setRoomCoordinate();
 
-        room[0].setLocation(166,175);
-        room[1].setLocation(352,175);
-        room[2].setLocation(532,175);
-        room[3].setLocation(700,175);
-        room[4].setLocation(166,335);
-        room[5].setLocation(352,335);
-        room[6].setLocation(532,335);
-        room[7].setLocation(700,335);
-        room[8].setLocation(166,515);
-        room[9].setLocation(352,515);
-        room[10].setLocation(532,515);
-        room[11].setLocation(700,515);
-
-        for(int i=0;i<12;i++){
-            this.add(this.room[i]);
-        }
-
-        //test
-        ArrayList<Player> players=new ArrayList<>();
-
-        Player p = new Player("antonio");
-        p.setHero(new Hero("Violet","", model.board.Color.YELLOW));
-        players.add(p);
-        Player p2 = new Player("luigi");
-        p2.setHero(new Hero("Banshee","",model.board.Color.YELLOW));
-        players.add(p2);
-
-        Player p3 = new Player("antonello");
-        p3.setHero(new Hero("Di-Struct-Or","",model.board.Color.YELLOW));
-        players.add(p3);
-
-        Player p4 = new Player("giovanni");
-        p4.setHero(new Hero("Sprog","",model.board.Color.YELLOW));
-        players.add(p4);
-
-        Player p5 = new Player("michele");
-        p5.setHero(new Hero("Dozer","",model.board.Color.YELLOW));
-        players.add(p5);
-
-        createIconPlayers(players);
-        //setPlayerIcon();
-        //resetRooms();
-        movePlayer(3,p);
-        movePlayer(3,p2);
-        movePlayer(6,p3);
-        movePlayer(2,p4);
-        movePlayer(3,p5);
-      //  playerIcon.get(0).setEnabled(false);
-        Weapon x= new Weapon("weapon","descrizione",AmmoColor.RED,null);
-        addWeapon(x);
-        Weapon y= new Weapon("weapon2","descrizione2",AmmoColor.RED,null);
-        addWeapon(y);
+        JButton button = new JButton();
+        button.setSize(200,100);
 
 
         run =new JButton("RUN");
@@ -136,35 +73,22 @@ public class MapPanel extends JLayeredPane{
         adrenaline2.setOpaque(false);
         add(adrenaline2);
 
-        playerboards =new JButton("SHOW PLAYERBOARDS");
-        playerboards.setSize(250,70);
-        playerboards.setLocation(1030,360);
-        playerboards.setOpaque(false);
-        add(playerboards);
+        pBoards =new JButton("SHOW PLAYERS BOARDS");
+        pBoards.setSize(250,70);
+        pBoards.setLocation(1030,360);
+        pBoards.setOpaque(false);
+        add(pBoards);
 
     }
-    
-    private void createIconPlayers(ArrayList <Player> players){
-        for(int i=0;i<players.size();i++){
-            Player p=players.get(i);
-            JPlayerButton playerButton=new JPlayerButton(p);
-            playerButton.setSize(46,68);
-            playerButton.setContentAreaFilled(false);
-            playerButton.setBorder(null);
-            playerButton.setFocusPainted(false);
-            playerButton.setIcon(new ImageIcon(getHeroIcon(p.getHero().getName())));
-            //playerButton.setPressedIcon(new ImageIcon(p.getHero().getName())));
-            playerButton.setOpaque(false);
-            playerButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.out.println("bottone premuto");
-                }
-            });
-            playerButton.setVisible(true);
-            playerIcon.add(playerButton);
-            this.add(playerIcon.get(i));
-        }
+
+    private void setRoomCoordinate(){
+        positionX [0]=166;
+        positionX [1]=352;
+        positionX [2]=532;
+        positionX [3]=700;
+        positionY [0]=175;
+        positionY [1]=335;
+        positionY [2]=515;
     }
 
     private String getHeroIcon (String name){
@@ -202,9 +126,9 @@ public class MapPanel extends JLayeredPane{
     }
 
     public void resetRooms(){
-        for(int i=0;i<12;i++) {
-            room[i].setEnabled(false);
-            room[i].setVisible(false);
+        for(int i=0;i<roomButton.size();i++) {
+            roomButton.get(i).setEnabled(false);
+            roomButton.get(i).setVisible(false);
         }
     }
 
@@ -220,7 +144,6 @@ public class MapPanel extends JLayeredPane{
         weaponButton.setBorder(null);
         weaponButton.setFocusPainted(false);
         weaponButton.setIcon(new ImageIcon("./src/main/resources/" + weapon.getName() + ".png"));
-        //weaponButton.setPressedIcon(new ImageIcon(p.getHero().getName())));
         weaponButton.setOpaque(false);
         weaponIcon.add(weaponButton);
         this.add(weaponButton);
@@ -238,7 +161,6 @@ public class MapPanel extends JLayeredPane{
                 jDialog.add(l);
                 jDialog.setSize(300, 300);
                 jDialog.setVisible(true);
-               // dialog.setVisible(true);
             }
         });
         infoWeapon.add(info);
@@ -255,20 +177,48 @@ public class MapPanel extends JLayeredPane{
         }
     }
 
+    public void createPlayerIcon(Player player){
+        JPlayerButton playerButton=new JPlayerButton(player);
+        playerButton.setSize(46,68);
+        playerButton.setContentAreaFilled(false);
+        playerButton.setBorder(null);
+        playerButton.setFocusPainted(false);
+        playerButton.setIcon(new ImageIcon(getHeroIcon(player.getHero().getName())));
+        //playerButton.setPressedIcon(new ImageIcon(p.getHero().getName())));
+        playerButton.setOpaque(false);
+        playerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("bottone premuto");
+            }
+        });
+        playerButton.setVisible(true);
+        this.add(playerButton);
+        playerIcon.add(playerButton);
+    }
+
 
     public void movePlayer(int cell, Player player){
         //aggiungere controllo se si muove nella stessa cella
+        boolean created=false;
+        for (int i=0;i<playerIcon.size();i++){
+            if(player.getHero().getName().equals(playerIcon.get(i).getPlayer().getHero().getName()))
+                created=true;
+        }
+        if (!created)
+            createPlayerIcon(player);
+
         boolean occupied=false;
         int c;
         int k=0;
         int j;
         int x=0;
         Point [] positions = new Point[5];
-        positions[0]=new Point(room[cell].getX(),room[cell].getY()-14);
-        positions[1]=new Point(room[cell].getX()+51,room[cell].getY()-14);
-        positions[2]=new Point(room[cell].getX()+101,room[cell].getY()-14);
-        positions[3]=new Point(room[cell].getX(),room[cell].getY()+60);
-        positions[4]=new Point(room[cell].getX()+51,room[cell].getY()+60);
+        positions[0]=new Point(roomButton.get(cell).getX(),roomButton.get(cell).getY()-14);
+        positions[1]=new Point(roomButton.get(cell).getX()+51,roomButton.get(cell).getY()-14);
+        positions[2]=new Point(roomButton.get(cell).getX()+101,roomButton.get(cell).getY()-14);
+        positions[3]=new Point(roomButton.get(cell).getX(),roomButton.get(cell).getY()+60);
+        positions[4]=new Point(roomButton.get(cell).getX()+51,roomButton.get(cell).getY()+60);
 
         for(int i=0;i<playerIcon.size();i++){
           if(player.getNickname().equals(playerIcon.get(i).getPlayer().getNickname())){
@@ -311,7 +261,61 @@ public class MapPanel extends JLayeredPane{
         super.paintComponent(g);
     }
 
+    public void createMapButton(){
+    for(int i=0;board.getSquare(i)!=null;i++){
+        JMapButton room = new JMapButton(board.getSquare(i).getX(),board.getSquare(i).getY());
+        room.setOpaque(false);
+        room.setSize(149,116);
+        Border border= BorderFactory.createLineBorder(Color.red);
+        room.setBorder (border);
+        room.setBorderPainted (true);
+        room.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("bottone room premuto "+room.getPosx()+ " "+room.getPosy());
+            }
+        });
+        room.setLocation(positionX[board.getSquare(i).getX()],positionY[board.getSquare(i).getY()]);
+        roomButton.add(room);
+        this.add(roomButton.get(i));
+    }
+    }
 
+    public void updBoardGui(GameBoard b){
+        this.board=b;
+        for(int i=0;board.getSquare(i)!=null;i++){
+            Square square = board.getSquare(i);
+            if(board.getSquare(i).isGenerationPoint()){
+                GenerationSquare generationSquare = (GenerationSquare) square;
+                if(generationSquare.getWeaponDeck().isEmpty()){
+                    for(int j=0;i<generationSquare.getWeaponDeck().size();j++){
+                    Weapon weapon=generationSquare.getWeaponDeck().get(j);
+                    // jbutton per ogni arma
+                }
+                }
+            }
+            else{
+                AmmoSquare ammoSquare= (AmmoSquare) square;
+                JButton ammo= new JButton();
+                ammo.setSize(46,68);
+                ammo.setContentAreaFilled(false);
+                ammo.setBorder(null);
+                ammo.setFocusPainted(false);
+                if(ammoSquare.getAmmoCard().getAmmoList().isEmpty())
+                    ammo.setIcon(new ImageIcon("./src/main/resources/"+ammoSquare.getAmmoCard().getName()+".png"));
+                else
+                    ammo.setIcon(new ImageIcon("./src/main/resources/ammo.png"));
+                ammo.setOpaque(false);
+                ammo.setLocation(roomButton.get(i).getX()+101,roomButton.get(i).getY()+60);
+                this.add(ammo);
+            }
+            int c=i;
+            square.getPlayersOnSquare().forEach(player -> {
+                movePlayer(c,player);
+            });
+
+        }
+    }
 
 
 }

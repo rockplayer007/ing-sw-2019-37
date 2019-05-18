@@ -8,7 +8,8 @@ import java.util.*;
 public class PlayerBoard {
     private  Player player;
     private List<Player> hp;
-    private int[] pointArray;
+    private static int[] pointArray = {8, 6, 4, 2, 1, 1};
+    //TOdo
     private int points;
     private int deathTimes;
     private List<Player> marks;
@@ -17,7 +18,6 @@ public class PlayerBoard {
         this.hp=new ArrayList<>(12);
         this.points=0;
         this.deathTimes=0;
-        pointArray = new int[]{8, 6, 4, 2, 1, 1};
     }
     
     public void setDeathTimes(int deathPoint) {
@@ -34,17 +34,20 @@ public class PlayerBoard {
 
     /**
      * Sets the player that applied the damage on the board
-     * @param player
+     * @param player that give you the damage.
+     * @param points how damage give this(player).
      */
-    public void addDamage(Player player){
-        if (hp.size()<12)
-            hp.add(player);
+    public void addDamage(Player player,int points){
+        for (int i=0;i<points;i++) {
+            if (hp.size() < 12)
+                hp.add(player);
+        }
         int c=playerMarks(player);
-        removeMarks(player);
-        if (c!=0)
-            for (int i=0;i<c;i++) {
-                this.addDamage(player);
-            }
+        if (c!=0) {
+            removeMarks(player);
+            this.addDamage(player, c);
+        }
+
         //TODO bisogna vedere come funziona con gli pattern observer
     }
 

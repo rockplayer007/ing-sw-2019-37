@@ -1,9 +1,6 @@
 package model.board;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameBoard {
 
@@ -72,6 +69,13 @@ public class GameBoard {
                 .filter(a -> x == (a.getValue().getX()) && y == (a.getValue().getY()))
                 .findAny().map(Map.Entry::getValue)
                 .orElse(null);
+    }
+
+    /**
+     * @return a list of all square in the Map
+     */
+    public Set<Square> allSquares(){
+        return (Set<Square>) allSquares.values();
     }
 
 }

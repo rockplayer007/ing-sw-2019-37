@@ -3,6 +3,11 @@ package model.card;
 import model.gamehandler.Room;
 import model.board.Color;
 import model.board.Square;
+import model.exceptions.InterruptOperationException;
+import model.exceptions.NotEnoughException;
+import model.exceptions.NullTargetsException;
+import model.gamehandler.AttackHandler;
+
 import model.player.ActionHandler;
 import model.player.Player;
 
@@ -11,13 +16,14 @@ import java.util.stream.Collectors;
 
 public interface Operation {
 
-    void execute(Room room);
+    void execute(Room room)throws InterruptOperationException,NullTargetsException;
 }
 
 class VisiblePlayers implements Operation{
 
     @Override
     public void execute(Room room){
+        AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         Set<Square> visible = new HashSet<>(currentPlayer.getPosition().visibleSquare(room.getBoard().getMap()));
         ArrayList<Player> visiblePlayers = new ArrayList<>();
@@ -25,7 +31,7 @@ class VisiblePlayers implements Operation{
         visible.forEach(x-> visiblePlayers.addAll(x.getPlayersOnSquare()));
         visiblePlayers.remove(currentPlayer);
 
-        currentPlayer.setPossibleTargets(visiblePlayers);
+        attackHandler.setPossibleTargets(visiblePlayers);
     }
 }
 
@@ -40,8 +46,9 @@ class SelectTargets implements Operation{
 
     @Override
     public void execute(Room room){
+        AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
-        List<Player> possibleTargets =currentPlayer.getPossibleTargets();
+        List<Player> possibleTargets =attackHandler.getPossibleTargets();
         List<Player> targets=new ArrayList<>();
         if (distinctSquare) {
             //TODO ask player what target he wants
@@ -50,7 +57,7 @@ class SelectTargets implements Operation{
 //            TODO the targets choice need be different square
         }
         possibleTargets.removeAll(targets);
-        currentPlayer.setTargetsToShot(targets);
+        attackHandler.setTargetsToShot(targets);
     }
 
 }
@@ -63,11 +70,12 @@ class SelectFromSelectedTargets implements Operation{
 
     @Override
     public void execute(Room room) {
+        AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
-        List<Player> selectedTargets =currentPlayer.getSelectedTargets();
+        List<Player> selectedTargets =attackHandler.getSelectedTargets();
         List<Player> targets=new ArrayList<>();
         //TODO
-        currentPlayer.setTargetsToShot(targets);
+        attackHandler.setTargetsToShot(targets);
 
     }
 }
@@ -82,11 +90,13 @@ class Damage implements Operation{
 
     @Override
     public void execute(Room room){
+        AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
-        List<Player> targets = currentPlayer.getTargetsToShot();
-        for(int i = 0; i < points; i++){
-            targets.forEach(x->x.getPlayerBoard().addDamage(currentPlayer));
-        }
+        List<Player> targets = attackHandler.getTargetsToShot();
+        targets.forEach(x->attackHandler.addDamage(x,points));
+//        TODO
+        targets.forEach(x->x.getPlayerBoard().addDamage(currentPlayer,points));
+
     }
 }
 
@@ -101,7 +111,7 @@ class Mark implements Operation{
     @Override
     public void execute(Room room){
         Player currentPlayer = room.getCurrentPlayer();
-        List<Player> targets = currentPlayer.getTargetsToShot();
+        List<Player> targets = room.getAttackHandler().getTargetsToShot();
         for(int i = 0; i < points; i++){
             targets.forEach(x->x.getPlayerBoard().addMark(currentPlayer));
         }
@@ -113,9 +123,9 @@ class Mark implements Operation{
 class SetTargetToSelected implements Operation{
     @Override
     public void execute(Room room) {
-        Player currentPlayer = room.getCurrentPlayer();
-        List<Player> targets =new ArrayList<>(currentPlayer.getTargetsToShot());
-        List<Player> selectedTargets = currentPlayer.getSelectedTargets();
+        AttackHandler attackHandler=room.getAttackHandler();
+        List<Player> targets =new ArrayList<>(attackHandler.getTargetsToShot());
+        List<Player> selectedTargets = attackHandler.getSelectedTargets();
 
         for (Player p:targets) {
             if (selectedTargets.contains(p))
@@ -130,7 +140,7 @@ class SetTargetToSelected implements Operation{
 class Run implements Operation{
     private int distance;
 
-    public Run(int distance){
+    Run(int distance){
         this.distance=distance;
     }
 
@@ -156,6 +166,7 @@ class MinOrMaxDistance implements Operation{
 
     @Override
     public void execute(Room room) {
+        AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         Set<Square> possibleSquares =new HashSet<>(currentPlayer.getPosition().getValidPosition(distance));
         List<Player> possiblePlayers = new ArrayList<>();
@@ -164,9 +175,9 @@ class MinOrMaxDistance implements Operation{
         possiblePlayers.remove(currentPlayer);
 
         if (isMaxDistance)
-            currentPlayer.setPossibleTargets(possiblePlayers);
+            attackHandler.setPossibleTargets(possiblePlayers);
         else
-            currentPlayer.getPossibleTargets().removeAll(possiblePlayers);
+            attackHandler.getPossibleTargets().removeAll(possiblePlayers);
     }
 }
 
@@ -175,7 +186,7 @@ class SameSquare implements Operation{
     public void execute(Room room) {
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> possiblePlayers = new ArrayList<>(currentPlayer.getPosition().getPlayersOnSquare());
-        currentPlayer.setPossibleTargets(possiblePlayers);
+        room.getAttackHandler().setPossibleTargets(possiblePlayers);
     }
 }
 
@@ -193,20 +204,21 @@ class  AddPossibleTargetBeforeMove implements Operation{
 
     @Override
     public void execute(Room room) {
+        AttackHandler attackHandler = room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> possiblePlayers = new ArrayList<>(room.getPlayers());
         Set<Square> visibleSquare=new HashSet<>(currentPlayer.getPosition().visibleSquare(room.getBoard().getMap()));
         if (!yourSquare){
-            possiblePlayers.removeAll(currentPlayer.getPossibleTargets());
+            possiblePlayers.removeAll(attackHandler.getPossibleTargets());
             possiblePlayers=possiblePlayers.stream()
                     .filter(player-> player.getPosition().getValidPosition(distance).stream().anyMatch(visibleSquare::contains))
                     .collect(Collectors.toList());
-            currentPlayer.getPossibleTargets().addAll(possiblePlayers);
+            attackHandler.getPossibleTargets().addAll(possiblePlayers);
         }else {
             possiblePlayers=possiblePlayers.stream()
                     .filter(player-> player.getPosition().getValidPosition(distance).contains(currentPlayer.getPosition()))
                     .collect(Collectors.toList());
-            currentPlayer.setPossibleTargets(possiblePlayers);
+            attackHandler.setPossibleTargets(possiblePlayers);
         }
 
     }
@@ -223,7 +235,7 @@ class  MoveTargetToVisible implements Operation{
     @Override
     public void execute(Room room) {
         Player currentPlayer = room.getCurrentPlayer();
-        Player target = currentPlayer.getTargetsToShot().get(0); // dovrebbe essere sempre uno solo quando lancia questo operazione
+        Player target = room.getAttackHandler().getTargetsToShot().get(0); // dovrebbe essere sempre uno solo quando lancia questo operazione
         Set<Square> visibleSquare=currentPlayer.getPosition().visibleSquare(room.getBoard().getMap());
         Set<Square> validSquare;
         validSquare=target.getPosition().getValidPosition(distance).stream().filter(visibleSquare::contains).collect(Collectors.toSet());
@@ -237,7 +249,7 @@ class SetPlayerPositionAsEffectSquare implements Operation{
     @Override
     public void execute(Room room) {
         Player currentPlayer = room.getCurrentPlayer();
-        currentPlayer.setEffectSquare(currentPlayer.getPosition());
+        room.getAttackHandler().setEffectSquare(currentPlayer.getPosition());
     }
 }
 
@@ -250,6 +262,7 @@ class SelectEffectSquare implements Operation{
     }
     @Override
     public void execute(Room room) {
+        AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> possibleTargets = new ArrayList<>();
         Set<Square> visibleSquare=currentPlayer.getPosition().visibleSquare(room.getBoard().getMap())
@@ -258,27 +271,28 @@ class SelectEffectSquare implements Operation{
                 .collect(Collectors.toSet());
         Square vortex=ActionHandler.chooseSquare(currentPlayer,visibleSquare);//TODO DA controllare.
         vortex.getValidPosition(1).forEach(x-> possibleTargets.addAll(x.getPlayersOnSquare()));
-        currentPlayer.setPossibleTargets(possibleTargets);
-        currentPlayer.setEffectSquare(vortex);
+        attackHandler.setPossibleTargets(possibleTargets);
+        attackHandler.setEffectSquare(vortex);
     }
 }
 
 class MoveTargetToEffevtSquare implements Operation{
     @Override
     public void execute(Room room) {
-        Player currentPlayer = room.getCurrentPlayer();
-        currentPlayer.getTargetsToShot().forEach(x->x.movePlayer(currentPlayer.getEffectSquare()));
+        AttackHandler attackHandler=room.getAttackHandler();
+        attackHandler.getTargetsToShot().forEach(x->x.movePlayer(attackHandler.getEffectSquare()));
     }
 }
 
 class Furance implements Operation{
-    Boolean selectSquare;
+    private Boolean selectSquare;
 
     Furance(Boolean selectSquare){
         this.selectSquare=selectSquare;
     }
     @Override
     public void execute(Room room) {
+        AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         if (!selectSquare){
             Set<Color> rooms= new HashSet<>();
@@ -290,7 +304,7 @@ class Furance implements Operation{
             Set<Square> squares=new HashSet<>(currentPlayer.getPosition().getNeighbourSquare());
             squares.remove(currentPlayer.getPosition());
             squares=squares.stream().filter(x->!x.getPlayersOnSquare().isEmpty()).collect(Collectors.toSet());
-            currentPlayer.setTargetsToShot(ActionHandler.chooseSquare(currentPlayer,squares).getPlayersOnSquare());//TODO DA controllare.
+            attackHandler.setTargetsToShot(ActionHandler.chooseSquare(currentPlayer,squares).getPlayersOnSquare());//TODO DA controllare.
         }
     }
 }
@@ -302,10 +316,10 @@ class Furance implements Operation{
 class Heatseekker implements Operation{
     @Override
     public void execute(Room room) {
-        Player currentPlayer = room.getCurrentPlayer();
+        AttackHandler attackHandler=room.getAttackHandler();
         List<Player> possibleTarets=new ArrayList<>(room.getPlayers());
-        possibleTarets.removeAll(currentPlayer.getPossibleTargets());
-        currentPlayer.setPossibleTargets(possibleTarets);
+        possibleTarets.removeAll(attackHandler.getPossibleTargets());
+        attackHandler.setPossibleTargets(possibleTarets);
     }
 }
 
@@ -322,22 +336,24 @@ class DirectionTargets implements Operation{
     }
     @Override
     public void execute(Room room) {
+        AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         Map<String,Set<Square>> map;
         if (!penetrate)
             map = currentPlayer.getPosition().directions(distance);
         else
             map= currentPlayer.getPosition().directionAbsolute(room.getBoard().getMap());
+        map=map.entrySet().stream()
+                .filter(x -> x.getValue().stream().anyMatch(s -> s.getPlayersOnSquare().isEmpty()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         Set<String> direction=map.keySet();
         //Todo da vedere con messagio per fare la scelta;
         String choise="";
 
         Set<Square> squares=map.get(choise);
-//        if (!penetrate) // solo per weapon FLAMETHROWER
-//            squares.remove(currentPlayer.getPosition());
         List<Player> possibleTargets=new ArrayList<>();
         squares.forEach(x->possibleTargets.addAll(x.getPlayersOnSquare()));
-        currentPlayer.setPossibleTargets(possibleTargets);
+        attackHandler.setPossibleTargets(possibleTargets);
     }
 }
 
@@ -347,9 +363,9 @@ class DirectionTargets implements Operation{
 class SelectAllTarget implements Operation{
     @Override
     public void execute(Room room) {
-        Player currentPlayer = room.getCurrentPlayer();
-        currentPlayer.setTargetsToShot(new ArrayList<>(currentPlayer.getPossibleTargets()));
-        currentPlayer.setPossibleTargets(new ArrayList<>());
+        AttackHandler attackHandler=room.getAttackHandler();
+        attackHandler.setTargetsToShot(new ArrayList<>(attackHandler.getPossibleTargets()));
+        attackHandler.setPossibleTargets(new ArrayList<>());
     }
 }
 
@@ -357,19 +373,19 @@ class MoveToTarget implements Operation{
     @Override
     public void execute(Room room) {
         Player currentPlayer = room.getCurrentPlayer();
-        currentPlayer.movePlayer(currentPlayer.getTargetsToShot().get(0).getPosition());
+        currentPlayer.movePlayer(room.getAttackHandler().getTargetsToShot().get(0).getPosition());
     }
 }
 
 class MoveTarget implements Operation{
     private int distance;
-    public MoveTarget(int distance){
+    MoveTarget(int distance){
         this.distance=distance;
     }
     @Override
     public void execute(Room room) {
         Player currentPlayer = room.getCurrentPlayer();
-        Player target = currentPlayer.getTargetsToShot().get(0); // dovrebbe essere sempre uno solo quando lancia questo operazione
+        Player target = room.getAttackHandler().getTargetsToShot().get(0); // dovrebbe essere sempre uno solo quando lancia questo operazione
         Set<Square> validSquare;
         validSquare=target.getPosition().getValidPosition(distance);
         target.movePlayer(ActionHandler.chooseSquare(currentPlayer,validSquare));//TODO DA controllare.
@@ -379,20 +395,20 @@ class MoveTarget implements Operation{
 class SetTargetPositionAsEffectSquare implements Operation{
     @Override
     public void execute(Room room) {
-        Player currentPlayer = room.getCurrentPlayer();
-        Player target = currentPlayer.getTargetsToShot().get(0);
-        currentPlayer.setEffectSquare(target.getPosition());
+        AttackHandler attackHandler=room.getAttackHandler();
+        Player target = attackHandler.getTargetsToShot().get(0);
+        attackHandler.setEffectSquare(target.getPosition());
     }
 }
 
 class TargetOnEffectSquare implements Operation{
     @Override
     public void execute(Room room) {
-        Player currentPlayer = room.getCurrentPlayer();
-        List<Player> targets=new ArrayList<>(currentPlayer.getEffectSquare().getPlayersOnSquare());
-        targets.addAll(currentPlayer.getSelectedTargets());
+        AttackHandler attackHandler=room.getAttackHandler();
+        List<Player> targets=new ArrayList<>(attackHandler.getEffectSquare().getPlayersOnSquare());
+        targets.addAll(attackHandler.getSelectedTargets());
         targets=targets.stream().distinct().collect(Collectors.toList());
-        currentPlayer.setTargetsToShot(targets);
+        attackHandler.setPossibleTargets(targets);
     }
 }
 
@@ -404,36 +420,125 @@ class ThorTargets implements Operation{
     }
     @Override
     public void execute(Room room) {
+        AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
-        Set<Square> visible = new HashSet<>(currentPlayer.getSelectedTargets().get(index).getPosition().visibleSquare(room.getBoard().getMap()));
+        Set<Square> visible = new HashSet<>(attackHandler.getSelectedTargets().get(index).getPosition().visibleSquare(room.getBoard().getMap()));
         ArrayList<Player> visiblePlayers = new ArrayList<>();
 
         visible.forEach(x-> visiblePlayers.addAll(x.getPlayersOnSquare()));
         visiblePlayers.remove(currentPlayer);
-        visiblePlayers.removeAll(currentPlayer.getSelectedTargets());
+        visiblePlayers.removeAll(attackHandler.getSelectedTargets());
 
-        currentPlayer.setPossibleTargets(visiblePlayers);
+        attackHandler.setPossibleTargets(visiblePlayers);
     }
 }
 
-class NextSquareInDirection implements Operation{
+class NextSquareInDirection implements Operation {
     @Override
     public void execute(Room room) {
+        AttackHandler attackHandler = room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
-        Square targetPosition=currentPlayer.getSelectedTargets().get(0).getPosition();
-        Square currentPlayerPosiction=currentPlayer.getPosition();
-        int diffx=currentPlayerPosiction.getX()-targetPosition.getX();
-        int diffy=currentPlayerPosiction.getY()-targetPosition.getY();
-        Square nextSquare=null;
-        if (diffx==0){
-            nextSquare=targetPosition.getOneOfNeighbour(targetPosition.getX(),targetPosition.getY()-diffy);
-        }else if (diffy==0){
-            nextSquare=targetPosition.getOneOfNeighbour(targetPosition.getX()-diffx,targetPosition.getY());
+        Square targetPosition = attackHandler.getSelectedTargets().get(0).getPosition();
+        Square currentPlayerPosition = currentPlayer.getPosition();
+        int diffx = currentPlayerPosition.getX() - targetPosition.getX();
+        int diffy = currentPlayerPosition.getY() - targetPosition.getY();
+        Square nextSquare = null;
+        if (diffx == 0) {
+            nextSquare = targetPosition.getOneOfNeighbour(targetPosition.getX(), targetPosition.getY() - diffy);
+        } else if (diffy == 0) {
+            nextSquare = targetPosition.getOneOfNeighbour(targetPosition.getX() - diffx, targetPosition.getY());
         }
-        if (nextSquare!=null)
-            currentPlayer.setEffectSquare(nextSquare);
-        else
-            System.out.println("haven't next square");//TODO da controllare.
+        attackHandler.setEffectSquare(nextSquare);
+
+
+    }
+}
+
+class Flamethorwer implements Operation {
+    @Override
+    public void execute(Room room) throws NullTargetsException {
+        AttackHandler attackHandler = room.getAttackHandler();
+        Player currentPlayer = room.getCurrentPlayer();
+        Map<String, Set<Square>> map = currentPlayer.getPosition().directions(2)
+                .entrySet().stream()
+                .filter(x -> x.getValue().stream().anyMatch(s -> s.getPlayersOnSquare().isEmpty()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        if (map.size() == 0)
+            throw new NullTargetsException("haven't targets can be shot");
+        Set<String> direction = map.keySet();
+        //Todo da vedere con messagio per fare la scelta;
+        String choise = "";
+
+        List<Square> squares = new ArrayList<>(map.get(choise));
+        squares.remove(currentPlayer.getPosition());
+        for (Square s:map.get(choise)){
+            if (currentPlayer.getPosition().getNeighbourSquare().contains(s)) {
+                attackHandler.setPossibleTargets(squares.get(0).getPlayersOnSquare());
+                new SelectAllTarget().execute(room);
+                new Damage(2).execute(room);
+            }
+            else {
+                attackHandler.setPossibleTargets(squares.get(1).getPlayersOnSquare());
+                new SelectAllTarget().execute(room);
+                new Damage(1).execute(room);
+            }
+        }
+    }
+}
+
+class Repel implements Operation{
+    private int distance;
+    Repel (int distance){
+        this.distance=distance;
+    }
+    @Override
+    public void execute(Room room){
+        AttackHandler attackHandler = room.getAttackHandler();
+        Player target = attackHandler.getTargetsToShot().get(0);
+        Set<Square> validPosition = new HashSet<>();
+        target.getPosition().directions(distance).forEach((key,value)->validPosition.addAll(value));
+        target.movePlayer(ActionHandler.chooseSquare(room.getCurrentPlayer(),validPosition));
+    }
+}
+ class AllPossibleTargets implements Operation{
+     @Override
+     public void execute(Room room) {
+         List<Player> players = new ArrayList<>(room.getPlayers());
+         players.remove(room.getCurrentPlayer());
+         room.getAttackHandler().setPossibleTargets(players);
+     }
+ }
+
+class TargetingScope implements Operation{
+    @Override
+    public void execute(Room room) throws NullTargetsException {
+        AttackHandler attackHandler = room.getAttackHandler();
+        Player currentPlayer = room.getCurrentPlayer();
+        List<AmmoColor> ammoColors = currentPlayer.allAmmo().entrySet().stream().filter(x->x.getValue()>0).map(Map.Entry::getKey).collect(Collectors.toList());
+        //TODO far scegliere un ammo da utilizzare.
+        int i=0;//da controllare
+        try {
+            ActionHandler.decuction(currentPlayer,Collections.singletonList(ammoColors.get(i)));
+        } catch (NotEnoughException e) {
+            throw new NullTargetsException(e.getMessage());
+        }
+        attackHandler.setPossibleTargets(new ArrayList<>(attackHandler.getDamaged().keySet()));
+    }
+}
+
+
+class TagbackGrende implements Operation{
+    @Override
+    public void execute(Room room){
+//      TODO da rivedere questo poweup.
+    }
+}
+
+class Teleporter implements Operation{
+    @Override
+    public void execute(Room room){
+        Player currentPlayer = room.getCurrentPlayer();
+        currentPlayer.movePlayer(ActionHandler.chooseSquare(currentPlayer,room.getBoard().getMap().allSquares()));
 
     }
 }

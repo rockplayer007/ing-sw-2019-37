@@ -21,12 +21,8 @@ public class Player {
     private Map<AmmoColor,Integer> ammo;
     private List<Weapon> weapons;
     private List<Powerup> powerups;
-    private List<Player> PossibleTargets;
-    private List<Player> targetsToShot;
-    private List<Player> selectedTargets;
     private Actions actionStatus;
     private Boolean live;
-    private Square effectSquare;
 
     public Player(String nickname) {
         this.nickname = nickname;
@@ -82,40 +78,8 @@ public class Player {
         return Collections.unmodifiableList(weapons);
     }
 
-    public List<Player> getPossibleTargets() {
-        return PossibleTargets;
-    }
-
-    public void setPossibleTargets(List<Player> targetPlayers) {
-        this.PossibleTargets = targetPlayers;
-    }
-
-    public List<Player> getTargetsToShot() {
-        return targetsToShot;
-    }
-
-    public void setTargetsToShot(List<Player> targetsToShot) {
-        this.targetsToShot = targetsToShot;
-    }
-
-    public List<Player> getSelectedTargets() {
-        return selectedTargets;
-    }
-
-    public void setSelectedTargets(List<Player> selectedTargets) {
-        this.selectedTargets = selectedTargets;
-    }
-
     public Actions getActionStatus() {
         return actionStatus;
-    }
-
-    public Square getEffectSquare() {
-        return effectSquare;
-    }
-
-    public void setEffectSquare(Square effectSquare) {
-        this.effectSquare = effectSquare;
     }
 
     public void movePlayer(Square square){
@@ -170,7 +134,7 @@ public class Player {
      */
     public List<AmmoColor> powerupAsAmmo(){
         ArrayList<AmmoColor> bullets=new ArrayList<>();
-        powerups.forEach(i->bullets.add(i.getAmmoColor()));
+        powerups.forEach(i->bullets.add(i.getAmmo()));
         return bullets;
     }
 
@@ -187,8 +151,8 @@ public class Player {
      */
     public Map<AmmoColor,Integer> allAmmo(){
         Map<AmmoColor,Integer> bullets=new EnumMap<>(AmmoColor.class);
-        bullets.putAll(getAmmo());
-        powerups.forEach(i->bullets.put(i.getAmmoColor(), bullets.get(i.getAmmoColor())+1));
+        bullets.putAll(ammo);
+        powerups.forEach(i->bullets.put(i.getAmmo(), bullets.get(i.getAmmo())+1));
         return bullets;
     }
 
@@ -196,8 +160,13 @@ public class Player {
      * @param cost is the cost that the player need to be incurred
      * @return true if the player can pay that cost, else no.
      */
-    public Boolean enoughAmmos(List<AmmoColor> cost){
-        Map<AmmoColor,Integer> bullets= allAmmo();
+    public Boolean enoughAmmos(List<AmmoColor> cost,Boolean allAmmos){
+        Map<AmmoColor,Integer> bullets;
+        if (allAmmos)
+            bullets = allAmmo();
+        else
+            bullets = new EnumMap<>(ammo);
+
         for (AmmoColor c:cost){
             if (bullets.get(c)>0)
                 bullets.put(c,bullets.get(c)-1);
@@ -206,6 +175,8 @@ public class Player {
         }
         return true;
     }
+
+
 
 
 }
