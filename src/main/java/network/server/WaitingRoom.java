@@ -1,6 +1,7 @@
 package network.server;
 
 import controller.RoomController;
+import model.player.HeroGenerator;
 import model.player.Player;
 
 import java.util.*;
@@ -82,8 +83,9 @@ public class WaitingRoom {
         RoomController playingRoom = new RoomController();
         List<String> usernames = new ArrayList<>();
 
+        HeroGenerator heroGen = new HeroGenerator();
         for(ClientOnServer waitingClient : waitingClients){
-            Player player = new Player(waitingClient.getUsername());
+            Player player = new Player(waitingClient.getUsername(), heroGen.getHero());
             waitingClient.setPersonalPlayer(player);
             playingRoom.addPlayer(waitingClient);
             usernames.add(waitingClient.getUsername());

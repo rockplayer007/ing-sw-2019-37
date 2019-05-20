@@ -34,6 +34,7 @@ public class RoomController {
     private String expectedReceiver;
     private Message.Content expectedType;
     private Thread askingThread;
+    private TurnController turnController;
 
     private static final Logger logger = Logger.getLogger(RoomController.class.getName());
 
@@ -42,12 +43,19 @@ public class RoomController {
         room = new Room();
         players = new ArrayList<>();
         connectionToClient = new HashMap<>();
-
+        turnController = new TurnController(this, room);
     }
 
     public void handleMessages(ClientToServer message) {
 
         switch (message.getContent()) {
+            case CARD_RESPONSE:
+                if(checkReceiver(message)) {
+
+                    mockMessage = message;
+                    //askingThread.interrupt();
+                }
+                break;
             case BOARD_RESPONSE:
                 if(checkReceiver(message)) {
 
@@ -55,6 +63,12 @@ public class RoomController {
                     //askingThread.interrupt();
                 }
                 break;
+            case SQUARE_RESPONSE:
+                if(checkReceiver(message)) {
+
+                    mockMessage = message;
+                    //askingThread.interrupt();
+                }
 
             default:
                 logger.log(Level.WARNING, "Unhandled message");
@@ -85,7 +99,7 @@ public class RoomController {
         askBoard();
 
         System.out.println("next steeeeeeeeeeeep");
-
+        turnController.startPlayerRound(room.getCurrentPlayer());
 
     }
 
@@ -143,6 +157,20 @@ public class RoomController {
         room.createMap(boardMessage.getSelectedItem());
 
         //necessary to serialize properly also the sub classes
+        sendUpdate();
+
+
+        logger.log(Level.INFO,"board is: {0}", (boardMessage.getSelectedItem()));
+        resetReceiver();
+    }
+
+
+    public void sendMessageToAll(ServerToClient message){
+        players.forEach(x -> sendMessage(x, message));
+    }
+
+    public void sendUpdate(){
+        //send a message that includes the board and other things
         RuntimeTypeAdapterFactory<Square> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
                 .of(Square.class, "Square")
                 .registerSubtype(AmmoSquare.class, "AmmoSquare")
@@ -153,15 +181,6 @@ public class RoomController {
                 .create();
 
         sendMessageToAll(new BoardInfo(gson.toJson(room.getBoard().getMap())));
-
-
-        logger.log(Level.INFO,"board is: {0}", (boardMessage.getSelectedItem()));
-        resetReceiver();
-    }
-
-
-    public void sendMessageToAll(ServerToClient message){
-        players.forEach(x -> sendMessage(x, message));
     }
 
     public boolean checkReceiver(ClientToServer message) {
@@ -197,23 +216,15 @@ public class RoomController {
 
     public List<String> toJsonCardList(List<? extends Card> cards){
         List<String> list = new ArrayList<>();
-        String stringed;
         Gson gson = new Gson();
 
         cards.forEach(x -> list.add(gson.toJson(x)) );
-        /*
-        for(Card card : cards){
-            stringed = gson.toJson(card);
-            list.add(stringed);
-        }
 
-         */
         return list;
     }
 
     public List<String> toJsonSquareList(Set<Square> squares){
         List<String> list = new ArrayList<>();
-        String stringed;
         //not making use of the adapter because no need in view
         Gson gson = new Gson();
 
@@ -222,5 +233,8 @@ public class RoomController {
         return list;
     }
 
+    public Room getRoom(){
+        return room;
+    }
 
 }

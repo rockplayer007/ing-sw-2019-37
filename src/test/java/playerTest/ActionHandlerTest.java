@@ -5,6 +5,7 @@ import model.card.AmmoCard;
 import model.card.AmmoColor;
 import model.card.PowerDeck;
 import model.player.ActionHandler;
+import model.player.Hero;
 import model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.EnumMap;
 
+import static model.board.Color.RED;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ActionHandlerTest {
@@ -23,8 +25,8 @@ public class ActionHandlerTest {
     @BeforeEach
     public void before(){
 
-        Player p1=new Player("p1");
-        Player p2=new Player("p2");
+        Player p1=new Player("p1", new Hero("", "", RED));
+        Player p2=new Player("p2", new Hero("", "", RED));
 
         room =new Room();
         room.setStartingPlayer(p1);

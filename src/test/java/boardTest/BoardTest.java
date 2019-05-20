@@ -7,6 +7,8 @@ import com.google.gson.reflect.TypeToken;
 
 import model.board.*;
 import model.card.AmmoColor;
+import model.player.Hero;
+import model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import view.CLI.Printer;
@@ -36,6 +38,7 @@ public class BoardTest {
     @Test
     public void serializeMapTest(){
 
+        map.getSquare(0).addPlayer(new Player("", new Hero("", "", Color.RED)));
         RuntimeTypeAdapterFactory<Square> rfSquare = RuntimeTypeAdapterFactory
                 .of(Square.class, "Square")
                 .registerSubtype(AmmoSquare.class, "AmmoSquare")

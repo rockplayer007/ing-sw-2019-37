@@ -96,7 +96,7 @@ public class Square implements Serializable {
      * @param maxDistance Distance from the square
      * @return All the squares with that distance
      */
-    public Set<Square> getValidPosition(int maxDistance){
+    public Set<Square> getAllPositions(int maxDistance){
         Set<Square> positions = new HashSet<>();
         if(maxDistance != 0){
             neighbourSquare.forEach(squares-> positions.
@@ -107,6 +107,14 @@ public class Square implements Serializable {
         }
 
         return positions;
+    }
+
+    public Set<Square> getValidPosition(int maxDistance){
+        Set<Square> all = new HashSet<>();
+        for(int i = 0; i <= maxDistance; i++){
+            all.addAll(getAllPositions(i));
+        }
+        return all;
     }
 
     public List<Player> getPlayersOnSquare(){

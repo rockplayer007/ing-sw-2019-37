@@ -1,5 +1,8 @@
 package view.GUI;
 import model.board.GameBoard;
+import model.board.Square;
+import model.card.Powerup;
+import model.player.ActionOption;
 import network.client.MainClient;
 import view.ViewInterface;
 
@@ -9,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.rmi.NotBoundException;
+import java.util.List;
 import java.util.Map;
 
 
@@ -112,6 +116,8 @@ public class GUI implements ViewInterface {
         frame.setVisible(true);
     }
 
+
+
     @Override
     public void timeout() {
         JDialog jDialog= new JDialog(frame,"TIMEOUT");
@@ -147,6 +153,20 @@ public class GUI implements ViewInterface {
         mapPanel.updBoardGui(board);
         frame.getContentPane().add(mapPanel);
         frame.setVisible(true);
+    }
+
+    @Override
+    public void choosePowerup(List<Powerup> powerups, boolean optional) {
+
+    }
+    @Override
+    public void chooseAction(List<ActionOption> actions) {
+
+    }
+
+    @Override
+    public void chooseSquare(List<Square> squares) {
+
     }
 }
 

@@ -1,23 +1,25 @@
 package controller;
 
+import com.google.gson.Gson;
 import model.board.Square;
 import model.card.Powerup;
+import model.exceptions.InterruptOperationException;
+import model.exceptions.NullTargetsException;
 import model.player.ActionOption;
 import model.player.Player;
 import network.messages.Message;
-import network.messages.clientToServer.GeneralResponse;
 import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
-import network.messages.serverToClient.GeneralRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RoundController {
 
-    RoomController roomController;
+    private RoomController roomController;
 
     private static final Logger logger = Logger.getLogger(RoundController.class.getName());
 
@@ -31,21 +33,23 @@ public class RoundController {
         while (usePowerups){
             List<Powerup> powerups = possiblePowerups(player);
             if(!powerups.isEmpty()){
-                //ask player if he wants to use a powerup
-                usePowerups = ((GeneralResponse) roomController
-                        .sendAndReceive(player, new GeneralRequest(Message.Content.YESNO_REQUEST)))
-                        .getAnswer();
 
-                if (usePowerups){
-                    //send powerups
-                    AnswerRequest message = new AnswerRequest(roomController
-                            .toJsonCardList(powerups), Message.Content.CARD_REQUEST);
-                    //sends the cards and receives the chosen one
-                    ListResponse chosenCard =(ListResponse) roomController.sendAndReceive(player, message);
 
+                AnswerRequest message = new AnswerRequest(roomController.toJsonCardList(powerups), Message.Content.POWERUP_REQUEST);
+                message.setIsOptional();
+
+                //send powerups
+                ListResponse chosenCard =(ListResponse) roomController.sendAndReceive(player, message);
+
+
+                //-1 means the player doesnt want to use powerups
+                if (chosenCard.getSelectedItem() < powerups.size() && chosenCard.getSelectedItem() >= 0){
                     //the chosen powerup will be executed
-                    usePowerup(powerups.get(chosenCard.getSelectedItem()));
+                    usePowerup(powerups.get(chosenCard.getSelectedItem()), player);
 
+                }
+                else {
+                    usePowerups = false;
                 }
             }
             else{
@@ -54,48 +58,62 @@ public class RoundController {
         }
     }
 
-    public List<Powerup> possiblePowerups(Player player){
+    private List<Powerup> possiblePowerups(Player player){
 
         List<Powerup> usable = new ArrayList<>();
         for(Powerup powerup : player.getPowerups()){
             //check if the player can use the powerup
+            //TARGETING SCOPE only after weapon
+            //NEWTON before/after action. Not possibile if no players on board
+            //TAGBACK GRENADE only after a another player shot
+            //TELEPORTER before/after action
 
         }
+        //needs to be changed
+        usable = player.getPowerups();
         return usable;
     }
 
-    public void usePowerup(Powerup powerup){
+    private void usePowerup(Powerup powerup, Player player){
         //execute it
+        try {
+            powerup.getEffect().execute(roomController.getRoom());
+        } catch (InterruptOperationException e) {
+            logger.log(Level.WARNING, "Powerup operation interrupted", e);
+        } catch (NullTargetsException e) {
+            logger.log(Level.WARNING, "Powerup operation has no targets", e);
+        }
         //remove the powerup from the player
+        player.removePowerup(powerup);
+        roomController.getRoom().getBoard().getPowerDeck().usedPowerups(powerup);
 
     }
 
 
     public void actionController(Player player){
         //check action in player
-        List<String> send = player.getActionStatus().getChoices();
+        List<String> send = player.getActionStatus().getJsonChoices(player);
+        List<ActionOption> actions = player.getActionStatus().getChoices(player);
 
-        ListResponse action = (ListResponse) roomController
+        ListResponse selected = (ListResponse) roomController
                 .sendAndReceive(player, new AnswerRequest(send, Message.Content.ACTION_REQUEST));
-        ActionOption choice;
 
+        ActionOption choice;
         try{
-            choice = ActionOption.valueOf(send.get(action.getSelectedItem()));
+            choice = actions.get(selected.getSelectedItem());
         }catch (RuntimeException e){
             //cheater
             return;
         }
 
-
         switch (choice){
             case MOVE3:
-
                 player.movePlayer(squareManager(player, 3));
                 break;
-            case MOVE_GRAB:
+            case MOVE1_GRAB:
                 //send moving squares
-                //grap in this square
                 squareManager(player, 1);
+                //grap in this square
 
                 break;
             case SHOOT:
@@ -106,22 +124,24 @@ public class RoundController {
 
     }
 
-    public Square squareManager(Player player, int n){
+    private Square squareManager(Player player, int n){
+        Set<Square> squares = player.getPosition().getValidPosition(n);
         List<String> send = roomController
-                .toJsonSquareList(player.getPosition().getValidPosition(n));
-        ListResponse action = (ListResponse) roomController
+                .toJsonSquareList(squares);
+        ListResponse square = (ListResponse) roomController
                 .sendAndReceive(player, new AnswerRequest(send, Message.Content.SQUARE_REQUEST));
+
         List<Square> tempSquares;
         try{
-             tempSquares = new ArrayList<>(player.getPosition().getValidPosition(3));
-
+            //needed to convert set into the array
+            tempSquares = new ArrayList<>(player.getPosition().getValidPosition(n));
+            return tempSquares.get(square.getSelectedItem());
         }catch (RuntimeException e){
             //cheater
             logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
-
-            return null;
+            //dont move the player
+            return player.getPosition();
         }
-        return tempSquares.get(action.getSelectedItem());
     }
 
 }
