@@ -10,19 +10,21 @@ public class Hero {
 
     private String name;
     private String description;
-    private Color color;
 
     /**
-     * Default constructor
+     * constructor
      */
-    public Hero(String name,String description, Color color) {
+    public Hero(String name,String description) {
         this.name=name;
         this.description=description;
-        this.color = color;
     }
 
+    public String getDescription() {
+        return description;
+    }
 
     public String getName() {
         return name;
     }
+
 }

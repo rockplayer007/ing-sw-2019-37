@@ -6,9 +6,13 @@ import model.board.GenerationSquare;
 import model.board.Square;
 import model.card.*;
 
+import model.exceptions.InterruptOperationException;
 import model.exceptions.NotEnoughException;
+import model.exceptions.NullTargetsException;
+import model.gamehandler.Room;
 
 
+import java.security.PublicKey;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -57,14 +61,44 @@ public class ActionHandler {
     }
 
     /**
-     *
-     * @param
-     * @param
-     * @return
+     * use the weapon to shoot
+     * @param room of the player in
+     * @param weapon that the player want to use
      */
-    public static void shoot() {
-        // TODO implement here
+    public static void shoot(Room room, Weapon weapon) {
+        Map<Effect,Integer> effects = weapon.getEffects();
+        Effect effectSelect;
+        Player player=room.getCurrentPlayer();
+        List<Effect> validEffect = new ArrayList<>(weapon.getLevelEffects(-1));
+        validEffect.addAll(weapon.getLevelEffects(0));
+        effectSelect = chooseEffects(player,validEffect);
+        int i = 1;
+        while (effectSelect!=null){
+            validEffect.remove(effectSelect);
+            try {
+                decuction(player,effectSelect.getExtraCost());
+                effectSelect.execute(room);
+                if (!weapon.getOptional())
+                    break;
+            } catch (NullTargetsException|NotEnoughException|InterruptOperationException e) {
+                e.printStackTrace();
+//                TODO
+            }
+            if (validEffect.isEmpty()|| validEffect.stream().allMatch(x->effects.get(x)==-1)){
+                validEffect.addAll(weapon.getLevelEffects(i));
+                i++;
+            }
+            validEffect = validEffect.stream().filter(x->player.enoughAmmos(x.getExtraCost(),true)).collect(Collectors.toList());
+            effectSelect = chooseEffects(player,validEffect);
+        }
+        weapon.setCharged(false);
 
+    }
+
+    // if effects isempty return null.
+    public static Effect chooseEffects(Player player,List<Effect> effects){
+        //TODO
+        return null;
     }
 
     /**
@@ -131,6 +165,8 @@ public class ActionHandler {
     }
 
     public static void decuction(Player player,List<AmmoColor> cost) throws NotEnoughException {
+        if (cost.isEmpty())
+            return;
         int i;
         int c=0;
         List<Powerup> temp = new ArrayList<>();

@@ -6,16 +6,17 @@ import model.board.Square;
 import model.card.Weapon;
 import model.card.Powerup;
 import model.exceptions.*;
+
+import java.io.Serializable;
 import java.util.*;
 
 /**
  *
  */
-public class Player {
+public class Player implements Serializable {
 
     private String nickname;
-    private Hero hero;
-    private Color color;
+    private Miniatures hero;
     private Square position;
     private PlayerBoard playerBoard;
     private Map<AmmoColor,Integer> ammo;
@@ -36,7 +37,7 @@ public class Player {
 
     }
 
-    public void setHero(Hero hero) {
+    public void setHero(Miniatures hero) {
         this.hero = hero;
     }
 
@@ -56,11 +57,11 @@ public class Player {
         return nickname;
     }
 
-    public Hero getHero() {
+    public Miniatures getHero() {
         return hero;
     }
 
-    public Color getColor(){ return color;}
+    public Color getColor(){ return hero.getColor();}
 
     public Square getPosition() {
         return position;
@@ -162,6 +163,8 @@ public class Player {
      */
     public Boolean enoughAmmos(List<AmmoColor> cost,Boolean allAmmos){
         Map<AmmoColor,Integer> bullets;
+        if (cost.isEmpty())
+            return true;
         if (allAmmos)
             bullets = allAmmo();
         else
