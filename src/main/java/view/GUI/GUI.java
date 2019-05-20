@@ -83,7 +83,6 @@ public class GUI implements ViewInterface {
             frame.getContentPane().add(loadingPanel);
             frame.setVisible(true);
         }
-
     }
 
     @Override
