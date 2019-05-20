@@ -1,14 +1,19 @@
 package view.CLI;
 
 import model.board.GameBoard;
+import model.board.Square;
+import model.card.Powerup;
+import model.player.ActionOption;
 import network.client.MainClient;
 import view.ViewInterface;
 
+import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.rmi.NotBoundException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -103,7 +108,32 @@ public class CLI implements ViewInterface {
     }
 
 
+    public void choosePowerup(List<Powerup> powerups, boolean optional){
+        printer.askPowerup(powerups, powerup -> {
+            if(powerup >= powerups.size()){
+                mainClient.sendSelectedCard(-1);
+            }
+            else {
+                mainClient.sendSelectedCard(powerup);
+            }
+        }, optional);
+    }
+
+    @Override
+    public void chooseAction(List<ActionOption> actions) {
+        List<String> stringed = new ArrayList<>();
+        actions.forEach(x -> stringed.add(x.explenation));
+        printer.displayRequest(stringed, board -> mainClient.sendSelectedBoard(board));
+    }
+
+    @Override
+    public void chooseSquare(List<Square> squares) {
+        printer.askSquare(squares, square -> mainClient.sendSelectedBoard(square));
+    }
+
+
     public void timeout(){
+        printer.println("You finished your time for choosing");
         printer.closeRequest();
     }
 
@@ -112,5 +142,7 @@ public class CLI implements ViewInterface {
         //println board
         printer.printBoard(board);
     }
+
+
 
 }

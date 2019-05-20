@@ -3,6 +3,10 @@ package network.client;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.board.*;
+import model.card.Card;
+import model.card.Powerup;
+import model.player.ActionOption;
+import model.player.ActionState;
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
 import network.messages.Message;
@@ -17,6 +21,8 @@ import view.ViewInterface;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,7 +55,17 @@ public class MainClient {
         if (choice.equals("g")) {
             view = new GUI(mainClient);
 
-            //((GUI) view).map();
+        /*
+            //usato solo per test
+            Map<Integer, String> map = new HashMap<>();
+            map.put(1, "ideale per 3/4 giocatori");
+            map.put(2, "ideale per 3/4 giocatori");
+            map.put(3, "third");
+            map.put(0, "zero");
+            view.chooseBoard(map);
+        */
+           // ((GUI) view).map();
+
         }
         else {
             view = new CLI(mainClient);
@@ -102,12 +118,23 @@ public class MainClient {
         connection.sendMessage(new ListResponse(username, clientID, board, Message.Content.BOARD_RESPONSE));
     }
 
+    public void sendSelectedCard(int card){
+        connection.sendMessage(new ListResponse(username, clientID, card, Message.Content.CARD_RESPONSE));
+    }
+
+    public void sendSelectedSquare(int square){
+        connection.sendMessage(new ListResponse(username, clientID, square, Message.Content.SQUARE_RESPONSE));
+    }
+
+
     /**
      * New messages that arrive from the server are managed here
      * @param message
      */
     public void handleMessage(ServerToClient message){
 
+        Gson gson = new Gson();
+        List<String> stringed;
 
         switch (message.getContent()){
             case TIMEOUT:
@@ -127,11 +154,34 @@ public class MainClient {
                         .registerSubtype(AmmoSquare.class, "AmmoSquare")
                         .registerSubtype(GenerationSquare.class, "GenerationSquare");
 
-                Gson gson = new GsonBuilder()
+                Gson boardGson = new GsonBuilder()
                         .registerTypeAdapterFactory(runtimeTypeAdapterFactory)
                         .create();
                 //Gson gson = new Gson();
-                view.updatedBoard(gson.fromJson(((BoardInfo) message).getBoard(), GameBoard.class));
+                view.updatedBoard(boardGson.fromJson(((BoardInfo) message).getBoard(), GameBoard.class));
+                break;
+            case POWERUP_REQUEST:
+                stringed = ((AnswerRequest) message).getRequests();
+                List<Powerup> powerups = new ArrayList<>();
+
+                for(String powerup : stringed){
+                    powerups.add( gson.fromJson(powerup, Powerup.class));
+                }
+                view.choosePowerup(powerups, ((AnswerRequest) message).isOptional());
+                break;
+            case ACTION_REQUEST:
+
+                stringed = ((AnswerRequest) message).getRequests();
+                List<ActionOption> actions = new ArrayList<>();
+                stringed.forEach(action -> actions.add(gson.fromJson(action, ActionOption.class)));
+                view.chooseAction(actions);
+                break;
+
+            case SQUARE_REQUEST:
+                stringed = ((AnswerRequest) message).getRequests();
+                List<Square> squares = new ArrayList<>();
+                stringed.forEach(square -> squares.add(gson.fromJson(square, Square.class)));
+                view.chooseSquare(squares);
                 break;
             default:
                 logger.log(Level.WARNING, "Unregistered message");

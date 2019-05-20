@@ -5,13 +5,16 @@ import model.board.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import model.card.AmmoColor;
+import model.card.Powerup;
 import model.card.Weapon;
+import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 
 public class Printer {
@@ -39,7 +42,7 @@ public class Printer {
                 println((i + 1) + ") " + possibilities.get(i));
             }
 
-            println("THRED IS  " + thread.getName());
+            //println("THREAD IS  " + thread.getName());
             println("Choose an option between 1 and " + nRequests  + ":");
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
             Scanner reader = new Scanner(bufferedReader);
@@ -73,6 +76,28 @@ public class Printer {
         thread.start();
     }
 
+    public void askPowerup(List<Powerup> powerups, Consumer<Integer> selection, boolean optional){
+        List<String> printable = new ArrayList<>();
+        for(Powerup powerup : powerups){
+            String temp = powerup.getName() + colorToAnsi(powerup.getAmmo()) + " O" + colorToAnsi(Color.WHITE);
+            printable.add(temp);
+        }
+        if(optional){
+            printable.add("Dont use any powerup");
+        }
+
+        displayRequest(printable, selection);
+    }
+
+    public void askSquare(List<Square> squares, Consumer<Integer> selection){
+        List<String> printable = new ArrayList<>();
+        for(Square square : squares){
+            String temp = "Move to square " + colorToAnsi(square.getColor()) + (square.getId() + 1) + colorToAnsi(Color.WHITE);
+            printable.add(temp);
+        }
+
+        displayRequest(printable, selection);
+    }
 
     public void closeRequest(){
         if(thread != null && !thread.isInterrupted()){
@@ -85,8 +110,7 @@ public class Printer {
                 //nothing to println for cli
             }
             thread.interrupt();
-            println("You finished your time for choosing");
-            println("KILLING THREAD  " + thread.getName());
+            //println("KILLING THREAD  " + thread.getName());
         }
 
     }
@@ -100,7 +124,7 @@ public class Printer {
 
     public void printBoard(GameBoard board){
         closeRequest();
-        println("chosen board is number "+ board.getId() + " " + board.getDescription());
+        //println("chosen board is number "+ board.getId() + " " + board.getDescription());
 
         int square = 0, tempS = 0;
 
@@ -168,7 +192,7 @@ public class Printer {
                                     else {
                                         final int xx = x, yy = y;
                                         if(tempSquare.getNeighbourId().stream().anyMatch(k -> k == board.getSquare(xx - 1, yy).getId())){
-                                            print(colorToAnsi(tempSquare.getColor()) + "= ");
+                                            print(colorToAnsi(tempSquare.getColor()) + "  ");
                                         }
                                         else {
                                             print(colorToAnsi(tempSquare.getColor()) + "| ");
@@ -196,7 +220,7 @@ public class Printer {
                                     else {
                                         final int xx = x, yy = y;
                                         if(tempSquare.getNeighbourId().stream().anyMatch(k -> k == board.getSquare(xx + 1, yy).getId())){
-                                            print(colorToAnsi(tempSquare.getColor()) + " =");
+                                            print(colorToAnsi(tempSquare.getColor()) + "  ");
                                         }
                                         else {
                                             print(colorToAnsi(tempSquare.getColor()) + " |");
@@ -248,7 +272,6 @@ public class Printer {
                                 break;
                         }
 
-
                         square++;
                     }
                     else{
@@ -256,16 +279,10 @@ public class Printer {
                     }
 
                 }
-                println("");
+                println(colorToAnsi(Color.WHITE) + "");
             }
             tempS = square;
         }
-
-
-
-
-
-
 
     }
 
@@ -282,7 +299,7 @@ public class Printer {
                 for(int n = 0; n < weapon.getChargeCost().size(); n++){
                     print(colorToAnsi(weapon.getChargeCost().get(n)) + "O");
                 }
-                println("");
+                println(colorToAnsi(Color.WHITE) + "");
             }
         }
     }

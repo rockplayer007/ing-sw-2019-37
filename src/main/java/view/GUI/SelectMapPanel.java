@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.Map;
 
 public class SelectMapPanel extends JPanel {
@@ -52,14 +53,7 @@ public class SelectMapPanel extends JPanel {
             gbc.gridx=x;
             gbc.gridy=y-1;
             gbc.anchor = GridBagConstraints.CENTER;
-            ImageIcon img=null;
-            switch (key){
-                case 0: img = new ImageIcon("./src/main/resources/map0icon.png");break;
-                case 1: img = new ImageIcon("./src/main/resources/map1icon.png");break;
-                case 2: img = new ImageIcon("./src/main/resources/map2icon.png");break;
-                case 3: img = new ImageIcon("./src/main/resources/map3icon.png");break;
-                default: img =null;
-            }
+            ImageIcon img= new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar+"maps"+File.separatorChar +"map"+key+"icon.png");
             final int c=i;
             this.imMap[i].setIcon(img);
             this.imMap[i].setOpaque(true);

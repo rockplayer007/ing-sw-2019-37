@@ -45,10 +45,10 @@ public class PlayerBoard {
             this.addDamage(player, c);
         }
         if (!isFrenzy){
-            if (hp.size()>5)
-                this.player.setActionStatus(ActionState.ADRENALINEACTIONS2);
-            else if (hp.size()>2)
-                this.player.setActionStatus(ActionState.ADRENALINEACTIONS1);
+//            if (hp.size()>5)
+//                this.player.setActionStatus(ActionState.ADRENALINEACTIONS2);
+//            else if (hp.size()>2)
+//                this.player.setActionStatus(ActionState.ADRENALINEACTIONS1);
         }else{
             //TODO
              }

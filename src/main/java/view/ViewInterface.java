@@ -2,10 +2,14 @@ package view;
 
 
 import model.board.GameBoard;
+import model.board.Square;
+import model.card.Powerup;
+import model.player.ActionOption;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.List;
 
 
 /**
@@ -32,6 +36,8 @@ public interface ViewInterface {
      */
     void chooseBoard(java.util.Map<Integer,String> possibleBoards);
 
+    void choosePowerup(List<Powerup> powerups, boolean optional);
+
     /**
      * Notifies the user that the time for his action is finished
      */
@@ -39,4 +45,8 @@ public interface ViewInterface {
 
 
     void updatedBoard(GameBoard board);
+
+    void chooseAction(List<ActionOption> actions);
+
+    void chooseSquare(List<Square> squares);
 }

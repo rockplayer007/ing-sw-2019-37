@@ -44,6 +44,7 @@ public class Weapon extends Card {
         return cost;
     }
 
+
     public Boolean getOptional() {
         return optional;
     }

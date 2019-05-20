@@ -27,4 +27,5 @@ public class AmmoCard extends Card{
     public boolean hasPowerup(){
         return hasPowerup;
     }
+
 }
