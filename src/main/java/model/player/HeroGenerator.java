@@ -14,7 +14,6 @@ public class HeroGenerator{
 
     private void fillList(){
             heroes.addAll(Arrays.asList(Heroes.values()));
-
     }
 
     public Heroes getHero(){

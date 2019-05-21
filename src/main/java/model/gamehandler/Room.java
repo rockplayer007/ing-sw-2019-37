@@ -87,4 +87,10 @@ public class Room {
     public void setPlayers(List<Player> player){
         players.addAll(player);
     }
+
+    public void startFrenzy(){
+        players.forEach(p->p.getPlayerBoard().setFrenzy(true));
+//        TODO da mettere  frenetiche action state a ogni player a seconda le regole.
+
+    }
 }
