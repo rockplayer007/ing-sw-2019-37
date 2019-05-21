@@ -6,7 +6,6 @@ import model.board.GenerationSquare;
 import model.board.Square;
 import model.card.Weapon;
 import model.player.Player;
-import model.player.Hero;
 
 import javax.swing.*;
 import java.awt.*;

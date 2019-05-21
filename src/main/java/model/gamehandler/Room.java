@@ -5,8 +5,6 @@ import model.board.BoardGenerator;
 import model.board.GameBoard;
 import model.player.Player;
 
-import network.server.ClientOnServer;
-
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,7 +12,6 @@ import java.util.logging.Logger;
 public class Room {
 
     private List<Player> players;
-    private Map<Player, ClientOnServer> connectionToClient;
     private Board board;
     private BoardGenerator boardGenerator;
     private Player currentPlayer;
@@ -28,7 +25,6 @@ public class Room {
         board = new Board();
         boardGenerator = new BoardGenerator(board);
         players = new ArrayList<>();
-        connectionToClient = new HashMap<>();
 
     }
 
@@ -91,5 +87,11 @@ public class Room {
 
     public void setPlayers(List<Player> player){
         players.addAll(player);
+    }
+
+    public void startFrenzy(){
+        players.forEach(p->p.getPlayerBoard().setFrenzy(true));
+//        TODO da mettere  frenetiche action state a ogni player a seconda le regole.
+
     }
 }

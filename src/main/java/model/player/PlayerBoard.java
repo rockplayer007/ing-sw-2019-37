@@ -9,7 +9,8 @@ public class PlayerBoard {
     private  Player player;
     private List<Player> hp;
     private static int[] pointArray = {8, 6, 4, 2, 1, 1};
-    //TOdo
+    private static int[] frenzyPoints = {2, 1, 1, 1};
+    private Boolean isFrenzy;
     private int points;
     private int deathTimes;
     private List<Player> marks;
@@ -19,13 +20,13 @@ public class PlayerBoard {
         this.points=0;
         this.deathTimes=0;
     }
-    
-    public void setDeathTimes(int deathPoint) {
-        this.deathTimes = deathPoint;
-    }
 
     public int getDeathTimes() {
         return deathTimes;
+    }
+
+    public void setFrenzy(Boolean frenzy) {
+        isFrenzy = frenzy;
     }
 
     public int getPoints() {
@@ -47,6 +48,14 @@ public class PlayerBoard {
             removeMarks(player);
             this.addDamage(player, c);
         }
+        if (!isFrenzy){
+//            if (hp.size()>5)
+//                this.player.setActionStatus(ActionState.ADRENALINEACTIONS2);
+//            else if (hp.size()>2)
+//                this.player.setActionStatus(ActionState.ADRENALINEACTIONS1);
+        }else{
+            //TODO
+             }
 
         //TODO bisogna vedere come funziona con gli pattern observer
     }
@@ -99,8 +108,7 @@ public class PlayerBoard {
     private List<Player> listForLiquidation(){
         Map<Player,Integer> mapofpoints=new TreeMap<>(hitNumberOfPlayers());
         List<Map.Entry<Player,Integer>> sortmap=new ArrayList<>(mapofpoints.entrySet());
-        MapValueComparator c=new MapValueComparator();
-        sortmap.sort(c);
+        sortmap.sort((Map.Entry<Player, Integer> o1, Map.Entry<Player, Integer> o2)-> o2.getValue()-o1.getValue());
         List<Player> list=new ArrayList<>();
         sortmap.forEach(x->list.add(x.getKey()));
         return list;
@@ -127,24 +135,16 @@ public class PlayerBoard {
         List<Player> listForLiquidation=listForLiquidation();
         int i=0;
         for (Player p:listForLiquidation){
-            p.getPlayerBoard().addPoints(pointArray[deathTimes+i]);
+            p.getPlayerBoard().addPoints(isFrenzy ? frenzyPoints[deathTimes+i] : pointArray[deathTimes+i]);
             i++;
         }
-        if (hp.get(0)!=null)
+        if (hp.get(0)!=null&&!isFrenzy)
             hp.get(0).getPlayerBoard().addPoints(1);
+
         if (hp.size()==12&&hp.get(11)!=null)
             hp.get(11).getPlayerBoard().addMark(this.player);
         hp=new ArrayList<>();
 
     }
 
-}
-
-class MapValueComparator implements Comparator<Map.Entry<Player,Integer>> {
-
-
-    @Override
-    public int compare(Map.Entry<Player, Integer> m1, Map.Entry<Player, Integer> m2) {
-        return m2.getValue()-m1.getValue();
-    }
 }

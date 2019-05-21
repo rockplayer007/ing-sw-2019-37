@@ -1,6 +1,5 @@
 package controller;
 
-import com.google.gson.Gson;
 import model.board.Square;
 import model.card.Powerup;
 import model.exceptions.InterruptOperationException;
@@ -20,6 +19,7 @@ import java.util.logging.Logger;
 public class RoundController {
 
     private RoomController roomController;
+    private boolean shot = false;
 
     private static final Logger logger = Logger.getLogger(RoundController.class.getName());
 
@@ -47,6 +47,7 @@ public class RoundController {
                     //the chosen powerup will be executed
                     usePowerup(powerups.get(chosenCard.getSelectedItem()), player);
 
+
                 }
                 else {
                     usePowerups = false;
@@ -58,19 +59,33 @@ public class RoundController {
         }
     }
 
+    //check if the player can use the powerup
     private List<Powerup> possiblePowerups(Player player){
 
         List<Powerup> usable = new ArrayList<>();
         for(Powerup powerup : player.getPowerups()){
-            //check if the player can use the powerup
-            //TARGETING SCOPE only after weapon
+
             //NEWTON before/after action. Not possibile if no players on board
-            //TAGBACK GRENADE only after a another player shot
+            if(powerup.getName().equals("NEWTON") && roomController.getRoom().getBoard().getMap().getPlayersOnMap().size() > 1){
+                usable.add(powerup);
+            }
             //TELEPORTER before/after action
+            if(powerup.getName().equals("TELEPORTER")){
+                usable.add(powerup);
+            }
+
+            if(powerup.getName().equals("TARGETING SCOPE") && shot){
+                usable.add(powerup);
+            }
+            //TARGETING SCOPE only after weapon
+
+            //TAGBACK GRENADE only after a another player shot
+
 
         }
-        //needs to be changed
-        usable = player.getPowerups();
+        //set back the shot flag for the next call
+        shot = false;
+
         return usable;
     }
 
@@ -119,6 +134,8 @@ public class RoundController {
             case SHOOT:
                 //ask card
                 //execute this card
+                //flag for shooting
+                shot = true;
                 break;
         }
 

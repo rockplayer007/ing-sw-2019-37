@@ -3,11 +3,9 @@ package boardTest;
 import com.google.gson.Gson;
 
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 import model.board.*;
-import model.card.AmmoColor;
-import model.player.Hero;
+import model.player.Heroes;
 import model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +36,7 @@ public class BoardTest {
     @Test
     public void serializeMapTest(){
 
-        map.getSquare(0).addPlayer(new Player("", new Hero("", "", Color.RED)));
+        map.getSquare(0).addPlayer(new Player("", Heroes.D_STRUCT_OR));
         RuntimeTypeAdapterFactory<Square> rfSquare = RuntimeTypeAdapterFactory
                 .of(Square.class, "Square")
                 .registerSubtype(AmmoSquare.class, "AmmoSquare")
@@ -79,6 +77,11 @@ public class BoardTest {
     public void printBoardTest(){
         Printer printer = new Printer();
         printer.printBoard(map);
+    }
+
+    @Test
+    public void getAllSquaresTest(){
+        map.allSquares();
     }
 
 

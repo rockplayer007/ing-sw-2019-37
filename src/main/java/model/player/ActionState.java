@@ -6,13 +6,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ActionState {
+public enum  ActionState {
+
+    TURNACTIONS(Arrays.asList(ActionOption.MOVE3, ActionOption.MOVE1_GRAB, ActionOption.SHOOT));
+//    ,ADRENALINEACTIONS1,ADRENALINEACTIONS2,FRENETICACTIONS1,FRENETICACTIONS2;
 
     private List<ActionOption> options;
 
-    //NORMALCTIONS ,ADRENALINEACTIONS1,ADRENALINEACTIONS2,FRENETICACTIONS1,FRENETICACTIONS2
 
-    public ActionState(List<ActionOption> options){
+    ActionState(List<ActionOption> options){
         this.options = options;
 
     }
@@ -38,13 +40,7 @@ public class ActionState {
     }
 
 
-
 }
 
-class TurnActions extends ActionState{
-    public TurnActions(){
-        super(new ArrayList<>(Arrays.asList(ActionOption.MOVE3, ActionOption.MOVE1_GRAB, ActionOption.SHOOT)));
-    }
-}
 
 

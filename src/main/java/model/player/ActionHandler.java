@@ -6,7 +6,10 @@ import model.board.GenerationSquare;
 import model.board.Square;
 import model.card.*;
 
+import model.exceptions.InterruptOperationException;
 import model.exceptions.NotEnoughException;
+import model.exceptions.NullTargetsException;
+import model.gamehandler.Room;
 
 
 import java.util.*;
@@ -41,18 +44,49 @@ public class ActionHandler {
      */
     public static Square chooseSquare(Player player,Set<Square> validPositions) {
 
+        // TODO
         return null;
     }
 
     /**
-     *
-     * @param
-     * @param
-     * @return
+     * use the weapon to shoot
+     * @param room of the player in
+     * @param weapon that the player want to use
      */
-    public static void shoot() {
-        // TODO implement here
+    public static void shoot(Room room, Weapon weapon) {
+        Map<Effect,Integer> effects = weapon.getEffects();
+        Effect effectSelect;
+        Player player=room.getCurrentPlayer();
+        List<Effect> validEffect = new ArrayList<>(weapon.getLevelEffects(-1));
+        validEffect.addAll(weapon.getLevelEffects(0));
+        effectSelect = chooseEffects(player,validEffect);
+        int i = 1;
+        while (effectSelect!=null){
+            validEffect.remove(effectSelect);
+            try {
+                decuction(player,effectSelect.getExtraCost());
+                effectSelect.execute(room);
+                if (!weapon.getOptional())
+                    break;
+            } catch (NullTargetsException|NotEnoughException|InterruptOperationException e) {
+                e.printStackTrace();
+//                TODO
+            }
+            if (validEffect.isEmpty()|| validEffect.stream().allMatch(x->effects.get(x)==-1)){
+                validEffect.addAll(weapon.getLevelEffects(i));
+                i++;
+            }
+            validEffect = validEffect.stream().filter(x->player.enoughAmmos(x.getExtraCost(),true)).collect(Collectors.toList());
+            effectSelect = chooseEffects(player,validEffect);
+        }
+        weapon.setCharged(false);
 
+    }
+
+    // if effects isempty return null.
+    public static Effect chooseEffects(Player player,List<Effect> effects){
+        //TODO
+        return null;
     }
 
     /**
@@ -67,16 +101,20 @@ public class ActionHandler {
             List<Weapon> weapons=((GenerationSquare) player.getPosition()).getWeaponDeck().stream().
                     filter(i->player.enoughAmmos(i.getBuyCost(),true))
                     .collect(Collectors.toList());
-            while (!weapons.isEmpty()){
-                Weapon weapon = weapons.get(chooseCard(weapons,"to grab"));
+            if (!weapons.isEmpty()){
+                Weapon weapon = chooseCard(weapons,"to grab");
+                if (weapon==null)
+                    return;
                 if (player.limitWeapon()) {
-                    int i = chooseCard(player.getWeapons(), "change");
-                    ((GenerationSquare) player.getPosition()).addWeapon(player.getWeapons().get(i));
-                    player.getWeapons().remove(i);
+                    Weapon changeWeapon = chooseCard(player.getWeapons(), "change");
+                    if (changeWeapon==null)
+                        return;
+                    changeWeapon.setCharged(true);
+                    ((GenerationSquare) player.getPosition()).addWeapon(changeWeapon);
+                    player.getWeapons().remove(changeWeapon);
                 }
                 try {
                     grabWeapon(player, weapon);
-                    break;
                 } catch (NotEnoughException e) {
                     e.printStackTrace();
                 }
@@ -91,9 +129,10 @@ public class ActionHandler {
      * @param reason why go to this choose
      * @return position of card choose in the List
      */
-    public static int chooseCard(List<? extends Card> cards, String reason) {
 
-        return 0;
+    public static <T extends Card> T chooseCard(List<T> cards, String reason) {
+//        TODO
+        return null;
     }
 
     /**
@@ -108,19 +147,20 @@ public class ActionHandler {
     }
 
     public static void decuction(Player player,List<AmmoColor> cost) throws NotEnoughException {
-        int i;
+        if (cost.isEmpty())
+            return;
+        Powerup powerup;
         int c=0;
         List<Powerup> temp = new ArrayList<>();
         List<Powerup> powerups = player.getPowerups();
         if (player.enoughAmmos(cost, true)) {
             while (cost.stream().distinct().anyMatch(player::usePowerupAsAmmo)) {//if the player has the powerups that can use as ammo
-                if (choice(c, "use a powerup as a ammo")) {
-                    i = chooseCard(powerups, "use as ammo");
-                    cost.remove(powerups.get(i).getAmmo());
-                    temp.add(powerups.get(i));
-                    c++;
-                } else
+                powerup = chooseCard(powerups, "use as ammo");
+                if (powerup==null)
                     break;
+                cost.remove(powerup.getAmmo());
+                temp.add(powerup);
+                c++;
             }
             if (player.enoughAmmos(cost, false)) {
                 temp.forEach(powerups::remove);
@@ -152,44 +192,21 @@ public class ActionHandler {
     public static void reload(Player player) {
         List<Weapon> weapons=player.getWeapons().stream().filter(x->!x.getCharged()).collect(Collectors.toList());
         while (!weapons.isEmpty()) {
-            Weapon weapon = weapons.get(chooseCard(weapons, "charge"));
+            Weapon weapon = chooseCard(weapons, "charge");
+                if (weapon==null)
+                    break;
                 List<AmmoColor> cost = weapon.getChargeCost();
                 try {
                     decuction(player,cost);
                     weapon.setCharged(true);
-                    break;
+                    continue;
                 } catch (NotEnoughException e) {
                     e.printStackTrace();
                 }
         }
 
     }
-    /**
-     * general way to let player chooses the yes or no
-     * @param i for in the case need a loop of request
-     * @param message is the target of question
-     * @return a Boonlean in base yes or no, chosen by player
-     */
-    public static Boolean choice(int i, String message){
-        if (i==0)
-            System.out.println("You can still "+message+",do you want?");
-        else
-            System.out.println("You can "+message+",do you want?");
-        System.out.println("presse: [y/n] ");
-        while (true) {
-            Scanner sc = new Scanner(System.in);
-            String choice=sc.next();
-            if (choice.equalsIgnoreCase("y")) {
-                return true;
-            } else {
-                if(choice.equalsIgnoreCase("n")) {
-                    return false;
-                }else {
-                    System.out.println("wrong choice, please chooce again");
-                }
-            }
-        }
-    }
+
 
 
 
