@@ -97,7 +97,7 @@ public class Square implements Serializable {
      * @return All the squares with that distance
      */
     public Set<Square> getAllPositions(int maxDistance){
-        Set<Square> positions = new HashSet<>();
+        Set<Square> positions = new LinkedHashSet<>();
         if(maxDistance != 0){
             neighbourSquare.forEach(squares-> positions.
                     addAll(squares.getValidPosition(maxDistance-1)));
@@ -110,7 +110,7 @@ public class Square implements Serializable {
     }
 
     public Set<Square> getValidPosition(int maxDistance){
-        Set<Square> all = new HashSet<>();
+        Set<Square> all = new LinkedHashSet<>();
         for(int i = 0; i <= maxDistance; i++){
             all.addAll(getAllPositions(i));
         }
@@ -130,7 +130,7 @@ public class Square implements Serializable {
      * @return a set of squares visible from the current square
      */
     public Set<Square> visibleSquare(GameBoard map){
-        Set<Square> positions = new HashSet<>();
+        Set<Square> positions = new LinkedHashSet<>();
         //adds all the squares that are in the same room or in a neighbour room
         neighbourSquare.forEach(square -> positions.addAll(map.getSquaresInRoom().get(square.squareColor)));
 

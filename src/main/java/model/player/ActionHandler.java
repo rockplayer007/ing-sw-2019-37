@@ -40,20 +40,8 @@ public class ActionHandler {
      * @return the Square that the player choose to move
      */
     public static Square chooseSquare(Player player,Set<Square> validPositions) {
-        System.out.println("there are valid points:");
-        validPositions.forEach(i -> System.out.println("X:" + i.getX() + "Y:" + i.getY()));
-        Scanner sc = new Scanner(System.in);
-        while (true) {
-            System.out.println("Write X that you want to go:");
-            int x = sc.nextInt();
-            System.out.println("Write Y that you want to go:");
-            int y = sc.nextInt();
-            for (Square s : validPositions) {
-                if (s.isThisSquare(x, y))
-                    return s;
-            }
-            System.out.println("You cant muove this position,please rewrite X and Y");
-        }
+
+        return null;
     }
 
     /**
@@ -104,19 +92,8 @@ public class ActionHandler {
      * @return position of card choose in the List
      */
     public static int chooseCard(List<? extends Card> cards, String reason) {
-        System.out.println("you need choose one card,to " + reason);
-        System.out.println("choose one of these:");
-        int i;
-        cards.forEach(c->System.out.println(cards.indexOf(c)+1 + ". " + c.getName()));
-        System.out.print("Write the number of the card：");
-        while (true) {
-            Scanner sc = new Scanner(System.in);
-            i = sc.nextInt();
-            if (i>0||i<cards.size())
-                return i;
-            else
-                System.out.print("Number writed is not valid!! Please write the number again:");//TODO da stampare sul view del player
-        }
+
+        return 0;
     }
 
     /**
