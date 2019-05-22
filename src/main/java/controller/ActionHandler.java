@@ -1,4 +1,4 @@
-package model.player;
+package controller;
 
 import model.board.AmmoSquare;
 import model.board.Board;
@@ -8,17 +8,26 @@ import model.card.*;
 
 import model.exceptions.InterruptOperationException;
 import model.exceptions.NotEnoughException;
+import model.exceptions.NotExecutedExeption;
 import model.exceptions.NullTargetsException;
 import model.gamehandler.Room;
+import model.player.Player;
+import network.messages.Message;
+import network.messages.clientToServer.ListResponse;
+import network.messages.serverToClient.AnswerRequest;
 
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
  * contain the min actions t
  */
 public class ActionHandler {
+
+    private static final Logger logger = Logger.getLogger(ActionHandler.class.getName());
 
     private ActionHandler(){
     throw new IllegalStateException("Utility class");
@@ -31,9 +40,9 @@ public class ActionHandler {
      * @param player that do this action.
      * @param  distanceMax Max distance that the player can move
      */
-    public static void run( Player player, int distanceMax) {
+    public static void run(Player player, int distanceMax, Room room) {
         Set<Square> validPositions = player.getPosition().getValidPosition(distanceMax);
-        Square destination = chooseSquare(player, validPositions);
+        Square destination = chooseSquare(player, validPositions, room);
         player.movePlayer(destination);
     }
     /**
@@ -42,18 +51,36 @@ public class ActionHandler {
      * @param  validPositions all ssquare that you can choose.
      * @return the Square that the player choose to move
      */
-    public static Square chooseSquare(Player player,Set<Square> validPositions) {
+    public static Square chooseSquare(Player player,Set<Square> validPositions, Room room) {
+        RoomController roomController = room.getRoomController();
+        List<String> send = roomController
+                .toJsonSquareList(validPositions);
+        ListResponse square = (ListResponse) roomController
+                .sendAndReceive(player, new AnswerRequest(send, Message.Content.SQUARE_REQUEST));
 
-        // TODO
-        return null;
+        List<Square> tempSquares;
+        try{
+            //needed to convert set into the array
+            tempSquares = new ArrayList<>(validPositions);
+            return tempSquares.get(square.getSelectedItem());
+        }catch (RuntimeException e){
+            //cheater
+            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
+
+            List<Square> x = new ArrayList<>(validPositions);
+            return x.get(0);
+        }
+
     }
+
 
     /**
      * use the weapon to shoot
      * @param room of the player in
      * @param weapon that the player want to use
      */
-    public static void shoot(Room room, Weapon weapon) {
+    public static void shoot(Room room, Weapon weapon) throws NotExecutedExeption {
+        //TODO inizializza attacHandler
         Map<Effect,Integer> effects = weapon.getEffects();
         Effect effectSelect;
         Player player=room.getCurrentPlayer();
@@ -85,7 +112,13 @@ public class ActionHandler {
 
     // if effects isempty return null.
     public static Effect chooseEffects(Player player,List<Effect> effects){
+        if(effects.isEmpty()){
+            return null;
+        }
         //TODO
+
+
+
         return null;
     }
 
@@ -124,7 +157,7 @@ public class ActionHandler {
     }
 
     /**
-     * general way to let player chooses the Squere that he can go
+     * general way to let player chooses the cards he wants to use
      * @param cards cards that need to choose
      * @param reason why go to this choose
      * @return position of card choose in the List

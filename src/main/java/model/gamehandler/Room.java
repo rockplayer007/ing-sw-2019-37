@@ -1,5 +1,7 @@
 package model.gamehandler;
 
+import controller.RoomController;
+import controller.RoundController;
 import model.board.Board;
 import model.board.BoardGenerator;
 import model.board.GameBoard;
@@ -11,6 +13,7 @@ import java.util.logging.Logger;
 
 public class Room {
 
+    private RoomController roomController;
     private List<Player> players;
     private Board board;
     private BoardGenerator boardGenerator;
@@ -21,7 +24,8 @@ public class Room {
     private static final Logger logger = Logger.getLogger(Room.class.getName());
 
 
-    public Room() {
+    public Room(RoomController roomController) {
+        this.roomController = roomController;
         board = new Board();
         boardGenerator = new BoardGenerator(board);
         players = new ArrayList<>();
@@ -51,7 +55,9 @@ public class Room {
         //TODO add update all message
     }
 
-
+    public RoomController getRoomController() {
+        return roomController;
+    }
 
     public List<Player> getPlayers() {
         return Collections.unmodifiableList(players);

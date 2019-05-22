@@ -101,6 +101,7 @@ public class Square implements Serializable {
         if(maxDistance != 0){
             neighbourSquare.forEach(squares-> positions.
                     addAll(squares.getValidPosition(maxDistance-1)));
+            //positions.addAll(neighbourSquare);
         }
         else {
             positions.add(this);
@@ -180,7 +181,7 @@ public class Square implements Serializable {
         return square;
     }
 
-    public Set<Square> oneDirection(Direction direction, int distance){
+    private Set<Square> oneDirection(Direction direction, int distance){
         Set<Square> set = new HashSet<>();
         if (distance>0) {
             if (direction == Direction.LEFT&&x!=0&&neighbourSquare.stream().anyMatch(s->s.getX()<this.getX()))
@@ -210,7 +211,7 @@ public class Square implements Serializable {
         return  map;
     }
 
-    public Set<Square> oneDirectionAbsolute(Direction direction, GameBoard gameBoard){
+    private Set<Square> oneDirectionAbsolute(Direction direction, GameBoard gameBoard){
         Set<Square> set = new HashSet<>();
         if (direction == Direction.LEFT && x!=0)
             set.addAll(gameBoard.getSquare(x-1,y).oneDirectionAbsolute(direction, gameBoard));

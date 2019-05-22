@@ -1,11 +1,8 @@
 package model.board;
 
-import model.card.Card;
 import model.card.Weapon;
-import model.player.ActionHandler;
 
 import java.util.List;
-import java.util.*;
 
 public class GenerationSquare extends Square {
 

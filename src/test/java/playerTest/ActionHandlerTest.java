@@ -1,10 +1,11 @@
 package playerTest;
 
+import controller.RoomController;
 import model.gamehandler.Room;
 import model.card.AmmoCard;
 import model.card.AmmoColor;
 import model.card.PowerDeck;
-import model.player.ActionHandler;
+import controller.ActionHandler;
 import model.player.Heroes;
 import model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +28,7 @@ public class ActionHandlerTest {
         Player p1=new Player("p1", Heroes.BANSHEE);
         Player p2=new Player("p2", Heroes.D_STRUCT_OR);
 
-        room =new Room();
+        room =new Room(new RoomController());
         room.setStartingPlayer(p1);
         room.setCurrentPlayer(p1);
         room.setPlayers(Arrays.asList(p1,p2));

@@ -2,6 +2,7 @@ package controller;
 
 import model.board.Square;
 import model.card.Powerup;
+import model.card.Weapon;
 import model.exceptions.InterruptOperationException;
 import model.exceptions.NullTargetsException;
 import model.player.ActionOption;
@@ -10,6 +11,7 @@ import network.messages.Message;
 import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -56,6 +58,7 @@ public class RoundController {
             else{
                 usePowerups = false;
             }
+
         }
     }
 
@@ -66,6 +69,7 @@ public class RoundController {
         for(Powerup powerup : player.getPowerups()){
 
             //NEWTON before/after action. Not possibile if no players on board
+            //TODO check this
             if(powerup.getName().equals("NEWTON") && roomController.getRoom().getBoard().getMap().getPlayersOnMap().size() > 1){
                 usable.add(powerup);
             }
@@ -123,42 +127,30 @@ public class RoundController {
 
         switch (choice){
             case MOVE3:
-                player.movePlayer(squareManager(player, 3));
+                player.movePlayer(ActionHandler
+                        .chooseSquare(player, player.getPosition()
+                                .getValidPosition(3), roomController.getRoom()));
+                //player.movePlayer(squareManager(player, 3));
                 break;
             case MOVE1_GRAB:
                 //send moving squares
-                squareManager(player, 1);
+                player.movePlayer(ActionHandler
+                        .chooseSquare(player, player.getPosition()
+                                .getValidPosition(1), roomController.getRoom()));
+                //squareManager(player, 1);
                 //grap in this square
+
 
                 break;
             case SHOOT:
                 //ask card
+
                 //execute this card
                 //flag for shooting
                 shot = true;
                 break;
         }
 
-    }
-
-    private Square squareManager(Player player, int n){
-        Set<Square> squares = player.getPosition().getValidPosition(n);
-        List<String> send = roomController
-                .toJsonSquareList(squares);
-        ListResponse square = (ListResponse) roomController
-                .sendAndReceive(player, new AnswerRequest(send, Message.Content.SQUARE_REQUEST));
-
-        List<Square> tempSquares;
-        try{
-            //needed to convert set into the array
-            tempSquares = new ArrayList<>(player.getPosition().getValidPosition(n));
-            return tempSquares.get(square.getSelectedItem());
-        }catch (RuntimeException e){
-            //cheater
-            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
-            //dont move the player
-            return player.getPosition();
-        }
     }
 
 }
