@@ -5,6 +5,7 @@ import model.card.AmmoCard;
 import model.card.AmmoColor;
 import model.card.PowerDeck;
 import model.player.ActionHandler;
+import model.player.Heroes;
 import model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,8 +24,8 @@ public class ActionHandlerTest {
     @BeforeEach
     public void before(){
 
-        Player p1=new Player("p1");
-        Player p2=new Player("p2");
+        Player p1=new Player("p1", Heroes.BANSHEE);
+        Player p2=new Player("p2", Heroes.D_STRUCT_OR);
 
         room =new Room();
         room.setStartingPlayer(p1);

@@ -33,7 +33,7 @@ public class PowerDeck extends Deck<Powerup>{
             for (int i=0; i<2; i++){
                 addCard(new Powerup("TARGETING SCOPE",targetingScopeDes,targetingScope,color));
                 addCard(new Powerup("NEWTON",newtonDes,newton,color));
-                addCard(new Powerup("TAGBAK GRENDE",tagbackGrendeDes,null,color));
+                addCard(new Powerup("TAGBAK GRENADE",tagbackGrendeDes,null,color));
                 addCard(new Powerup("TELEPORTER",teleporterDes,teleporter,color));
 
             }

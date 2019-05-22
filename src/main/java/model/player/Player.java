@@ -6,26 +6,28 @@ import model.board.Square;
 import model.card.Weapon;
 import model.card.Powerup;
 import model.exceptions.*;
+
+import java.io.Serializable;
 import java.util.*;
 
 /**
  *
  */
-public class Player {
+public class Player implements Serializable {
 
     private String nickname;
-    private Hero hero;
-    private Color color;
-    private Square position;
+    private Heroes hero;
+    private transient Square position;
     private PlayerBoard playerBoard;
     private Map<AmmoColor,Integer> ammo;
     private List<Weapon> weapons;
     private transient List<Powerup> powerups;
-    private ActionState actionStatus;
+    private transient ActionState actionStatus;
     private Boolean live;
 
-    public Player(String nickname) {
+    public Player(String nickname, Heroes hero) {
         this.nickname = nickname;
+        this.hero = hero;
         ammo = new EnumMap<>(AmmoColor.class);
         for (AmmoColor c : AmmoColor.values()) {
             ammo.put(c, 1);
@@ -33,10 +35,12 @@ public class Player {
         powerups=new ArrayList<>();
         weapons=new ArrayList<>();
         playerBoard=new PlayerBoard();
+        actionStatus = ActionState.TURNACTIONS;
+        position = null;
 
     }
 
-    public void setHero(Hero hero) {
+    public void setHero(Heroes hero) {
         this.hero = hero;
     }
 
@@ -56,11 +60,11 @@ public class Player {
         return nickname;
     }
 
-    public Hero getHero() {
+    public Heroes getHero() {
         return hero;
     }
 
-    public Color getColor(){ return color;}
+    public Color getColor(){ return hero.getColor();}
 
     public Square getPosition() {
         return position;
@@ -83,11 +87,16 @@ public class Player {
     }
 
     public void movePlayer(Square square){
-        if (!square.equals(getPosition())) {
-            this.getPosition().removePlayer(this);
+        if(position == null){
             square.addPlayer(this);
-            this.setPosition(square);
+            setPosition(square);
         }
+        else if (!square.equals(position)) {
+            position.removePlayer(this);
+            square.addPlayer(this);
+            setPosition(square);
+        }
+        //else dont move if the player didnt change position
     }
 
     public void addAmmo(AmmoColor ammoColor){
@@ -111,8 +120,8 @@ public class Player {
         powerups.add(powerup);
     }
 
-    public void removePowerup(int i){
-        powerups.remove(i);
+    public void removePowerup(Powerup powerup){
+        powerups.remove(powerup);
     }
     public void addWeapon(Weapon weapon){
         weapons.add(weapon);
@@ -162,6 +171,8 @@ public class Player {
      */
     public Boolean enoughAmmos(List<AmmoColor> cost,Boolean allAmmos){
         Map<AmmoColor,Integer> bullets;
+        if (cost.isEmpty())
+            return true;
         if (allAmmos)
             bullets = allAmmo();
         else

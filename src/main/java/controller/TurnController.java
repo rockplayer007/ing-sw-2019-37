@@ -1,17 +1,15 @@
 package controller;
 
-import com.google.gson.Gson;
 import model.board.Color;
 import model.card.Card;
 import model.card.Powerup;
 import model.gamehandler.Room;
 import model.player.Player;
 import network.messages.Message;
-import network.messages.clientToServer.GeneralResponse;
 import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
+import network.messages.serverToClient.BoardInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -23,6 +21,7 @@ public class TurnController {
     private Room room;
     private Timer timer;
     private RoundStatus roundStatus;
+    private RoundController roundController;
 
     private static final Logger logger = Logger.getLogger(TurnController.class.getName());
 
@@ -30,35 +29,37 @@ public class TurnController {
         this.roomController = roomController;
         this.room = room;
         this.roundStatus = RoundStatus.FIRST_ROUND;
+        roundController = new RoundController(roomController);
+
     }
 
     public void startPlayerRound(Player player){
         if(roundStatus == RoundStatus.FIRST_ROUND){
             firstRound(player);
             //continue with normal round
-            normalRound();
+            normalRound(player);
         }
         else if (roundStatus == RoundStatus.NORMAL_ROUND){
-            normalRound();
+            normalRound(player);
         }
     }
 
     public void firstRound(Player currentPlayer){
 
         List<Card> powerup = room.getBoard().getPowerDeck().getCard(2);
-        AnswerRequest message = new AnswerRequest(roomController.toJsonList(powerup), Message.Content.CARD_REQUEST);
+        AnswerRequest message = new AnswerRequest(roomController.toJsonCardList(powerup), Message.Content.POWERUP_REQUEST);
         //sends the cards and receives the chosen one
         //chosen card is the card to KEEP
         ListResponse chosenCard =(ListResponse) roomController.sendAndReceive(currentPlayer, message);
 
-        if(chosenCard.getSelectedItem() != powerup.size()){
-            //player is a cheater, set wrong card
-            //to manage
+        Powerup playerCard;
+        try{
+            //check if the size is not different
+            playerCard = (Powerup) powerup.get(chosenCard.getSelectedItem());
+        }catch (RuntimeException e){
             logger.log(Level.WARNING, "CHEATER DETECTED: {0}", currentPlayer.getNickname());
             return;
         }
-
-        Powerup playerCard = (Powerup) powerup.get(chosenCard.getSelectedItem());
         powerup.remove(chosenCard.getSelectedItem());
 
         //give the chosen card to the player
@@ -71,13 +72,26 @@ public class TurnController {
 
         //put the player on the generation square
         Color spawnColor = Color.valueOf(playerCard.getAmmo().toString());
-        room.getBoard().getMap().getGenerationPoint(spawnColor).addPlayer(currentPlayer);
+        currentPlayer.movePlayer(room.getBoard().getMap().getGenerationPoint(spawnColor));
 
 
-
+        roomController.sendUpdate();
     }
 
-    public void normalRound(){
+    public void normalRound(Player player){
+        //first ask for powerup
+        roundController.powerupController(player);
+        //ask for action
+        roundController.actionController(player);
+        roomController.sendUpdate();
+        //ask powerup again
+        roundController.powerupController(player);
+        //ask for action again
+        roundController.actionController(player);
+        //last powerup check
+        //roundController.powerupController(player);
+        //send reload request
+
 
     }
 
