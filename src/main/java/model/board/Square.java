@@ -97,10 +97,11 @@ public class Square implements Serializable {
      * @return All the squares with that distance
      */
     public Set<Square> getAllPositions(int maxDistance){
-        Set<Square> positions = new HashSet<>();
+        Set<Square> positions = new LinkedHashSet<>();
         if(maxDistance != 0){
             neighbourSquare.forEach(squares-> positions.
                     addAll(squares.getValidPosition(maxDistance-1)));
+            //positions.addAll(neighbourSquare);
         }
         else {
             positions.add(this);
@@ -110,7 +111,7 @@ public class Square implements Serializable {
     }
 
     public Set<Square> getValidPosition(int maxDistance){
-        Set<Square> all = new HashSet<>();
+        Set<Square> all = new LinkedHashSet<>();
         for(int i = 0; i <= maxDistance; i++){
             all.addAll(getAllPositions(i));
         }
@@ -130,7 +131,7 @@ public class Square implements Serializable {
      * @return a set of squares visible from the current square
      */
     public Set<Square> visibleSquare(GameBoard map){
-        Set<Square> positions = new HashSet<>();
+        Set<Square> positions = new LinkedHashSet<>();
         //adds all the squares that are in the same room or in a neighbour room
         neighbourSquare.forEach(square -> positions.addAll(map.getSquaresInRoom().get(square.squareColor)));
 
@@ -180,7 +181,7 @@ public class Square implements Serializable {
         return square;
     }
 
-    public Set<Square> oneDirection(Direction direction, int distance){
+    private Set<Square> oneDirection(Direction direction, int distance){
         Set<Square> set = new HashSet<>();
         if (distance>0) {
             if (direction == Direction.LEFT&&x!=0&&neighbourSquare.stream().anyMatch(s->s.getX()<this.getX()))
@@ -210,7 +211,7 @@ public class Square implements Serializable {
         return  map;
     }
 
-    public Set<Square> oneDirectionAbsolute(Direction direction, GameBoard gameBoard){
+    private Set<Square> oneDirectionAbsolute(Direction direction, GameBoard gameBoard){
         Set<Square> set = new HashSet<>();
         if (direction == Direction.LEFT && x!=0)
             set.addAll(gameBoard.getSquare(x-1,y).oneDirectionAbsolute(direction, gameBoard));

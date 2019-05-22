@@ -25,6 +25,10 @@ public class PlayerBoard {
         return deathTimes;
     }
 
+    public void setFrenzy(Boolean frenzy) {
+        isFrenzy = frenzy;
+    }
+
     public int getPoints() {
         return points;
     }

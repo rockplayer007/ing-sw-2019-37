@@ -79,6 +79,11 @@ public class BoardTest {
         printer.printBoard(map);
     }
 
+    @Test
+    public void getAllSquaresTest(){
+        map.allSquares();
+    }
+
 
 
 }

@@ -21,7 +21,7 @@ public class PowerDeck extends Deck<Powerup>{
         operations = Arrays.asList(new AllPossibleTargets(),new SelectTargets(1, true), new MoveTarget(2));
         Effect newton= new Effect("",Collections.emptyList(), operations);
 
-        String tagbackGrendeDes = "You may play this card when you receive damage from a player you can see. Give that player 1 mark.";
+        String tagbackGrenadeDes = "You may play this card when you receive damage from a player you can see. Give that player 1 mark.";
 
         String teleporterDes = "You may play this card on your turn before or after any action. Pick up your figure and" +
                 "set it down on any square of the board. (You can't use this after you see where someone " +
@@ -33,7 +33,7 @@ public class PowerDeck extends Deck<Powerup>{
             for (int i=0; i<2; i++){
                 addCard(new Powerup("TARGETING SCOPE",targetingScopeDes,targetingScope,color));
                 addCard(new Powerup("NEWTON",newtonDes,newton,color));
-                addCard(new Powerup("TAGBAK GRENADE",tagbackGrendeDes,null,color));
+                addCard(new Powerup("TAGBACK GRENADE",tagbackGrenadeDes,null,color));
                 addCard(new Powerup("TELEPORTER",teleporterDes,teleporter,color));
 
             }

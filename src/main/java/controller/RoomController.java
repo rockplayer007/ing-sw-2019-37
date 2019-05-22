@@ -40,7 +40,7 @@ public class RoomController {
 
 
     public RoomController() {
-        room = new Room();
+        room = new Room(this);
         players = new ArrayList<>();
         connectionToClient = new HashMap<>();
         turnController = new TurnController(this, room);
