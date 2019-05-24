@@ -24,6 +24,8 @@ public class GUI implements ViewInterface {
     private JFrame frame = new JFrame("ADRENALINE");
     private boolean first=true;
     private boolean firstUpdate=true;
+    private MapPanel mapPanel;
+
 
     public GUI(MainClient mainClient) {
         this.mainClient = mainClient;
@@ -88,7 +90,6 @@ public class GUI implements ViewInterface {
             frame.getContentPane().add(loadingPanel);
             frame.setVisible(true);
         }
-
     }
 
     @Override
@@ -143,22 +144,29 @@ public class GUI implements ViewInterface {
 
     @Override
     public void updatedBoard(GameBoard board) {
-        frame.getContentPane().removeAll();
-        frame.setResizable(false);
-        MapPanel mapPanel = new MapPanel(board);
-        mapPanel.setName("mapPanel");
-        if(firstUpdate) {
+        if(firstUpdate){
+            frame.getContentPane().removeAll();
+            frame.setResizable(false);
+            mapPanel = new MapPanel(board);
+            mapPanel.setName("mapPanel");
             mapPanel.createMapButton();
+            frame.getContentPane().add(mapPanel);
+            frame.setVisible(true);
             firstUpdate=false;
         }
+
         mapPanel.updBoardGui(board);
-        frame.getContentPane().add(mapPanel);
-        frame.setVisible(true);
+
+
     }
 
     @Override
     public void choosePowerup(List<Powerup> powerups, boolean optional) {
-
+        Component component =frame.getContentPane().getComponent(0);
+        if ((component.getName().equals("mapPanel"))){
+            MapPanel mapPanel = (MapPanel) component;
+            mapPanel.getCardSelected(powerups,optional,mainClient);
+        }
     }
 
     @Override
@@ -168,12 +176,20 @@ public class GUI implements ViewInterface {
 
     @Override
     public void chooseAction(List<ActionOption> actions) {
-
+        Component component = frame.getContentPane().getComponent(0);
+        if ((component.getName().equals("mapPanel"))) {
+            MapPanel mapPanel = (MapPanel) component;
+            mapPanel.getAction(actions, mainClient);
+        }
     }
 
     @Override
     public void chooseSquare(List<Square> squares) {
-
+        Component component =frame.getContentPane().getComponent(0);
+        if ((component.getName().equals("mapPanel"))){
+            MapPanel map = (MapPanel) component;
+            map.getSquareSelected(squares,mainClient);
+        }
     }
 
 
