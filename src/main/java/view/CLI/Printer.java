@@ -89,6 +89,27 @@ public class Printer {
         displayRequest(printable, selection);
     }
 
+    public void askWeapon(List<Weapon> weapons, Consumer<Integer> selection, boolean optional){
+        List<String> printable = new ArrayList<>();
+        for(Weapon weapon : weapons){
+            StringBuilder charge = new StringBuilder();
+
+            for(int n = 0; n < weapon.getChargeCost().size(); n++){
+                charge.append(colorToAnsi(weapon.getChargeCost().get(n)) + "O");
+            }
+            String temp = colorToAnsi(Color.WHITE) + weapon.getName()
+                    + " buy cost: " + weapon.getBuyCost() + colorToAnsi(Color.WHITE)
+                    + " charge cost: " + charge.toString() + colorToAnsi(Color.WHITE);
+
+            printable.add(temp);
+        }
+        if(optional){
+            printable.add("Dont use any weapon");
+        }
+
+        displayRequest(printable, selection);
+    }
+
     public void askSquare(List<Square> squares, Consumer<Integer> selection){
         List<String> printable = new ArrayList<>();
         for(Square square : squares){

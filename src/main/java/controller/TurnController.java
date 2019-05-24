@@ -89,6 +89,7 @@ public class    TurnController {
         //ask for action again
         roundController.actionController(player);
         //last powerup check
+        roundController.powerupController(player);
         //roundController.powerupController(player);
         //send reload request
 

@@ -12,7 +12,13 @@ public abstract class Deck <T extends Card>{
     }
 
     public Card getCard(){
-        return cardDeck.pop();
+        if(cardDeck.isEmpty()){
+            return null;
+        }
+        else{
+            return cardDeck.pop();
+        }
+
     }
 
     public List<Card> getCard(int n){

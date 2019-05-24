@@ -518,7 +518,7 @@ class TargetingScope implements Operation{
         //TODO far scegliere un ammo da utilizzare.
         int i=0;//da controllare
         try {
-            ActionHandler.decuction(currentPlayer,Collections.singletonList(ammoColors.get(i)));
+            ActionHandler.deduction(currentPlayer,Collections.singletonList(ammoColors.get(i)), room);
         } catch (NotEnoughException e) {
             throw new NullTargetsException(e.getMessage());
         }

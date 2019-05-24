@@ -6,10 +6,7 @@ import model.board.GenerationSquare;
 import model.board.Square;
 import model.card.*;
 
-import model.exceptions.InterruptOperationException;
-import model.exceptions.NotEnoughException;
-import model.exceptions.NotExecutedExeption;
-import model.exceptions.NullTargetsException;
+import model.exceptions.*;
 import model.gamehandler.Room;
 import model.player.Player;
 import network.messages.Message;
@@ -70,9 +67,7 @@ public class ActionHandler {
             List<Square> x = new ArrayList<>(validPositions);
             return x.get(0);
         }
-
     }
-
 
     /**
      * use the weapon to shoot
@@ -91,7 +86,7 @@ public class ActionHandler {
         while (effectSelect!=null){
             validEffect.remove(effectSelect);
             try {
-                decuction(player,effectSelect.getExtraCost());
+                deduction(player,effectSelect.getExtraCost(), room);
                 effectSelect.execute(room);
                 if (!weapon.getOptional())
                     break;
@@ -117,8 +112,6 @@ public class ActionHandler {
         }
         //TODO
 
-
-
         return null;
     }
 
@@ -127,80 +120,164 @@ public class ActionHandler {
      * @param player that do this action.
      * @param board that the player play.
      */
-    public static void grab( Player player,Board board) {
+    public static void grab( Player player,Board board, Room room) throws NotExecutedExeption{
+
         if (!player.getPosition().isGenerationPoint())
             grabAmmo(player,((AmmoSquare) player.getPosition()).getAmmoCard(),board);
         else {
+
+            //takes only weapons that the player can pay
             List<Weapon> weapons=((GenerationSquare) player.getPosition()).getWeaponDeck().stream().
                     filter(i->player.enoughAmmos(i.getBuyCost(),true))
                     .collect(Collectors.toList());
+
+
             if (!weapons.isEmpty()){
-                Weapon weapon = chooseCard(weapons,"to grab");
-                if (weapon==null)
-                    return;
-                if (player.limitWeapon()) {
-                    Weapon changeWeapon = chooseCard(player.getWeapons(), "change");
-                    if (changeWeapon==null)
-                        return;
-                    changeWeapon.setCharged(true);
-                    ((GenerationSquare) player.getPosition()).addWeapon(changeWeapon);
-                    player.getWeapons().remove(changeWeapon);
+                Weapon weapon = chooseCard(weapons, true, room, true);
+
+                if (weapon==null){
+                    throw new NotExecutedExeption("No card has been chosen");
                 }
+
+                //pay
                 try {
-                    grabWeapon(player, weapon);
+                    List<AmmoColor> cost = weapon.getBuyCost();
+                    deduction(player,cost, room);
                 } catch (NotEnoughException e) {
-                    e.printStackTrace();
+                    throw new NotExecutedExeption("Not enough ammo to pay");
+                }
+
+
+                //player needs to swap cards if he has already 3
+                if (player.limitWeapon()) {
+                    //choose weapon to discard
+                    Weapon discardWeapon = chooseCard(player.getWeapons(), false, room, true);
+
+                    //just in case make this check
+                    if (discardWeapon==null){
+                        return;
+                    }
+
+                    discardWeapon.setCharged(true);
+                    ((GenerationSquare) player.getPosition()).addWeapon(discardWeapon);
+                    player.getWeapons().remove(discardWeapon);
+                    player.addWeapon(weapon);
+                }
+                else{
+                    //remove weapon from gen square
+                    ((GenerationSquare) player.getPosition()).getWeaponDeck().remove(weapon);
+
+                    //put a new weapon
+                    Weapon temp = (Weapon) room.getBoard().getWeaponDeck().getCard();
+                    if( temp != null){
+                        ((GenerationSquare) player.getPosition()).addWeapon(temp);
+                    }
+                    // add it to the player
+                    player.addWeapon(weapon);
+
                 }
 
             }
+            else{
+                // etiher no there are no cards or not enough ammo to pay
+                throw new NotExecutedExeption("No available cards to choose");
+            }
+
         }
     }
 
     /**
      * general way to let player chooses the cards he wants to use
      * @param cards cards that need to choose
-     * @param reason why go to this choose
+     * @param isOptional if true the player can decide wheather to use the card or not
      * @return position of card choose in the List
      */
 
-    public static <T extends Card> T chooseCard(List<T> cards, String reason) {
-//        TODO
-        return null;
-    }
+    public static <T extends Card> T chooseCard(List<T> cards, boolean isOptional, Room room, boolean isWeapon) {
+//        TODO make it more general for other uses
 
-    /**
-     * add WeaponCard in player only if he has less than 3 weapons
-     * @param player current player
-     * @param  card weapon need to add in the player's hand
-     */
-    private static void grabWeapon(Player player, Weapon card) throws NotEnoughException{
-        List<AmmoColor> cost = card.getChargeCost();
-        decuction(player,cost);
-        player.addWeapon(card);
-    }
+        AnswerRequest message = new AnswerRequest(room
+                .getRoomController()
+                .toJsonCardList(cards),
+                //send message corrisponding to the request
+                isWeapon ? Message.Content.WEAPON_REQUEST : Message.Content.POWERUP_REQUEST);
+        if(isOptional){
+            message.setIsOptional();
+        }
 
-    public static void decuction(Player player,List<AmmoColor> cost) throws NotEnoughException {
-        if (cost.isEmpty())
-            return;
-        Powerup powerup;
-        int c=0;
-        List<Powerup> temp = new ArrayList<>();
-        List<Powerup> powerups = player.getPowerups();
-        if (player.enoughAmmos(cost, true)) {
-            while (cost.stream().distinct().anyMatch(player::usePowerupAsAmmo)) {//if the player has the powerups that can use as ammo
-                powerup = chooseCard(powerups, "use as ammo");
-                if (powerup==null)
-                    break;
-                cost.remove(powerup.getAmmo());
-                temp.add(powerup);
-                c++;
+        //send powerups
+        ListResponse chosenCard = (ListResponse) room
+                .getRoomController().sendAndReceive(room.getCurrentPlayer(), message);
+
+        //-1 means the player doesnt want to use powerups
+        if (chosenCard.getSelectedItem() < cards.size() && chosenCard.getSelectedItem() >= 0){
+            //the chosen powerup will be executed
+            return cards.get(chosenCard.getSelectedItem());
+        }
+        else{
+            if(isOptional){
+                return null;
             }
-            if (player.enoughAmmos(cost, false)) {
-                temp.forEach(powerups::remove);
-                cost.forEach(player::removeAmmo);
-            } else
-                throw new NotEnoughException("haven't enough ammo.");
+            else{
+                //is a cheater
+                logger.log(Level.WARNING, "CHEATER DETECTED: {0}", room.getCurrentPlayer().getNickname());
+                return null;
+            }
 
+        }
+    }
+
+    //payment method
+    public static void deduction(Player player, List<AmmoColor> cost, Room room) throws NotEnoughException {
+        List<AmmoColor> tempCost = new ArrayList<>(cost);
+        if (cost.isEmpty()){
+            return;
+        }
+        if (!player.enoughAmmos(tempCost, true)){
+            throw new NotEnoughException("Not enough ammo to pay");
+        }
+
+        // put only powerups that he can use to pay
+        List<Powerup> powerupsToPay = new ArrayList<>();
+        for(Powerup powerup : player.getPowerups()){
+            for(AmmoColor ammo : tempCost){
+                if(powerup.getAmmo() == ammo){
+                    powerupsToPay.add(powerup);
+                }
+            }
+        }
+
+        //the player has to choose a card if he has no ammo
+        //the player can choose to not use a card if he has ammo
+        Boolean usePowerups = true;
+        while (usePowerups || tempCost.isEmpty()) {
+
+            if (!powerupsToPay.isEmpty()) {
+
+                //is optional only if has enough ammo to pay
+                Powerup chosenCard = ActionHandler
+                        .chooseCard(powerupsToPay, player.enoughAmmos(cost, false), room, false);
+
+                //null means the player doesnt want to use powerups
+                if (chosenCard != null) {
+                    //the chosen powerup will be used to pay
+                    tempCost.remove(chosenCard.getAmmo());
+                    powerupsToPay.remove(chosenCard);
+                }
+                else {
+                    //pay with ammo instead
+                    for(AmmoColor ammo : tempCost){
+                        try {
+                            player.removeAmmo(ammo);
+                        } catch (AmmoException e) {
+                            throw new NotEnoughException("no ammo");
+                        }
+                    }
+                    usePowerups = false;
+                }
+            } else {
+                usePowerups = false;
+            }
         }
     }
 
@@ -222,28 +299,19 @@ public class ActionHandler {
      * reload the weapon
      * @param player that do this action
      */
-    public static void reload(Player player) {
-        List<Weapon> weapons=player.getWeapons().stream().filter(x->!x.getCharged()).collect(Collectors.toList());
+    public static void reload(Player player, Room room) throws NotEnoughException {
+        List<Weapon> weapons = player.getWeapons().stream().filter(x->!x.getCharged()).collect(Collectors.toList());
         while (!weapons.isEmpty()) {
-            Weapon weapon = chooseCard(weapons, "charge");
-                if (weapon==null)
+            Weapon weapon = chooseCard(weapons, true, room, true);
+                if (weapon == null)
                     break;
                 List<AmmoColor> cost = weapon.getChargeCost();
-                try {
-                    decuction(player,cost);
-                    weapon.setCharged(true);
-                    continue;
-                } catch (NotEnoughException e) {
-                    e.printStackTrace();
-                }
+
+                deduction(player,cost, room);
+                weapon.setCharged(true);
         }
 
     }
-
-
-
-
-
 
 
 }

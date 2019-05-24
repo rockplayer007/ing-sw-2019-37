@@ -4,6 +4,7 @@ package view;
 import model.board.GameBoard;
 import model.board.Square;
 import model.card.Powerup;
+import model.card.Weapon;
 import model.player.ActionOption;
 
 import java.io.IOException;
@@ -36,8 +37,6 @@ public interface ViewInterface {
      */
     void chooseBoard(java.util.Map<Integer,String> possibleBoards);
 
-    void choosePowerup(List<Powerup> powerups, boolean optional);
-
     /**
      * Notifies the user that the time for his action is finished
      */
@@ -49,4 +48,8 @@ public interface ViewInterface {
     void chooseAction(List<ActionOption> actions);
 
     void chooseSquare(List<Square> squares);
+
+    void choosePowerup(List<Powerup> powerups, boolean optional);
+
+    void chooseWeapon(List<Weapon> weapons, boolean optional);
 }

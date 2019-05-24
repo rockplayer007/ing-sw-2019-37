@@ -3,6 +3,7 @@ package view.CLI;
 import model.board.GameBoard;
 import model.board.Square;
 import model.card.Powerup;
+import model.card.Weapon;
 import model.player.ActionOption;
 import network.client.MainClient;
 import view.ViewInterface;
@@ -107,6 +108,17 @@ public class CLI implements ViewInterface {
         printer.displayRequest(new ArrayList<>(maps.values()), board -> mainClient.sendSelectedBoard(board));
     }
 
+    @Override
+    public void chooseWeapon(List<Weapon> weapons, boolean optional) {
+        printer.askWeapon(weapons, weapon -> {
+            if(weapon >= weapons.size()){
+                mainClient.sendSelectedCard(-1);
+            }
+            else {
+                mainClient.sendSelectedCard(weapon);
+            }
+        }, optional);
+    }
 
     public void choosePowerup(List<Powerup> powerups, boolean optional){
         printer.askPowerup(powerups, powerup -> {
@@ -118,6 +130,7 @@ public class CLI implements ViewInterface {
             }
         }, optional);
     }
+
 
     @Override
     public void chooseAction(List<ActionOption> actions) {

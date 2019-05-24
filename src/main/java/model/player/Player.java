@@ -132,10 +132,10 @@ public class Player implements Serializable {
     }
 
     /**
-     * @return true if player has less then 3 weapons
+     * @return true if player has more than 3 weapons
      */
     public Boolean limitWeapon(){
-            return (weapons.size()<3);
+            return (weapons.size()>=3);
     }
 
     /**

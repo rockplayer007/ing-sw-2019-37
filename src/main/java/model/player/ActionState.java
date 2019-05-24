@@ -18,8 +18,8 @@ public enum  ActionState {
         this.options = options;
 
     }
-    public List<ActionOption> getChoices(Player player){
-        if(player.getWeapons().isEmpty()){
+    public List<ActionOption> getChoices(Player player, boolean dontShoot){
+        if(player.getWeapons().isEmpty() || dontShoot){
             List<ActionOption> noWeaponOption = new ArrayList<>(options);
 
             //remove all possible shoot options when the player doesnt have weapons
@@ -31,8 +31,8 @@ public enum  ActionState {
         }
         return options;
     }
-    public List<String> getJsonChoices(Player player){
-        List<ActionOption> list = getChoices(player);
+    public List<String> getJsonChoices(Player player, boolean dontShoot){
+        List<ActionOption> list = getChoices(player, dontShoot);
         List<String> stringed = new ArrayList<>();
         Gson gson = new Gson();
         list.forEach(x -> stringed.add(gson.toJson(x)));

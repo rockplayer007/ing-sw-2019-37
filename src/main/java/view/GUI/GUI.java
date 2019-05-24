@@ -2,6 +2,7 @@ package view.GUI;
 import model.board.GameBoard;
 import model.board.Square;
 import model.card.Powerup;
+import model.card.Weapon;
 import model.player.ActionOption;
 import network.client.MainClient;
 import view.ViewInterface;
@@ -159,6 +160,12 @@ public class GUI implements ViewInterface {
     public void choosePowerup(List<Powerup> powerups, boolean optional) {
 
     }
+
+    @Override
+    public void chooseWeapon(List<Weapon> weapons, boolean optional) {
+
+    }
+
     @Override
     public void chooseAction(List<ActionOption> actions) {
 
@@ -168,6 +175,8 @@ public class GUI implements ViewInterface {
     public void chooseSquare(List<Square> squares) {
 
     }
+
+
 }
 
 

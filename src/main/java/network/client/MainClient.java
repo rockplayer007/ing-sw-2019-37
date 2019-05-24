@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import model.board.*;
 import model.card.Card;
 import model.card.Powerup;
+import model.card.Weapon;
 import model.player.ActionOption;
 import model.player.ActionState;
 import network.client.rmi.ConnectionRMI;
@@ -169,6 +170,16 @@ public class MainClient {
                 }
                 view.choosePowerup(powerups, ((AnswerRequest) message).isOptional());
                 break;
+
+            case WEAPON_REQUEST:
+                stringed = ((AnswerRequest) message).getRequests();
+                List<Weapon> weapons = new ArrayList<>();
+
+                for(String weapon : stringed){
+                    weapons.add( gson.fromJson(weapon, Weapon.class));
+                }
+                view.chooseWeapon(weapons, ((AnswerRequest) message).isOptional());
+                break;
             case ACTION_REQUEST:
 
                 stringed = ((AnswerRequest) message).getRequests();
@@ -183,6 +194,7 @@ public class MainClient {
                 stringed.forEach(square -> squares.add(gson.fromJson(square, Square.class)));
                 view.chooseSquare(squares);
                 break;
+
             default:
                 logger.log(Level.WARNING, "Unregistered message");
 

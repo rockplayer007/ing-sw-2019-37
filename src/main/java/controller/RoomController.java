@@ -78,7 +78,7 @@ public class RoomController {
 
 
     //needed for starting a new room from waitingRoom
-    public void addPlayer(ClientOnServer client) {
+    public void addPlayer(ClientOnServer client) throws TooManyPlayerException {
         Player player = client.getPersonalPlayer();
         if (players.isEmpty()) {
             room.setStartingPlayer(player);
@@ -214,6 +214,8 @@ public class RoomController {
         expectedType = null;
     }
 
+    //TODO check this
+    //public < T > List<String> toJsonCardList(List<T> cards){
     public List<String> toJsonCardList(List<? extends Card> cards){
         List<String> list = new ArrayList<>();
         Gson gson = new Gson();
