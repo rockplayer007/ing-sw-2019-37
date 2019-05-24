@@ -505,6 +505,7 @@ class Repel implements Operation{
      public void execute(Room room) {
          List<Player> players = new ArrayList<>(room.getPlayers());
          players.remove(room.getCurrentPlayer());
+         players = players.stream().filter(x->x.getPosition()!=null).collect(Collectors.toList());
          room.getAttackHandler().setPossibleTargets(players);
      }
  }
@@ -526,13 +527,6 @@ class TargetingScope implements Operation{
     }
 }
 
-
-class TagbackGrende implements Operation{
-    @Override
-    public void execute(Room room){
-//      TODO da rivedere questo poweup.
-    }
-}
 
 class Teleporter implements Operation{
     @Override
