@@ -8,7 +8,7 @@ import model.exceptions.NotEnoughException;
 import model.exceptions.NullTargetsException;
 import model.gamehandler.AttackHandler;
 
-import model.player.ActionHandler;
+import controller.ActionHandler;
 import model.player.Player;
 
 import java.util.*;
@@ -147,7 +147,7 @@ class Run implements Operation{
     @Override
     public void execute(Room room){
         Player currentPlayer = room.getCurrentPlayer();
-        currentPlayer.movePlayer(ActionHandler.chooseSquare(currentPlayer,currentPlayer.getPosition().getValidPosition(distance)));
+        currentPlayer.movePlayer(ActionHandler.chooseSquare(currentPlayer,currentPlayer.getPosition().getValidPosition(distance), room));
     }
 }
 
@@ -240,7 +240,7 @@ class  MoveTargetToVisible implements Operation{
         Set<Square> validSquare;
         validSquare=target.getPosition().getValidPosition(distance).stream().filter(visibleSquare::contains).collect(Collectors.toSet());
 
-        target.movePlayer(ActionHandler.chooseSquare(currentPlayer,validSquare));//TODO DA controllare.
+        target.movePlayer(ActionHandler.chooseSquare(currentPlayer,validSquare, room));//TODO DA controllare.
     }
 }
 
@@ -269,7 +269,7 @@ class SelectEffectSquare implements Operation{
                 .stream()
                 .filter(x->x.getValidPosition(zone).stream().anyMatch(p->!p.getPlayersOnSquare().isEmpty()))
                 .collect(Collectors.toSet());
-        Square vortex=ActionHandler.chooseSquare(currentPlayer,visibleSquare);//TODO DA controllare.
+        Square vortex=ActionHandler.chooseSquare(currentPlayer,visibleSquare, room);//TODO DA controllare.
         vortex.getValidPosition(1).forEach(x-> possibleTargets.addAll(x.getPlayersOnSquare()));
         attackHandler.setPossibleTargets(possibleTargets);
         attackHandler.setEffectSquare(vortex);
@@ -304,7 +304,7 @@ class Furance implements Operation{
             Set<Square> squares=new HashSet<>(currentPlayer.getPosition().getNeighbourSquare());
             squares.remove(currentPlayer.getPosition());
             squares=squares.stream().filter(x->!x.getPlayersOnSquare().isEmpty()).collect(Collectors.toSet());
-            attackHandler.setTargetsToShot(ActionHandler.chooseSquare(currentPlayer,squares).getPlayersOnSquare());//TODO DA controllare.
+            attackHandler.setTargetsToShot(ActionHandler.chooseSquare(currentPlayer,squares, room).getPlayersOnSquare());//TODO DA controllare.
         }
     }
 }
@@ -388,7 +388,7 @@ class MoveTarget implements Operation{
         Player target = room.getAttackHandler().getTargetsToShot().get(0); // dovrebbe essere sempre uno solo quando lancia questo operazione
         Set<Square> validSquare;
         validSquare=target.getPosition().getValidPosition(distance);
-        target.movePlayer(ActionHandler.chooseSquare(currentPlayer,validSquare));//TODO DA controllare.
+        target.movePlayer(ActionHandler.chooseSquare(currentPlayer,validSquare, room));//TODO DA controllare.
     }
 }
 
@@ -497,7 +497,7 @@ class Repel implements Operation{
         Player target = attackHandler.getTargetsToShot().get(0);
         Set<Square> validPosition = new HashSet<>();
         target.getPosition().directions(distance).forEach((key,value)->validPosition.addAll(value));
-        target.movePlayer(ActionHandler.chooseSquare(room.getCurrentPlayer(),validPosition));
+        target.movePlayer(ActionHandler.chooseSquare(room.getCurrentPlayer(),validPosition, room));
     }
 }
  class AllPossibleTargets implements Operation{
@@ -532,7 +532,7 @@ class Teleporter implements Operation{
     @Override
     public void execute(Room room){
         Player currentPlayer = room.getCurrentPlayer();
-        currentPlayer.movePlayer(ActionHandler.chooseSquare(currentPlayer,room.getBoard().getMap().allSquares()));
+        currentPlayer.movePlayer(ActionHandler.chooseSquare(currentPlayer,room.getBoard().getMap().allSquares(), room));
 
     }
 }

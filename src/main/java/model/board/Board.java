@@ -7,9 +7,9 @@ import model.card.*;
  */
 public class Board {
 
-    private AmmoDeck ammoDeck;
-    private PowerDeck powerDeck;
-    private WeaponDeck weaponDeck;
+    private transient AmmoDeck ammoDeck;
+    private transient PowerDeck powerDeck;
+    private transient WeaponDeck weaponDeck;
 
     private GameBoard map;
     private SkullBoard skullBoard;

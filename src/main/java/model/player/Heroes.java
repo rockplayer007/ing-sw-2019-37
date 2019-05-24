@@ -4,7 +4,7 @@ import model.board.Color;
 
 
 public enum Heroes {
-    D_STRUCT_OR(":D-STRUCT-0R","favorite beverage: 5W-30\n" +
+    D_STRUCT_OR("D-STRUCT-0R","favorite beverage: 5W-30\n" +
             "hobbies: tennis, bowling, sheet-metal origami\n" +
             "favorite board game: Robo Rally\n" +
             "beloved pet: a cordless drill",Color.YELLOW),

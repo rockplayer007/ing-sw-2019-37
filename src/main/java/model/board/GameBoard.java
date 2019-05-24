@@ -1,5 +1,7 @@
 package model.board;
 
+import model.player.Player;
+
 import java.util.*;
 
 public class GameBoard {
@@ -75,7 +77,14 @@ public class GameBoard {
      * @return a list of all square in the Map
      */
     public Set<Square> allSquares(){
-        return (Set<Square>) allSquares.values();
+        return new LinkedHashSet<>(allSquares.values());
+    }
+
+
+    public List<Player> getPlayersOnMap(){
+        List<Player> allPlayers = new ArrayList<>();
+        allSquares.values().stream().forEach(x -> allPlayers.addAll(x.getPlayersOnSquare()));
+        return allPlayers;
     }
 
 }

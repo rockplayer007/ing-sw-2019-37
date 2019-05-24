@@ -7,7 +7,7 @@ import java.util.List;
 public class AnswerRequest extends ServerToClient {
 
     List<String> requests;
-    Boolean isOptional = false;
+    Boolean isOptional = false; //isOptional = true the player can choose if he wants to use the card or not
 
 
     public AnswerRequest(List<String> requests, Content content){

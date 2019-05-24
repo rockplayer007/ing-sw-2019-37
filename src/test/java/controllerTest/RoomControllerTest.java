@@ -21,8 +21,9 @@ public class RoomControllerTest {
     @BeforeEach
     public void createBoard(){
 
-        room = new Room();
+
         roomController = new RoomController();
+        room = new Room(roomController);
 
     }
 
