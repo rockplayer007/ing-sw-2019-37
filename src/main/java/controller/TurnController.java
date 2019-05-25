@@ -8,7 +8,6 @@ import model.player.Player;
 import network.messages.Message;
 import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
-import network.messages.serverToClient.BoardInfo;
 
 import java.util.List;
 import java.util.Timer;
@@ -67,7 +66,7 @@ public class    TurnController {
 
         //discard the second card
 
-        room.getBoard().getPowerDeck().usedPowerups((Powerup) powerup.get(0));
+        room.getBoard().getPowerDeck().usedCard((Powerup) powerup.get(0));
 
 
         //put the player on the generation square

@@ -141,8 +141,15 @@ public class ActionHandler {
      */
     public static void grab( Player player,Board board, Room room) throws NotExecutedExeption{
 
-        if (!player.getPosition().isGenerationPoint())
-            grabAmmo(player,((AmmoSquare) player.getPosition()).getAmmoCard(),board);
+        if (!player.getPosition().isGenerationPoint()){
+            AmmoCard card = ((AmmoSquare) player.getPosition()).getAmmoCard();
+            card.getAmmoList().forEach(player::addAmmo);
+            if (card.hasPowerup() && player.getPowerups().size() < 3) {
+                player.addPowerup((Powerup) board.getPowerDeck().getCard());
+            }
+            //after taking the ammoCard set a new card
+            ((AmmoSquare) player.getPosition()).setAmmoCard((AmmoCard) board.getAmmoDeck().getCard());
+        }
         else {
 
             //takes only weapons that the player can pay
@@ -310,19 +317,6 @@ public class ActionHandler {
                 }
                 tempCost.clear();
             }
-        }
-    }
-
-    /**
-     * grab AmmoCard and add the Ammos and Powerup in player
-     * @param player current player
-     * @param  card Ammocard need to analize
-     */
-
-    public static void grabAmmo(Player player, AmmoCard card, Board board) {
-        card.getAmmoList().forEach(player::addAmmo);
-        if (card.hasPowerup() && player.getPowerups().size() < 3) {
-            player.addPowerup((Powerup) board.getPowerDeck().getCard());
         }
     }
 
