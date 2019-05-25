@@ -1,6 +1,8 @@
 package view.GUI;
 import model.board.GameBoard;
+import model.board.SkullBoard;
 import model.board.Square;
+import model.card.Effect;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.player.ActionOption;
@@ -143,7 +145,7 @@ public class GUI implements ViewInterface {
     }
 
     @Override
-    public void updatedBoard(GameBoard board) {
+    public void updateAll(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard) {
         if(firstUpdate){
             frame.getContentPane().removeAll();
             frame.setResizable(false);
@@ -171,6 +173,11 @@ public class GUI implements ViewInterface {
 
     @Override
     public void chooseWeapon(List<Weapon> weapons, boolean optional) {
+
+    }
+
+    @Override
+    public void chooseEffect(List<Effect> effects) {
 
     }
 

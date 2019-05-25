@@ -82,6 +82,10 @@ public class Player implements Serializable {
         return Collections.unmodifiableList(weapons);
     }
 
+    public void removeWeapon(Weapon weapon){
+        weapons.remove(weapon);
+    }
+
     public ActionState getActionStatus() {
         return actionStatus;
     }

@@ -3,11 +3,10 @@ package network.client;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.board.*;
-import model.card.Card;
+import model.card.Effect;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.player.ActionOption;
-import model.player.ActionState;
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
 import network.messages.Message;
@@ -148,7 +147,7 @@ public class MainClient {
             case BOARD_REQUEST:
                 view.chooseBoard(((BoardRequest) message).getBoards());
                 break;
-            case BOARD_INFO:
+            case UPDATE:
                 //necessary to deserialize properly also the sub classes
                 RuntimeTypeAdapterFactory<Square> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
                         .of(Square.class, "Square")
@@ -158,8 +157,19 @@ public class MainClient {
                 Gson boardGson = new GsonBuilder()
                         .registerTypeAdapterFactory(runtimeTypeAdapterFactory)
                         .create();
-                //Gson gson = new Gson();
-                view.updatedBoard(boardGson.fromJson(((BoardInfo) message).getBoard(), GameBoard.class));
+
+                UpdateMessage update = ((UpdateMessage) message);
+
+
+                stringed = update.getPlayerPowerups();
+                List<Powerup> myPowerups = new ArrayList<>();
+                for(String powerup : stringed){
+                    myPowerups.add( gson.fromJson(powerup, Powerup.class));
+                }
+
+                view.updateAll(boardGson.fromJson(update.getBoard(), GameBoard.class), //board
+                        myPowerups, //powerups
+                        gson.fromJson(update.getSkullBoard(), SkullBoard.class)); //skullBoard
                 break;
             case POWERUP_REQUEST:
                 stringed = ((AnswerRequest) message).getRequests();
@@ -193,6 +203,12 @@ public class MainClient {
                 List<Square> squares = new ArrayList<>();
                 stringed.forEach(square -> squares.add(gson.fromJson(square, Square.class)));
                 view.chooseSquare(squares);
+                break;
+            case EFFECT_REQUEST:
+                stringed = ((AnswerRequest) message).getRequests();
+                List<Effect> effects = new ArrayList<>();
+                stringed.forEach(square -> effects.add(gson.fromJson(square, Effect.class)));
+                view.chooseEffect(effects);
                 break;
 
             default:

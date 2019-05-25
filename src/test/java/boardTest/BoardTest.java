@@ -7,8 +7,10 @@ import com.google.gson.GsonBuilder;
 import model.board.*;
 import model.player.Heroes;
 import model.player.Player;
+import network.client.MainClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import view.CLI.CLI;
 import view.CLI.Printer;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,7 +38,15 @@ public class BoardTest {
     @Test
     public void serializeMapTest(){
 
-        map.getSquare(0).addPlayer(new Player("", Heroes.D_STRUCT_OR));
+        Player player1 = new Player("destructor", Heroes.D_STRUCT_OR);
+        Player player2 = new Player("banshee", Heroes.BANSHEE);
+        Player player3 = new Player("dozer", Heroes.DOZER);
+
+        map.getSquare(0).addPlayer(player1);
+        map.getSquare(0).addPlayer(player2);
+        map.getSquare(2).addPlayer(player3);
+
+
         RuntimeTypeAdapterFactory<Square> rfSquare = RuntimeTypeAdapterFactory
                 .of(Square.class, "Square")
                 .registerSubtype(AmmoSquare.class, "AmmoSquare")
@@ -67,15 +77,18 @@ public class BoardTest {
         assertEquals(gameBoard.getGenerationPoint(Color.BLUE).getX(), 2);
         assertEquals(gameBoard.getGenerationPoint(Color.BLUE).getY(), 0);
 
-        Printer printer = new Printer();
-        printer.printBoard(gameBoard);
-        printer.printWeaponsOnBoard(gameBoard);
+        Printer printer = new Printer(new CLI(new MainClient()));
+        //printer.printBoard(gameBoard);
+        //printer.printWeaponsOnBoard(gameBoard);
+        printer.printAllInfo(gameBoard, player1.getPowerups(), new SkullBoard());
+
+        printer.printPlayersInfo(gameBoard, player1.getPowerups());
 
     }
 
     @Test
     public void printBoardTest(){
-        Printer printer = new Printer();
+        Printer printer = new Printer(new CLI(new MainClient()));
         printer.printBoard(map);
     }
 

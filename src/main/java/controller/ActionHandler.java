@@ -31,7 +31,6 @@ public class ActionHandler {
     }
 
 
-
     /**
      * run actions let current player to changes position
      * @param player that do this action.
@@ -81,7 +80,7 @@ public class ActionHandler {
         Player player=room.getCurrentPlayer();
         List<Effect> validEffect = new ArrayList<>(weapon.getLevelEffects(-1));
         validEffect.addAll(weapon.getLevelEffects(0));
-        effectSelect = chooseEffects(player,validEffect);
+        effectSelect = chooseEffects(player,validEffect, room);
         int i = 1;
         while (effectSelect!=null){
             validEffect.remove(effectSelect);
@@ -99,21 +98,41 @@ public class ActionHandler {
                 i++;
             }
             validEffect = validEffect.stream().filter(x->player.enoughAmmos(x.getExtraCost(),true)).collect(Collectors.toList());
-            effectSelect = chooseEffects(player,validEffect);
+            effectSelect = chooseEffects(player,validEffect, room);
         }
         weapon.setCharged(false);
 
     }
 
     // if effects isempty return null.
-    public static Effect chooseEffects(Player player,List<Effect> effects){
+    public static Effect chooseEffects(Player player,List<Effect> effects, Room room){
         if(effects.isEmpty()){
             return null;
         }
-        //TODO
 
+        RoomController roomController = room.getRoomController();
+        List<String> send = roomController
+                .toJsonEffectList(effects);
+
+        ListResponse effect = (ListResponse) roomController
+                .sendAndReceive(player, new AnswerRequest(send, Message.Content.EFFECT_REQUEST));
+
+        try{
+            return effects.get(effect.getSelectedItem());
+        }catch (RuntimeException e){
+            //cheater
+            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
+            return null;
+        }
+
+    }
+
+    public static Player choosePlayer(Player player, List<Player> players, Room room){
+        //TODO
         return null;
     }
+
+
 
     /**
      * basic grab method let player to grab all card that they can
@@ -160,7 +179,7 @@ public class ActionHandler {
 
                     discardWeapon.setCharged(true);
                     ((GenerationSquare) player.getPosition()).addWeapon(discardWeapon);
-                    player.getWeapons().remove(discardWeapon);
+                    player.removeWeapon(discardWeapon);
                     player.addWeapon(weapon);
                 }
                 else{
@@ -247,10 +266,11 @@ public class ActionHandler {
             }
         }
 
+
         //the player has to choose a card if he has no ammo
         //the player can choose to not use a card if he has ammo
-        Boolean usePowerups = true;
-        while (usePowerups || tempCost.isEmpty()) {
+
+        while (!tempCost.isEmpty()) {
 
             if (!powerupsToPay.isEmpty()) {
 
@@ -261,22 +281,34 @@ public class ActionHandler {
                 //null means the player doesnt want to use powerups
                 if (chosenCard != null) {
                     //the chosen powerup will be used to pay
+                    player.removePowerup(chosenCard);
                     tempCost.remove(chosenCard.getAmmo());
                     powerupsToPay.remove(chosenCard);
                 }
                 else {
-                    //pay with ammo instead
+                    //pay the remaining with ammo instead
                     for(AmmoColor ammo : tempCost){
                         try {
                             player.removeAmmo(ammo);
+                            //this gives an error, dont need anyway
+                            //tempCost.remove(ammo);
                         } catch (AmmoException e) {
                             throw new NotEnoughException("no ammo");
                         }
                     }
-                    usePowerups = false;
+                    tempCost.clear();
                 }
-            } else {
-                usePowerups = false;
+            }
+            else {
+                //pay with ammo instead of paying with powerups
+                for(AmmoColor ammo : tempCost){
+                    try {
+                        player.removeAmmo(ammo);
+                    } catch (AmmoException e) {
+                        throw new NotEnoughException("no ammo");
+                    }
+                }
+                tempCost.clear();
             }
         }
     }

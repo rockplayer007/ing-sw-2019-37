@@ -130,6 +130,7 @@ public class RoundController {
                 break;
             case MOVE1_GRAB:
                 //send moving squares
+                Square goBackSquare = player.getPosition();
                 ActionHandler.run(player, 2, roomController.getRoom());
                 //player.movePlayer(ActionHandler.chooseSquare(player, player.getPosition().getValidPosition(1), roomController.getRoom()));
                 //squareManager(player, 1);
@@ -137,6 +138,8 @@ public class RoundController {
                 try {
                     ActionHandler.grab(player, roomController.getRoom().getBoard(), roomController.getRoom());
                 } catch (NotExecutedExeption notExecutedExeption) {
+                    // set the player to his previous position
+                    player.movePlayer(goBackSquare);
                     //send a message with exception to string
                     System.out.println(notExecutedExeption.getMessage());
                 }

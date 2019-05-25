@@ -2,7 +2,9 @@ package view;
 
 
 import model.board.GameBoard;
+import model.board.SkullBoard;
 import model.board.Square;
+import model.card.Effect;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.player.ActionOption;
@@ -43,7 +45,7 @@ public interface ViewInterface {
     void timeout();
 
 
-    void updatedBoard(GameBoard board);
+    void updateAll(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard);
 
     void chooseAction(List<ActionOption> actions);
 
@@ -52,4 +54,7 @@ public interface ViewInterface {
     void choosePowerup(List<Powerup> powerups, boolean optional);
 
     void chooseWeapon(List<Weapon> weapons, boolean optional);
+
+    void chooseEffect(List<Effect> effects);
+
 }

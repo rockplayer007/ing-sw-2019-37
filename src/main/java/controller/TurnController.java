@@ -79,11 +79,16 @@ public class    TurnController {
     }
 
     public void normalRound(Player player){
-        //first ask for powerup
-        roundController.powerupController(player);
-        //ask for action
-        roundController.actionController(player);
-        roomController.sendUpdate();
+        int x = 0;
+        while (x == 0){
+            //first ask for powerup
+            roundController.powerupController(player);
+            roomController.sendUpdate();
+            //ask for action
+            roundController.actionController(player);
+            roomController.sendUpdate();
+        }
+
         //ask powerup again
         roundController.powerupController(player);
         //ask for action again
@@ -92,6 +97,10 @@ public class    TurnController {
         roundController.powerupController(player);
         //roundController.powerupController(player);
         //send reload request
+
+
+        //to remove
+        roundController.actionController(player);
 
 
     }
