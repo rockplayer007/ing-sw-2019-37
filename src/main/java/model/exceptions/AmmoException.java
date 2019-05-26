@@ -1,6 +1,6 @@
 package model.exceptions;
 
-public class AmmoException extends RuntimeException {
+public class AmmoException extends Exception {
     public AmmoException(String s) {
         super(s);
     }

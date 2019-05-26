@@ -338,7 +338,7 @@ class DirectionTargets implements Operation{
     public void execute(Room room) {
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
-        Map<String,Set<Square>> map;
+        Map<Square.Direction,Set<Square>> map;
         if (!penetrate)
             map = currentPlayer.getPosition().directions(distance);
         else
@@ -346,7 +346,7 @@ class DirectionTargets implements Operation{
         map=map.entrySet().stream()
                 .filter(x -> x.getValue().stream().anyMatch(s -> s.getPlayersOnSquare().isEmpty()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        Set<String> direction=map.keySet();
+        Set<Square.Direction> direction=map.keySet();
         //Todo da vedere con messagio per fare la scelta;
         String choise="";
 
@@ -459,13 +459,13 @@ class Flamethorwer implements Operation {
     public void execute(Room room) throws NullTargetsException {
         AttackHandler attackHandler = room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
-        Map<String, Set<Square>> map = currentPlayer.getPosition().directions(2)
+        Map<Square.Direction, Set<Square>> map = currentPlayer.getPosition().directions(2)
                 .entrySet().stream()
                 .filter(x -> x.getValue().stream().anyMatch(s -> s.getPlayersOnSquare().isEmpty()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         if (map.size() == 0)
             throw new NullTargetsException("haven't targets can be shot");
-        Set<String> direction = map.keySet();
+        Set<Square.Direction> direction = map.keySet();
         //Todo da vedere con messagio per fare la scelta;
         String choise = "";
 
@@ -519,7 +519,7 @@ class TargetingScope implements Operation{
         //TODO far scegliere un ammo da utilizzare.
         int i=0;//da controllare
         try {
-            ActionHandler.decuction(currentPlayer,Collections.singletonList(ammoColors.get(i)));
+            ActionHandler.deduction(currentPlayer,Collections.singletonList(ammoColors.get(i)), room);
         } catch (NotEnoughException e) {
             throw new NullTargetsException(e.getMessage());
         }

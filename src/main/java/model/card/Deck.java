@@ -12,7 +12,14 @@ public abstract class Deck <T extends Card>{
     }
 
     public Card getCard(){
-        return cardDeck.pop();
+        if(cardDeck.isEmpty()){
+            reMix();
+            return getCard();
+        }
+        else{
+            return cardDeck.pop();
+        }
+
     }
 
     public List<Card> getCard(int n){
@@ -35,14 +42,14 @@ public abstract class Deck <T extends Card>{
      */
     public void reMix(){
         addAll(usedCard);
+        usedCard.clear();
         mixDeck();
     }
 
     /**
      * when the player use the powerup need add that card in usedPwerups for reuse.
      */
-    public void usedPowerups(T card){
+    public void usedCard(T card){
         usedCard.add(card);
-
     }
 }

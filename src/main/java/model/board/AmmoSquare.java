@@ -28,4 +28,8 @@ public class AmmoSquare extends Square {
     public AmmoCard getAmmoCard(){
         return ammoCard;
     }
+
+    public void setAmmoCard(AmmoCard ammoCard){
+        this.ammoCard = ammoCard;
+    }
 }

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -77,6 +78,8 @@ public class SquareTest {
             assertTrue(testVisibleSquare.contains(x));
         }
 
+
+
     }
 
     @Test
@@ -92,5 +95,60 @@ public class SquareTest {
         //not existing square
         assertNull(map.getSquare(0,2));
     }
+
+    @Test
+    public void directionTest(){
+        //first test from position 0
+        Square testSquare = map.getSquare(0);
+        Map<Square.Direction,Set<Square>> directionSquares = testSquare.directions(2);
+        Set<Square> rightSquares = new HashSet<>();
+        Set<Square> downSquares = new HashSet<>();
+
+        rightSquares.add(map.getSquare(1));
+        rightSquares.add(map.getSquare(2));
+        downSquares.add(map.getSquare(3));
+
+        assertTrue(rightSquares.containsAll(directionSquares.get(Square.Direction.RIGHT)));
+
+        assertTrue(downSquares.containsAll(directionSquares.get(Square.Direction.DOWN)));
+
+
+        //first test from position 0
+        testSquare = map.getSquare(4);
+        directionSquares = testSquare.directions(2);
+        rightSquares = new HashSet<>();
+        downSquares = new HashSet<>();
+        Set<Square> leftSquares = new HashSet<>();
+        Set<Square> topSquares = new HashSet<>();
+
+        rightSquares.add(map.getSquare(5));
+        rightSquares.add(map.getSquare(6));
+
+        leftSquares.add(map.getSquare(3));
+
+        topSquares.add(map.getSquare(1));
+        downSquares.add(map.getSquare(7));
+
+
+        assertTrue(rightSquares.containsAll(directionSquares.get(Square.Direction.RIGHT)));
+
+        assertTrue(leftSquares.containsAll(directionSquares.get(Square.Direction.LEFT)));
+
+        assertTrue(downSquares.containsAll(directionSquares.get(Square.Direction.DOWN)));
+
+        //for absoluteDirection
+
+        directionSquares = testSquare.directionAbsolute(map);
+
+        assertTrue(rightSquares.containsAll(directionSquares.get(Square.Direction.RIGHT)));
+
+        assertTrue(leftSquares.containsAll(directionSquares.get(Square.Direction.LEFT)));
+
+        assertTrue(downSquares.containsAll(directionSquares.get(Square.Direction.DOWN)));
+
+        assertTrue(topSquares.containsAll(directionSquares.get(Square.Direction.TOP)));
+    }
+
+
 
 }

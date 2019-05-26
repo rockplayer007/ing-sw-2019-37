@@ -137,6 +137,7 @@ public class Square implements Serializable {
 
         return positions;
     }
+
     /**
      * Places a player to the current square
      * @param player Player that has to be placed
@@ -157,80 +158,132 @@ public class Square implements Serializable {
         return (getX()==x && getY()==y);
     }
 
-    public Map<String,Set<Square>> directions(int distance){
-        Map<String,Set<Square>> map=new HashMap<>();
-        for (Square s:neighbourSquare){
-            if (s.getY()<this.getY())
-                map.put("Down",this.oneDirection(Direction.DOWN,distance));
-            else if (s.getY()>this.getY())
-                map.put("Top",this.oneDirection(Direction.TOP,distance));
-            else if (s.getX()>this.getX())
-                map.put("Right",this.oneDirection(Direction.RIGHT,distance));
-            else if (s.getX()<this.getX())
-                map.put("Left",this.oneDirection(Direction.LEFT,distance));
+    public Map<Direction,Set<Square>> directions(int distance){
+
+        Map<Direction,Set<Square>> allSquares = new EnumMap<>(Direction.class);
+        Set<Square> tempSquare;
+
+        for(Direction direction : Direction.values()){
+            tempSquare = oneDirection(direction, distance);
+            if(!tempSquare.isEmpty()){
+                allSquares.put(direction, tempSquare);
+            }
         }
-        return map;
+
+        return allSquares;
     }
 
     public Square getOneOfNeighbour(int x, int y){
-        Square square=null;
+        Square square = null;
         for (Square s:neighbourSquare){
-            if (s.getY()==y&&s.getX()==x)
-                square=s;
+            if (s.getY() == y && s.getX() == x)
+                square = s;
         }
         return square;
     }
 
     private Set<Square> oneDirection(Direction direction, int distance){
-        Set<Square> set = new HashSet<>();
-        if (distance>0) {
-            if (direction == Direction.LEFT&&x!=0&&neighbourSquare.stream().anyMatch(s->s.getX()<this.getX()))
-                set.addAll(getOneOfNeighbour(x-1,y).oneDirection(direction,distance-1));
-            else if (direction == Direction.RIGHT&&x!=3&&neighbourSquare.stream().anyMatch(s->s.getX()>this.getX()))
-                set.addAll(getOneOfNeighbour(x+1,y).oneDirection(direction,distance-1));
-            else if (direction == Direction.DOWN&&y!=0&&neighbourSquare.stream().anyMatch(s->s.getY()<this.getY()))
-                set.addAll(getOneOfNeighbour(x,y-1).oneDirection(direction,distance-1));
-            else if (direction == Direction.TOP&&y!=2&&neighbourSquare.stream().anyMatch(s->s.getY()>this.getY()))
-                set.addAll(getOneOfNeighbour(x,y+1).oneDirection(direction,distance-1));
+
+        Set<Square> squares = new HashSet<>();
+        Square currentSquare = this;
+        int currentX = x;
+        int currentY = y;
+
+        while (distance > 0){
+
+            switch (direction){
+                case TOP:
+                    currentY--;
+                    break;
+                case DOWN:
+                    currentY++;
+                    break;
+                case RIGHT:
+                    currentX++;
+                    break;
+                case LEFT:
+                    currentX--;
+                    break;
+            }
+
+            currentSquare = currentSquare.getOneOfNeighbour(currentX, currentY);
+            if(currentSquare != null){
+                squares.add(currentSquare);
+            }
+            else {
+                break;
+            }
+            distance--;
         }
-        set.add(this);
-        return set;
+
+        return squares;
     }
 
-    public Map<String,Set<Square>> directionAbsolute(GameBoard gameBoard){
-        Map<String,Set<Square>> map=new HashMap<>();
-        if (x!=0)
-            map.put("Left",oneDirectionAbsolute(Direction.LEFT, gameBoard));
-        if (x!=3)
-            map.put("Right",oneDirectionAbsolute(Direction.RIGHT, gameBoard));
-        if (y!=0)
-            map.put("Top",oneDirectionAbsolute(Direction.TOP, gameBoard));
-        if (y!=2)
-            map.put("Down",oneDirectionAbsolute(Direction.DOWN, gameBoard));
+    public Map<Direction,Set<Square>> directionAbsolute(GameBoard gameBoard){
 
-        return  map;
+        Map<Direction,Set<Square>> allSquares = new EnumMap<>(Direction.class);
+        Set<Square> tempSquare;
+
+        for(Direction direction : Direction.values()){
+            tempSquare = oneDirectionAbsolute(direction, gameBoard);
+            if(!tempSquare.isEmpty()){
+                allSquares.put(direction, tempSquare);
+            }
+        }
+
+        return allSquares;
     }
 
     private Set<Square> oneDirectionAbsolute(Direction direction, GameBoard gameBoard){
-        Set<Square> set = new HashSet<>();
-        if (direction == Direction.LEFT && x!=0)
-            set.addAll(gameBoard.getSquare(x-1,y).oneDirectionAbsolute(direction, gameBoard));
-        else if (direction == Direction.RIGHT && x!=3)
-            set.addAll(gameBoard.getSquare(x+1,y).oneDirectionAbsolute(direction, gameBoard));
-        else if (direction == Direction.DOWN && y!=0)
-            set.addAll(gameBoard.getSquare(x,y-1).oneDirectionAbsolute(direction, gameBoard));
-        else if (direction == Direction.TOP && y!=2)
-            set.addAll(gameBoard.getSquare(x,y+1).oneDirectionAbsolute(direction, gameBoard));
-        set.add(this);
-        return set;
+
+
+        Set<Square> squares = new HashSet<>();
+        Square currentSquare = this;
+        int currentX = x;
+        int currentY = y;
+
+        while (currentSquare != null){
+
+            switch (direction){
+                case TOP:
+                    currentY--;
+                    break;
+                case DOWN:
+                    currentY++;
+                    break;
+                case RIGHT:
+                    currentX++;
+                    break;
+                case LEFT:
+                    currentX--;
+                    break;
+            }
+
+            currentSquare = gameBoard.getSquare(currentX, currentY);
+            if(currentSquare != null){
+                squares.add(currentSquare);
+            }
+
+        }
+
+        return squares;
     }
 
     @Override
     public String toString () {
         return "X: " + x + " Y: " + y + " Color: " + squareColor;
     }
+
     public enum Direction {
-        TOP,DOWN,LEFT,RIGHT
+        //🠘 🠚 🠙 🠛
+        //TOP("\uD83E\uDC19"), DOWN("\uD83E\uDC1B"),LEFT("\uD83E\uDC18"),RIGHT("\uD83E\uDC1A");
+        TOP, DOWN, LEFT, RIGHT;
+
+        @Override
+        public String toString() {
+            return super.toString();
+        }
+
 
     }
 

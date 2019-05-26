@@ -1,13 +1,18 @@
 package view.CLI;
 
+import model.board.Color;
 import model.board.GameBoard;
+import model.board.SkullBoard;
 import model.board.Square;
+import model.card.AmmoColor;
+import model.card.Effect;
 import model.card.Powerup;
+import model.card.Weapon;
 import model.player.ActionOption;
+import model.player.Player;
 import network.client.MainClient;
 import view.ViewInterface;
 
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,7 +36,11 @@ public class CLI implements ViewInterface {
 
     public CLI(MainClient mainClient){
         this.mainClient = mainClient;
-        printer = new Printer();
+        printer = new Printer(this);
+    }
+
+    MainClient getMainClient(){
+        return mainClient;
     }
 
     /**
@@ -45,6 +54,7 @@ public class CLI implements ViewInterface {
         chooseConnection();
         mainClient.connect();
 
+        //TODO doesnt work with rmi
         printer.println("Connection successful!");
         logIn(true);
 
@@ -107,6 +117,42 @@ public class CLI implements ViewInterface {
         printer.displayRequest(new ArrayList<>(maps.values()), board -> mainClient.sendSelectedBoard(board));
     }
 
+    @Override
+    public void chooseWeapon(List<Weapon> weapons, boolean optional) {
+        printer.askWeapon(weapons, weapon -> {
+            if(weapon >= weapons.size()){
+                mainClient.sendSelectedCard(-1);
+            }
+            else {
+                mainClient.sendSelectedCard(weapon);
+            }
+        }, optional);
+    }
+
+    @Override
+    public void chooseEffect(List<Effect> effects) {
+        printer.askEffect(effects, effect -> mainClient.sendSelectedCard(effect));
+    }
+
+    @Override
+    public void choosePlayer(List<Player> players) {
+        printer.askPlayer(players, player -> mainClient.sendSelectedPlayer(player));
+    }
+
+    @Override
+    public void chooseDirection(List<Square.Direction> directions) {
+        printer.askDirection(directions, direction -> mainClient.sendSelectedDirection(direction));
+    }
+
+    @Override
+    public void chooseAmmoColor(List<AmmoColor> ammoColors) {
+        printer.askAmmoColor(ammoColors, color -> mainClient.sendSelectedAmmoColor(color));
+    }
+
+    @Override
+    public void chooseRoom(List<Color> rooms) {
+        printer.askRoom(rooms, room -> mainClient.sendSelectedRoom(room));
+    }
 
     public void choosePowerup(List<Powerup> powerups, boolean optional){
         printer.askPowerup(powerups, powerup -> {
@@ -119,6 +165,7 @@ public class CLI implements ViewInterface {
         }, optional);
     }
 
+
     @Override
     public void chooseAction(List<ActionOption> actions) {
         List<String> stringed = new ArrayList<>();
@@ -128,7 +175,7 @@ public class CLI implements ViewInterface {
 
     @Override
     public void chooseSquare(List<Square> squares) {
-        printer.askSquare(squares, square -> mainClient.sendSelectedBoard(square));
+        printer.askSquare(squares, square -> mainClient.sendSelectedSquare(square));
     }
 
 
@@ -138,9 +185,9 @@ public class CLI implements ViewInterface {
     }
 
     @Override
-    public void updatedBoard(GameBoard board) {
-        //println board
-        printer.printBoard(board);
+    public void updateAll(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard) {
+        printer.printAllInfo(board, myPowerups, skullBoard);
+
     }
 
 

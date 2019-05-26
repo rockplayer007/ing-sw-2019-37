@@ -1,8 +1,13 @@
 package view.GUI;
 import model.board.GameBoard;
+import model.board.SkullBoard;
 import model.board.Square;
+import model.card.AmmoColor;
+import model.card.Effect;
 import model.card.Powerup;
+import model.card.Weapon;
 import model.player.ActionOption;
+import model.player.Player;
 import network.client.MainClient;
 import view.ViewInterface;
 
@@ -142,7 +147,7 @@ public class GUI implements ViewInterface {
     }
 
     @Override
-    public void updatedBoard(GameBoard board) {
+    public void updateAll(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard) {
         if(firstUpdate){
             frame.getContentPane().removeAll();
             frame.setResizable(false);
@@ -167,6 +172,37 @@ public class GUI implements ViewInterface {
             mapPanel.getCardSelected(powerups,optional,mainClient);
         }
     }
+
+    @Override
+    public void chooseWeapon(List<Weapon> weapons, boolean optional) {
+
+    }
+
+    @Override
+    public void chooseEffect(List<Effect> effects) {
+
+    }
+
+    @Override
+    public void choosePlayer(List<Player> players) {
+
+    }
+
+    @Override
+    public void chooseDirection(List<Square.Direction> directions) {
+
+    }
+
+    @Override
+    public void chooseAmmoColor(List<AmmoColor> ammoColors) {
+
+    }
+
+    @Override
+    public void chooseRoom(List<model.board.Color> rooms) {
+
+    }
+
     @Override
     public void chooseAction(List<ActionOption> actions) {
         Component component = frame.getContentPane().getComponent(0);
@@ -184,6 +220,8 @@ public class GUI implements ViewInterface {
             map.getSquareSelected(squares,mainClient);
         }
     }
+
+
 }
 
 

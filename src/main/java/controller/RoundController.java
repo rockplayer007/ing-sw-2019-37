@@ -2,8 +2,8 @@ package controller;
 
 import model.board.Square;
 import model.card.Powerup;
-import model.card.Weapon;
 import model.exceptions.InterruptOperationException;
+import model.exceptions.NotExecutedExeption;
 import model.exceptions.NullTargetsException;
 import model.player.ActionOption;
 import model.player.Player;
@@ -11,10 +11,8 @@ import network.messages.Message;
 import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,20 +34,13 @@ public class RoundController {
             List<Powerup> powerups = possiblePowerups(player);
             if(!powerups.isEmpty()){
 
+                Powerup chosenCard = ActionHandler
+                        .chooseCard(powerups, true, roomController.getRoom(), false);
 
-                AnswerRequest message = new AnswerRequest(roomController.toJsonCardList(powerups), Message.Content.POWERUP_REQUEST);
-                message.setIsOptional();
-
-                //send powerups
-                ListResponse chosenCard =(ListResponse) roomController.sendAndReceive(player, message);
-
-
-                //-1 means the player doesnt want to use powerups
-                if (chosenCard.getSelectedItem() < powerups.size() && chosenCard.getSelectedItem() >= 0){
+                //null means the player doesnt want to use powerups
+                if (chosenCard != null){
                     //the chosen powerup will be executed
-                    usePowerup(powerups.get(chosenCard.getSelectedItem()), player);
-
-
+                    usePowerup(chosenCard, player);
                 }
                 else {
                     usePowerups = false;
@@ -104,15 +95,18 @@ public class RoundController {
         }
         //remove the powerup from the player
         player.removePowerup(powerup);
-        roomController.getRoom().getBoard().getPowerDeck().usedPowerups(powerup);
+        roomController.getRoom().getBoard().getPowerDeck().usedCard(powerup);
 
     }
 
 
     public void actionController(Player player){
         //check action in player
-        List<String> send = player.getActionStatus().getJsonChoices(player);
-        List<ActionOption> actions = player.getActionStatus().getChoices(player);
+        List<String> send = player.getActionStatus().getJsonChoices(player,
+                //if the there is only 1 player he cant shoot
+                roomController.getRoom().getBoard().getMap().getPlayersOnMap().size() <= 1);
+        List<ActionOption> actions = player.getActionStatus().getChoices(player,
+                roomController.getRoom().getBoard().getMap().getPlayersOnMap().size() <= 1);
 
         ListResponse selected = (ListResponse) roomController
                 .sendAndReceive(player, new AnswerRequest(send, Message.Content.ACTION_REQUEST));
@@ -127,26 +121,29 @@ public class RoundController {
 
         switch (choice){
             case MOVE3:
-                player.movePlayer(ActionHandler
-                        .chooseSquare(player, player.getPosition()
-                                .getValidPosition(3), roomController.getRoom()));
-                //player.movePlayer(squareManager(player, 3));
+                ActionHandler.run(player, 3, roomController.getRoom());
                 break;
             case MOVE1_GRAB:
-                //send moving squares
-                player.movePlayer(ActionHandler
-                        .chooseSquare(player, player.getPosition()
-                                .getValidPosition(1), roomController.getRoom()));
-                //squareManager(player, 1);
-                //grap in this square
+                //backup square
+                Square goBackSquare = player.getPosition();
+                ActionHandler.run(player, 1, roomController.getRoom());
 
+                //grap in this square
+                try {
+                    ActionHandler.grab(player, roomController.getRoom().getBoard(), roomController.getRoom());
+                } catch (NotExecutedExeption notExecutedExeption) {
+                    // set the player to his previous position
+                    player.movePlayer(goBackSquare);
+                    //send a message with exception to string
+                    System.out.println(notExecutedExeption.getMessage());
+                }
 
                 break;
             case SHOOT:
                 //ask card
 
                 //execute this card
-                //flag for shooting
+                //flag for shooting, needed to decide to use a powerup or not
                 shot = true;
                 break;
         }

@@ -3,10 +3,12 @@ package network.client;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.board.*;
-import model.card.Card;
+import model.card.AmmoColor;
+import model.card.Effect;
 import model.card.Powerup;
+import model.card.Weapon;
 import model.player.ActionOption;
-import model.player.ActionState;
+import model.player.Player;
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
 import network.messages.Message;
@@ -126,6 +128,29 @@ public class MainClient {
         connection.sendMessage(new ListResponse(username, clientID, square, Message.Content.SQUARE_RESPONSE));
     }
 
+    public void sendSelectedEffect(int effect){
+        connection.sendMessage(new ListResponse(username, clientID, effect, Message.Content.EFFECT_RESPOSNSE));
+    }
+
+    public void sendSelectedPlayer(int player){
+        connection.sendMessage(new ListResponse(username, clientID, player, Message.Content.PLAYER_RESPONSE));
+    }
+
+    public void sendSelectedDirection(int direction){
+        connection.sendMessage(new ListResponse(username, clientID, direction, Message.Content.DIRECTION_RESPONSE));
+    }
+
+    public void sendSelectedAmmoColor(int ammo){
+        connection.sendMessage(new ListResponse(username, clientID, ammo, Message.Content.AMMO_RESPONSE));
+    }
+
+    public void sendSelectedRoom(int room){
+        connection.sendMessage(new ListResponse(username, clientID, room, Message.Content.ROOM_RESPONSE));
+    }
+
+
+
+
 
     /**
      * New messages that arrive from the server are managed here
@@ -147,7 +172,7 @@ public class MainClient {
             case BOARD_REQUEST:
                 view.chooseBoard(((BoardRequest) message).getBoards());
                 break;
-            case BOARD_INFO:
+            case UPDATE:
                 //necessary to deserialize properly also the sub classes
                 RuntimeTypeAdapterFactory<Square> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
                         .of(Square.class, "Square")
@@ -157,8 +182,19 @@ public class MainClient {
                 Gson boardGson = new GsonBuilder()
                         .registerTypeAdapterFactory(runtimeTypeAdapterFactory)
                         .create();
-                //Gson gson = new Gson();
-                view.updatedBoard(boardGson.fromJson(((BoardInfo) message).getBoard(), GameBoard.class));
+
+                UpdateMessage update = ((UpdateMessage) message);
+
+
+                stringed = update.getPlayerPowerups();
+                List<Powerup> myPowerups = new ArrayList<>();
+                for(String powerup : stringed){
+                    myPowerups.add( gson.fromJson(powerup, Powerup.class));
+                }
+
+                view.updateAll(boardGson.fromJson(update.getBoard(), GameBoard.class), //board
+                        myPowerups, //powerups
+                        gson.fromJson(update.getSkullBoard(), SkullBoard.class)); //skullBoard
                 break;
             case POWERUP_REQUEST:
                 stringed = ((AnswerRequest) message).getRequests();
@@ -168,6 +204,16 @@ public class MainClient {
                     powerups.add( gson.fromJson(powerup, Powerup.class));
                 }
                 view.choosePowerup(powerups, ((AnswerRequest) message).isOptional());
+                break;
+
+            case WEAPON_REQUEST:
+                stringed = ((AnswerRequest) message).getRequests();
+                List<Weapon> weapons = new ArrayList<>();
+
+                for(String weapon : stringed){
+                    weapons.add( gson.fromJson(weapon, Weapon.class));
+                }
+                view.chooseWeapon(weapons, ((AnswerRequest) message).isOptional());
                 break;
             case ACTION_REQUEST:
 
@@ -182,6 +228,36 @@ public class MainClient {
                 List<Square> squares = new ArrayList<>();
                 stringed.forEach(square -> squares.add(gson.fromJson(square, Square.class)));
                 view.chooseSquare(squares);
+                break;
+            case EFFECT_REQUEST:
+                stringed = ((AnswerRequest) message).getRequests();
+                List<Effect> effects = new ArrayList<>();
+                stringed.forEach(square -> effects.add(gson.fromJson(square, Effect.class)));
+                view.chooseEffect(effects);
+                break;
+            case PLAYER_REQUEST:
+                stringed = ((AnswerRequest) message).getRequests();
+                List<Player> players = new ArrayList<>();
+                stringed.forEach(square -> players.add(gson.fromJson(square, Player.class)));
+                view.choosePlayer(players);
+                break;
+            case DIRECTION_REQUEST:
+                stringed = ((AnswerRequest) message).getRequests();
+                List<Square.Direction> directions = new ArrayList<>();
+                stringed.forEach(square -> directions.add(gson.fromJson(square, Square.Direction.class)));
+                view.chooseDirection(directions);
+                break;
+            case AMMOCOLOR_REQUEST:
+                stringed = ((AnswerRequest) message).getRequests();
+                List<AmmoColor> ammoColors = new ArrayList<>();
+                stringed.forEach(square -> ammoColors.add(gson.fromJson(square, AmmoColor.class)));
+                view.chooseAmmoColor(ammoColors);
+                break;
+            case ROOM_REQUEST:
+                stringed = ((AnswerRequest) message).getRequests();
+                List<Color> rooms = new ArrayList<>();
+                stringed.forEach(square -> rooms.add(gson.fromJson(square, Color.class)));
+                view.chooseRoom(rooms);
                 break;
             default:
                 logger.log(Level.WARNING, "Unregistered message");
