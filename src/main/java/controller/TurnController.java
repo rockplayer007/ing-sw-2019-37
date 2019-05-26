@@ -8,7 +8,6 @@ import model.player.Player;
 import network.messages.Message;
 import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
-import network.messages.serverToClient.BoardInfo;
 
 import java.util.List;
 import java.util.Timer;
@@ -67,7 +66,7 @@ public class    TurnController {
 
         //discard the second card
 
-        room.getBoard().getPowerDeck().usedPowerups((Powerup) powerup.get(0));
+        room.getBoard().getPowerDeck().usedCard((Powerup) powerup.get(0));
 
 
         //put the player on the generation square
@@ -79,11 +78,16 @@ public class    TurnController {
     }
 
     public void normalRound(Player player){
-        //first ask for powerup
-        roundController.powerupController(player);
-        //ask for action
-        roundController.actionController(player);
-        roomController.sendUpdate();
+        int x = 0;
+        while (x == 0){
+            //first ask for powerup
+            roundController.powerupController(player);
+            roomController.sendUpdate();
+            //ask for action
+            roundController.actionController(player);
+            roomController.sendUpdate();
+        }
+
         //ask powerup again
         roundController.powerupController(player);
         //ask for action again
@@ -92,6 +96,10 @@ public class    TurnController {
         roundController.powerupController(player);
         //roundController.powerupController(player);
         //send reload request
+
+
+        //to remove
+        roundController.actionController(player);
 
 
     }

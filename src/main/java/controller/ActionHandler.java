@@ -10,6 +10,7 @@ import model.exceptions.*;
 import model.gamehandler.Room;
 import model.player.Player;
 import network.messages.Message;
+import network.messages.clientToServer.GeneralResponse;
 import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
 
@@ -29,7 +30,6 @@ public class ActionHandler {
     private ActionHandler(){
     throw new IllegalStateException("Utility class");
     }
-
 
 
     /**
@@ -81,7 +81,7 @@ public class ActionHandler {
         Player player=room.getCurrentPlayer();
         List<Effect> validEffect = new ArrayList<>(weapon.getLevelEffects(-1));
         validEffect.addAll(weapon.getLevelEffects(0));
-        effectSelect = chooseEffects(player,validEffect);
+        effectSelect = chooseEffects(player,validEffect, room);
         int i = 1;
         while (effectSelect!=null){
             validEffect.remove(effectSelect);
@@ -99,21 +99,41 @@ public class ActionHandler {
                 i++;
             }
             validEffect = validEffect.stream().filter(x->player.enoughAmmos(x.getExtraCost(),true)).collect(Collectors.toList());
-            effectSelect = chooseEffects(player,validEffect);
+            effectSelect = chooseEffects(player,validEffect, room);
         }
         weapon.setCharged(false);
 
     }
 
     // if effects isempty return null.
-    public static Effect chooseEffects(Player player,List<Effect> effects){
+    public static Effect chooseEffects(Player player,List<Effect> effects, Room room){
         if(effects.isEmpty()){
             return null;
         }
-        //TODO
 
+        RoomController roomController = room.getRoomController();
+        List<String> send = roomController
+                .toJsonEffectList(effects);
+
+        ListResponse effect = (ListResponse) roomController
+                .sendAndReceive(player, new AnswerRequest(send, Message.Content.EFFECT_REQUEST));
+
+        try{
+            return effects.get(effect.getSelectedItem());
+        }catch (RuntimeException e){
+            //cheater
+            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
+            return null;
+        }
+
+    }
+
+    public static Player choosePlayer(Player player, List<Player> players, Room room){
+        //TODO
         return null;
     }
+
+
 
     /**
      * basic grab method let player to grab all card that they can
@@ -122,12 +142,20 @@ public class ActionHandler {
      */
     public static void grab( Player player,Board board, Room room) throws NotExecutedExeption{
 
-        if (!player.getPosition().isGenerationPoint())
-            grabAmmo(player,((AmmoSquare) player.getPosition()).getAmmoCard(),board);
+        if (!player.getPosition().isGenerationPoint()){
+            AmmoCard card = ((AmmoSquare) player.getPosition()).getAmmoCard();
+            card.getAmmoList().forEach(player::addAmmo);
+            if (card.hasPowerup() && player.getPowerups().size() < 3) {
+                player.addPowerup((Powerup) board.getPowerDeck().getCard());
+            }
+            //after taking the ammoCard set a new card
+            ((AmmoSquare) player.getPosition()).setAmmoCard((AmmoCard) board.getAmmoDeck().getCard());
+        }
         else {
 
+            GenerationSquare currentSquare = (GenerationSquare) player.getPosition();
             //takes only weapons that the player can pay
-            List<Weapon> weapons=((GenerationSquare) player.getPosition()).getWeaponDeck().stream().
+            List<Weapon> weapons=currentSquare.getWeaponDeck().stream().
                     filter(i->player.enoughAmmos(i.getBuyCost(),true))
                     .collect(Collectors.toList());
 
@@ -159,18 +187,21 @@ public class ActionHandler {
                     }
 
                     discardWeapon.setCharged(true);
-                    ((GenerationSquare) player.getPosition()).addWeapon(discardWeapon);
-                    player.getWeapons().remove(discardWeapon);
-                    player.addWeapon(weapon);
+                    //places the discarded weapon in the same place of the weapon before
+                    currentSquare.getWeaponDeck()
+                            .set(currentSquare.getWeaponDeck().indexOf(weapon), discardWeapon);
+
+                    //remove and add the new weapon in the same position
+                    player.getWeapons()
+                            .set(player.getWeapons().indexOf(discardWeapon), weapon);
+
                 }
                 else{
-                    //remove weapon from gen square
-                    ((GenerationSquare) player.getPosition()).getWeaponDeck().remove(weapon);
-
-                    //put a new weapon
+                    //replace the weapon in the deck with a new one if there are cards
                     Weapon temp = (Weapon) room.getBoard().getWeaponDeck().getCard();
                     if( temp != null){
-                        ((GenerationSquare) player.getPosition()).addWeapon(temp);
+                        currentSquare.getWeaponDeck()
+                                .set(currentSquare.getWeaponDeck().indexOf(weapon), temp);
                     }
                     // add it to the player
                     player.addWeapon(weapon);
@@ -247,10 +278,11 @@ public class ActionHandler {
             }
         }
 
+
         //the player has to choose a card if he has no ammo
         //the player can choose to not use a card if he has ammo
-        Boolean usePowerups = true;
-        while (usePowerups || tempCost.isEmpty()) {
+
+        while (!tempCost.isEmpty()) {
 
             if (!powerupsToPay.isEmpty()) {
 
@@ -261,36 +293,35 @@ public class ActionHandler {
                 //null means the player doesnt want to use powerups
                 if (chosenCard != null) {
                     //the chosen powerup will be used to pay
+                    player.removePowerup(chosenCard);
                     tempCost.remove(chosenCard.getAmmo());
                     powerupsToPay.remove(chosenCard);
                 }
                 else {
-                    //pay with ammo instead
+                    //pay the remaining with ammo instead
                     for(AmmoColor ammo : tempCost){
                         try {
                             player.removeAmmo(ammo);
+                            //this gives an error, dont need anyway
+                            //tempCost.remove(ammo);
                         } catch (AmmoException e) {
                             throw new NotEnoughException("no ammo");
                         }
                     }
-                    usePowerups = false;
+                    tempCost.clear();
                 }
-            } else {
-                usePowerups = false;
             }
-        }
-    }
-
-    /**
-     * grab AmmoCard and add the Ammos and Powerup in player
-     * @param player current player
-     * @param  card Ammocard need to analize
-     */
-
-    public static void grabAmmo(Player player, AmmoCard card, Board board) {
-        card.getAmmoList().forEach(player::addAmmo);
-        if (card.hasPowerup() && player.getPowerups().size() < 3) {
-            player.addPowerup((Powerup) board.getPowerDeck().getCard());
+            else {
+                //pay with ammo instead of paying with powerups
+                for(AmmoColor ammo : tempCost){
+                    try {
+                        player.removeAmmo(ammo);
+                    } catch (AmmoException e) {
+                        throw new NotEnoughException("no ammo");
+                    }
+                }
+                tempCost.clear();
+            }
         }
     }
 

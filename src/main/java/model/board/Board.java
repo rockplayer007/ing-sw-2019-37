@@ -72,6 +72,8 @@ public class Board {
         this.weaponDeck = weaponDeck;
     }
 
-
+    public SkullBoard getSkullBoard(){
+        return skullBoard;
+    }
 
 }

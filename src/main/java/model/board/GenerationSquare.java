@@ -33,7 +33,10 @@ public class GenerationSquare extends Square {
 
     public void addWeapon(Weapon card) {
         weaponDeck.add(card);
+    }
 
+    public void removeWeapon(Weapon card){
+        weaponDeck.remove(card);
     }
 
 }

@@ -1,14 +1,15 @@
 package view.CLI;
 
 import model.board.GameBoard;
+import model.board.SkullBoard;
 import model.board.Square;
+import model.card.Effect;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.player.ActionOption;
 import network.client.MainClient;
 import view.ViewInterface;
 
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,7 +33,11 @@ public class CLI implements ViewInterface {
 
     public CLI(MainClient mainClient){
         this.mainClient = mainClient;
-        printer = new Printer();
+        printer = new Printer(this);
+    }
+
+    MainClient getMainClient(){
+        return mainClient;
     }
 
     /**
@@ -46,6 +51,7 @@ public class CLI implements ViewInterface {
         chooseConnection();
         mainClient.connect();
 
+        //TODO doesnt work with rmi
         printer.println("Connection successful!");
         logIn(true);
 
@@ -120,6 +126,11 @@ public class CLI implements ViewInterface {
         }, optional);
     }
 
+    @Override
+    public void chooseEffect(List<Effect> effects) {
+
+    }
+
     public void choosePowerup(List<Powerup> powerups, boolean optional){
         printer.askPowerup(powerups, powerup -> {
             if(powerup >= powerups.size()){
@@ -141,7 +152,7 @@ public class CLI implements ViewInterface {
 
     @Override
     public void chooseSquare(List<Square> squares) {
-        printer.askSquare(squares, square -> mainClient.sendSelectedBoard(square));
+        printer.askSquare(squares, square -> mainClient.sendSelectedSquare(square));
     }
 
 
@@ -151,9 +162,16 @@ public class CLI implements ViewInterface {
     }
 
     @Override
-    public void updatedBoard(GameBoard board) {
-        //println board
-        printer.printBoard(board);
+    public void updateAll(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard) {
+        //print board
+        //print weapons in the board
+        //print skullboard
+        //print players informations
+        //for myPlayer print also powerups
+
+        printer.printAllInfo(board, myPowerups, skullBoard);
+        //printer.printBoard(board);
+
     }
 
 

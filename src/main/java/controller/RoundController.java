@@ -2,7 +2,6 @@ package controller;
 
 import model.board.Square;
 import model.card.Powerup;
-import model.card.Weapon;
 import model.exceptions.InterruptOperationException;
 import model.exceptions.NotExecutedExeption;
 import model.exceptions.NullTargetsException;
@@ -12,10 +11,8 @@ import network.messages.Message;
 import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -98,7 +95,7 @@ public class RoundController {
         }
         //remove the powerup from the player
         player.removePowerup(powerup);
-        roomController.getRoom().getBoard().getPowerDeck().usedPowerups(powerup);
+        roomController.getRoom().getBoard().getPowerDeck().usedCard(powerup);
 
     }
 
@@ -130,13 +127,16 @@ public class RoundController {
                 break;
             case MOVE1_GRAB:
                 //send moving squares
-                ActionHandler.run(player, 2, roomController.getRoom());
+                Square goBackSquare = player.getPosition();
+                ActionHandler.run(player, 1, roomController.getRoom());
                 //player.movePlayer(ActionHandler.chooseSquare(player, player.getPosition().getValidPosition(1), roomController.getRoom()));
                 //squareManager(player, 1);
                 //grap in this square
                 try {
                     ActionHandler.grab(player, roomController.getRoom().getBoard(), roomController.getRoom());
                 } catch (NotExecutedExeption notExecutedExeption) {
+                    // set the player to his previous position
+                    player.movePlayer(goBackSquare);
                     //send a message with exception to string
                     System.out.println(notExecutedExeption.getMessage());
                 }
