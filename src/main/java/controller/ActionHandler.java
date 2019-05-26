@@ -10,6 +10,7 @@ import model.exceptions.*;
 import model.gamehandler.Room;
 import model.player.Player;
 import network.messages.Message;
+import network.messages.clientToServer.GeneralResponse;
 import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
 
@@ -152,8 +153,9 @@ public class ActionHandler {
         }
         else {
 
+            GenerationSquare currentSquare = (GenerationSquare) player.getPosition();
             //takes only weapons that the player can pay
-            List<Weapon> weapons=((GenerationSquare) player.getPosition()).getWeaponDeck().stream().
+            List<Weapon> weapons=currentSquare.getWeaponDeck().stream().
                     filter(i->player.enoughAmmos(i.getBuyCost(),true))
                     .collect(Collectors.toList());
 
@@ -185,18 +187,21 @@ public class ActionHandler {
                     }
 
                     discardWeapon.setCharged(true);
-                    ((GenerationSquare) player.getPosition()).addWeapon(discardWeapon);
-                    player.removeWeapon(discardWeapon);
-                    player.addWeapon(weapon);
+                    //places the discarded weapon in the same place of the weapon before
+                    currentSquare.getWeaponDeck()
+                            .set(currentSquare.getWeaponDeck().indexOf(weapon), discardWeapon);
+
+                    //remove and add the new weapon in the same position
+                    player.getWeapons()
+                            .set(player.getWeapons().indexOf(discardWeapon), weapon);
+
                 }
                 else{
-                    //remove weapon from gen square
-                    ((GenerationSquare) player.getPosition()).getWeaponDeck().remove(weapon);
-
-                    //put a new weapon
+                    //replace the weapon in the deck with a new one if there are cards
                     Weapon temp = (Weapon) room.getBoard().getWeaponDeck().getCard();
                     if( temp != null){
-                        ((GenerationSquare) player.getPosition()).addWeapon(temp);
+                        currentSquare.getWeaponDeck()
+                                .set(currentSquare.getWeaponDeck().indexOf(weapon), temp);
                     }
                     // add it to the player
                     player.addWeapon(weapon);

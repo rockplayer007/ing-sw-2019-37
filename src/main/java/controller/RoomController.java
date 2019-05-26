@@ -64,6 +64,7 @@ public class RoomController {
                     mockMessage = message;
                     //askingThread.interrupt();
                 }
+                break;
 
             default:
                 logger.log(Level.WARNING, "Unhandled message");
