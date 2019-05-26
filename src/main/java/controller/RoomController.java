@@ -228,6 +228,16 @@ public class RoomController {
         return list;
     }
 
+    public List<String> toJsonPlayerList(List<Player> players){
+        List<String> list = new ArrayList<>();
+        //not making use of the adapter because no need in view
+        Gson gson = new Gson();
+
+        players.forEach(x -> list.add(gson.toJson(x)) );
+
+        return list;
+    }
+
     public List<String> toJsonEffectList(List<Effect> effects){
         List<String> list = new ArrayList<>();
         //not making use of the adapter because no need in view
