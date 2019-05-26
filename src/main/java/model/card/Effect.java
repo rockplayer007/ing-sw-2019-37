@@ -20,7 +20,7 @@ public class Effect implements Serializable {
         this.operations = operations;
     }
 
-    public void execute(Room room)throws InterruptOperationException,NullTargetsException {
+    public void execute(Room room)throws NullTargetsException {
         for (Operation o:operations){
             o.execute(room);
         }

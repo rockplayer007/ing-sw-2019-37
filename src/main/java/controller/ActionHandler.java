@@ -3,9 +3,8 @@ package controller;
 import model.board.*;
 import model.card.*;
 
-import model.exceptions.InterruptOperationException;
 import model.exceptions.NotEnoughException;
-import model.exceptions.NotExecutedExeption;
+import model.exceptions.NotExecutedException;
 import model.exceptions.NullTargetsException;
 import model.gamehandler.AttackHandler;
 import model.exceptions.*;
@@ -75,26 +74,50 @@ public class ActionHandler {
      * @param room of the player in
      * @param weapon that the player want to use
      */
-    public static void shoot(Room room, Weapon weapon) throws NotExecutedExeption {
+    public static void shoot(Room room, Weapon weapon) throws NotExecutedException {
+        // reinitialization of AttackHandler,
         room.setAttackHandler(new AttackHandler());
         Map<Effect,Integer> effects = weapon.getEffects();
         Effect effectSelect;
+        boolean used=false; // a variable local need for check in the exception
         Player player=room.getCurrentPlayer();
+        // save the position of player for undo (use this only if is necessary)
         Square playerPosition = player.getPosition();
+
+        // add immediately the effect that have level -1 and initialization of list, if the weapon haven't effect -1 do only initialization
         List<Effect> validEffect = new ArrayList<>(weapon.getLevelEffects(-1));
+        //add the effect that have level 0
         validEffect.addAll(weapon.getLevelEffects(0));
+        validEffect = validEffect.stream().filter(x->player.enoughAmmos(x.getExtraCost(),true)).collect(Collectors.toList());
         effectSelect = chooseEffect(player,validEffect, room);
-        int i = 1;
+        int i = 1;// level counter
+        // if the player dont want use any effect.
+        if (effectSelect == null)
+            throw new NotExecutedException("Not effect chosen");
+
+
         while (effectSelect!=null){
             validEffect.remove(effectSelect);
+
             try {
                 deduction(player,effectSelect.getExtraCost(), room);
+                //TODO fare un funzione del tipo deduction che permette undo
                 effectSelect.execute(room);
+                // if the effect used is not level -1, means the weapon is used so i need set state of "Charged"
+                if (!used && effects.get(effectSelect)!=-1) {
+                    used = true;
+                    weapon.setCharged(false);
+                }
                 if (!weapon.getOptional())
                     break;
-            } catch (NullTargetsException|NotEnoughException|InterruptOperationException e) {
-                e.printStackTrace();
-//                TODO
+            } catch (NullTargetsException e) {
+                if (!used) {
+                    player.movePlayer(playerPosition);
+                    //TODO da vedere come e fatto il undo della deduction.
+                    throw new NotExecutedException("Effect is not possible used");
+                }
+            } catch (NotEnoughException e) {
+                throw new NotExecutedException(e.getMessage());
             }
             if (validEffect.isEmpty()|| validEffect.stream().allMatch(x->effects.get(x)==-1)){
                 validEffect.addAll(weapon.getLevelEffects(i));
@@ -103,7 +126,6 @@ public class ActionHandler {
             validEffect = validEffect.stream().filter(x->player.enoughAmmos(x.getExtraCost(),true)).collect(Collectors.toList());
             effectSelect = chooseEffect(player,validEffect, room);
         }
-        weapon.setCharged(false);
 
     }
 
@@ -211,7 +233,7 @@ public class ActionHandler {
      * @param player that do this action.
      * @param board that the player play.
      */
-    public static void grab( Player player,Board board, Room room) throws NotExecutedExeption{
+    public static void grab( Player player,Board board, Room room) throws NotExecutedException {
 
         if (!player.getPosition().isGenerationPoint()){
             AmmoCard card = ((AmmoSquare) player.getPosition()).getAmmoCard();
@@ -235,7 +257,7 @@ public class ActionHandler {
                 Weapon weapon = chooseCard(weapons, true, room, true);
 
                 if (weapon==null){
-                    throw new NotExecutedExeption("No card has been chosen");
+                    throw new NotExecutedException("No card has been chosen");
                 }
 
                 //pay
@@ -243,7 +265,7 @@ public class ActionHandler {
                     List<AmmoColor> cost = weapon.getBuyCost();
                     deduction(player,cost, room);
                 } catch (NotEnoughException e) {
-                    throw new NotExecutedExeption("Not enough ammo to pay");
+                    throw new NotExecutedException("Not enough ammo to pay");
                 }
 
 
@@ -282,7 +304,7 @@ public class ActionHandler {
             }
             else{
                 // etiher no there are no cards or not enough ammo to pay
-                throw new NotExecutedExeption("No available cards to choose");
+                throw new NotExecutedException("No available cards to choose");
             }
 
         }
@@ -402,6 +424,7 @@ public class ActionHandler {
      */
     public static void reload(Player player, Room room) throws NotEnoughException {
         List<Weapon> weapons = player.getWeapons().stream().filter(x->!x.getCharged()).collect(Collectors.toList());
+        weapons =  weapons.stream().filter(x->player.enoughAmmos(x.getChargeCost(),true)).collect(Collectors.toList());
         while (!weapons.isEmpty()) {
             Weapon weapon = chooseCard(weapons, true, room, true);
                 if (weapon == null)

@@ -105,7 +105,7 @@ public class WeaponDeck extends Deck<Weapon>{
         description="Notes: This card constrains the order in which you can use its effects. " +
                 "(Most cards don't.) Also note that each target must be a different player.\n" ;
 
-        weapons.add(new Weapon("T.H.O.R", description, AmmoColor.BLUE, Collections.singletonList(AmmoColor.RED),
+        weapons.add(new Weapon("T.H.O.R.", description, AmmoColor.BLUE, Collections.singletonList(AmmoColor.RED),
                 true, effects));
 
 

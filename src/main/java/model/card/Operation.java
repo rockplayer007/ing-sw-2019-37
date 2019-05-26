@@ -3,7 +3,6 @@ package model.card;
 import model.gamehandler.Room;
 import model.board.Color;
 import model.board.Square;
-import model.exceptions.InterruptOperationException;
 import model.exceptions.NotEnoughException;
 import model.exceptions.NullTargetsException;
 import model.gamehandler.AttackHandler;
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
 
 public interface Operation {
 
-    void execute(Room room)throws InterruptOperationException,NullTargetsException;
+    void execute(Room room)throws NullTargetsException;
 }
 
 class VisiblePlayers implements Operation{

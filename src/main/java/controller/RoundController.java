@@ -3,7 +3,7 @@ package controller;
 import model.board.Square;
 import model.card.Powerup;
 import model.exceptions.InterruptOperationException;
-import model.exceptions.NotExecutedExeption;
+import model.exceptions.NotExecutedException;
 import model.exceptions.NullTargetsException;
 import model.player.ActionOption;
 import model.player.Player;
@@ -88,8 +88,6 @@ public class RoundController {
         //execute it
         try {
             powerup.getEffect().execute(roomController.getRoom());
-        } catch (InterruptOperationException e) {
-            logger.log(Level.WARNING, "Powerup operation interrupted", e);
         } catch (NullTargetsException e) {
             logger.log(Level.WARNING, "Powerup operation has no targets", e);
         }
@@ -131,11 +129,11 @@ public class RoundController {
                 //grap in this square
                 try {
                     ActionHandler.grab(player, roomController.getRoom().getBoard(), roomController.getRoom());
-                } catch (NotExecutedExeption notExecutedExeption) {
+                } catch (NotExecutedException notExecutedException) {
                     // set the player to his previous position
                     player.movePlayer(goBackSquare);
                     //send a message with exception to string
-                    System.out.println(notExecutedExeption.getMessage());
+                    System.out.println(notExecutedException.getMessage());
                 }
 
                 break;
