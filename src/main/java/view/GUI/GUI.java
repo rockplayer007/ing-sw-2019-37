@@ -146,6 +146,7 @@ public class GUI implements ViewInterface {
     public void updatedBoard(GameBoard board) {
         if(firstUpdate){
             frame.getContentPane().removeAll();
+            frame.setSize(1280,1024);
             frame.setResizable(false);
             mapPanel = new MapPanel(board);
             mapPanel.setName("mapPanel");
@@ -156,7 +157,8 @@ public class GUI implements ViewInterface {
         }
 
         mapPanel.updBoardGui(board);
-
+        mapPanel.updatePlayerBoard(board);
+        mapPanel.updateWeapon(board,mainClient);
 
     }
 
@@ -171,7 +173,11 @@ public class GUI implements ViewInterface {
 
     @Override
     public void chooseWeapon(List<Weapon> weapons, boolean optional) {
-
+        Component component =frame.getContentPane().getComponent(0);
+        if ((component.getName().equals("mapPanel"))){
+            MapPanel mapPanel = (MapPanel) component;
+            mapPanel.getWeaponSelected(weapons,optional,mainClient);
+        }
     }
 
     @Override

@@ -147,4 +147,11 @@ public class PlayerBoard {
 
     }
 
+    public List<Player> getHp() {
+        return hp;
+    }
+
+    public List<Player> getMarks() {
+        return marks;
+    }
 }
