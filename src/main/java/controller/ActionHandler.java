@@ -1,16 +1,17 @@
 package controller;
 
-import model.board.AmmoSquare;
-import model.board.Board;
-import model.board.GenerationSquare;
-import model.board.Square;
+import model.board.*;
 import model.card.*;
 
+import model.exceptions.InterruptOperationException;
+import model.exceptions.NotEnoughException;
+import model.exceptions.NotExecutedExeption;
+import model.exceptions.NullTargetsException;
+import model.gamehandler.AttackHandler;
 import model.exceptions.*;
 import model.gamehandler.Room;
 import model.player.Player;
 import network.messages.Message;
-import network.messages.clientToServer.GeneralResponse;
 import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
 
@@ -75,13 +76,14 @@ public class ActionHandler {
      * @param weapon that the player want to use
      */
     public static void shoot(Room room, Weapon weapon) throws NotExecutedExeption {
-        //TODO inizializza attacHandler
+        room.setAttackHandler(new AttackHandler());
         Map<Effect,Integer> effects = weapon.getEffects();
         Effect effectSelect;
         Player player=room.getCurrentPlayer();
+        Square playerPosition = player.getPosition();
         List<Effect> validEffect = new ArrayList<>(weapon.getLevelEffects(-1));
         validEffect.addAll(weapon.getLevelEffects(0));
-        effectSelect = chooseEffects(player,validEffect, room);
+        effectSelect = chooseEffect(player,validEffect, room);
         int i = 1;
         while (effectSelect!=null){
             validEffect.remove(effectSelect);
@@ -99,14 +101,14 @@ public class ActionHandler {
                 i++;
             }
             validEffect = validEffect.stream().filter(x->player.enoughAmmos(x.getExtraCost(),true)).collect(Collectors.toList());
-            effectSelect = chooseEffects(player,validEffect, room);
+            effectSelect = chooseEffect(player,validEffect, room);
         }
         weapon.setCharged(false);
 
     }
 
     // if effects isempty return null.
-    public static Effect chooseEffects(Player player,List<Effect> effects, Room room){
+    public static Effect chooseEffect(Player player, List<Effect> effects, Room room){
         if(effects.isEmpty()){
             return null;
         }
@@ -128,12 +130,81 @@ public class ActionHandler {
 
     }
 
-    public static Player choosePlayer(Player player, List<Player> players, Room room){
-        //TODO
-        return null;
+    public static List<Player> choosePlayers(Player player, List<Player> possiblePlayers, int maxPlayerToChoose, Room room){
+
+        List<Player> playersToAttack = new ArrayList<>();
+        int askIterations = (maxPlayerToChoose < possiblePlayers.size() ? maxPlayerToChoose : possiblePlayers.size());
+
+        RoomController roomController = room.getRoomController();
+
+        for (int i = 0; i < askIterations; i++){
+
+            List<String> send = roomController
+                    .toJsonPlayerList(possiblePlayers);
+            ListResponse chosenPlayer = (ListResponse) roomController
+                    .sendAndReceive(player, new AnswerRequest(send, Message.Content.PLAYER_REQUEST));
+
+            try{
+                playersToAttack.add(possiblePlayers.get(chosenPlayer.getSelectedItem()));
+            }catch (RuntimeException e){
+                //cheater
+                logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
+                return null;
+            }
+        }
+        return playersToAttack;
     }
 
+    public static Square.Direction chooseDirection(Player player, List<Square.Direction> directions, Room room){
+        RoomController roomController = room.getRoomController();
+        List<String> send = roomController
+                .toJsonDirectionList(directions);
 
+        ListResponse direction = (ListResponse) roomController
+                .sendAndReceive(player, new AnswerRequest(send, Message.Content.DIRECTION_REQUEST));
+
+        try{
+            return directions.get(direction.getSelectedItem());
+        }catch (RuntimeException e){
+            //cheater
+            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
+            return null;
+        }
+    }
+
+    public static AmmoColor chooseAmmoColor(Player player, List<AmmoColor> ammo, Room room){
+        RoomController roomController = room.getRoomController();
+        List<String> send = roomController
+                .toJsonAmmoColortList(ammo);
+
+        ListResponse chosenAmmo = (ListResponse) roomController
+                .sendAndReceive(player, new AnswerRequest(send, Message.Content.AMMOCOLOR_REQUEST));
+
+        try{
+            return ammo.get(chosenAmmo.getSelectedItem());
+        }catch (RuntimeException e){
+            //cheater
+            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
+            return null;
+        }
+    }
+
+    public static Color chooseRoom(Player player, List<Color> rooms, Room room){
+        RoomController roomController = room.getRoomController();
+        List<String> send = roomController
+                .toJsonColorList(rooms);
+
+        ListResponse chosenRoom = (ListResponse) roomController
+                .sendAndReceive(player, new AnswerRequest(send, Message.Content.ROOM_REQUEST));
+
+        try{
+            return rooms.get(chosenRoom.getSelectedItem());
+        }catch (RuntimeException e){
+            //cheater
+            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
+            return null;
+        }
+    }
 
     /**
      * basic grab method let player to grab all card that they can
@@ -324,7 +395,6 @@ public class ActionHandler {
             }
         }
     }
-
 
     /**
      * reload the weapon

@@ -53,10 +53,7 @@ public class PlayerBoard {
 //                this.player.setActionStatus(ActionState.ADRENALINEACTIONS2);
 //            else if (hp.size()>2)
 //                this.player.setActionStatus(ActionState.ADRENALINEACTIONS1);
-        }else{
-            //TODO
-             }
-
+        }
         //TODO bisogna vedere come funziona con gli pattern observer
     }
 

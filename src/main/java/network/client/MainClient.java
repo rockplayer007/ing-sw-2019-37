@@ -3,10 +3,12 @@ package network.client;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.board.*;
+import model.card.AmmoColor;
 import model.card.Effect;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.player.ActionOption;
+import model.player.Player;
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
 import network.messages.Message;
@@ -126,6 +128,29 @@ public class MainClient {
         connection.sendMessage(new ListResponse(username, clientID, square, Message.Content.SQUARE_RESPONSE));
     }
 
+    public void sendSelectedEffect(int effect){
+        connection.sendMessage(new ListResponse(username, clientID, effect, Message.Content.EFFECT_RESPOSNSE));
+    }
+
+    public void sendSelectedPlayer(int player){
+        connection.sendMessage(new ListResponse(username, clientID, player, Message.Content.PLAYER_RESPONSE));
+    }
+
+    public void sendSelectedDirection(int direction){
+        connection.sendMessage(new ListResponse(username, clientID, direction, Message.Content.DIRECTION_RESPONSE));
+    }
+
+    public void sendSelectedAmmoColor(int ammo){
+        connection.sendMessage(new ListResponse(username, clientID, ammo, Message.Content.AMMO_RESPONSE));
+    }
+
+    public void sendSelectedRoom(int room){
+        connection.sendMessage(new ListResponse(username, clientID, room, Message.Content.ROOM_RESPONSE));
+    }
+
+
+
+
 
     /**
      * New messages that arrive from the server are managed here
@@ -210,7 +235,30 @@ public class MainClient {
                 stringed.forEach(square -> effects.add(gson.fromJson(square, Effect.class)));
                 view.chooseEffect(effects);
                 break;
-
+            case PLAYER_REQUEST:
+                stringed = ((AnswerRequest) message).getRequests();
+                List<Player> players = new ArrayList<>();
+                stringed.forEach(square -> players.add(gson.fromJson(square, Player.class)));
+                view.choosePlayer(players);
+                break;
+            case DIRECTION_REQUEST:
+                stringed = ((AnswerRequest) message).getRequests();
+                List<Square.Direction> directions = new ArrayList<>();
+                stringed.forEach(square -> directions.add(gson.fromJson(square, Square.Direction.class)));
+                view.chooseDirection(directions);
+                break;
+            case AMMOCOLOR_REQUEST:
+                stringed = ((AnswerRequest) message).getRequests();
+                List<AmmoColor> ammoColors = new ArrayList<>();
+                stringed.forEach(square -> ammoColors.add(gson.fromJson(square, AmmoColor.class)));
+                view.chooseAmmoColor(ammoColors);
+                break;
+            case ROOM_REQUEST:
+                stringed = ((AnswerRequest) message).getRequests();
+                List<Color> rooms = new ArrayList<>();
+                stringed.forEach(square -> rooms.add(gson.fromJson(square, Color.class)));
+                view.chooseRoom(rooms);
+                break;
             default:
                 logger.log(Level.WARNING, "Unregistered message");
 

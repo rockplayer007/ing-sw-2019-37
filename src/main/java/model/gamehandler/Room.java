@@ -78,6 +78,9 @@ public class Room {
         return board;
     }
 
+    public void setAttackHandler(AttackHandler attackHandler) {
+        this.attackHandler = attackHandler;
+    }
 
     public AttackHandler getAttackHandler() {
         return attackHandler;

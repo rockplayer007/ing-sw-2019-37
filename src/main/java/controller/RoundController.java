@@ -122,15 +122,12 @@ public class RoundController {
         switch (choice){
             case MOVE3:
                 ActionHandler.run(player, 3, roomController.getRoom());
-                //player.movePlayer(ActionHandler.chooseSquare(player, player.getPosition().getValidPosition(3), roomController.getRoom()));
-                //player.movePlayer(squareManager(player, 3));
                 break;
             case MOVE1_GRAB:
-                //send moving squares
+                //backup square
                 Square goBackSquare = player.getPosition();
                 ActionHandler.run(player, 1, roomController.getRoom());
-                //player.movePlayer(ActionHandler.chooseSquare(player, player.getPosition().getValidPosition(1), roomController.getRoom()));
-                //squareManager(player, 1);
+
                 //grap in this square
                 try {
                     ActionHandler.grab(player, roomController.getRoom().getBoard(), roomController.getRoom());
@@ -146,7 +143,7 @@ public class RoundController {
                 //ask card
 
                 //execute this card
-                //flag for shooting
+                //flag for shooting, needed to decide to use a powerup or not
                 shot = true;
                 break;
         }
