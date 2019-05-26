@@ -10,6 +10,7 @@ import model.exceptions.InterruptOperationException;
 import model.exceptions.NotEnoughException;
 import model.exceptions.NotExecutedExeption;
 import model.exceptions.NullTargetsException;
+import model.gamehandler.AttackHandler;
 import model.gamehandler.Room;
 import model.player.Player;
 import network.messages.Message;
@@ -80,10 +81,11 @@ public class ActionHandler {
      * @param weapon that the player want to use
      */
     public static void shoot(Room room, Weapon weapon) throws NotExecutedExeption {
-        //TODO inizializza attacHandler
+        room.setAttackHandler(new AttackHandler());
         Map<Effect,Integer> effects = weapon.getEffects();
         Effect effectSelect;
         Player player=room.getCurrentPlayer();
+        Square playerPosition = player.getPosition();
         List<Effect> validEffect = new ArrayList<>(weapon.getLevelEffects(-1));
         validEffect.addAll(weapon.getLevelEffects(0));
         effectSelect = chooseEffects(player,validEffect);

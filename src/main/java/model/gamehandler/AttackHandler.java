@@ -15,7 +15,7 @@ public class AttackHandler {
     private Square effectSquare;
     private Map<Player,Integer> damaged;
 
-    AttackHandler() {
+    public AttackHandler() {
         possibleTargets = new ArrayList<>();
         targetsToShot = new ArrayList<>();
         selectedTargets = new ArrayList<>();
