@@ -1,12 +1,15 @@
 package view.CLI;
 
+import model.board.Color;
 import model.board.GameBoard;
 import model.board.SkullBoard;
 import model.board.Square;
+import model.card.AmmoColor;
 import model.card.Effect;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.player.ActionOption;
+import model.player.Player;
 import network.client.MainClient;
 import view.ViewInterface;
 
@@ -128,7 +131,27 @@ public class CLI implements ViewInterface {
 
     @Override
     public void chooseEffect(List<Effect> effects) {
+        printer.askEffect(effects, effect -> mainClient.sendSelectedCard(effect));
+    }
 
+    @Override
+    public void choosePlayer(List<Player> players) {
+        printer.askPlayer(players, player -> mainClient.sendSelectedPlayer(player));
+    }
+
+    @Override
+    public void chooseDirection(List<Square.Direction> directions) {
+        printer.askDirection(directions, direction -> mainClient.sendSelectedDirection(direction));
+    }
+
+    @Override
+    public void chooseAmmoColor(List<AmmoColor> ammoColors) {
+        printer.askAmmoColor(ammoColors, color -> mainClient.sendSelectedAmmoColor(color));
+    }
+
+    @Override
+    public void chooseRoom(List<Color> rooms) {
+        printer.askRoom(rooms, room -> mainClient.sendSelectedRoom(room));
     }
 
     public void choosePowerup(List<Powerup> powerups, boolean optional){
@@ -163,14 +186,7 @@ public class CLI implements ViewInterface {
 
     @Override
     public void updateAll(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard) {
-        //print board
-        //print weapons in the board
-        //print skullboard
-        //print players informations
-        //for myPlayer print also powerups
-
         printer.printAllInfo(board, myPowerups, skullBoard);
-        //printer.printBoard(board);
 
     }
 

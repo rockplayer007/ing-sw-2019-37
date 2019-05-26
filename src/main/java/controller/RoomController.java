@@ -3,6 +3,7 @@ package controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.board.*;
+import model.card.AmmoColor;
 import model.card.Card;
 import model.card.Effect;
 import model.exceptions.TooManyPlayerException;
@@ -244,6 +245,36 @@ public class RoomController {
         Gson gson = new Gson();
 
         effects.forEach(x -> list.add(gson.toJson(x)) );
+
+        return list;
+    }
+
+    public List<String> toJsonDirectionList(List<Square.Direction> directions){
+        List<String> list = new ArrayList<>();
+        //not making use of the adapter because no need in view
+        Gson gson = new Gson();
+
+        directions.forEach(x -> list.add(gson.toJson(x)) );
+
+        return list;
+    }
+
+    public List<String> toJsonAmmoColortList(List<AmmoColor> ammo){
+        List<String> list = new ArrayList<>();
+        //not making use of the adapter because no need in view
+        Gson gson = new Gson();
+
+        ammo.forEach(x -> list.add(gson.toJson(x)) );
+
+        return list;
+    }
+
+    public List<String> toJsonColorList(List<Color> color){
+        List<String> list = new ArrayList<>();
+        //not making use of the adapter because no need in view
+        Gson gson = new Gson();
+
+        color.forEach(x -> list.add(gson.toJson(x)) );
 
         return list;
     }

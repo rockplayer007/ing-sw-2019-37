@@ -1,13 +1,16 @@
 package view;
 
 
+import model.board.Color;
 import model.board.GameBoard;
 import model.board.SkullBoard;
 import model.board.Square;
+import model.card.AmmoColor;
 import model.card.Effect;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.player.ActionOption;
+import model.player.Player;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
@@ -57,4 +60,11 @@ public interface ViewInterface {
 
     void chooseEffect(List<Effect> effects);
 
+    void choosePlayer(List<Player> players);
+
+    void chooseDirection(List<Square.Direction> directions);
+
+    void chooseAmmoColor(List<AmmoColor> ammoColors);
+
+    void chooseRoom(List<Color> rooms);
 }

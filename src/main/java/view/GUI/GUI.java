@@ -2,10 +2,12 @@ package view.GUI;
 import model.board.GameBoard;
 import model.board.SkullBoard;
 import model.board.Square;
+import model.card.AmmoColor;
 import model.card.Effect;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.player.ActionOption;
+import model.player.Player;
 import network.client.MainClient;
 import view.ViewInterface;
 
@@ -178,6 +180,26 @@ public class GUI implements ViewInterface {
 
     @Override
     public void chooseEffect(List<Effect> effects) {
+
+    }
+
+    @Override
+    public void choosePlayer(List<Player> players) {
+
+    }
+
+    @Override
+    public void chooseDirection(List<Square.Direction> directions) {
+
+    }
+
+    @Override
+    public void chooseAmmoColor(List<AmmoColor> ammoColors) {
+
+    }
+
+    @Override
+    public void chooseRoom(List<model.board.Color> rooms) {
 
     }
 

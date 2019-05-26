@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import model.card.AmmoColor;
+import model.card.Effect;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.player.Player;
@@ -126,6 +127,63 @@ public class Printer {
 
         displayRequest(printable, selection);
     }
+
+    public void askEffect(List<Effect> effects, Consumer<Integer> selection){
+        List<String> printable = new ArrayList<>();
+        for(Effect effect : effects){
+            StringBuilder temp = new StringBuilder();
+            temp.append(colorToAnsi(Color.WHITE)).append("Effect: ").append(effect.getDescription());
+            temp.append("Extra cost: ");
+            for(AmmoColor color : effect.getExtraCost()){
+                temp.append(colorToAnsi(color)).append("O");
+            }
+
+            printable.add(temp.toString());
+        }
+
+        displayRequest(printable, selection);
+    }
+
+    public void askPlayer(List<Player> players, Consumer<Integer> selection){
+        List<String> printable = new ArrayList<>();
+        for(Player player : players){
+            String temp = colorToAnsi(Color.WHITE) + "Attack " + colorToAnsi(player.getColor()) + player.getNickname();
+            printable.add(temp);
+        }
+
+        displayRequest(printable, selection);
+    }
+
+    public void askAmmoColor(List<AmmoColor> ammoColors, Consumer<Integer> selection){
+        List<String> printable = new ArrayList<>();
+        for(AmmoColor ammo : ammoColors){
+            String temp = colorToAnsi(Color.WHITE) + "Pay with: " + colorToAnsi(ammo) + "O";
+            printable.add(temp);
+        }
+
+        displayRequest(printable, selection);
+    }
+
+    public void askRoom(List<Color> rooms, Consumer<Integer> selection){
+        List<String> printable = new ArrayList<>();
+        for(Color room : rooms){
+            String temp = colorToAnsi(room) + room.toString() + colorToAnsi(Color.WHITE) + "room";
+            printable.add(temp);
+        }
+
+        displayRequest(printable, selection);
+    }
+
+    public void askDirection(List<Square.Direction> directions, Consumer<Integer> selection){
+        List<String> printable = new ArrayList<>();
+        for(Square.Direction direction : directions){
+            String temp = colorToAnsi(Color.WHITE) + "Shoot " + direction.toString();
+            printable.add(temp);
+        }
+
+        displayRequest(printable, selection);
+    }
+
 
     public void closeRequest(){
         if(thread != null && !thread.isInterrupted()){

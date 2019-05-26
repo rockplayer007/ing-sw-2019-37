@@ -273,8 +273,18 @@ public class Square implements Serializable {
     public String toString () {
         return "X: " + x + " Y: " + y + " Color: " + squareColor;
     }
+
     public enum Direction {
-        TOP,DOWN,LEFT,RIGHT
+        //🠘 🠚 🠙 🠛
+        //TOP("\uD83E\uDC19"), DOWN("\uD83E\uDC1B"),LEFT("\uD83E\uDC18"),RIGHT("\uD83E\uDC1A");
+        TOP, DOWN, LEFT, RIGHT;
+
+        @Override
+        public String toString() {
+            return super.toString();
+        }
+
+
     }
 
 }
