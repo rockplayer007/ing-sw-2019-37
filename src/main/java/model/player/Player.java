@@ -100,6 +100,7 @@ public class Player implements Serializable {
             square.addPlayer(this);
             setPosition(square);
         }
+        //TODO notify view the changes
         //else dont move if the player didnt change position
     }
 

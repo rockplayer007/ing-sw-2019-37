@@ -45,7 +45,7 @@ public class ActionHandler {
     /**
      *  general way to let player chooses the Squere that he can go
      * @param player current player
-     * @param  validPositions all ssquare that you can choose.
+     * @param  validPositions all square that you can choose.
      * @return the Square that the player choose to move
      */
     public static Square chooseSquare(Player player,Set<Square> validPositions, Room room) {

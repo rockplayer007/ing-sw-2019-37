@@ -50,11 +50,16 @@ class SelectTargets implements Operation{
         List<Player> possibleTargets =attackHandler.getPossibleTargets();
         List<Player> targets=new ArrayList<>();
         if (distinctSquare) {
-            //TODO ask player what target he wants
+            for (int i=0; i< numberTragets;i++){
+                targets.addAll(ActionHandler.choosePlayers(currentPlayer,possibleTargets,1,room));
+                Square targetPostion = targets.get(i).getPosition();
+                possibleTargets = possibleTargets.stream().filter(x->x.getPosition()!=targetPostion).collect(Collectors.toList());
+            }
 
         }else {
-//            TODO the targets choice need be different square
+           targets = ActionHandler.choosePlayers(currentPlayer,possibleTargets,numberTragets,room);
         }
+        // TODO se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
         possibleTargets.removeAll(targets);
         attackHandler.setTargetsToShot(targets);
     }
@@ -72,8 +77,9 @@ class SelectFromSelectedTargets implements Operation{
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> selectedTargets =attackHandler.getSelectedTargets();
-        List<Player> targets=new ArrayList<>();
-        //TODO
+        List<Player> targets = ActionHandler.choosePlayers(currentPlayer,selectedTargets,numberTragets,room);
+    // TODO se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
+        selectedTargets.removeAll(targets);
         attackHandler.setTargetsToShot(targets);
 
     }
@@ -147,6 +153,7 @@ class Run implements Operation{
     public void execute(Room room){
         Player currentPlayer = room.getCurrentPlayer();
         currentPlayer.movePlayer(ActionHandler.chooseSquare(currentPlayer,currentPlayer.getPosition().getValidPosition(distance), room));
+        //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
     }
 }
 
@@ -239,7 +246,8 @@ class  MoveTargetToVisible implements Operation{
         Set<Square> validSquare;
         validSquare=target.getPosition().getValidPosition(distance).stream().filter(visibleSquare::contains).collect(Collectors.toSet());
 
-        target.movePlayer(ActionHandler.chooseSquare(currentPlayer,validSquare, room));//TODO DA controllare.
+        target.movePlayer(ActionHandler.chooseSquare(currentPlayer,validSquare, room));
+        //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
     }
 }
 
@@ -268,7 +276,9 @@ class SelectEffectSquare implements Operation{
                 .stream()
                 .filter(x->x.getValidPosition(zone).stream().anyMatch(p->!p.getPlayersOnSquare().isEmpty()))
                 .collect(Collectors.toSet());
-        Square vortex=ActionHandler.chooseSquare(currentPlayer,visibleSquare, room);//TODO DA controllare.
+
+        Square vortex=ActionHandler.chooseSquare(currentPlayer,visibleSquare, room);
+        //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
         vortex.getValidPosition(1).forEach(x-> possibleTargets.addAll(x.getPlayersOnSquare()));
         attackHandler.setPossibleTargets(possibleTargets);
         attackHandler.setEffectSquare(vortex);
@@ -295,15 +305,20 @@ class Furance implements Operation{
         Player currentPlayer = room.getCurrentPlayer();
         if (!selectSquare){
             Set<Color> rooms= new HashSet<>();
+            List<Player> targets = new ArrayList<>();
             currentPlayer.getPosition().getNeighbourSquare().forEach(x->rooms.add(x.getColor()));
             rooms.remove(currentPlayer.getPosition().getColor());
-//          TODO far scegliere stanza.
 
+            Color color = ActionHandler.chooseRoom(currentPlayer,new ArrayList<>(rooms),room);
+            //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
+            room.getBoard().getMap().getSquaresInRoom().get(color).forEach(x-> targets.addAll(x.getPlayersOnSquare()));
+            attackHandler.setTargetsToShot(targets);
         }else {
             Set<Square> squares=new HashSet<>(currentPlayer.getPosition().getNeighbourSquare());
             squares.remove(currentPlayer.getPosition());
             squares=squares.stream().filter(x->!x.getPlayersOnSquare().isEmpty()).collect(Collectors.toSet());
-            attackHandler.setTargetsToShot(ActionHandler.chooseSquare(currentPlayer,squares, room).getPlayersOnSquare());//TODO DA controllare.
+            attackHandler.setTargetsToShot(ActionHandler.chooseSquare(currentPlayer,squares, room).getPlayersOnSquare());
+            //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
         }
     }
 }
@@ -327,7 +342,7 @@ class Heatseekker implements Operation{
  */
 class DirectionTargets implements Operation{
     private int distance;
-    Boolean penetrate;
+    private boolean penetrate;
 
     DirectionTargets(int distance, Boolean penetrate){
         this.distance=distance;
@@ -338,18 +353,20 @@ class DirectionTargets implements Operation{
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         Map<Square.Direction,Set<Square>> map;
+
         if (!penetrate)
             map = currentPlayer.getPosition().directions(distance);
         else
             map= currentPlayer.getPosition().directionAbsolute(room.getBoard().getMap());
+
         map=map.entrySet().stream()
                 .filter(x -> x.getValue().stream().anyMatch(s -> s.getPlayersOnSquare().isEmpty()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        Set<Square.Direction> direction=map.keySet();
-        //Todo da vedere con messagio per fare la scelta;
-        String choise="";
 
-        Set<Square> squares=map.get(choise);
+        Square.Direction choice = ActionHandler.chooseDirection(currentPlayer,new ArrayList<>(map.keySet()),room);
+        //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
+
+        Set<Square> squares=map.get(choice);
         List<Player> possibleTargets=new ArrayList<>();
         squares.forEach(x->possibleTargets.addAll(x.getPlayersOnSquare()));
         attackHandler.setPossibleTargets(possibleTargets);
@@ -387,7 +404,8 @@ class MoveTarget implements Operation{
         Player target = room.getAttackHandler().getTargetsToShot().get(0); // dovrebbe essere sempre uno solo quando lancia questo operazione
         Set<Square> validSquare;
         validSquare=target.getPosition().getValidPosition(distance);
-        target.movePlayer(ActionHandler.chooseSquare(currentPlayer,validSquare, room));//TODO DA controllare.
+        target.movePlayer(ActionHandler.chooseSquare(currentPlayer,validSquare, room));
+        //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
     }
 }
 
@@ -464,13 +482,13 @@ class Flamethorwer implements Operation {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         if (map.size() == 0)
             throw new NullTargetsException("haven't targets can be shot");
-        Set<Square.Direction> direction = map.keySet();
-        //Todo da vedere con messagio per fare la scelta;
-        String choise = "";
 
-        List<Square> squares = new ArrayList<>(map.get(choise));
+        Square.Direction choice = ActionHandler.chooseDirection(currentPlayer,new ArrayList<>(map.keySet()),room);
+        //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
+
+        List<Square> squares = new ArrayList<>(map.get(choice));
         squares.remove(currentPlayer.getPosition());
-        for (Square s:map.get(choise)){
+        for (Square s:map.get(choice)){
             if (currentPlayer.getPosition().getNeighbourSquare().contains(s)) {
                 attackHandler.setPossibleTargets(squares.get(0).getPlayersOnSquare());
                 new SelectAllTarget().execute(room);
@@ -497,6 +515,7 @@ class Repel implements Operation{
         Set<Square> validPosition = new HashSet<>();
         target.getPosition().directions(distance).forEach((key,value)->validPosition.addAll(value));
         target.movePlayer(ActionHandler.chooseSquare(room.getCurrentPlayer(),validPosition, room));
+        //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
     }
 }
  class AllPossibleTargets implements Operation{
@@ -515,10 +534,10 @@ class TargetingScope implements Operation{
         AttackHandler attackHandler = room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         List<AmmoColor> ammoColors = currentPlayer.allAmmo().entrySet().stream().filter(x->x.getValue()>0).map(Map.Entry::getKey).collect(Collectors.toList());
-        //TODO far scegliere un ammo da utilizzare.
-        int i=0;//da controllare
+        AmmoColor ammoColor = ActionHandler.chooseAmmoColor(currentPlayer,ammoColors,room);
+        //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
         try {
-            ActionHandler.deduction(currentPlayer,Collections.singletonList(ammoColors.get(i)), room);
+            ActionHandler.deduction(currentPlayer,Collections.singletonList(ammoColor),room);
         } catch (NotEnoughException e) {
             throw new NullTargetsException(e.getMessage());
         }
@@ -532,6 +551,7 @@ class Teleporter implements Operation{
     public void execute(Room room){
         Player currentPlayer = room.getCurrentPlayer();
         currentPlayer.movePlayer(ActionHandler.chooseSquare(currentPlayer,room.getBoard().getMap().allSquares(), room));
+        //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
 
     }
 }
