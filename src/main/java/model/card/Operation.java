@@ -192,6 +192,7 @@ class SameSquare implements Operation{
     public void execute(Room room) {
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> possiblePlayers = new ArrayList<>(currentPlayer.getPosition().getPlayersOnSquare());
+        possiblePlayers.remove(currentPlayer);
         room.getAttackHandler().setPossibleTargets(possiblePlayers);
     }
 }

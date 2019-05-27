@@ -1,5 +1,6 @@
 package model.card;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,7 @@ public class Weapon extends Card {
     private transient Map<Effect,Integer> effects;
 
 
-    Weapon(String name, String description, AmmoColor chargeCost, List<AmmoColor> buyCost,Boolean optional,Map<Effect,Integer> effects){
+    public Weapon(String name, String description, AmmoColor chargeCost, List<AmmoColor> buyCost,Boolean optional,Map<Effect,Integer> effects){
         super(name, description);
         this.buyCost = buyCost;
         this.chargeCost = chargeCost;

@@ -1,8 +1,8 @@
 package model.card;
 
-import java.io.Serializable;
 
-public abstract class Card {
+
+public class Card  {
     private String name;
     private String description;
 

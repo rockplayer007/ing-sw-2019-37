@@ -1,24 +1,31 @@
 package model.player;
 
+
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * 
  */
 public class PlayerBoard {
-    private  Player player;
+
+    private transient Player player;
     private List<Player> hp;
     private static int[] pointArray = {8, 6, 4, 2, 1, 1};
     private static int[] frenzyPoints = {2, 1, 1, 1};
-    private Boolean isFrenzy;
+    private transient Boolean isFrenzy;
     private int points;
     private int deathTimes;
     private List<Player> marks;
 
-    public PlayerBoard() {
+    public PlayerBoard(Player player) {
+        this.player = player;
         this.hp=new ArrayList<>(12);
         this.points=0;
         this.deathTimes=0;
+        marks = new ArrayList<>();
+        isFrenzy = false;
+
     }
 
     public int getDeathTimes() {
@@ -39,6 +46,8 @@ public class PlayerBoard {
      * @param points how damage give this(player).
      */
     public void addDamage(Player player,int points){
+        if (points==0)
+            return;
         for (int i=0;i<points;i++) {
             if (hp.size() < 12)
                 hp.add(player);

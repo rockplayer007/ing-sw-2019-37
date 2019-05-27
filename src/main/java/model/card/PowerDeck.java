@@ -18,7 +18,7 @@ public class PowerDeck extends Deck<Powerup>{
         String newtonDes = "You may play this card on your turn before or after any action. Choose any other player's" +
                 "figure and move it 1 or 2 squares in one direction. (You can't use this to move a figure" +
                 "after it respawns at the end of your turn. That would be too late.)";
-        operations = Arrays.asList(new AllPossibleTargets(),new SelectTargets(1, true), new MoveTarget(2));
+        operations = Arrays.asList(new AllPossibleTargets(),new SelectTargets(1, true), new Repel(2));
         Effect newton= new Effect("","",Collections.emptyList(), operations);
 
         String tagbackGrenadeDes = "You may play this card when you receive damage from a player you can see. Give that player 1 mark.";

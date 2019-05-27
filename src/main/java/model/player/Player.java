@@ -34,7 +34,7 @@ public class Player implements Serializable {
         }
         powerups=new ArrayList<>();
         weapons=new ArrayList<>();
-        playerBoard=new PlayerBoard();
+        playerBoard=new PlayerBoard(this);
         actionStatus = ActionState.TURNACTIONS;
         position = null;
 
@@ -100,7 +100,6 @@ public class Player implements Serializable {
             square.addPlayer(this);
             setPosition(square);
         }
-        //TODO notify view the changes
         //else dont move if the player didnt change position
     }
 

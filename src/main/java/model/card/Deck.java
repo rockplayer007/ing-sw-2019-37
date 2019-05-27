@@ -52,4 +52,8 @@ public abstract class Deck <T extends Card>{
     public void usedCard(T card){
         usedCard.add(card);
     }
+
+    public Deque<T> getCardDeck() {
+        return cardDeck;
+    }
 }
