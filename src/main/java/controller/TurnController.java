@@ -32,15 +32,25 @@ public class    TurnController {
 
     }
 
-    public void startPlayerRound(Player player){
-        if(roundStatus == RoundStatus.FIRST_ROUND){
-            firstRound(player);
-            //continue with normal round
-            normalRound(player);
+    public void startPlayerRound(){
+
+        //need to ckeck with currentPlayer
+        for(Player player : room.getPlayers()){
+            if(roundStatus == RoundStatus.FIRST_ROUND){
+                firstRound(player);
+                //continue with normal round
+                normalRound(player);
+            }
+            else if (roundStatus == RoundStatus.NORMAL_ROUND){
+                normalRound(player);
+            }
+            room.setNextPlayer();
         }
-        else if (roundStatus == RoundStatus.NORMAL_ROUND){
-            normalRound(player);
-        }
+        roundStatus = RoundStatus.NORMAL_ROUND;
+
+
+        //TODO change this
+        startPlayerRound();
     }
 
     public void firstRound(Player currentPlayer){
@@ -78,29 +88,17 @@ public class    TurnController {
     }
 
     public void normalRound(Player player){
-        int x = 0;
-        while (x == 0){
+        //in normal round do this 2 times
+        for(int i = 0; i < 2; i++){
             //first ask for powerup
             roundController.powerupController(player);
-            roomController.sendUpdate();
+            //roomController.sendUpdate();
             //ask for action
             roundController.actionController(player);
             roomController.sendUpdate();
         }
-
-        //ask powerup again
+        //ask last time
         roundController.powerupController(player);
-        //ask for action again
-        roundController.actionController(player);
-        //last powerup check
-        roundController.powerupController(player);
-        //roundController.powerupController(player);
-        //send reload request
-
-
-        //to remove
-        roundController.actionController(player);
-
 
     }
 

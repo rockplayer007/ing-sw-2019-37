@@ -197,7 +197,7 @@ public class ActionHandler {
     public static AmmoColor chooseAmmoColor(Player player, List<AmmoColor> ammo, Room room){
         RoomController roomController = room.getRoomController();
         List<String> send = roomController
-                .toJsonAmmoColortList(ammo);
+                .toJsonAmmoColorList(ammo);
 
         ListResponse chosenAmmo = (ListResponse) roomController
                 .sendAndReceive(player, new AnswerRequest(send, Message.Content.AMMOCOLOR_REQUEST));
