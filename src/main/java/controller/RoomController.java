@@ -44,6 +44,16 @@ public class RoomController {
 
     public void handleMessages(ClientToServer message) {
 
+        if(checkReceiver(message)) {
+
+            mockMessage = message;
+            //askingThread.interrupt();
+        }
+        else {
+            System.out.println("CHEATER");
+        }
+
+        /*
         switch (message.getContent()) {
             case CARD_RESPONSE:
                 if(checkReceiver(message)) {
@@ -71,6 +81,8 @@ public class RoomController {
                 logger.log(Level.WARNING, "Unhandled message");
         }
 
+         */
+
     }
 
 
@@ -89,14 +101,10 @@ public class RoomController {
     }
 
     public void matchSetup() {
-
-        //add players to the room
-        room.setPlayers(players);
-
         askBoard();
 
         System.out.println("next steeeeeeeeeeeep");
-        turnController.startPlayerRound(room.getCurrentPlayer());
+        turnController.startPlayerRound();
 
     }
 
@@ -206,6 +214,7 @@ public class RoomController {
     public void resetReceiver(){
         mockMessage = null;
         expectedType = null;
+        //TODO expected receiver??
     }
 
     //TODO check this
@@ -259,7 +268,7 @@ public class RoomController {
         return list;
     }
 
-    public List<String> toJsonAmmoColortList(List<AmmoColor> ammo){
+    public List<String> toJsonAmmoColorList(List<AmmoColor> ammo){
         List<String> list = new ArrayList<>();
         //not making use of the adapter because no need in view
         Gson gson = new Gson();
