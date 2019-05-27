@@ -101,6 +101,9 @@ public class RoomController {
     }
 
     public void matchSetup() {
+
+        //add players to the room
+        room.setPlayers(players);
         askBoard();
 
         System.out.println("next steeeeeeeeeeeep");
