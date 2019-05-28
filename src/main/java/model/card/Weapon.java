@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
-public class Weapon extends Card {
+public class Weapon extends Card{
 
     private Boolean charged;
     private AmmoColor chargeCost;

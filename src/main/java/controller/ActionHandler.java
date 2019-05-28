@@ -5,7 +5,6 @@ import model.card.*;
 
 import model.exceptions.NotEnoughException;
 import model.exceptions.NotExecutedException;
-import model.exceptions.NullTargetsException;
 import model.gamehandler.AttackHandler;
 import model.exceptions.*;
 import model.gamehandler.Room;

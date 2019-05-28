@@ -7,19 +7,17 @@ import java.util.*;
 /**
  * 
  */
-public class PlayerBoard {
+public class PlayerBoard implements Serializable{
 
-    private transient Player player;
-    private List<Player> hp;
+    private transient List<Player> hp;
     private static int[] pointArray = {8, 6, 4, 2, 1, 1};
     private static int[] frenzyPoints = {2, 1, 1, 1};
-    private transient Boolean isFrenzy;
+    private boolean isFrenzy;
     private int points;
     private int deathTimes;
-    private List<Player> marks;
-
-    public PlayerBoard(Player player) {
-        this.player = player;
+    private transient List<Player> marks;
+    private transient  Player killer;
+    public PlayerBoard() {
         this.hp=new ArrayList<>(12);
         this.points=0;
         this.deathTimes=0;
@@ -137,7 +135,7 @@ public class PlayerBoard {
     /**
      * liquidation when the hero dies, and give the point to others player
      */
-    public void liquidation(){
+    public void liquidation(Player player){
         List<Player> listForLiquidation=listForLiquidation();
         int i=0;
         for (Player p:listForLiquidation){
@@ -148,7 +146,7 @@ public class PlayerBoard {
             hp.get(0).getPlayerBoard().addPoints(1);
 
         if (hp.size()==12&&hp.get(11)!=null)
-            hp.get(11).getPlayerBoard().addMark(this.player);
+            hp.get(11).getPlayerBoard().addMark(player);
         hp=new ArrayList<>();
 
     }

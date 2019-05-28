@@ -4,9 +4,8 @@ import model.gamehandler.Room;
 import model.board.Color;
 import model.board.Square;
 import model.exceptions.NotEnoughException;
-import model.exceptions.NullTargetsException;
 import model.gamehandler.AttackHandler;
-
+import model.exceptions.NotExecutedException;
 import controller.ActionHandler;
 import model.player.Player;
 
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 
 public interface Operation {
 
-    void execute(Room room)throws NullTargetsException;
+    void execute(Room room)throws NotExecutedException;
 }
 
 class VisiblePlayers implements Operation{
@@ -44,7 +43,7 @@ class SelectTargets implements Operation{
     }
 
     @Override
-    public void execute(Room room){
+    public void execute(Room room)throws NotExecutedException{
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> possibleTargets =attackHandler.getPossibleTargets();
@@ -73,7 +72,7 @@ class SelectFromSelectedTargets implements Operation{
     }
 
     @Override
-    public void execute(Room room) {
+    public void execute(Room room) throws NotExecutedException{
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> selectedTargets =attackHandler.getSelectedTargets();
@@ -150,7 +149,7 @@ class Run implements Operation{
     }
 
     @Override
-    public void execute(Room room){
+    public void execute(Room room) throws NotExecutedException{
         Player currentPlayer = room.getCurrentPlayer();
         currentPlayer.movePlayer(ActionHandler.chooseSquare(currentPlayer,currentPlayer.getPosition().getValidPosition(distance), room));
         //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
@@ -240,7 +239,7 @@ class  MoveTargetToVisible implements Operation{
     }
 
     @Override
-    public void execute(Room room) {
+    public void execute(Room room) throws NotExecutedException{
         Player currentPlayer = room.getCurrentPlayer();
         Player target = room.getAttackHandler().getTargetsToShot().get(0); // dovrebbe essere sempre uno solo quando lancia questo operazione
         Set<Square> visibleSquare=currentPlayer.getPosition().visibleSquare(room.getBoard().getMap());
@@ -269,7 +268,7 @@ class SelectEffectSquare implements Operation{
         this.zone=zone;
     }
     @Override
-    public void execute(Room room) {
+    public void execute(Room room) throws NotExecutedException{
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> possibleTargets = new ArrayList<>();
@@ -301,7 +300,7 @@ class Furance implements Operation{
         this.selectSquare=selectSquare;
     }
     @Override
-    public void execute(Room room) {
+    public void execute(Room room) throws NotExecutedException{
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         if (!selectSquare){
@@ -350,7 +349,7 @@ class DirectionTargets implements Operation{
         this.penetrate=penetrate;
     }
     @Override
-    public void execute(Room room) {
+    public void execute(Room room) throws NotExecutedException{
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         Map<Square.Direction,Set<Square>> map;
@@ -400,7 +399,7 @@ class MoveTarget implements Operation{
         this.distance=distance;
     }
     @Override
-    public void execute(Room room) {
+    public void execute(Room room) throws NotExecutedException{
         Player currentPlayer = room.getCurrentPlayer();
         Player target = room.getAttackHandler().getTargetsToShot().get(0); // dovrebbe essere sempre uno solo quando lancia questo operazione
         Set<Square> validSquare;
@@ -474,7 +473,7 @@ class NextSquareInDirection implements Operation {
 
 class Flamethorwer implements Operation {
     @Override
-    public void execute(Room room) throws NullTargetsException {
+    public void execute(Room room) throws NotExecutedException {
         AttackHandler attackHandler = room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         Map<Square.Direction, Set<Square>> map = currentPlayer.getPosition().directions(2)
@@ -482,7 +481,7 @@ class Flamethorwer implements Operation {
                 .filter(x -> x.getValue().stream().anyMatch(s -> s.getPlayersOnSquare().isEmpty()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         if (map.size() == 0)
-            throw new NullTargetsException("haven't targets can be shot");
+            throw new NotExecutedException("haven't targets can be shot");
 
         Square.Direction choice = ActionHandler.chooseDirection(currentPlayer,new ArrayList<>(map.keySet()),room);
         //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
@@ -510,7 +509,7 @@ class Repel implements Operation{
         this.distance=distance;
     }
     @Override
-    public void execute(Room room){
+    public void execute(Room room) throws NotExecutedException{
         AttackHandler attackHandler = room.getAttackHandler();
         Player target = attackHandler.getTargetsToShot().get(0);
         Set<Square> validPosition = new HashSet<>();
@@ -531,7 +530,7 @@ class Repel implements Operation{
 
 class TargetingScope implements Operation{
     @Override
-    public void execute(Room room) throws NullTargetsException {
+    public void execute(Room room) throws NotExecutedException {
         AttackHandler attackHandler = room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         List<AmmoColor> ammoColors = currentPlayer.allAmmo().entrySet().stream().filter(x->x.getValue()>0).map(Map.Entry::getKey).collect(Collectors.toList());
@@ -540,7 +539,7 @@ class TargetingScope implements Operation{
         try {
             ActionHandler.deduction(currentPlayer,Collections.singletonList(ammoColor),room);
         } catch (NotEnoughException e) {
-            throw new NullTargetsException(e.getMessage());
+            throw new NotExecutedException(e.getMessage());
         }
         attackHandler.setPossibleTargets(new ArrayList<>(attackHandler.getDamaged().keySet()));
     }
@@ -549,7 +548,7 @@ class TargetingScope implements Operation{
 
 class Teleporter implements Operation{
     @Override
-    public void execute(Room room){
+    public void execute(Room room) throws NotExecutedException{
         Player currentPlayer = room.getCurrentPlayer();
         currentPlayer.movePlayer(ActionHandler.chooseSquare(currentPlayer,room.getBoard().getMap().allSquares(), room));
         //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.

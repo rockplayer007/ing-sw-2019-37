@@ -23,7 +23,7 @@ public class Player implements Serializable {
     private List<Weapon> weapons;
     private transient List<Powerup> powerups;
     private transient ActionState actionStatus;
-    private Boolean live;
+    private boolean live;
 
     public Player(String nickname, Heroes hero) {
         this.nickname = nickname;
@@ -34,9 +34,10 @@ public class Player implements Serializable {
         }
         powerups=new ArrayList<>();
         weapons=new ArrayList<>();
-        playerBoard=new PlayerBoard(this);
+        playerBoard=new PlayerBoard();
         actionStatus = ActionState.TURNACTIONS;
         position = null;
+        live = true;
 
     }
 

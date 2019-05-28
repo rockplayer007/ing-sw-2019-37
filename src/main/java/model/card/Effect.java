@@ -1,7 +1,5 @@
 package model.card;
 
-import model.exceptions.InterruptOperationException;
-import model.exceptions.NullTargetsException;
 import model.gamehandler.Room;
 
 import java.io.Serializable;
