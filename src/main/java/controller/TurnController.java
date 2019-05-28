@@ -12,14 +12,15 @@ import network.messages.serverToClient.AnswerRequest;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class    TurnController {
+public class TurnController {
     private RoomController roomController;
     private Room room;
     private Timer timer;
-    private RoundStatus roundStatus;
+
     private RoundController roundController;
 
     private static final Logger logger = Logger.getLogger(TurnController.class.getName());
@@ -27,7 +28,6 @@ public class    TurnController {
     public TurnController(RoomController roomController, Room room) {
         this.roomController = roomController;
         this.room = room;
-        this.roundStatus = RoundStatus.FIRST_ROUND;
         roundController = new RoundController(roomController);
 
     }
@@ -36,24 +36,28 @@ public class    TurnController {
 
         //need to ckeck with currentPlayer
         for(Player player : room.getPlayers()){
-            if(roundStatus == RoundStatus.FIRST_ROUND){
-                firstRound(player);
+            if(player.getRoundStatus() == Player.RoundStatus.FIRST_ROUND){
+                try {
+                    firstRound(player);
+                } catch (TimeoutException e) {
+                    //send message
+                    break;
+                }
                 //continue with normal round
                 normalRound(player);
+                player.setNextRouncstatus();
             }
-            else if (roundStatus == RoundStatus.NORMAL_ROUND){
+            else if (player.getRoundStatus() == Player.RoundStatus.NORMAL_ROUND){
                 normalRound(player);
             }
             room.setNextPlayer();
         }
-        roundStatus = RoundStatus.NORMAL_ROUND;
-
 
         //TODO change this
         startPlayerRound();
     }
 
-    public void firstRound(Player currentPlayer){
+    public void firstRound(Player currentPlayer) throws TimeoutException {
 
         List<Card> powerup = room.getBoard().getPowerDeck().getCard(2);
         AnswerRequest message = new AnswerRequest(roomController.toJsonCardList(powerup), Message.Content.POWERUP_REQUEST);
@@ -100,6 +104,10 @@ public class    TurnController {
         //ask last time
         roundController.powerupController(player);
 
+
+        //reload
+
+
     }
 
     public void finalFrenzy(){
@@ -121,8 +129,5 @@ public class    TurnController {
 
 
 
-    private enum RoundStatus{
-        FIRST_ROUND, NORMAL_ROUND, FINAL_ROUND;
-    }
 
 }

@@ -23,6 +23,7 @@ public class Player implements Serializable {
     private List<Weapon> weapons;
     private transient List<Powerup> powerups;
     private transient ActionState actionStatus;
+    private RoundStatus roundStatus;
     private boolean live;
 
     public Player(String nickname, Heroes hero) {
@@ -38,6 +39,8 @@ public class Player implements Serializable {
         actionStatus = ActionState.TURNACTIONS;
         position = null;
         live = true;
+        this.roundStatus = RoundStatus.FIRST_ROUND;
+
 
     }
 
@@ -89,6 +92,19 @@ public class Player implements Serializable {
 
     public ActionState getActionStatus() {
         return actionStatus;
+    }
+
+    public RoundStatus getRoundStatus(){
+        return roundStatus;
+    }
+
+    public void setNextRouncstatus(){
+        if(roundStatus == RoundStatus.FIRST_ROUND){
+            roundStatus = RoundStatus.NORMAL_ROUND;
+        }
+        else if(roundStatus == RoundStatus.NORMAL_ROUND){
+            roundStatus = RoundStatus.FINAL_ROUND;
+        }
     }
 
     public void movePlayer(Square square){
@@ -193,6 +209,9 @@ public class Player implements Serializable {
     }
 
 
+    public enum RoundStatus{
+        FIRST_ROUND, NORMAL_ROUND, FINAL_ROUND;
+    }
 
 
 }
