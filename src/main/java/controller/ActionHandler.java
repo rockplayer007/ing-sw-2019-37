@@ -1,80 +1,38 @@
 package controller;
 
-import model.board.*;
+import model.board.AmmoSquare;
+import model.board.Board;
+import model.board.GenerationSquare;
+import model.board.Square;
 import model.card.*;
-
+import model.exceptions.AmmoException;
 import model.exceptions.NotEnoughException;
 import model.exceptions.NotExecutedException;
 import model.exceptions.NullTargetsException;
 import model.gamehandler.AttackHandler;
-import model.exceptions.*;
 import model.gamehandler.Room;
 import model.player.Player;
-import network.messages.Message;
-import network.messages.clientToServer.ListResponse;
-import network.messages.serverToClient.AnswerRequest;
 
-
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-/**
- * contain the min actions t
- */
 public class ActionHandler {
 
-    private static final Logger logger = Logger.getLogger(ActionHandler.class.getName());
-
     private ActionHandler(){
-    throw new IllegalStateException("Utility class");
+        throw new IllegalStateException("Utility class");
     }
 
-
-    /**
-     * run actions let current player to changes position
-     * @param player that do this action.
-     * @param  distanceMax Max distance that the player can move
-     */
-    public static void run(Player player, int distanceMax, Room room) {
-        Set<Square> validPositions = player.getPosition().getValidPosition(distanceMax);
-        Square destination = chooseSquare(player, validPositions, room);
-        player.movePlayer(destination);
-    }
-    /**
-     *  general way to let player chooses the Squere that he can go
-     * @param player current player
-     * @param  validPositions all square that you can choose.
-     * @return the Square that the player choose to move
-     */
-    public static Square chooseSquare(Player player,Set<Square> validPositions, Room room) {
-        RoomController roomController = room.getRoomController();
-        List<String> send = roomController
-                .toJsonSquareList(validPositions);
-        ListResponse square = (ListResponse) roomController
-                .sendAndReceive(player, new AnswerRequest(send, Message.Content.SQUARE_REQUEST));
-
-        List<Square> tempSquares;
-        try{
-            //needed to convert set into the array
-            tempSquares = new ArrayList<>(validPositions);
-            return tempSquares.get(square.getSelectedItem());
-        }catch (RuntimeException e){
-            //cheater
-            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
-
-            List<Square> x = new ArrayList<>(validPositions);
-            return x.get(0);
-        }
-    }
 
     /**
      * use the weapon to shoot
      * @param room of the player in
      * @param weapon that the player want to use
      */
-    public static void shoot(Room room, Weapon weapon) throws NotExecutedException {
+    public static void shoot(Room room, Weapon weapon) throws NotExecutedException, TimeoutException {
         // reinitialization of AttackHandler,
         room.setAttackHandler(new AttackHandler());
         Map<Effect,Integer> effects = weapon.getEffects();
@@ -89,7 +47,7 @@ public class ActionHandler {
         //add the effect that have level 0
         validEffect.addAll(weapon.getLevelEffects(0));
         validEffect = validEffect.stream().filter(x->player.enoughAmmos(x.getExtraCost(),true)).collect(Collectors.toList());
-        effectSelect = chooseEffect(player,validEffect, room);
+        effectSelect = MessageHandler.chooseEffect(player,validEffect, room);
         int i = 1;// level counter
         // if the player dont want use any effect.
         if (effectSelect == null)
@@ -100,8 +58,8 @@ public class ActionHandler {
             validEffect.remove(effectSelect);
 
             try {
-                deduction(player,effectSelect.getExtraCost(), room);
-                //TODO fare un funzione del tipo deduction che permette undo
+                payment(player,effectSelect.getExtraCost(), room);
+                //TODO fare un funzione del tipo payment che permette undo
                 effectSelect.execute(room);
                 // if the effect used is not level -1, means the weapon is used so i need set state of "Charged"
                 if (!used && effects.get(effectSelect)!=-1) {
@@ -113,7 +71,7 @@ public class ActionHandler {
             } catch (NullTargetsException e) {
                 if (!used) {
                     player.movePlayer(playerPosition);
-                    //TODO da vedere come e fatto il undo della deduction.
+                    //TODO da vedere come e fatto il undo della payment.
                     throw new NotExecutedException("Effect is not possible used");
                 }
             } catch (NotEnoughException e) {
@@ -124,116 +82,30 @@ public class ActionHandler {
                 i++;
             }
             validEffect = validEffect.stream().filter(x->player.enoughAmmos(x.getExtraCost(),true)).collect(Collectors.toList());
-            effectSelect = chooseEffect(player,validEffect, room);
+            effectSelect = MessageHandler.chooseEffect(player,validEffect, room);
         }
 
     }
 
-    // if effects isempty return null.
-    public static Effect chooseEffect(Player player, List<Effect> effects, Room room){
-        if(effects.isEmpty()){
-            return null;
-        }
 
-        RoomController roomController = room.getRoomController();
-        List<String> send = roomController
-                .toJsonEffectList(effects);
-
-        ListResponse effect = (ListResponse) roomController
-                .sendAndReceive(player, new AnswerRequest(send, Message.Content.EFFECT_REQUEST));
-
-        try{
-            return effects.get(effect.getSelectedItem());
-        }catch (RuntimeException e){
-            //cheater
-            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
-            return null;
-        }
-
+    /**
+     * run actions let current player to changes position
+     * @param player that do this action.
+     * @param  distanceMax Max distance that the player can move
+     */
+    public static void run(Player player, int distanceMax, Room room) throws TimeoutException {
+        Set<Square> validPositions = player.getPosition().getValidPosition(distanceMax);
+        Square destination = MessageHandler.chooseSquare(player, validPositions, room);
+        player.movePlayer(destination);
     }
 
-    public static List<Player> choosePlayers(Player player, List<Player> possiblePlayers, int maxPlayerToChoose, Room room){
-
-        List<Player> playersToAttack = new ArrayList<>();
-        int askIterations = (maxPlayerToChoose < possiblePlayers.size() ? maxPlayerToChoose : possiblePlayers.size());
-
-        RoomController roomController = room.getRoomController();
-
-        for (int i = 0; i < askIterations; i++){
-
-            List<String> send = roomController
-                    .toJsonPlayerList(possiblePlayers);
-            ListResponse chosenPlayer = (ListResponse) roomController
-                    .sendAndReceive(player, new AnswerRequest(send, Message.Content.PLAYER_REQUEST));
-
-            try{
-                playersToAttack.add(possiblePlayers.get(chosenPlayer.getSelectedItem()));
-            }catch (RuntimeException e){
-                //cheater
-                logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
-                return null;
-            }
-        }
-        return playersToAttack;
-    }
-
-    public static Square.Direction chooseDirection(Player player, List<Square.Direction> directions, Room room){
-        RoomController roomController = room.getRoomController();
-        List<String> send = roomController
-                .toJsonDirectionList(directions);
-
-        ListResponse direction = (ListResponse) roomController
-                .sendAndReceive(player, new AnswerRequest(send, Message.Content.DIRECTION_REQUEST));
-
-        try{
-            return directions.get(direction.getSelectedItem());
-        }catch (RuntimeException e){
-            //cheater
-            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
-            return null;
-        }
-    }
-
-    public static AmmoColor chooseAmmoColor(Player player, List<AmmoColor> ammo, Room room){
-        RoomController roomController = room.getRoomController();
-        List<String> send = roomController
-                .toJsonAmmoColorList(ammo);
-
-        ListResponse chosenAmmo = (ListResponse) roomController
-                .sendAndReceive(player, new AnswerRequest(send, Message.Content.AMMOCOLOR_REQUEST));
-
-        try{
-            return ammo.get(chosenAmmo.getSelectedItem());
-        }catch (RuntimeException e){
-            //cheater
-            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
-            return null;
-        }
-    }
-
-    public static Color chooseRoom(Player player, List<Color> rooms, Room room){
-        RoomController roomController = room.getRoomController();
-        List<String> send = roomController
-                .toJsonColorList(rooms);
-
-        ListResponse chosenRoom = (ListResponse) roomController
-                .sendAndReceive(player, new AnswerRequest(send, Message.Content.ROOM_REQUEST));
-
-        try{
-            return rooms.get(chosenRoom.getSelectedItem());
-        }catch (RuntimeException e){
-            //cheater
-            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
-            return null;
-        }
-    }
 
     /**
      * basic grab method let player to grab all card that they can
      * @param player that do this action.
      * @param board that the player play.
      */
-    public static void grab( Player player,Board board, Room room) throws NotExecutedException {
+    public static void grab(Player player, Board board, Room room) throws NotExecutedException {
 
         if (!player.getPosition().isGenerationPoint()){
             AmmoCard card = ((AmmoSquare) player.getPosition()).getAmmoCard();
@@ -254,7 +126,7 @@ public class ActionHandler {
 
 
             if (!weapons.isEmpty()){
-                Weapon weapon = chooseCard(weapons, true, room, true);
+                Weapon weapon = MessageHandler.chooseCard(weapons, true, room, true);
 
                 if (weapon==null){
                     throw new NotExecutedException("No card has been chosen");
@@ -263,7 +135,7 @@ public class ActionHandler {
                 //pay
                 try {
                     List<AmmoColor> cost = weapon.getBuyCost();
-                    deduction(player,cost, room);
+                    payment(player,cost, room);
                 } catch (NotEnoughException e) {
                     throw new NotExecutedException("Not enough ammo to pay");
                 }
@@ -272,7 +144,7 @@ public class ActionHandler {
                 //player needs to swap cards if he has already 3
                 if (player.limitWeapon()) {
                     //choose weapon to discard
-                    Weapon discardWeapon = chooseCard(player.getWeapons(), false, room, true);
+                    Weapon discardWeapon = MessageHandler.chooseCard(player.getWeapons(), false, room, true);
 
                     //just in case make this check
                     if (discardWeapon==null){
@@ -311,48 +183,31 @@ public class ActionHandler {
     }
 
     /**
-     * general way to let player chooses the cards he wants to use
-     * @param cards cards that need to choose
-     * @param isOptional if true the player can decide wheather to use the card or not
-     * @return position of card choose in the List
+     * reload the weapon
+     * @param player that do this action
      */
+    public static void reload(Player player, Room room) throws TimeoutException {
+        List<Weapon> weapons = player.getWeapons().stream().filter(x->!x.getCharged()).collect(Collectors.toList());
+        weapons =  weapons.stream().filter(x->player.enoughAmmos(x.getChargeCost(),true)).collect(Collectors.toList());
+        while (!weapons.isEmpty()) {
+            Weapon weapon = MessageHandler.chooseCard(weapons, true, room, true);
+            if (weapon == null)
+                break;
+            List<AmmoColor> cost = weapon.getChargeCost();
 
-    public static <T extends Card> T chooseCard(List<T> cards, boolean isOptional, Room room, boolean isWeapon) {
-//        TODO make it more general for other uses
-
-        AnswerRequest message = new AnswerRequest(room
-                .getRoomController()
-                .toJsonCardList(cards),
-                //send message corrisponding to the request
-                isWeapon ? Message.Content.WEAPON_REQUEST : Message.Content.POWERUP_REQUEST);
-        if(isOptional){
-            message.setIsOptional();
-        }
-
-        //send powerups
-        ListResponse chosenCard = (ListResponse) room
-                .getRoomController().sendAndReceive(room.getCurrentPlayer(), message);
-
-        //-1 means the player doesnt want to use powerups
-        if (chosenCard.getSelectedItem() < cards.size() && chosenCard.getSelectedItem() >= 0){
-            //the chosen powerup will be executed
-            return cards.get(chosenCard.getSelectedItem());
-        }
-        else{
-            if(isOptional){
-                return null;
+            try {
+                payment(player,cost, room); //questa eccezione può far continuare
+            } catch (NotEnoughException e) {
+                //TODO send message
+                //The player can continue to reload another
             }
-            else{
-                //is a cheater
-                logger.log(Level.WARNING, "CHEATER DETECTED: {0}", room.getCurrentPlayer().getNickname());
-                return null;
-            }
-
+            weapon.setCharged(true);
         }
+
     }
 
     //payment method
-    public static void deduction(Player player, List<AmmoColor> cost, Room room) throws NotEnoughException {
+    public static void payment(Player player, List<AmmoColor> cost, Room room) throws NotEnoughException {
         List<AmmoColor> tempCost = new ArrayList<>(cost);
         if (cost.isEmpty()){
             return;
@@ -380,7 +235,7 @@ public class ActionHandler {
             if (!powerupsToPay.isEmpty()) {
 
                 //is optional only if has enough ammo to pay
-                Powerup chosenCard = ActionHandler
+                Powerup chosenCard = MessageHandler
                         .chooseCard(powerupsToPay, player.enoughAmmos(cost, false), room, false);
 
                 //null means the player doesnt want to use powerups
@@ -417,25 +272,5 @@ public class ActionHandler {
             }
         }
     }
-
-    /**
-     * reload the weapon
-     * @param player that do this action
-     */
-    public static void reload(Player player, Room room) throws NotEnoughException {
-        List<Weapon> weapons = player.getWeapons().stream().filter(x->!x.getCharged()).collect(Collectors.toList());
-        weapons =  weapons.stream().filter(x->player.enoughAmmos(x.getChargeCost(),true)).collect(Collectors.toList());
-        while (!weapons.isEmpty()) {
-            Weapon weapon = chooseCard(weapons, true, room, true);
-                if (weapon == null)
-                    break;
-                List<AmmoColor> cost = weapon.getChargeCost();
-
-                deduction(player,cost, room);
-                weapon.setCharged(true);
-        }
-
-    }
-
 
 }

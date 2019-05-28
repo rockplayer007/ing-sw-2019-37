@@ -6,6 +6,7 @@ import model.board.*;
 import model.card.AmmoColor;
 import model.card.Card;
 import model.card.Effect;
+import model.exceptions.NotExecutedException;
 import model.exceptions.TooManyPlayerException;
 import model.gamehandler.Room;
 import model.player.Player;
@@ -17,6 +18,7 @@ import network.server.ClientOnServer;
 
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -148,7 +150,7 @@ public class RoomController {
         room.createMap(((ListResponse) mockMessage).getSelectedItem());
 
          */
-
+        //TODO in this case ask somebody else
         ListResponse boardMessage = (ListResponse) sendAndReceive(room.getCurrentPlayer(), boardRequest);
         room.createMap(boardMessage.getSelectedItem());
 
@@ -199,7 +201,7 @@ public class RoomController {
         }
     }
 
-    public ClientToServer sendAndReceive(Player player, ServerToClient message){
+    public ClientToServer sendAndReceive(Player player, ServerToClient message) throws TimeoutException {
         mockMessage = null;
         expectedReceiver = player.getNickname();
         //expectedType = message.getContent();
@@ -221,7 +223,7 @@ public class RoomController {
     }
 
     //TODO check this
-    //public < T > List<String> toJsonCardList(List<T> cards){
+    //public <T> List<String> toJsonCardList(List<T> cards){
     public List<String> toJsonCardList(List<? extends Card> cards){
         List<String> list = new ArrayList<>();
         Gson gson = new Gson();

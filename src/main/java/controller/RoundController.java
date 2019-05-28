@@ -3,7 +3,6 @@ package controller;
 import model.board.Square;
 import model.card.Powerup;
 import model.card.Weapon;
-import model.exceptions.InterruptOperationException;
 import model.exceptions.NotExecutedException;
 import model.exceptions.NullTargetsException;
 import model.player.ActionOption;
@@ -38,7 +37,7 @@ public class RoundController {
             List<Powerup> powerups = possiblePowerups(player);
             if(!powerups.isEmpty()){
 
-                Powerup chosenCard = ActionHandler
+                Powerup chosenCard = MessageHandler
                         .chooseCard(powerups, true, roomController.getRoom(), false);
 
                 //null means the player doesnt want to use powerups
@@ -146,16 +145,25 @@ public class RoundController {
             case SHOOT:
                 //ask card
                 List<Weapon> usableWeapons = player.getWeapons().stream().filter(Weapon::getCharged).collect(Collectors.toList());
-                Weapon chosenWeapon = ActionHandler.chooseCard(usableWeapons, false, roomController.getRoom(), true);
+                Weapon chosenWeapon = MessageHandler.chooseCard(usableWeapons, false, roomController.getRoom(), true);
+
+                if(chosenWeapon == null){
+                    //cheater
+                }
+
+                //execute this card
                 try {
                     ActionHandler.shoot(roomController.getRoom(), chosenWeapon);
                 } catch (NotExecutedException e) {
                     //send message
                     System.out.println("not executed");
                 }
-                //execute this card
+
                 //flag for shooting, needed to decide to use a powerup or not
                 shot = true;
+
+
+                //TODO add powerup check
                 break;
         }
 
