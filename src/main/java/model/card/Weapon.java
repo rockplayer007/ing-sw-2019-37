@@ -29,6 +29,9 @@ public class Weapon extends Card {
             e.setId(i);
             i++;
         }
+        String newDescription = effects.keySet().stream().map(Effect::getDescription).reduce("",(a,b)->a+b);
+        newDescription = newDescription + super.getDescription();
+        super.setDescription(newDescription);
     }
 
 
@@ -44,13 +47,6 @@ public class Weapon extends Card {
         return buyCost;
     }
 
-    public List<AmmoColor> getChargeCost() {
-        List<AmmoColor>cost=new ArrayList<>();
-        cost.add(chargeCost);
-        cost.addAll(buyCost);
-        return cost;
-    }
-
     public Boolean getOptional() {
         return optional;
     }
@@ -59,21 +55,19 @@ public class Weapon extends Card {
         return effects;
     }
 
-    /**
-     * @return description of the card
-     */
-    @Override
-    public String getDescription() {
-        String description = effects.keySet().stream().map(Effect::getDescription).reduce("",(a,b)->a+b);
-        description = description + super.getDescription();
-        return description;
+    public int getNumberOfEffect(){
+        return numberOfEffect;
+    }
+
+    public List<AmmoColor> getChargeCost() {
+        List<AmmoColor>cost=new ArrayList<>();
+        cost.add(chargeCost);
+        cost.addAll(buyCost);
+        return cost;
     }
 
     public List<Effect> getLevelEffects(int level){
         return effects.entrySet().stream().filter(x->x.getValue()==level).map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
-    public int getNumberOfEffect(){
-        return numberOfEffect;
-    }
 }

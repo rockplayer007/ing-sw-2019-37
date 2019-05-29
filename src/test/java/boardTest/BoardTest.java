@@ -80,7 +80,7 @@ public class BoardTest {
         Printer printer = new Printer(new CLI(new MainClient()));
         //printer.printBoard(gameBoard);
         //printer.printWeaponsOnBoard(gameBoard);
-        printer.printAllInfo(gameBoard, player1.getPowerups(), new SkullBoard());
+        printer.printAllInfo(gameBoard, player1.getPowerups(), new SkullBoard(5));
 
         printer.printPlayersInfo(gameBoard, player1.getPowerups());
 

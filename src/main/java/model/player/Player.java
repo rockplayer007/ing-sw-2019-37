@@ -48,7 +48,6 @@ public class Player implements Serializable {
         this.position = position;
     }
 
-
     public void setActionStatus(ActionState actionStatus) {
         this.actionStatus = actionStatus;
     }
@@ -66,7 +65,6 @@ public class Player implements Serializable {
     public Square getPosition() {
         return position;
     }
-
 
     public PlayerBoard getPlayerBoard() {
         return playerBoard;
@@ -101,7 +99,7 @@ public class Player implements Serializable {
         return live;
     }
 
-    public void setNextRouncstatus(){
+    public void setNextRoundstatus(){
 
         if(roundStatus == RoundStatus.FIRST_ROUND){
             roundStatus = RoundStatus.NORMAL_ROUND;
