@@ -35,26 +35,19 @@ public class Player implements Serializable {
         }
         powerups=new ArrayList<>();
         weapons=new ArrayList<>();
-        playerBoard=new PlayerBoard();
+        playerBoard=new PlayerBoard(this);
         actionStatus = ActionState.TURNACTIONS;
         position = null;
-        live = true;
+        live = false;
         this.roundStatus = RoundStatus.FIRST_ROUND;
 
 
-    }
-
-    public void setHero(Heroes hero) {
-        this.hero = hero;
     }
 
     private void setPosition(Square position) {
         this.position = position;
     }
 
-    public void setPlayerBoard(PlayerBoard board) {
-        this.playerBoard = board;
-    }
 
     public void setActionStatus(ActionState actionStatus) {
         this.actionStatus = actionStatus;
@@ -74,6 +67,7 @@ public class Player implements Serializable {
         return position;
     }
 
+
     public PlayerBoard getPlayerBoard() {
         return playerBoard;
     }
@@ -86,16 +80,25 @@ public class Player implements Serializable {
         return weapons;
     }
 
-    public void removeWeapon(Weapon weapon){
-        weapons.remove(weapon);
-    }
-
     public ActionState getActionStatus() {
         return actionStatus;
     }
 
     public RoundStatus getRoundStatus(){
         return roundStatus;
+    }
+
+    public void setLive(boolean live) {
+        this.live = live;
+
+        if (!live) {
+            position.getPlayersOnSquare().remove(this);
+            position = null;
+        }
+    }
+
+    public boolean isLive() {
+        return live;
     }
 
     public void setNextRouncstatus(){
@@ -166,14 +169,6 @@ public class Player implements Serializable {
         ArrayList<AmmoColor> bullets=new ArrayList<>();
         powerups.forEach(i->bullets.add(i.getAmmo()));
         return bullets;
-    }
-
-    /**
-     * @param ammoColor the color of ammo request
-     * @return true if play has at least one powerup is same as that request, else no.
-     */
-    public boolean usePowerupAsAmmo(AmmoColor ammoColor){
-        return powerupAsAmmo().contains(ammoColor);
     }
 
     /**

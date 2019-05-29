@@ -19,8 +19,8 @@ public class Board {
         powerDeck = new PowerDeck();
         weaponDeck = new WeaponDeck();
 
-        //map = new BoardGenerator(this);
-        skullBoard = new SkullBoard();
+        //TODO fare l'utente a scegliere quandi skull mette.
+        skullBoard = new SkullBoard(5);
     }
 
     /**

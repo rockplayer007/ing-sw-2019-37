@@ -1,19 +1,19 @@
 package model.card;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 
-public class Weapon extends Card{
+public class Weapon extends Card {
 
     private Boolean charged;
     private AmmoColor chargeCost;
     private List<AmmoColor> buyCost;
     private Boolean optional;
     private transient Map<Effect,Integer> effects;
+    private int numberOfEffect;
 
 
     public Weapon(String name, String description, AmmoColor chargeCost, List<AmmoColor> buyCost,Boolean optional,Map<Effect,Integer> effects){
@@ -23,6 +23,12 @@ public class Weapon extends Card{
         charged = true;
         this.optional=optional;
         this.effects=effects;
+        this.numberOfEffect = effects.size();
+        int i = 0;
+        for (Effect e:this.effects.keySet()) {
+            e.setId(i);
+            i++;
+        }
     }
 
 
@@ -44,7 +50,6 @@ public class Weapon extends Card{
         cost.addAll(buyCost);
         return cost;
     }
-
 
     public Boolean getOptional() {
         return optional;
@@ -68,4 +73,7 @@ public class Weapon extends Card{
         return effects.entrySet().stream().filter(x->x.getValue()==level).map(Map.Entry::getKey).collect(Collectors.toList());
     }
 
+    public int getNumberOfEffect(){
+        return numberOfEffect;
+    }
 }

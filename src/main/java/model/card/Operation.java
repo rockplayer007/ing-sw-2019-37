@@ -116,11 +116,12 @@ class Mark implements Operation{
 
     @Override
     public void execute(Room room){
+        AttackHandler attackHandler = room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
-        List<Player> targets = room.getAttackHandler().getTargetsToShot();
-        for(int i = 0; i < points; i++){
-            targets.forEach(x->x.getPlayerBoard().addMark(currentPlayer));
-        }
+        List<Player> targets = attackHandler.getTargetsToShot();
+        targets.forEach(x->attackHandler.addmark(x,points));
+        targets.forEach(x->x.getPlayerBoard().addMark(currentPlayer,points));
+
 
     }
 }
