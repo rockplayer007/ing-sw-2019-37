@@ -30,6 +30,8 @@ public class Room {
         board = new Board();
         boardGenerator = new BoardGenerator(board);
         players = new ArrayList<>();
+        //needs to be null at the beginning to be set later
+        startingPlayer = null;
 
     }
 

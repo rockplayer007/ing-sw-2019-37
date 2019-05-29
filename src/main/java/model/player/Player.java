@@ -102,6 +102,7 @@ public class Player implements Serializable {
     }
 
     public void setNextRouncstatus(){
+
         if(roundStatus == RoundStatus.FIRST_ROUND){
             roundStatus = RoundStatus.NORMAL_ROUND;
         }
@@ -147,6 +148,7 @@ public class Player implements Serializable {
     public void removePowerup(Powerup powerup){
         powerups.remove(powerup);
     }
+
     public void addWeapon(Weapon weapon){
         weapons.add(weapon);
     }

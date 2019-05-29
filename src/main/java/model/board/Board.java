@@ -76,4 +76,14 @@ public class Board {
         return skullBoard;
     }
 
+    public void fillAmmo(){
+        for(Square square : map.allSquares()){
+            if(!square.isGenerationPoint()){
+                if(((AmmoSquare) square).getAmmoCard() == null){
+                    ((AmmoSquare) square).setAmmoCard((AmmoCard) ammoDeck.getCard());
+                }
+            }
+        }
+    }
+
 }

@@ -4,6 +4,9 @@ import model.board.Square;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.exceptions.NotExecutedException;
+
+import model.exceptions.TimeFinishedException;
+
 import model.player.ActionOption;
 import model.player.Player;
 import network.messages.Message;
@@ -30,7 +33,7 @@ public class RoundController {
     }
 
 
-    public void powerupController(Player player){
+    public void powerupController(Player player) throws TimeFinishedException {
         boolean usePowerups = true;
         while (usePowerups){
             List<Powerup> powerups = possiblePowerups(player);
@@ -88,7 +91,7 @@ public class RoundController {
         return usable;
     }
 
-    private void usePowerup(Powerup powerup, Player player){
+    private void usePowerup(Powerup powerup, Player player) throws TimeFinishedException{
         //execute it
         try {
             powerup.getEffect().execute(roomController.getRoom());
@@ -102,7 +105,7 @@ public class RoundController {
     }
 
 
-    public void actionController(Player player){
+    public void actionController(Player player) throws TimeFinishedException{
         //check action in player
         List<String> send = player.getActionStatus().getJsonChoices(player,
                 //if the there is only 1 player he cant shoot

@@ -1,6 +1,7 @@
 package model.card;
 
 import model.exceptions.NotExecutedException;
+import model.exceptions.TimeFinishedException;
 import model.gamehandler.Room;
 
 import java.io.Serializable;
@@ -21,7 +22,7 @@ public class Effect implements Serializable {
         this.operations = operations;
     }
 
-    public void execute(Room room)throws NotExecutedException, TimeoutException {
+    public void execute(Room room)throws NotExecutedException, TimeFinishedException {
         for (Operation o:operations){
             o.execute(room);
         }

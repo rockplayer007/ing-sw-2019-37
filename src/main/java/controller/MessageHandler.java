@@ -3,16 +3,18 @@ package controller;
 import model.board.*;
 import model.card.*;
 
-import model.exceptions.NotExecutedException;
+import model.exceptions.TimeFinishedException;
 import model.gamehandler.Room;
 import model.player.Player;
 import network.messages.Message;
 import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
+import network.messages.serverToClient.AttackMessage;
+import network.messages.serverToClient.InfoMessage;
+import network.messages.serverToClient.ServerToClient;
 
 
 import java.util.*;
-import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,7 +36,7 @@ public class MessageHandler {
      * @param  validPositions all square that you can choose.
      * @return the Square that the player choose to move
      */
-    public static Square chooseSquare(Player player,Set<Square> validPositions, Room room) throws TimeoutException {
+    public static Square chooseSquare(Player player,Set<Square> validPositions, Room room) throws TimeFinishedException {
         RoomController roomController = room.getRoomController();
         List<String> send = roomController
                 .toJsonSquareList(validPositions);
@@ -56,7 +58,7 @@ public class MessageHandler {
     }
 
     // if effects isempty return null.
-    public static Effect chooseEffect(Player player, List<Effect> effects, Room room) throws TimeoutException {
+    public static Effect chooseEffect(Player player, List<Effect> effects, Room room) throws TimeFinishedException {
         if(effects.isEmpty()){
             return null;
         }
@@ -78,7 +80,7 @@ public class MessageHandler {
 
     }
 
-    public static List<Player> choosePlayers(Player player, List<Player> possiblePlayers, int maxPlayerToChoose, Room room) throws TimeoutException {
+    public static List<Player> choosePlayers(Player player, List<Player> possiblePlayers, int maxPlayerToChoose, Room room) throws TimeFinishedException {
 
         List<Player> playersToAttack = new ArrayList<>();
         int askIterations = (maxPlayerToChoose < possiblePlayers.size() ? maxPlayerToChoose : possiblePlayers.size());
@@ -104,7 +106,7 @@ public class MessageHandler {
         return playersToAttack;
     }
 
-    public static Square.Direction chooseDirection(Player player, List<Square.Direction> directions, Room room) throws TimeoutException {
+    public static Square.Direction chooseDirection(Player player, List<Square.Direction> directions, Room room) throws TimeFinishedException {
         RoomController roomController = room.getRoomController();
         List<String> send = roomController
                 .toJsonDirectionList(directions);
@@ -121,7 +123,7 @@ public class MessageHandler {
         }
     }
 
-    public static AmmoColor chooseAmmoColor(Player player, List<AmmoColor> ammo, Room room) throws TimeoutException {
+    public static AmmoColor chooseAmmoColor(Player player, List<AmmoColor> ammo, Room room) throws TimeFinishedException {
         RoomController roomController = room.getRoomController();
         List<String> send = roomController
                 .toJsonAmmoColorList(ammo);
@@ -138,7 +140,7 @@ public class MessageHandler {
         }
     }
 
-    public static Color chooseRoom(Player player, List<Color> rooms, Room room) throws TimeoutException {
+    public static Color chooseRoom(Player player, List<Color> rooms, Room room) throws TimeFinishedException {
         RoomController roomController = room.getRoomController();
         List<String> send = roomController
                 .toJsonColorList(rooms);
@@ -162,7 +164,7 @@ public class MessageHandler {
      * @return position of card choose in the List
      */
 
-    public static <T extends Card> T chooseCard(List<T> cards, boolean isOptional, Room room, boolean isWeapon) throws TimeoutException {
+    public static <T extends Card> T chooseCard(List<T> cards, boolean isOptional, Room room, boolean isWeapon) throws TimeFinishedException {
 //        TODO make it more general for other uses
 
         AnswerRequest message = new AnswerRequest(room
@@ -197,4 +199,13 @@ public class MessageHandler {
         }
     }
 
+    public static void sendInfo(Player player, String info, Room room){
+        ServerToClient message = new InfoMessage(info);
+        room.getRoomController().sendMessage(player, message);
+    }
+
+    public static void sendAttack(Player attacker, Map<Player, Integer> hp, Map<Player, Integer> marks, Room room){
+        ServerToClient message = new AttackMessage(attacker, hp, marks);
+        room.getRoomController().sendMessageToAll(message);
+    }
 }

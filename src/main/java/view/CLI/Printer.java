@@ -147,17 +147,18 @@ public class Printer {
     public void askPlayer(List<Player> players, Consumer<Integer> selection){
         List<String> printable = new ArrayList<>();
         for(Player player : players){
-            String temp = colorToAnsi(Color.WHITE) + "Attack " + colorToAnsi(player.getColor()) + player.getNickname();
+            String temp = colorToAnsi(Color.WHITE) + "Attack "
+                    + colorToAnsi(player.getColor()) + player.getNickname() + colorToAnsi(Color.WHITE);
             printable.add(temp);
         }
 
         displayRequest(printable, selection);
     }
 
-    public void askAmmoColor(List<AmmoColor> ammoColors, Consumer<Integer> selection){
+    public void askAmmoColor(List<AmmoColor> ammoColors, Consumer<Integer> selection)   {
         List<String> printable = new ArrayList<>();
         for(AmmoColor ammo : ammoColors){
-            String temp = colorToAnsi(Color.WHITE) + "Pay with: " + colorToAnsi(ammo) + "O";
+            String temp = colorToAnsi(Color.WHITE) + "Pay with: " + colorToAnsi(ammo) + "O" + colorToAnsi(Color.WHITE);
             printable.add(temp);
         }
 
@@ -256,20 +257,24 @@ public class Printer {
                                     line.append(colorToAnsi(tempSquare.getColor())).append("| GEN |");
                                 }
                                 else {
-                                    if(((AmmoSquare) tempSquare).getAmmoCard().hasPowerup()){
-                                        line.append(colorToAnsi(tempSquare.getColor())).append("| ");
-                                        for(int n = 0; n < 2; n++){
-                                            line.append(colorToAnsi(((AmmoSquare) tempSquare).getAmmoCard().getAmmoList().get(n))).append("O");
+                                    if(((AmmoSquare) tempSquare).getAmmoCard() != null) {
+                                        if (((AmmoSquare) tempSquare).getAmmoCard().hasPowerup()) {
+                                            line.append(colorToAnsi(tempSquare.getColor())).append("| ");
+                                            for (int n = 0; n < 2; n++) {
+                                                line.append(colorToAnsi(((AmmoSquare) tempSquare).getAmmoCard().getAmmoList().get(n))).append("O");
+                                            }
+                                            line.append(colorToAnsi(Color.WHITE)).append("?");
+                                            line.append(colorToAnsi(tempSquare.getColor())).append(" |");
+                                        } else {
+                                            line.append(colorToAnsi(tempSquare.getColor())).append("| ");
+                                            for (int n = 0; n < 3; n++) {
+                                                line.append(colorToAnsi(((AmmoSquare) tempSquare).getAmmoCard().getAmmoList().get(n))).append("O");
+                                            }
+                                            line.append(colorToAnsi(tempSquare.getColor())).append(" |");
                                         }
-                                        line.append(colorToAnsi(Color.WHITE)).append("?");
-                                        line.append(colorToAnsi(tempSquare.getColor())).append(" |");
                                     }
-                                    else {
-                                        line.append(colorToAnsi(tempSquare.getColor())).append("| ");
-                                        for(int n = 0; n < 3; n++){
-                                            line.append(colorToAnsi(((AmmoSquare) tempSquare).getAmmoCard().getAmmoList().get(n))).append("O");
-                                        }
-                                        line.append(colorToAnsi(tempSquare.getColor())).append(" |");
+                                    else{
+                                        line.append("   ");
                                     }
                                 }
                                 break;
@@ -521,7 +526,7 @@ public class Printer {
 
     }
 
-    private String colorToAnsi(AmmoColor color){
+    public String colorToAnsi(AmmoColor color){
         switch (color){
             case BLUE:
                 return "\u001B[0;34m";
@@ -533,7 +538,7 @@ public class Printer {
                 return "\u001B[0;37m"; //white
         }
     }
-    private String colorToAnsi(Color color){
+    public String colorToAnsi(Color color){
         switch (color){
             case BLUE:
                 return "\u001B[0;34m";
