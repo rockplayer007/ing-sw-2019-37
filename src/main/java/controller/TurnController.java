@@ -69,18 +69,22 @@ public class TurnController {
                 }
 
                 timer.cancelTimer();
+
+                //after taking the ammoCard set a new card
+                room.getBoard().fillAmmo();
+
             } catch (TimeFinishedException e) {
                 //send message
                 roomController.sendMessage(room.getCurrentPlayer(), new TimeoutMessage());
                 //set the player as disconnected
                 //continue as normal
                 System.out.println("player: " + room.getCurrentPlayer() + " diconnected");
+                room.getBoard().fillAmmo();
                 roomController.sendUpdate();
             }
 
 
-            //after taking the ammoCard set a new card
-            room.getBoard().fillAmmo();
+
             room.setNextPlayer();
         }
 

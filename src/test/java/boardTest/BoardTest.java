@@ -19,11 +19,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BoardTest {
 
     private GameBoard map;
+    private Board board;
 
     @BeforeEach
     public void createBoard(){
-        Board board = new Board();
+        board = new Board();
         map = new BoardGenerator(board).createMap(0);
+        board.setMap(map);
 
 
     }
@@ -45,6 +47,8 @@ public class BoardTest {
         map.getSquare(0).addPlayer(player1);
         map.getSquare(0).addPlayer(player2);
         map.getSquare(2).addPlayer(player3);
+        ((AmmoSquare)map.getSquare(0)).removeAmmoCard();
+        board.fillAmmo();
 
 
         RuntimeTypeAdapterFactory<Square> rfSquare = RuntimeTypeAdapterFactory
@@ -78,7 +82,8 @@ public class BoardTest {
         assertEquals(gameBoard.getGenerationPoint(Color.BLUE).getY(), 0);
 
         Printer printer = new Printer(new CLI(new MainClient()));
-        ((AmmoSquare) gameBoard.getSquare(0)).removeAmmoCard();
+        //((AmmoSquare) gameBoard.getSquare(0)).removeAmmoCard();
+
         //printer.printBoard(gameBoard);
         //printer.printWeaponsOnBoard(gameBoard);
         printer.printAllInfo(gameBoard, player1.getPowerups(), new SkullBoard(5));
