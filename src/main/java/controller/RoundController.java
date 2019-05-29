@@ -31,6 +31,9 @@ public class RoundController {
         this.roomController = roomController;
         this.shot = false;
     }
+    public void resetShot(){
+        shot = false;
+    }
 
 
     public void powerupController(Player player) throws TimeFinishedException {

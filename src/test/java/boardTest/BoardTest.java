@@ -78,6 +78,7 @@ public class BoardTest {
         assertEquals(gameBoard.getGenerationPoint(Color.BLUE).getY(), 0);
 
         Printer printer = new Printer(new CLI(new MainClient()));
+        ((AmmoSquare) gameBoard.getSquare(0)).removeAmmoCard();
         //printer.printBoard(gameBoard);
         //printer.printWeaponsOnBoard(gameBoard);
         printer.printAllInfo(gameBoard, player1.getPowerups(), new SkullBoard());
@@ -89,6 +90,7 @@ public class BoardTest {
     @Test
     public void printBoardTest(){
         Printer printer = new Printer(new CLI(new MainClient()));
+
         printer.printBoard(map);
     }
 

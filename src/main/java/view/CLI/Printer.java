@@ -274,7 +274,7 @@ public class Printer {
                                         }
                                     }
                                     else{
-                                        line.append("   ");
+                                        line.append(colorToAnsi(tempSquare.getColor())).append("|     |");
                                     }
                                 }
                                 break;
