@@ -1,19 +1,19 @@
 package model.card;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 
-public class Weapon extends Card{
+public class Weapon extends Card {
 
     private Boolean charged;
     private AmmoColor chargeCost;
     private List<AmmoColor> buyCost;
     private Boolean optional;
     private transient Map<Effect,Integer> effects;
+    private int numberOfEffect;
 
 
     public Weapon(String name, String description, AmmoColor chargeCost, List<AmmoColor> buyCost,Boolean optional,Map<Effect,Integer> effects){
@@ -23,6 +23,15 @@ public class Weapon extends Card{
         charged = true;
         this.optional=optional;
         this.effects=effects;
+        this.numberOfEffect = effects.size();
+        int i = 0;
+        for (Effect e:this.effects.keySet()) {
+            e.setId(i);
+            i++;
+        }
+        String newDescription = effects.keySet().stream().map(Effect::getDescription).reduce("",(a,b)->a+b);
+        newDescription = newDescription + super.getDescription();
+        super.setDescription(newDescription);
     }
 
 
@@ -38,14 +47,6 @@ public class Weapon extends Card{
         return buyCost;
     }
 
-    public List<AmmoColor> getChargeCost() {
-        List<AmmoColor>cost=new ArrayList<>();
-        cost.add(chargeCost);
-        cost.addAll(buyCost);
-        return cost;
-    }
-
-
     public Boolean getOptional() {
         return optional;
     }
@@ -54,14 +55,15 @@ public class Weapon extends Card{
         return effects;
     }
 
-    /**
-     * @return description of the card
-     */
-    @Override
-    public String getDescription() {
-        String description = effects.keySet().stream().map(Effect::getDescription).reduce("",(a,b)->a+b);
-        description = description + super.getDescription();
-        return description;
+    public int getNumberOfEffect(){
+        return numberOfEffect;
+    }
+
+    public List<AmmoColor> getChargeCost() {
+        List<AmmoColor>cost=new ArrayList<>();
+        cost.add(chargeCost);
+        cost.addAll(buyCost);
+        return cost;
     }
 
     public List<Effect> getLevelEffects(int level){

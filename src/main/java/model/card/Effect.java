@@ -4,13 +4,13 @@ import model.exceptions.NotExecutedException;
 import model.exceptions.TimeFinishedException;
 import model.gamehandler.Room;
 
-import java.awt.image.TileObserver;
 import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class Effect implements Serializable {
     private String name;
+    private int id;
     private String description;
     private List<AmmoColor> extraCost;
     private transient List<Operation> operations;
@@ -44,4 +44,7 @@ public class Effect implements Serializable {
         return name+": "+description;
     }
 
+    public void setId(int id){
+        this.id = id;
+    }
 }

@@ -233,7 +233,7 @@ public class ActionHandler {
         }
 
         // put only powerups that he can use to pay
-        List<Powerup> powerupsToPay = new ArrayList<>();
+        List<Powerup> powerupsToPay = new ArrayList<>();// player.getPowerups().stream().filter(x->tempCost.contains(x.getAmmo())).collect(Collectors.toList());
         for(Powerup powerup : player.getPowerups()){
             for(AmmoColor ammo : tempCost){
                 if(powerup.getAmmo() == ammo){

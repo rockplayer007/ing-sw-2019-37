@@ -14,6 +14,7 @@ public class AttackHandler {
     private List<Player> selectedTargets;
     private Square effectSquare;
     private Map<Player,Integer> damaged;
+    private Map<Player,Integer> marked;
 
     public AttackHandler() {
         possibleTargets = new ArrayList<>();
@@ -65,8 +66,10 @@ public class AttackHandler {
             damaged.put(player,point);
     }
 
-    public void damage(Player player){
-        damaged.forEach((key, value) ->key.getPlayerBoard().addDamage(player,value));
-
+    public void addmark(Player player,int point){
+        if (marked.containsKey(player))
+            marked.put(player, marked.get(player)+point);
+        else
+            marked.put(player,point);
     }
 }
