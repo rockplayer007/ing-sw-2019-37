@@ -96,7 +96,7 @@ public class Player implements Serializable {
         return roundStatus;
     }
 
-    public void setNextRouncstatus(){
+    public void setNextRoundstatus(){
         if(roundStatus == RoundStatus.FIRST_ROUND){
             roundStatus = RoundStatus.NORMAL_ROUND;
         }

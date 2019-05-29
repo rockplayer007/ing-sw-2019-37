@@ -6,7 +6,7 @@ import model.board.*;
 import model.card.AmmoColor;
 import model.card.Card;
 import model.card.Effect;
-import model.exceptions.NotExecutedException;
+import model.exceptions.TimeFinishedException;
 import model.exceptions.TooManyPlayerException;
 import model.gamehandler.Room;
 import model.player.Player;
@@ -33,6 +33,7 @@ public class RoomController {
     private Message.Content expectedType;
     private Thread askingThread;
     private TurnController turnController;
+    private boolean wait;
 
     private static final Logger logger = Logger.getLogger(RoomController.class.getName());
 
@@ -42,6 +43,7 @@ public class RoomController {
         players = new ArrayList<>();
         connectionToClient = new HashMap<>();
         turnController = new TurnController(this, room);
+        wait = true;
     }
 
     public void handleMessages(ClientToServer message) {
@@ -92,7 +94,7 @@ public class RoomController {
     public void addPlayer(ClientOnServer client) throws TooManyPlayerException {
         Player player = client.getPersonalPlayer();
         if (players.isEmpty()) {
-            room.setStartingPlayer(player);
+            //room.setStartingPlayer(player);
             room.setCurrentPlayer(player);
         }
         if (players.size() < 5) {
@@ -151,7 +153,12 @@ public class RoomController {
 
          */
         //TODO in this case ask somebody else
-        ListResponse boardMessage = (ListResponse) sendAndReceive(room.getCurrentPlayer(), boardRequest);
+        ListResponse boardMessage = null;
+        try {
+            boardMessage = (ListResponse) sendAndReceive(room.getCurrentPlayer(), boardRequest);
+        } catch (TimeFinishedException e) {
+            e.printStackTrace();
+        }
         room.createMap(boardMessage.getSelectedItem());
 
         //necessary to serialize properly also the sub classes
@@ -201,19 +208,42 @@ public class RoomController {
         }
     }
 
-    public ClientToServer sendAndReceive(Player player, ServerToClient message) throws TimeoutException {
+    public ClientToServer sendAndReceive(Player player, ServerToClient message) throws TimeFinishedException {
         mockMessage = null;
         expectedReceiver = player.getNickname();
         //expectedType = message.getContent();
+
+        //timeout happens before sending
+        if(wait == false){
+            //send timout message
+            wait = true;
+            resetReceiver();
+
+            throw new TimeFinishedException();
+        }
         sendMessage(player, message);
-        while (mockMessage == null){
+
+        //dont wait for the sending when wait is false
+        while (mockMessage == null && wait){
             Thread.onSpinWait();
             //System.out.println("waiting");
         }
+
+        //timeout happens after sending
+        if (wait == false){
+            wait = true;
+            resetReceiver();
+            throw new TimeFinishedException();
+        }
+
         ClientToServer answer = mockMessage;
         resetReceiver();
 
         return answer;
+    }
+
+    public void stopWaiting(){
+        wait = false;
     }
 
     public void resetReceiver(){

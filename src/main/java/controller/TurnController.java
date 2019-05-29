@@ -3,6 +3,7 @@ package controller;
 import model.board.Color;
 import model.card.Card;
 import model.card.Powerup;
+import model.exceptions.TimeFinishedException;
 import model.gamehandler.Room;
 import model.player.Player;
 import network.messages.Message;
@@ -19,7 +20,8 @@ import java.util.logging.Logger;
 public class TurnController {
     private RoomController roomController;
     private Room room;
-    private Timer timer;
+    private CountDown timer;
+    private boolean gameFinished;
 
     private RoundController roundController;
 
@@ -29,35 +31,54 @@ public class TurnController {
         this.roomController = roomController;
         this.room = room;
         roundController = new RoundController(roomController);
+        gameFinished = false;
+        timer = new CountDown(1*10*1000, () -> {
+            System.out.println("time finished");
+            roomController.stopWaiting();
 
+        }); //30 seconds
     }
 
     public void startPlayerRound(){
 
         //need to ckeck with currentPlayer
-        for(Player player : room.getPlayers()){
-            if(player.getRoundStatus() == Player.RoundStatus.FIRST_ROUND){
-                try {
-                    firstRound(player);
-                } catch (TimeoutException e) {
-                    //send message
-                    break;
+
+        while (!gameFinished){
+            Player player = room.getCurrentPlayer();
+            timer.startTimer();
+            try {
+                if(player.getRoundStatus() == Player.RoundStatus.FIRST_ROUND){
+
+                        firstRound(player);
+                        //continue with normal round
+                        normalRound(player);
+                        player.setNextRoundstatus();
+
+                    //do this only once
+                    if(room.getStartingPlayer() == null){
+                        room.setStartingPlayer(player);
+                    }
+
                 }
-                //continue with normal round
-                normalRound(player);
-                player.setNextRouncstatus();
+                else if (player.getRoundStatus() == Player.RoundStatus.NORMAL_ROUND){
+                    normalRound(player);
+                }
+            } catch (TimeFinishedException e) {
+                //send message
+                //set the player as disconnected
+                //continue as normal
+                System.out.println("player: " + room.getCurrentPlayer() + " diconnected");
             }
-            else if (player.getRoundStatus() == Player.RoundStatus.NORMAL_ROUND){
-                normalRound(player);
-            }
+
+            timer.cancelTimer();
+            //after taking the ammoCard set a new card
+            room.getBoard().fillAmmo();
             room.setNextPlayer();
         }
 
-        //TODO change this
-        startPlayerRound();
     }
 
-    public void firstRound(Player currentPlayer) throws TimeoutException {
+    public void firstRound(Player currentPlayer) throws TimeFinishedException {
 
         List<Card> powerup = room.getBoard().getPowerDeck().getCard(2);
         AnswerRequest message = new AnswerRequest(roomController.toJsonCardList(powerup), Message.Content.POWERUP_REQUEST);
@@ -91,11 +112,14 @@ public class TurnController {
         roomController.sendUpdate();
     }
 
-    public void normalRound(Player player){
+    public void normalRound(Player player) throws TimeFinishedException{
         //in normal round do this 2 times
+
         for(int i = 0; i < 2; i++){
             //first ask for powerup
+
             roundController.powerupController(player);
+
             //roomController.sendUpdate();
             //ask for action
             roundController.actionController(player);
@@ -104,30 +128,14 @@ public class TurnController {
         //ask last time
         roundController.powerupController(player);
 
-
         //reload
-
+        ActionHandler.reload(player, room);
 
     }
 
     public void finalFrenzy(){
 
     }
-
-
-    private void startTimer(){
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run(){
-
-            }
-
-        }, 1*5*1000);
-
-    }
-
-
-
 
 
 }

@@ -5,10 +5,7 @@ import model.board.Board;
 import model.board.GenerationSquare;
 import model.board.Square;
 import model.card.*;
-import model.exceptions.AmmoException;
-import model.exceptions.NotEnoughException;
-import model.exceptions.NotExecutedException;
-import model.exceptions.NullTargetsException;
+import model.exceptions.*;
 import model.gamehandler.AttackHandler;
 import model.gamehandler.Room;
 import model.player.Player;
@@ -17,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeoutException;
+import model.exceptions.TimeFinishedException;
 import java.util.stream.Collectors;
 
 public class ActionHandler {
@@ -32,7 +29,7 @@ public class ActionHandler {
      * @param room of the player in
      * @param weapon that the player want to use
      */
-    public static void shoot(Room room, Weapon weapon) throws NotExecutedException, TimeoutException {
+    public static void shoot(Room room, Weapon weapon) throws NotExecutedException, TimeFinishedException {
         // reinitialization of AttackHandler,
         room.setAttackHandler(new AttackHandler());
         Map<Effect,Integer> effects = weapon.getEffects();
@@ -93,7 +90,7 @@ public class ActionHandler {
      * @param player that do this action.
      * @param  distanceMax Max distance that the player can move
      */
-    public static void run(Player player, int distanceMax, Room room) throws TimeoutException {
+    public static void run(Player player, int distanceMax, Room room) throws TimeFinishedException {
         Set<Square> validPositions = player.getPosition().getValidPosition(distanceMax);
         Square destination = MessageHandler.chooseSquare(player, validPositions, room);
         player.movePlayer(destination);
@@ -105,16 +102,20 @@ public class ActionHandler {
      * @param player that do this action.
      * @param board that the player play.
      */
-    public static void grab(Player player, Board board, Room room) throws NotExecutedException {
+    public static void grab(Player player, Board board, Room room) throws NotExecutedException, TimeFinishedException {
 
         if (!player.getPosition().isGenerationPoint()){
+
             AmmoCard card = ((AmmoSquare) player.getPosition()).getAmmoCard();
             card.getAmmoList().forEach(player::addAmmo);
+
             if (card.hasPowerup() && player.getPowerups().size() < 3) {
                 player.addPowerup((Powerup) board.getPowerDeck().getCard());
             }
-            //after taking the ammoCard set a new card
-            ((AmmoSquare) player.getPosition()).setAmmoCard((AmmoCard) board.getAmmoDeck().getCard());
+            //put the card int the used card deck
+            room.getBoard().getAmmoDeck().usedCard(card);
+            //remove the card from the board
+            ((AmmoSquare) player.getPosition()).removeAmmoCard();
         }
         else {
 
@@ -126,6 +127,7 @@ public class ActionHandler {
 
 
             if (!weapons.isEmpty()){
+                //weapon to choose
                 Weapon weapon = MessageHandler.chooseCard(weapons, true, room, true);
 
                 if (weapon==null){
@@ -144,7 +146,16 @@ public class ActionHandler {
                 //player needs to swap cards if he has already 3
                 if (player.limitWeapon()) {
                     //choose weapon to discard
-                    Weapon discardWeapon = MessageHandler.chooseCard(player.getWeapons(), false, room, true);
+
+                    Weapon discardWeapon = null;
+                    try {
+                        discardWeapon = MessageHandler.chooseCard(player.getWeapons(), false, room, true);
+                    } catch (TimeFinishedException e) {
+                        //TODO pay back function
+                        //handle exception
+
+                        throw new TimeFinishedException();
+                    }
 
                     //just in case make this check
                     if (discardWeapon==null){
@@ -186,7 +197,7 @@ public class ActionHandler {
      * reload the weapon
      * @param player that do this action
      */
-    public static void reload(Player player, Room room) throws TimeoutException {
+    public static void reload(Player player, Room room) throws TimeFinishedException {
         List<Weapon> weapons = player.getWeapons().stream().filter(x->!x.getCharged()).collect(Collectors.toList());
         weapons =  weapons.stream().filter(x->player.enoughAmmos(x.getChargeCost(),true)).collect(Collectors.toList());
         while (!weapons.isEmpty()) {
@@ -202,12 +213,12 @@ public class ActionHandler {
                 //The player can continue to reload another
             }
             weapon.setCharged(true);
+            weapons.remove(weapon);
         }
-
     }
 
     //payment method
-    public static void payment(Player player, List<AmmoColor> cost, Room room) throws NotEnoughException {
+    public static void payment(Player player, List<AmmoColor> cost, Room room) throws NotEnoughException, TimeFinishedException {
         List<AmmoColor> tempCost = new ArrayList<>(cost);
         if (cost.isEmpty()){
             return;
@@ -235,8 +246,14 @@ public class ActionHandler {
             if (!powerupsToPay.isEmpty()) {
 
                 //is optional only if has enough ammo to pay
-                Powerup chosenCard = MessageHandler
-                        .chooseCard(powerupsToPay, player.enoughAmmos(cost, false), room, false);
+                Powerup chosenCard = null;
+                try {
+                    chosenCard = MessageHandler
+                            .chooseCard(powerupsToPay, player.enoughAmmos(cost, false), room, false);
+                } catch (TimeFinishedException e) {
+                    //TODO dont pay (go back function)
+                    throw new TimeFinishedException();
+                }
 
                 //null means the player doesnt want to use powerups
                 if (chosenCard != null) {
