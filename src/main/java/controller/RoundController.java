@@ -4,8 +4,9 @@ import model.board.Square;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.exceptions.NotExecutedException;
-import model.exceptions.NullTargetsException;
+
 import model.exceptions.TimeFinishedException;
+
 import model.player.ActionOption;
 import model.player.Player;
 import network.messages.Message;
@@ -90,11 +91,11 @@ public class RoundController {
         return usable;
     }
 
-    private void usePowerup(Powerup powerup, Player player){
+    private void usePowerup(Powerup powerup, Player player) throws TimeFinishedException{
         //execute it
         try {
             powerup.getEffect().execute(roomController.getRoom());
-        } catch (NullTargetsException e) {
+        } catch (NotExecutedException e) {
             logger.log(Level.WARNING, "Powerup operation has no targets", e);
         }
         //remove the powerup from the player

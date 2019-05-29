@@ -1,11 +1,13 @@
 package model.card;
 
-import model.exceptions.InterruptOperationException;
-import model.exceptions.NullTargetsException;
+import model.exceptions.NotExecutedException;
+import model.exceptions.TimeFinishedException;
 import model.gamehandler.Room;
 
+import java.awt.image.TileObserver;
 import java.io.Serializable;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 public class Effect implements Serializable {
     private String name;
@@ -20,7 +22,7 @@ public class Effect implements Serializable {
         this.operations = operations;
     }
 
-    public void execute(Room room)throws NullTargetsException {
+    public void execute(Room room)throws NotExecutedException, TimeFinishedException {
         for (Operation o:operations){
             o.execute(room);
         }

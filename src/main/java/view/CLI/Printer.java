@@ -526,7 +526,7 @@ public class Printer {
 
     }
 
-    private String colorToAnsi(AmmoColor color){
+    public String colorToAnsi(AmmoColor color){
         switch (color){
             case BLUE:
                 return "\u001B[0;34m";
@@ -538,7 +538,7 @@ public class Printer {
                 return "\u001B[0;37m"; //white
         }
     }
-    private String colorToAnsi(Color color){
+    public String colorToAnsi(Color color){
         switch (color){
             case BLUE:
                 return "\u001B[0;34m";

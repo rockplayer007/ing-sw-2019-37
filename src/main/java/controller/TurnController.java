@@ -9,6 +9,7 @@ import model.player.Player;
 import network.messages.Message;
 import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
+import network.messages.serverToClient.TimeoutMessage;
 
 import java.util.List;
 import java.util.Timer;
@@ -63,14 +64,17 @@ public class TurnController {
                 else if (player.getRoundStatus() == Player.RoundStatus.NORMAL_ROUND){
                     normalRound(player);
                 }
+
+                timer.cancelTimer();
             } catch (TimeFinishedException e) {
                 //send message
+                roomController.sendMessage(room.getCurrentPlayer(), new TimeoutMessage());
                 //set the player as disconnected
                 //continue as normal
                 System.out.println("player: " + room.getCurrentPlayer() + " diconnected");
             }
 
-            timer.cancelTimer();
+
             //after taking the ammoCard set a new card
             room.getBoard().fillAmmo();
             room.setNextPlayer();

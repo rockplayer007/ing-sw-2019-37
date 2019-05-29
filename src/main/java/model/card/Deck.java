@@ -49,7 +49,4 @@ public abstract class Deck <T extends Card>{
         usedCard.add(card);
     }
 
-    public Deque<T> getCardDeck() {
-        return cardDeck;
-    }
 }

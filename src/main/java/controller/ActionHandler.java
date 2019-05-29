@@ -5,7 +5,10 @@ import model.board.Board;
 import model.board.GenerationSquare;
 import model.board.Square;
 import model.card.*;
-import model.exceptions.*;
+
+import model.exceptions.AmmoException;
+import model.exceptions.NotEnoughException;
+import model.exceptions.NotExecutedException;
 import model.gamehandler.AttackHandler;
 import model.gamehandler.Room;
 import model.player.Player;
@@ -65,15 +68,16 @@ public class ActionHandler {
                 }
                 if (!weapon.getOptional())
                     break;
-            } catch (NullTargetsException e) {
-                if (!used) {
-                    player.movePlayer(playerPosition);
-                    //TODO da vedere come e fatto il undo della payment.
-                    throw new NotExecutedException("Effect is not possible used");
-                }
+            } catch (NotExecutedException e) {
+                throw new NotExecutedException("Effect is not possible used");
             } catch (NotEnoughException e) {
-                throw new NotExecutedException(e.getMessage());
+                //TODO
+            }finally {
+                if (!used)
+                    player.movePlayer(playerPosition);
+                //TODO da vedere come e fatto il undo della payment.
             }
+
             if (validEffect.isEmpty()|| validEffect.stream().allMatch(x->effects.get(x)==-1)){
                 validEffect.addAll(weapon.getLevelEffects(i));
                 i++;
@@ -219,6 +223,7 @@ public class ActionHandler {
 
     //payment method
     public static void payment(Player player, List<AmmoColor> cost, Room room) throws NotEnoughException, TimeFinishedException {
+
         List<AmmoColor> tempCost = new ArrayList<>(cost);
         if (cost.isEmpty()){
             return;

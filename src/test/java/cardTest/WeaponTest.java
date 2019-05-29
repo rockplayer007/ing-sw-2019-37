@@ -1,11 +1,7 @@
 package cardTest;
 
 import controller.RoomController;
-import model.card.Effect;
-import model.card.Operation;
-import model.card.Weapon;
-import model.card.WeaponDeck;
-import model.exceptions.NullTargetsException;
+import model.card.*;
 import model.gamehandler.AttackHandler;
 import model.gamehandler.Room;
 import model.player.Heroes;
@@ -13,12 +9,7 @@ import model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class WeaponTest {
 
@@ -59,6 +50,7 @@ public class WeaponTest {
 //            e.printStackTrace();
 //        }
 //        room.getAttackHandler().getPossibleTargets().forEach(x->System.out.println(x.getNickname()));
+
 
     }
 
