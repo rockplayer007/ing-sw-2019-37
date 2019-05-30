@@ -1,5 +1,6 @@
 package view.CLI;
 
+import com.sun.source.tree.WhileLoopTree;
 import model.board.*;
 
 import java.io.BufferedReader;
@@ -135,7 +136,7 @@ public class Printer {
             temp.append(colorToAnsi(Color.WHITE)).append("Effect: ").append(effect.getDescription());
             temp.append("Extra cost: ");
             for(AmmoColor color : effect.getExtraCost()){
-                temp.append(colorToAnsi(color)).append("O");
+                temp.append(colorToAnsi(color)).append("O").append(colorToAnsi(Color.WHITE));
             }
 
             printable.add(temp.toString());

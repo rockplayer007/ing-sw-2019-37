@@ -104,9 +104,7 @@ public class Player implements Serializable {
         if(roundStatus == RoundStatus.FIRST_ROUND){
             roundStatus = RoundStatus.NORMAL_ROUND;
         }
-        else if(roundStatus == RoundStatus.NORMAL_ROUND){
-            roundStatus = RoundStatus.FINAL_ROUND;
-        }
+
     }
 
     public void movePlayer(Square square){
@@ -205,7 +203,7 @@ public class Player implements Serializable {
 
 
     public enum RoundStatus{
-        FIRST_ROUND, NORMAL_ROUND, FINAL_ROUND;
+    FIRST_ROUND, NORMAL_ROUND;
     }
 
 

@@ -215,9 +215,9 @@ public class RoomController {
 
         //timeout happens before sending
         if(wait == false){
-            //send timout message
-            wait = true;
             resetReceiver();
+
+            wait = true;
 
             throw new TimeFinishedException();
         }
@@ -231,8 +231,9 @@ public class RoomController {
 
         //timeout happens after sending
         if (wait == false){
-            wait = true;
             resetReceiver();
+            wait = true;
+
             throw new TimeFinishedException();
         }
 
@@ -249,7 +250,7 @@ public class RoomController {
     public void resetReceiver(){
         mockMessage = null;
         expectedType = null;
-        //TODO expected receiver??
+        expectedReceiver = null;
     }
 
     //TODO check this

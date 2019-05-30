@@ -33,11 +33,14 @@ public class TurnController {
         this.room = room;
         roundController = new RoundController(roomController);
         gameFinished = false;
+        /*
         timer = new CountDown(1*20*1000, () -> {
             System.out.println("time finished");
             roomController.stopWaiting();
 
         }); //10 seconds
+
+         */
     }
 
     public void startPlayerRound(){
@@ -48,8 +51,14 @@ public class TurnController {
             Player player = room.getCurrentPlayer();
             //in case the timer finished reset the shoot for the next player
             roundController.resetShot();
+            timer = new CountDown(1*20*1000, () -> {
+                roomController.stopWaiting();
+                System.out.println("time finished");
+            }); //10 seconds
+
             timer.startTimer();
             try {
+
                 if(player.getRoundStatus() == Player.RoundStatus.FIRST_ROUND){
 
                     firstRound(player);
@@ -68,7 +77,13 @@ public class TurnController {
                     normalRound(player);
                 }
 
-                timer.cancelTimer();
+                try{
+                    timer.cancelTimer();
+                }catch (IllegalStateException e){
+                    System.out.println("ooops, timer already stopped, dont worry");
+                    //nothing, just continue
+                }
+
 
                 //after taking the ammoCard set a new card
                 room.getBoard().fillAmmo();
@@ -84,8 +99,10 @@ public class TurnController {
             }
 
 
-
+            room.endTurnControl(); //returns true if frenezy starts
             room.setNextPlayer();
+
+
         }
 
     }
