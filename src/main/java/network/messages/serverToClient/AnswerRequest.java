@@ -6,13 +6,14 @@ import java.util.List;
 
 public class AnswerRequest extends ServerToClient {
 
-    List<String> requests;
-    Boolean isOptional = false; //isOptional = true the player can choose if he wants to use the card or not
+    private List<String> requests;
+    private Boolean isOptional = false; //isOptional = true the player can choose if he wants to use the card or not
+    private String info;
 
-
-    public AnswerRequest(List<String> requests, Content content){
+    public AnswerRequest(List<String> requests, Content content, String info){
         super(content);
         this.requests = requests;
+        this.info = info;
     }
 
     public List<String> getRequests() {
@@ -24,5 +25,11 @@ public class AnswerRequest extends ServerToClient {
     }
     public boolean isOptional(){
         return isOptional;
+    }
+    public void setInfo(String info){
+        this.info = info;
+    }
+    public String getInfo(){
+        return info;
     }
 }

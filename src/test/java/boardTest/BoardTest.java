@@ -24,7 +24,7 @@ public class BoardTest {
     @BeforeEach
     public void createBoard(){
         board = new Board();
-        map = new BoardGenerator(board).createMap(0);
+        map = new BoardGenerator(board).createMap(3);
         board.setMap(map);
 
 

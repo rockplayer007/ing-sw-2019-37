@@ -110,7 +110,8 @@ public class TurnController {
     public void firstRound(Player currentPlayer) throws TimeFinishedException {
 
         List<Card> powerup = room.getBoard().getPowerDeck().getCard(2);
-        AnswerRequest message = new AnswerRequest(roomController.toJsonCardList(powerup), Message.Content.POWERUP_REQUEST);
+        AnswerRequest message = new AnswerRequest(roomController.toJsonCardList(powerup), Message.Content.POWERUP_REQUEST,
+                "Pick a powerup where to spawn");
         //sends the cards and receives the chosen one
         //chosen card is the card to KEEP
         ListResponse chosenCard;
