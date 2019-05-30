@@ -43,8 +43,9 @@ public class RoomController {
     }
 
     public void handleMessages(ClientToServer message) {
-
+        System.out.println("receved: " +  message.getContent().toString());
         switch (message.getContent()) {
+
             case CARD_RESPONSE:
                 if(checkReceiver(message)) {
 

@@ -3,14 +3,9 @@ package view.GUI;
 import model.card.AmmoColor;
 import model.player.Player;
 import model.player.PlayerBoard;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.html.StyleSheet;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
