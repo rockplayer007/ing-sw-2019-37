@@ -2,6 +2,7 @@ package view.GUI;
 
 import model.board.*;
 import model.card.AmmoColor;
+import model.card.Card;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.player.ActionOption;
@@ -28,19 +29,16 @@ public class MapPanel extends JLayeredPane{
     private List<WeaponButton> myWeapon = new ArrayList<>();
     private List<JButton> myPowerup = new ArrayList<>();
     private List<WeaponButton> weaponIcon = new ArrayList<>();
-    private List<JButton> infoWeapon = new ArrayList<>();
     private List<JButton> powerupButton = new ArrayList<>();
-    private List<JButton> weaponButton ;
     private List<JLabel> ammoColors = new ArrayList<>();
     private int [] positionX = new int[4];
     private int [] positionY = new int[3];
     private transient GameBoard board;
-    private JFrame chooseCard= new JFrame();
+    private JFrame chooseCard;
+    private JFrame choose;
    // private JFrame chooseCard = new JFrame();
     private JFrame playerboards=new JFrame("BOARDS");
     private List<JLabel> ammocards=new ArrayList<>();
-    private WeaponButton [] weaponButtons=new WeaponButton[3];
-    //private WeaponButton [] powerupButtons=new WeaponButton[3];
     private List<JButton> actions = new ArrayList<>();
     private Player myplayer=null;
     public MapPanel(GameBoard board)  {
@@ -62,6 +60,18 @@ public class MapPanel extends JLayeredPane{
         });
         add(pBoards);
 
+        chooseCard= new JFrame();
+        chooseCard.setLocation(300,50);
+        chooseCard.setMinimumSize(new Dimension(600,280));
+        chooseCard.setMaximumSize(new Dimension(800,285));
+        chooseCard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        choose= new JFrame();
+        choose.setLocation(300,50);
+        choose.setMinimumSize(new Dimension(300,300));
+        choose.setMaximumSize(new Dimension(300,300));
+        choose.setLayout(new GridLayout(2,2));
+        choose.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
     }
 
     private void setRoomCoordinate(){
@@ -81,12 +91,27 @@ public class MapPanel extends JLayeredPane{
 
     }
 
-    public void setEnabledPlayer(ArrayList<Player> players){
+    public void getPlayer(List<Player> players, MainClient mainClient){
+        resetRooms();
         resetPlayersEnabled();
         for (int i=0;i<players.size();i++){
             for(int j = 0; j< playerIcon.size(); j++){
-                if(players.get(i).getNickname().equals(playerIcon.get(j).getPlayer().getNickname()))
+                if(players.get(i).getNickname().equals(playerIcon.get(j).getPlayer().getNickname())) {
                     playerIcon.get(j).setEnabled(true);
+                    ActionListener actionListener[]=playerIcon.get(j).getActionListeners();
+                    for (int k=0;k<actionListener.length;k++){
+                        playerIcon.get(j).removeActionListener(actionListener[k]);
+                    }
+                    int s=i;
+                    playerIcon.get(j).addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            mainClient.sendSelectedPlayer(s);
+                            setVisibleRooms();
+                            enablePlayers();
+                        }
+                    });
+                }
             }
         }
     }
@@ -97,10 +122,22 @@ public class MapPanel extends JLayeredPane{
         }
     }
 
+    private  void enablePlayers(){
+        for (int i = 0; i<playerIcon.size(); i++){
+            playerIcon.get(i).setEnabled(true);
+        }
+    }
+
     public void resetRooms(){
         for(int i=0;i<roomButton.size();i++) {
             roomButton.get(i).setEnabled(false);
             roomButton.get(i).setVisible(false);
+        }
+    }
+
+    private void setVisibleRooms(){
+        for(int i=0;i<roomButton.size();i++) {
+            roomButton.get(i).setVisible(true);
         }
     }
 
@@ -124,8 +161,9 @@ public class MapPanel extends JLayeredPane{
 
     public void removeWeapon(){
         for(int i = 0; i< myWeapon.size(); i++){
-                myWeapon.get(i).setVisible(false);
-                //infoWeapon.get(i).setVisible(false);
+            myWeapon.get(i).setVisible(false);
+                this.remove(myWeapon.get(i));
+
             }
     }
 
@@ -174,6 +212,7 @@ public class MapPanel extends JLayeredPane{
             }
         }
     }
+
     public void removePowerup(){
         for(int i = 0; i< myPowerup.size(); i++){
             myPowerup.get(i).setVisible(false);
@@ -183,7 +222,7 @@ public class MapPanel extends JLayeredPane{
 
     }
 
-    public void addPowerup(Powerup powerup){
+    public void addPowerup(Powerup powerup, int key){
         JButton pow = new JButton();
         pow.setSize(80,120);
         int i=myPowerup.size();
@@ -205,9 +244,8 @@ public class MapPanel extends JLayeredPane{
         removePowerup();
         myPowerup=new ArrayList<>();
         for(int i=0;i<mypow.size();i++){
-            addPowerup(mypow.get(i));
+            addPowerup(mypow.get(i),i);
         }
-
     }
 
     public void createPlayerIcon(Player player){
@@ -219,12 +257,6 @@ public class MapPanel extends JLayeredPane{
         playerButton.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+
                 File.separatorChar +"heroes"+File.separatorChar+ player.getHero().getName()+".png"));
         playerButton.setOpaque(false);
-        playerButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("bottone premuto");
-            }
-        });
         playerButton.setVisible(true);
         this.add(playerButton);
         playerIcon.add(playerButton);
@@ -296,7 +328,7 @@ public class MapPanel extends JLayeredPane{
 
     public void createMapButton(){
         for(int i=0;board.getSquare(i)!=null;i++){
-            JMapButton room = new JMapButton(board.getSquare(i).getX(),board.getSquare(i).getY());
+            JMapButton room = new JMapButton(board.getSquare(i).getX(),board.getSquare(i).getY(),board.getSquare(i).getColor());
             room.setOpaque(false);
             room.setSize(149,116);
             Border border= BorderFactory.createLineBorder(Color.red);
@@ -315,8 +347,9 @@ public class MapPanel extends JLayeredPane{
         }
     }
 
-    public void updBoardGui(GameBoard board){
+    public void updBoardGui(GameBoard board, MainClient mainClient){
         //this.board=b;
+        //this.mainClient=mainClient;
         resetWeaponIcon();
         weaponIcon=new ArrayList<>();
         resetAmmo();
@@ -358,13 +391,13 @@ public class MapPanel extends JLayeredPane{
             }
             else{
                 AmmoSquare ammoSquare= (AmmoSquare) square;
-                ImageIcon imageIcon=new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"ammocard"+File.separatorChar+ ammoSquare.getAmmoCard().getName() + ".png");
-                JLabel ammo= new JLabel(imageIcon);
+               // ImageIcon imageIcon=new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"ammocard"+File.separatorChar+ ammoSquare.getAmmoCard().getName() + ".png");
+                JLabel ammo= new JLabel();
                 ammo.setSize(46,68);
                 //   ammo.setContentAreaFilled(false);
                 ammo.setBorder(null);
                 //  ammo.setFocusPainted(false);
-                if(!ammoSquare.getAmmoCard().getAmmoList().isEmpty())
+                if(ammoSquare.getAmmoCard()!=null)
                     ammo.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+
                             File.separatorChar+"resources"+File.separatorChar +"ammocard"+File.separatorChar
                             + ammoSquare.getAmmoCard().getName() + ".png"));
@@ -397,17 +430,23 @@ public class MapPanel extends JLayeredPane{
         playerboards.repaint();
     }
 
+
+
     public void getSquareSelected(List<Square> squares, MainClient mainClient){
         resetRooms();
         for (int i=0;i<squares.size();i++){
             Square square=squares.get(i);
             roomButton.get(square.getId()).setEnabled(true);
             roomButton.get(square.getId()).setVisible(true);
-            final int x=i;
+             int x=i;
+             ActionListener actionListener []=roomButton.get(square.getId()).getActionListeners();
+             for(int j=0;j<actionListener.length;j++){
+                 roomButton.get(square.getId()).removeActionListener(actionListener[j]);
+             }
             roomButton.get(square.getId()).addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    mainClient.sendSelectedBoard(x);
+                    mainClient.sendSelectedSquare(x);
                     resetRooms();
                 }
             });
@@ -422,154 +461,33 @@ public class MapPanel extends JLayeredPane{
         }
     }
 
-    public void getCardSelected(List<Powerup> powerups, boolean optional, MainClient mainClient) {
-        resetRooms();
-        chooseCard.setVisible(false);
-        resetPowerups();
-        powerupButton = new ArrayList<>();
-        weaponButton = new ArrayList<>();
+
+    public  void getPowerupSelected(List<Powerup> powerups,boolean optional, MainClient mainClient){
+        List<String> cards=new ArrayList<>();
+        for(int i=0;i<powerups.size();i++){
+            cards.add(powerups.get(i).getName()+powerups.get(i).getAmmo().toString());
+        }
+        SelectCardPanel selectCardPanel= new SelectCardPanel(cards,optional,mainClient,chooseCard);
         chooseCard.getContentPane().removeAll();
-        chooseCard=new JFrame();
-       // chooseCard.removeAll();
-        chooseCard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        chooseCard.setLayout(new GridLayout(1,4));
-        for (int j = 0; j < powerups.size(); j++) {
-            JButton powerup = new JButton();
-            powerup.setSize(196, 264);
-            //int i = powerupButton.size();
-                /*
-                if (i > 0) {
-                    powerup.setLocation(powerupButton.get(i - 1).getX() + 200, 10);
-                } else
-                    powerup.setLocation(600, 10);
-                */
-            powerup.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar
-                    + "main" + File.separatorChar + "resources" + File.separatorChar + "powerup" +
-                    File.separatorChar + powerups.get(j).getName() + powerups.get(j).getAmmo().toString()+".png"));
-            powerup.setOpaque(false);
-            powerup.setContentAreaFilled(false);
-            powerup.setBorder(null);
-            powerup.setFocusPainted(false);
-            final int c = j;
-            powerup.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    chooseCard.setVisible(false);
-                    mainClient.sendSelectedCard(c);
-                    //chooseCard.getContentPane().removeAll();
-
-
-
-
-                    //resetPowerups();
-                    //non dare possibilità di selezionare powerup
-
-                }
-            });
-            powerupButton.add(powerup);
-            chooseCard.add(powerup);
-        }
-
-
-        if (optional) {
-            JButton opt = new JButton("Dont use any powerup");
-            opt.setSize(196, 264);
-            opt.setBackground(Color.darkGray);
-            final int s = powerups.size();
-            opt.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    chooseCard.setVisible(false);
-                    mainClient.sendSelectedCard(s);
-
-                 //   chooseCard.getContentPane().removeAll();
-                }
-            });
-            powerupButton.add(opt);
-            chooseCard.add(opt);
-            chooseCard.setTitle("Do you want to use a powerup?");
-        }
-        else
-            chooseCard.setTitle("Select powerup to discard");
+        chooseCard.getContentPane().add(selectCardPanel);
         chooseCard.pack();
-        chooseCard.setLocation(300,50);
-        chooseCard.setMinimumSize(new Dimension(600,280));
-        chooseCard.setMaximumSize(new Dimension(800,285));
+        chooseCard.setVisible(true);
+    }
+
+    public void getWeaponSelected(List<Weapon> weapons,boolean optional, MainClient mainClient){
+        List<String> cards = new ArrayList<>();
+        for(int i=0 ;i<weapons.size();i++){
+            cards.add(weapons.get(i).getName());
+        }
+        chooseCard.getContentPane().removeAll();
+        SelectCardPanel selectCardPanel= new SelectCardPanel(cards,optional,mainClient,chooseCard);
+        chooseCard.getContentPane().add(selectCardPanel);
+        chooseCard.pack();
         chooseCard.setVisible(true);
     }
 
 
-    public void getWeaponSelected(List<Weapon> weapons, boolean optional, MainClient mainClient) {
-        resetRooms();
-        chooseCard.setVisible(false);
-        weaponButton = new ArrayList<>();
-        powerupButton = new ArrayList<>();
-        chooseCard.getContentPane().removeAll();
-        chooseCard=new JFrame();
-        chooseCard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        chooseCard.setLayout(new GridLayout(1,4));
-        for (int j = 0; j < weapons.size(); j++) {
-            JButton weapon = new JButton();
-            weapon.setSize(196, 264);
-            //int i = powerupButton.size();
-                /*
-                if (i > 0) {
-                    powerup.setLocation(powerupButton.get(i - 1).getX() + 200, 10);
-                } else
-                    powerup.setLocation(600, 10);
-                */
-            weapon.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar
-                    + "main" + File.separatorChar + "resources" + File.separatorChar + "powerup" +
-                    File.separatorChar + weapons.get(j).getName()+".png"));
-            weapon.setOpaque(false);
-            weapon.setContentAreaFilled(false);
-            weapon.setBorder(null);
-            weapon.setFocusPainted(false);
-            final int c = j;
-            weapon.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    chooseCard.setVisible(false);
-                    mainClient.sendSelectedCard(c);
-                    //chooseCard.getContentPane().removeAll();
 
-
-
-                    //resetPowerups();
-                    //non dare possibilità di selezionare powerup
-
-                }
-            });
-            weaponButton.add(weapon);
-            chooseCard.add(weapon);
-        }
-
-
-        if (optional) {
-            JButton opt = new JButton("Dont use any powerup");
-            opt.setSize(196, 264);
-            opt.setBackground(Color.darkGray);
-            final int s = weapons.size();
-            opt.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    mainClient.sendSelectedCard(s);
-                    chooseCard.setVisible(false);
-                    chooseCard.getContentPane().removeAll();
-                }
-            });
-            weaponButton.add(opt);
-            chooseCard.add(opt);
-            chooseCard.setTitle("Do you want to use a powerup?");
-        }
-        else
-            chooseCard.setTitle("Select powerup to discard");
-        chooseCard.pack();
-        chooseCard.setLocation(300,50);
-        chooseCard.setMinimumSize(new Dimension(600,280));
-        chooseCard.setMaximumSize(new Dimension(800,285));
-        chooseCard.setVisible(true);
-    }
 
     public void getAction(List<ActionOption> actionOptions, MainClient mainClient){
         //bloccare altre azioni possibili
@@ -619,4 +537,56 @@ public class MapPanel extends JLayeredPane{
             this.remove(actions.get(i));
         }
     }
+
+    public void getDirection(List<Square.Direction> directions,MainClient mainClient){
+        choose.getContentPane().removeAll();
+        for(int i=0;i<directions.size();i++){
+            JButton dir = new JButton();
+            dir.setSize(150,150);
+            int s=i;
+            dir.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar
+                    + "main" + File.separatorChar + "resources" + File.separatorChar
+                    + "directions" + File.separatorChar + directions.get(i).toString() + ".jpg"));
+            dir.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    mainClient.sendSelectedDirection(s);
+                    choose.setVisible(false);
+                }
+            });
+
+            choose.add(dir);
+        }
+        choose.pack();
+        choose.setVisible(true);
+    }
+
+    public void getAmmoColor(List<AmmoColor> ammoColors, MainClient mainClient){
+        choose.removeAll();
+        for(int i=0;i<ammoColors.size();i++){
+            JButton ammoColor = new JButton();
+            int x=i;
+            StyleSheet styleSheet=new StyleSheet();
+            ammoColor.setBackground(styleSheet.stringToColor(ammoColors.get(i).toString()));
+            ammoColor.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    choose.setVisible(false);
+                    mainClient.sendSelectedAmmoColor(x);
+                }
+            });
+            choose.add(ammoColor);
+        }
+        choose.pack();
+        choose.setVisible(true);
+    }
+
+    public void blockAll(){
+        choose.setVisible(false);
+        chooseCard.setVisible(false);
+        resetRooms();
+        setVisibleRooms();
+        resetActions();
+    }
 }
+

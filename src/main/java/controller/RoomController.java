@@ -48,6 +48,7 @@ public class RoomController {
 
     public void handleMessages(ClientToServer message) {
 
+
         if(checkReceiver(message)) {
 
             mockMessage = message;
@@ -58,7 +59,9 @@ public class RoomController {
         }
 
         /*
+>>>>>>> 87a8ada166e7f207673b3d4d9e29a2c4096abb79
         switch (message.getContent()) {
+
             case CARD_RESPONSE:
                 if(checkReceiver(message)) {
 

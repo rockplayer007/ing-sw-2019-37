@@ -3,14 +3,9 @@ package view.GUI;
 import model.card.AmmoColor;
 import model.player.Player;
 import model.player.PlayerBoard;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.html.StyleSheet;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,13 +20,13 @@ public class PlayerBoardPanel extends JPanel{
         for(int i=0;i<players.size();i++){
            PlayerBoard playerBoard=players.get(i).getPlayerBoard();
            int x=12;
-           for (int j=0;j<playerBoard.getHp().size();j++){
+           for (int j=0;j<playerBoard.getHpColor().size();j++){
                JLabel point = new JLabel();
                point.setLocation(x,i*205+74);
                point.setSize(40,52);
                x=x+48;
                StyleSheet s = new StyleSheet();
-               point.setBackground(s.stringToColor(playerBoard.getHp().get(j).getColor().toString()));
+               point.setBackground(s.stringToColor(playerBoard.getHpColor().get(j).toString()));
                this.add(point);
            }
            JButton board = new JButton();
