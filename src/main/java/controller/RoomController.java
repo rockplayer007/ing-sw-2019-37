@@ -6,6 +6,7 @@ import model.board.*;
 import model.card.AmmoColor;
 import model.card.Card;
 import model.card.Effect;
+import model.exceptions.TimeFinishedException;
 import model.exceptions.TooManyPlayerException;
 import model.gamehandler.Room;
 import model.player.Player;
@@ -17,6 +18,7 @@ import network.server.ClientOnServer;
 
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,6 +33,7 @@ public class RoomController {
     private Message.Content expectedType;
     private Thread askingThread;
     private TurnController turnController;
+    private boolean wait;
 
     private static final Logger logger = Logger.getLogger(RoomController.class.getName());
 
@@ -40,10 +43,23 @@ public class RoomController {
         players = new ArrayList<>();
         connectionToClient = new HashMap<>();
         turnController = new TurnController(this, room);
+        wait = true;
     }
 
     public void handleMessages(ClientToServer message) {
-        System.out.println("receved: " +  message.getContent().toString());
+
+
+        if(checkReceiver(message)) {
+
+            mockMessage = message;
+            //askingThread.interrupt();
+        }
+        else {
+            System.out.println("CHEATER");
+        }
+
+        /*
+>>>>>>> 87a8ada166e7f207673b3d4d9e29a2c4096abb79
         switch (message.getContent()) {
 
             case CARD_RESPONSE:
@@ -72,6 +88,8 @@ public class RoomController {
                 logger.log(Level.WARNING, "Unhandled message");
         }
 
+         */
+
     }
 
 
@@ -79,7 +97,7 @@ public class RoomController {
     public void addPlayer(ClientOnServer client) throws TooManyPlayerException {
         Player player = client.getPersonalPlayer();
         if (players.isEmpty()) {
-            room.setStartingPlayer(player);
+            //room.setStartingPlayer(player);
             room.setCurrentPlayer(player);
         }
         if (players.size() < 5) {
@@ -93,11 +111,10 @@ public class RoomController {
 
         //add players to the room
         room.setPlayers(players);
-
         askBoard();
 
         System.out.println("next steeeeeeeeeeeep");
-        turnController.startPlayerRound(room.getCurrentPlayer());
+        turnController.startPlayerRound();
 
     }
 
@@ -138,8 +155,13 @@ public class RoomController {
         room.createMap(((ListResponse) mockMessage).getSelectedItem());
 
          */
-
-        ListResponse boardMessage = (ListResponse) sendAndReceive(room.getCurrentPlayer(), boardRequest);
+        //TODO in this case ask somebody else
+        ListResponse boardMessage = null;
+        try {
+            boardMessage = (ListResponse) sendAndReceive(room.getCurrentPlayer(), boardRequest);
+        } catch (TimeFinishedException e) {
+            e.printStackTrace();
+        }
         room.createMap(boardMessage.getSelectedItem());
 
         //necessary to serialize properly also the sub classes
@@ -189,28 +211,53 @@ public class RoomController {
         }
     }
 
-    public ClientToServer sendAndReceive(Player player, ServerToClient message){
+    public ClientToServer sendAndReceive(Player player, ServerToClient message) throws TimeFinishedException {
         mockMessage = null;
         expectedReceiver = player.getNickname();
         //expectedType = message.getContent();
+
+        //timeout happens before sending
+        if(wait == false){
+            resetReceiver();
+
+            wait = true;
+
+            throw new TimeFinishedException();
+        }
         sendMessage(player, message);
-        while (mockMessage == null){
+
+        //dont wait for the sending when wait is false
+        while (mockMessage == null && wait){
             Thread.onSpinWait();
             //System.out.println("waiting");
         }
+
+        //timeout happens after sending
+        if (wait == false){
+            resetReceiver();
+            wait = true;
+
+            throw new TimeFinishedException();
+        }
+
         ClientToServer answer = mockMessage;
         resetReceiver();
 
         return answer;
     }
 
+    public void stopWaiting(){
+        wait = false;
+    }
+
     public void resetReceiver(){
         mockMessage = null;
         expectedType = null;
+        expectedReceiver = null;
     }
 
     //TODO check this
-    //public < T > List<String> toJsonCardList(List<T> cards){
+    //public <T> List<String> toJsonCardList(List<T> cards){
     public List<String> toJsonCardList(List<? extends Card> cards){
         List<String> list = new ArrayList<>();
         Gson gson = new Gson();
@@ -260,7 +307,7 @@ public class RoomController {
         return list;
     }
 
-    public List<String> toJsonAmmoColortList(List<AmmoColor> ammo){
+    public List<String> toJsonAmmoColorList(List<AmmoColor> ammo){
         List<String> list = new ArrayList<>();
         //not making use of the adapter because no need in view
         Gson gson = new Gson();

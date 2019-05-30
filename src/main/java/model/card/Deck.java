@@ -14,12 +14,8 @@ public abstract class Deck <T extends Card>{
     public Card getCard(){
         if(cardDeck.isEmpty()){
             reMix();
-            return getCard();
         }
-        else{
-            return cardDeck.pop();
-        }
-
+        return cardDeck.pop();
     }
 
     public List<Card> getCard(int n){
@@ -52,4 +48,5 @@ public abstract class Deck <T extends Card>{
     public void usedCard(T card){
         usedCard.add(card);
     }
+
 }

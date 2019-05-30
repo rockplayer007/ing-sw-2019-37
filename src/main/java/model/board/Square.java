@@ -276,8 +276,13 @@ public class Square implements Serializable {
 
     public enum Direction {
         //🠘 🠚 🠙 🠛
-        //TOP("\uD83E\uDC19"), DOWN("\uD83E\uDC1B"),LEFT("\uD83E\uDC18"),RIGHT("\uD83E\uDC1A");
-        TOP, DOWN, LEFT, RIGHT;
+        TOP("\uD83E\uDC19"), DOWN("\uD83E\uDC1B"),LEFT("\uD83E\uDC18"),RIGHT("\uD83E\uDC1A");
+        //TOP, DOWN, LEFT, RIGHT;
+        private String info;
+
+        Direction(String info){
+            this.info = info;
+        }
 
         @Override
         public String toString() {

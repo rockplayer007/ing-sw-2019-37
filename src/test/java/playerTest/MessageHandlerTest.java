@@ -5,18 +5,14 @@ import model.gamehandler.Room;
 import model.card.AmmoCard;
 import model.card.AmmoColor;
 import model.card.PowerDeck;
-import controller.ActionHandler;
 import model.player.Heroes;
 import model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.EnumMap;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-public class ActionHandlerTest {
+public class MessageHandlerTest {
 
     private Room room;
     private AmmoCard ammoCard, ammoCard1;
@@ -41,7 +37,7 @@ public class ActionHandlerTest {
     @Test
     public void grabAmmoCard(){
 /*
-        ActionHandler.grabAmmo(room.getCurrentPlayer(),ammoCard, room.getBoard());
+        MessageHandler.grabAmmo(room.getCurrentPlayer(),ammoCard, room.getBoard());
         EnumMap<AmmoColor,Integer> map= (EnumMap<AmmoColor,Integer>) room.getCurrentPlayer().getAmmo();
 
         System.out.println(map);
@@ -56,7 +52,7 @@ public class ActionHandlerTest {
     @Test
     public void grabAmmoCard1(){
 /*
-        ActionHandler.grabAmmo(room.getCurrentPlayer(),ammoCard1, room.getBoard());
+        MessageHandler.grabAmmo(room.getCurrentPlayer(),ammoCard1, room.getBoard());
         EnumMap<AmmoColor,Integer> map= (EnumMap<AmmoColor,Integer>) room.getCurrentPlayer().getAmmo();
 
         System.out.println(map);

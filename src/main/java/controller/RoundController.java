@@ -2,9 +2,11 @@ package controller;
 
 import model.board.Square;
 import model.card.Powerup;
-import model.exceptions.InterruptOperationException;
-import model.exceptions.NotExecutedExeption;
-import model.exceptions.NullTargetsException;
+import model.card.Weapon;
+import model.exceptions.NotExecutedException;
+
+import model.exceptions.TimeFinishedException;
+
 import model.player.ActionOption;
 import model.player.Player;
 import network.messages.Message;
@@ -15,32 +17,39 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class RoundController {
 
     private RoomController roomController;
-    private boolean shot = false;
+    private boolean shot;
 
     private static final Logger logger = Logger.getLogger(RoundController.class.getName());
 
 
     public RoundController(RoomController roomController){
         this.roomController = roomController;
+        this.shot = false;
+    }
+    public void resetShot(){
+        shot = false;
     }
 
-    public void powerupController(Player player){
-        Boolean usePowerups = true;
+
+    public void powerupController(Player player) throws TimeFinishedException {
+        boolean usePowerups = true;
         while (usePowerups){
             List<Powerup> powerups = possiblePowerups(player);
             if(!powerups.isEmpty()){
 
-                Powerup chosenCard = ActionHandler
+                Powerup chosenCard = MessageHandler
                         .chooseCard(powerups, true, roomController.getRoom(), false);
 
                 //null means the player doesnt want to use powerups
                 if (chosenCard != null){
                     //the chosen powerup will be executed
                     usePowerup(chosenCard, player);
+                    roomController.sendUpdate();
                 }
                 else {
                     usePowerups = false;
@@ -51,6 +60,9 @@ public class RoundController {
             }
 
         }
+        //set back the shot flag for the next call
+        shot = false;
+
     }
 
     //check if the player can use the powerup
@@ -60,7 +72,6 @@ public class RoundController {
         for(Powerup powerup : player.getPowerups()){
 
             //NEWTON before/after action. Not possibile if no players on board
-            //TODO check this
             if(powerup.getName().equals("NEWTON") && roomController.getRoom().getBoard().getMap().getPlayersOnMap().size() > 1){
                 usable.add(powerup);
             }
@@ -68,29 +79,26 @@ public class RoundController {
             if(powerup.getName().equals("TELEPORTER")){
                 usable.add(powerup);
             }
-
+            //TARGETING SCOPE only after weapon
             if(powerup.getName().equals("TARGETING SCOPE") && shot){
                 usable.add(powerup);
             }
-            //TARGETING SCOPE only after weapon
+
 
             //TAGBACK GRENADE only after a another player shot
 
 
         }
-        //set back the shot flag for the next call
-        shot = false;
+
 
         return usable;
     }
 
-    private void usePowerup(Powerup powerup, Player player){
+    private void usePowerup(Powerup powerup, Player player) throws TimeFinishedException{
         //execute it
         try {
             powerup.getEffect().execute(roomController.getRoom());
-        } catch (InterruptOperationException e) {
-            logger.log(Level.WARNING, "Powerup operation interrupted", e);
-        } catch (NullTargetsException e) {
+        } catch (NotExecutedException e) {
             logger.log(Level.WARNING, "Powerup operation has no targets", e);
         }
         //remove the powerup from the player
@@ -100,7 +108,7 @@ public class RoundController {
     }
 
 
-    public void actionController(Player player){
+    public void actionController(Player player) throws TimeFinishedException{
         //check action in player
         List<String> send = player.getActionStatus().getJsonChoices(player,
                 //if the there is only 1 player he cant shoot
@@ -131,20 +139,36 @@ public class RoundController {
                 //grap in this square
                 try {
                     ActionHandler.grab(player, roomController.getRoom().getBoard(), roomController.getRoom());
-                } catch (NotExecutedExeption notExecutedExeption) {
+                } catch (NotExecutedException notExecutedException) {
                     // set the player to his previous position
                     player.movePlayer(goBackSquare);
                     //send a message with exception to string
-                    System.out.println(notExecutedExeption.getMessage());
+                    System.out.println(notExecutedException.getMessage());
                 }
 
                 break;
             case SHOOT:
                 //ask card
+                List<Weapon> usableWeapons = player.getWeapons().stream().filter(Weapon::getCharged).collect(Collectors.toList());
+                Weapon chosenWeapon = MessageHandler.chooseCard(usableWeapons, false, roomController.getRoom(), true);
+
+                if(chosenWeapon == null){
+                    //cheater
+                }
 
                 //execute this card
+                try {
+                    ActionHandler.shoot(roomController.getRoom(), chosenWeapon);
+                } catch (NotExecutedException e) {
+                    //send message
+                    System.out.println("not executed");
+                }
+
                 //flag for shooting, needed to decide to use a powerup or not
                 shot = true;
+
+
+                //TODO add powerup check
                 break;
         }
 

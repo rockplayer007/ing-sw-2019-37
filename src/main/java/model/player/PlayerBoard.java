@@ -1,24 +1,40 @@
 package model.player;
 
+
+import model.board.Cell;
+import model.board.Color;
+
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * 
  */
-public class PlayerBoard {
-    private  Player player;
-    private List<Player> hp;
+public class PlayerBoard implements Serializable{
+
+    private transient Player player;
+    private transient List<Player> hp;
+    private List<Color> hpColor;
     private static int[] pointArray = {8, 6, 4, 2, 1, 1};
     private static int[] frenzyPoints = {2, 1, 1, 1};
-    private Boolean isFrenzy;
+    private boolean isFrenzy;
     private int points;
     private int deathTimes;
-    private List<Player> marks;
+    private transient List<Player> marks;
+    private List<Color> marksColor;
 
-    public PlayerBoard() {
-        this.hp=new ArrayList<>(12);
-        this.points=0;
-        this.deathTimes=0;
+
+    public PlayerBoard(Player player) {
+        this.player = player;
+        hp = new ArrayList<>(12);
+        hpColor = new ArrayList<>(12);
+        points=0;
+        deathTimes=0;
+        marks = new ArrayList<>();
+        marksColor = new ArrayList<>();
+        isFrenzy = false;
+
+
     }
 
     public int getDeathTimes() {
@@ -39,9 +55,13 @@ public class PlayerBoard {
      * @param points how damage give this(player).
      */
     public void addDamage(Player player,int points){
+        if (points==0)
+            return;
         for (int i=0;i<points;i++) {
-            if (hp.size() < 12)
+            if (hp.size() < 12) {
                 hp.add(player);
+                hpColor.add(player.getColor());
+            }
         }
         int c=playerMarks(player);
         if (c!=0) {
@@ -58,6 +78,20 @@ public class PlayerBoard {
     }
 
     /**
+     * add a mark if "this" has less than 3 mark of that player
+     * @param player the player marked "this"
+     */
+    public void addMark(Player player,int points){
+        for (int i=0; i<points; i++) {
+            if (playerMarks(player) < 3) {
+                marks.add(player);
+                marksColor.add(player.getColor());
+            }else
+                break;
+        }
+    }
+
+    /**
      *  remove all marks of that player
      * @param player that player's marks to remove
      */
@@ -66,6 +100,7 @@ public class PlayerBoard {
         if (c!=0)
             for (int i=0;i<c;i++) {
                 marks.remove(player);
+                marksColor.remove(player.getColor());
             }
     }
 
@@ -83,15 +118,6 @@ public class PlayerBoard {
     }
 
     /**
-     * add a mark if "this" has less than 3 mark of that player
-     * @param player the player marked "this"
-     */
-    public void addMark(Player player){
-        if (playerMarks(player)<3)
-            marks.add(player);
-    }
-
-    /**
      *  add the point that "this" has get
      * @param points number of point
      */
@@ -103,7 +129,7 @@ public class PlayerBoard {
      * @return a List of player that attached "this"  and sorted in base hit numbers
      */
     private List<Player> listForLiquidation(){
-        Map<Player,Integer> mapofpoints=new TreeMap<>(hitNumberOfPlayers());
+        Map<Player,Integer> mapofpoints=new LinkedHashMap<>(hitNumberOfPlayers());
         List<Map.Entry<Player,Integer>> sortmap=new ArrayList<>(mapofpoints.entrySet());
         sortmap.sort((Map.Entry<Player, Integer> o1, Map.Entry<Player, Integer> o2)-> o2.getValue()-o1.getValue());
         List<Player> list=new ArrayList<>();
@@ -115,7 +141,7 @@ public class PlayerBoard {
      * @return a Map whit player and his hit numbers
      */
     public Map<Player,Integer> hitNumberOfPlayers(){
-        Map<Player,Integer> map=new HashMap<>();
+        Map<Player,Integer> map=new LinkedHashMap<>();
         for (Player p:hp){
             if (map.containsKey(p))
                 map.put(p,map.get(p)+1);
@@ -127,9 +153,11 @@ public class PlayerBoard {
 
     /**
      * liquidation when the hero dies, and give the point to others player
+     * @return when the player is died return Cell that need add to SkullBoard, else return null.
      */
-    public void liquidation(){
-        List<Player> listForLiquidation=listForLiquidation();
+    public Cell liquidation(){
+        List<Player> listForLiquidation = listForLiquidation();
+        Cell cell = new Cell();
         int i=0;
         for (Player p:listForLiquidation){
             p.getPlayerBoard().addPoints(isFrenzy ? frenzyPoints[deathTimes+i] : pointArray[deathTimes+i]);
@@ -138,14 +166,37 @@ public class PlayerBoard {
         if (hp.get(0)!=null&&!isFrenzy)
             hp.get(0).getPlayerBoard().addPoints(1);
 
-        if (hp.size()==12&&hp.get(11)!=null)
-            hp.get(11).getPlayerBoard().addMark(this.player);
+        Player player1 = hp.get(10);
+
+        if (hp.size()==11&&hp.get(10)!=null) {
+            cell.setKill(player1);
+            player.setLive(false);
+        }
+
+        if (hp.size()==12&&hp.get(11)!=null) {
+            hp.get(11).getPlayerBoard().addMark(player,1);
+            cell.setOverKill();
+        }
+
         hp=new ArrayList<>();
+
+        if (cell.getKill()==null)
+            return null;
+        else
+            return cell;
 
     }
 
     public List<Player> getHp() {
         return hp;
+    }
+
+    public List<Color> getHpColor() {
+        return hpColor;
+    }
+
+    public List<Color> getMarksColor() {
+        return marksColor;
     }
 
     public List<Player> getMarks() {

@@ -8,8 +8,12 @@ import java.util.List;
 
 public enum  ActionState {
 
-    TURNACTIONS(Arrays.asList(ActionOption.MOVE3, ActionOption.MOVE1_GRAB, ActionOption.SHOOT));
-//    ,ADRENALINEACTIONS1,ADRENALINEACTIONS2,FRENETICACTIONS1,FRENETICACTIONS2;
+    TURNACTIONS(Arrays.asList(ActionOption.MOVE3, ActionOption.MOVE1_GRAB, ActionOption.SHOOT)),
+    ADRENALINEACTIONS1(Arrays.asList(ActionOption.MOVE3, ActionOption.MOVE2_GRAB, ActionOption.SHOOT)),
+    ADRENALINEACTIONS2(Arrays.asList(ActionOption.MOVE3, ActionOption.MOVE2_GRAB, ActionOption.MOVE1_SHOOT)),
+    FRENETICACTIONS1(Arrays.asList(ActionOption.MOVE1_RELOAD_SHOOT, ActionOption.MOVE4, ActionOption.MOVE2_GRAB)),
+    FRENETICACTIONS2(Arrays.asList(ActionOption.MOVE2_RELOAD_SHOOT, ActionOption.MOVE3_GRAB));
+
 
     private List<ActionOption> options;
 

@@ -1,10 +1,16 @@
 package model.card;
 
+
 import java.io.Serializable;
 
-public abstract class Card {
+public abstract class Card implements Serializable {
     private String name;
     private String description;
+
+    public Card(){
+        name = "";
+        description = "";
+    }
 
     public Card (String name, String description){
         this.name=name;
@@ -17,5 +23,9 @@ public abstract class Card {
 
     public String getDescription(){
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

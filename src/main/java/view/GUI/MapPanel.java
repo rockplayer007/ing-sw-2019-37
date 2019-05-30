@@ -41,7 +41,6 @@ public class MapPanel extends JLayeredPane{
     private List<JLabel> ammocards=new ArrayList<>();
     private List<JButton> actions = new ArrayList<>();
     private Player myplayer=null;
-    private MainClient mainClient;
     public MapPanel(GameBoard board)  {
         JButton pBoards;
         this.setLayout(null);
@@ -350,7 +349,7 @@ public class MapPanel extends JLayeredPane{
 
     public void updBoardGui(GameBoard board, MainClient mainClient){
         //this.board=b;
-        this.mainClient=mainClient;
+        //this.mainClient=mainClient;
         resetWeaponIcon();
         weaponIcon=new ArrayList<>();
         resetAmmo();
@@ -392,13 +391,13 @@ public class MapPanel extends JLayeredPane{
             }
             else{
                 AmmoSquare ammoSquare= (AmmoSquare) square;
-                ImageIcon imageIcon=new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"ammocard"+File.separatorChar+ ammoSquare.getAmmoCard().getName() + ".png");
-                JLabel ammo= new JLabel(imageIcon);
+               // ImageIcon imageIcon=new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"ammocard"+File.separatorChar+ ammoSquare.getAmmoCard().getName() + ".png");
+                JLabel ammo= new JLabel();
                 ammo.setSize(46,68);
                 //   ammo.setContentAreaFilled(false);
                 ammo.setBorder(null);
                 //  ammo.setFocusPainted(false);
-                if(ammoSquare.getAmmoCard().getAmmoList()!=null)
+                if(ammoSquare.getAmmoCard()!=null)
                     ammo.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+
                             File.separatorChar+"resources"+File.separatorChar +"ammocard"+File.separatorChar
                             + ammoSquare.getAmmoCard().getName() + ".png"));
@@ -580,6 +579,14 @@ public class MapPanel extends JLayeredPane{
         }
         choose.pack();
         choose.setVisible(true);
+    }
+
+    public void blockAll(){
+        choose.setVisible(false);
+        chooseCard.setVisible(false);
+        resetRooms();
+        setVisibleRooms();
+        resetActions();
     }
 }
 

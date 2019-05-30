@@ -10,6 +10,7 @@ import model.player.Player;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class Room {
 
@@ -29,6 +30,8 @@ public class Room {
         board = new Board();
         boardGenerator = new BoardGenerator(board);
         players = new ArrayList<>();
+        //needs to be null at the beginning to be set later
+        startingPlayer = null;
 
     }
 
@@ -60,7 +63,7 @@ public class Room {
     }
 
     public List<Player> getPlayers() {
-        return Collections.unmodifiableList(players);
+        return players;
     }
 
     public Player getCurrentPlayer() {
@@ -96,6 +99,19 @@ public class Room {
 
     public void setPlayers(List<Player> player){
         players.addAll(player);
+    }
+
+
+    /**
+     * do this every time when the player (currentPlayer) finished his turn.
+     */
+    public void endTurnControl (){
+        List<Player> diedPlayers = players.stream().filter(x->x.getPlayerBoard().getHp().size()>10).collect(Collectors.toList());
+        if (!diedPlayers.isEmpty()){
+            diedPlayers.forEach(x->x.getPlayerBoard().liquidation());
+            if (diedPlayers.size()>1)
+                currentPlayer.getPlayerBoard().addPoints(1);
+        }
     }
 
     public void startFrenzy(){

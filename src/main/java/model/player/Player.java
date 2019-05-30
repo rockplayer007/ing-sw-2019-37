@@ -23,7 +23,8 @@ public class Player implements Serializable {
     private List<Weapon> weapons;
     private transient List<Powerup> powerups;
     private transient ActionState actionStatus;
-    private Boolean live;
+    private RoundStatus roundStatus;
+    private boolean live;
 
     public Player(String nickname, Heroes hero) {
         this.nickname = nickname;
@@ -34,22 +35,17 @@ public class Player implements Serializable {
         }
         powerups=new ArrayList<>();
         weapons=new ArrayList<>();
-        playerBoard=new PlayerBoard();
+        playerBoard=new PlayerBoard(this);
         actionStatus = ActionState.TURNACTIONS;
         position = null;
+        live = false;
+        this.roundStatus = RoundStatus.FIRST_ROUND;
 
-    }
 
-    public void setHero(Heroes hero) {
-        this.hero = hero;
     }
 
     private void setPosition(Square position) {
         this.position = position;
-    }
-
-    public void setPlayerBoard(PlayerBoard board) {
-        this.playerBoard = board;
     }
 
     public void setActionStatus(ActionState actionStatus) {
@@ -82,12 +78,33 @@ public class Player implements Serializable {
         return weapons;
     }
 
-    public void removeWeapon(Weapon weapon){
-        weapons.remove(weapon);
-    }
-
     public ActionState getActionStatus() {
         return actionStatus;
+    }
+
+    public RoundStatus getRoundStatus(){
+        return roundStatus;
+    }
+
+    public void setLive(boolean live) {
+        this.live = live;
+
+        if (!live) {
+            position.getPlayersOnSquare().remove(this);
+            position = null;
+        }
+    }
+
+    public boolean isLive() {
+        return live;
+    }
+
+    public void setNextRoundstatus(){
+
+        if(roundStatus == RoundStatus.FIRST_ROUND){
+            roundStatus = RoundStatus.NORMAL_ROUND;
+        }
+
     }
 
     public void movePlayer(Square square){
@@ -127,6 +144,7 @@ public class Player implements Serializable {
     public void removePowerup(Powerup powerup){
         powerups.remove(powerup);
     }
+
     public void addWeapon(Weapon weapon){
         weapons.add(weapon);
     }
@@ -149,14 +167,6 @@ public class Player implements Serializable {
         ArrayList<AmmoColor> bullets=new ArrayList<>();
         powerups.forEach(i->bullets.add(i.getAmmo()));
         return bullets;
-    }
-
-    /**
-     * @param ammoColor the color of ammo request
-     * @return true if play has at least one powerup is same as that request, else no.
-     */
-    public boolean usePowerupAsAmmo(AmmoColor ammoColor){
-        return powerupAsAmmo().contains(ammoColor);
     }
 
     /**
@@ -192,6 +202,9 @@ public class Player implements Serializable {
     }
 
 
+    public enum RoundStatus{
+    FIRST_ROUND, NORMAL_ROUND;
+    }
 
 
 }

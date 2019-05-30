@@ -141,7 +141,7 @@ public class GUI implements ViewInterface {
         }
         if ((component.getName().equals("mapPanel"))){
             MapPanel mapPanel = (MapPanel) component;
-            //mapPanel.blockAll; devo implementarlo
+            mapPanel.blockAll();
         }
 
     }

@@ -31,7 +31,7 @@ public class Message implements Serializable{
 
 
         //general
-        TIMEOUT, BOARD_INFO, UPDATE,
+        TIMEOUT, INFO, UPDATE, ATTACK,
         //ClientToServer
         LOGIN_REQUEST, BOARD_RESPONSE, CARD_RESPONSE, SQUARE_RESPONSE, EFFECT_RESPOSNSE, PLAYER_RESPONSE,
         DIRECTION_RESPONSE, AMMO_RESPONSE, ROOM_RESPONSE,

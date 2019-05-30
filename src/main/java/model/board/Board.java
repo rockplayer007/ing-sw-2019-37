@@ -19,8 +19,8 @@ public class Board {
         powerDeck = new PowerDeck();
         weaponDeck = new WeaponDeck();
 
-        //map = new BoardGenerator(this);
-        skullBoard = new SkullBoard();
+        //TODO fare l'utente a scegliere quandi skull mette.
+        skullBoard = new SkullBoard(5);
     }
 
     /**
@@ -74,6 +74,16 @@ public class Board {
 
     public SkullBoard getSkullBoard(){
         return skullBoard;
+    }
+
+    public void fillAmmo(){
+        for(Square square : map.allSquares()){
+            if(!square.isGenerationPoint()){
+                if(((AmmoSquare) square).getAmmoCard() == null){
+                    ((AmmoSquare) square).setAmmoCard((AmmoCard) ammoDeck.getCard());
+                }
+            }
+        }
     }
 
 }

@@ -8,20 +8,6 @@ public class WeaponDeck extends Deck<Weapon>{
     public WeaponDeck(){
         this.addAll(generationWeapons());
         mixDeck();
-        /*
-        for(int i = 0; i < 20; i++){
-            //adding to the local deck (in the Deck class)
-            //for test
-            ArrayList<AmmoColor> cost = new ArrayList<>();
-            cost.add(AmmoColor.BLUE);
-            cost.add(AmmoColor.YELLOW);
-            Weapon weapon = new Weapon("TestName", "lots of effects", AmmoColor.BLUE, cost,
-                    true, new HashMap<>());
-
-            addCard(weapon);
-        }
-
-         */
 
     }
 
@@ -32,7 +18,7 @@ public class WeaponDeck extends Deck<Weapon>{
     private List<Weapon> generationWeapons(){
         List<Weapon> weapons = new ArrayList<>();
         List<Operation> operations;
-        Map<Effect,Integer> effects = new HashMap<>();
+        Map<Effect,Integer> effects = new LinkedHashMap<>();
         String basicEffect = "Basic effect";
         String basicMode = "Basic mode";
 
@@ -91,7 +77,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 true, effects ));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description ="Deal 2 damage to 1 target you can see.\n" ;
         operations = Arrays.asList(visiblePlayers, selectTarget1, damage2,setTargetToSelected);
         effects.put(new Effect(basicEffect,description,Collections.emptyList(), operations),0);
@@ -105,11 +91,11 @@ public class WeaponDeck extends Deck<Weapon>{
         description="Notes: This card constrains the order in which you can use its effects. " +
                 "(Most cards don't.) Also note that each target must be a different player.\n" ;
 
-        weapons.add(new Weapon("T.H.O.R", description, AmmoColor.BLUE, Collections.singletonList(AmmoColor.RED),
+        weapons.add(new Weapon("T.H.O.R.", description, AmmoColor.BLUE, Collections.singletonList(AmmoColor.RED),
                 true, effects));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description ="Deal 2 damage to 1 target you can see.\n" ;
         operations = Arrays.asList(visiblePlayers, selectTarget1, damage2, setTargetToSelected);
         effects.put(new Effect(basicEffect,description, Collections.emptyList(), operations),0);
@@ -127,7 +113,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 true, effects));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description = "Deal 3 damage and 1 mark to 1 target you can see. Your target must be at least 2 moves away from you.\n" ;
         operations = Arrays.asList(visiblePlayers, new MinOrMaxDistance(1,false), selectTarget1, damage3);
         effects.put(new Effect("Effect",description, Collections.emptyList(), operations), 0);
@@ -139,7 +125,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 false, effects));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description = "Deal 1 damage to every other player on your square.\n";
         operations = Arrays.asList(sameSquare, selectAllTarget, damage1);
         effects.put(new Effect(basicMode,description, Collections.emptyList(), operations), 0);
@@ -151,7 +137,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 false, effects));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description = "Move a target 0, 1, or 2 squares to a square you can see, and give it 1 damage.\n";
         operations = Arrays.asList(visiblePlayers,new AddPossibleTargetBeforeMove(2,false),
                 selectTarget1, new MoveTargetToVisible(2), damage1);
@@ -168,7 +154,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 false, effects));
 
 
-        effects=new HashMap<>();
+        effects=new LinkedHashMap<>();
         description = "Choose a square you can see, but not your square. Call it \"the vortex\". " +
                 "Choose a target on the vortex or 1 move away from it. Move it onto the vortex and give it 2 damage.\n";
         operations= Arrays.asList(new SelectEffectSquare(1),selectTarget1, moveTargetToEffevtSquare, damage1, setTargetToSelected);
@@ -184,7 +170,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 true, effects));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description = "Choose a room you can see, but not the room you are in. Deal 1 damage to everyone in that room.\n ";
         operations=Arrays.asList(new Furance(false), selectAllTarget, damage1);
         effects.put(new Effect("Basic mode: ",description, Collections.emptyList(), operations), 0);
@@ -196,7 +182,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 false, effects));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description = "Choose 1 target you cannot see and deal 3 damage to it.\n";
         operations = Arrays.asList(visiblePlayers, new Heatseekker(), selectTarget1, damage3);
         effects.put(new Effect("Effect",description, Collections.emptyList(), operations), 0);
@@ -206,7 +192,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 false, effects));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description = "Deal 1 damage to 1 target you can see at least 1 move away. " +
                 "Then give 1 mark to that target and everyone else on that square.\n";
         operations = Arrays.asList(visiblePlayers, minDistance0, selectTarget1, damage1, mark1,
@@ -222,7 +208,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 false, effects));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description = "Choose a square 1 move away and possibly a second square " +
                 "1 more move away in the same direction. On each square, you may choose 1 target and give it 1 damage.\n";
         operations = Arrays.asList(new DirectionTargets(2,false), minDistance0,
@@ -240,7 +226,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 false,effects));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description ="Deal 1 damage to 1 target you can see. Then you may move " +
                 "the target 1 square.\n" ;
         operations = Arrays.asList(visiblePlayers, selectTarget1, damage1, setTargetPositionAsEffectSquare, moveTarget1, setTargetToSelected);
@@ -258,7 +244,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 false, effects));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description = "Deal 2 damage to 1 target you can see that is not on your square. Then you may move the target 1 square.\n";
         operations = Arrays.asList(visiblePlayers, minDistance0, selectTarget1, damage2, moveTarget1, setTargetToSelected);
         effects.put(new Effect(basicEffect,description, Collections.emptyList(), operations), 0);
@@ -278,7 +264,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 false, effects));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description = "Choose a cardinal direction and 1 target in that direction. Deal 3 damage to it.\n";
         operations = Arrays.asList(directionTargets, selectTarget1, damage3);
         effects.put(new Effect(basicMode,description,Collections.emptyList(), operations), 0);
@@ -295,7 +281,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 false, effects));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description = "Deal 2 damage to 1 target on your square.\n";
         operations = Arrays.asList(sameSquare, selectTarget1, damage2, setTargetToSelected);
         effects.put(new Effect(basicEffect,description, Collections.emptyList(), operations), 0);
@@ -313,7 +299,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 true, effects));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description = "Deal 1 damage and 2 marks to 1 target you can see.\n";
         operations = Arrays.asList(visiblePlayers, selectTarget1, damage1, mark2);
         effects.put(new Effect(basicMode,description, Collections.emptyList(), operations), 0);
@@ -326,7 +312,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 false, effects));
 
 
-        effects=new HashMap<>();
+        effects=new LinkedHashMap<>();
         description = "Deal 3 damage to 1 target on your square. If you want, you may then move the target 1 square.\n";
         operations=Arrays.asList(sameSquare,selectTarget1,damage3,moveTarget1);
         effects.put(new Effect(basicMode,description,Collections.emptyList(), operations), 0);
@@ -338,7 +324,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 false,effects));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description = "Choose 1 target on any square exactly 1 move away. Move onto that square " +
                 "and give the target 1 damage and 2 marks.\n";
         operations = Arrays.asList(maxDistance1, minDistance0, selectTarget1, damage1, mark2, moveToTarget);
@@ -355,7 +341,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 false, effects));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description = "Choose up to 3 targets on different squares, each exactly 1 move away. " +
                 "Deal 1 damage to each target.\n";
         operations = Arrays.asList(maxDistance1, minDistance0, new SelectTargets(3,true), damage1);
@@ -368,7 +354,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 false, effects));
 
 
-        effects = new HashMap<>();
+        effects = new LinkedHashMap<>();
         description = "Deal 2 damage to 1 target on your square.\n";
         operations = Arrays.asList(sameSquare,selectTarget1,damage2);
         effects.put(new Effect(basicMode,description,Collections.emptyList(), operations),0);

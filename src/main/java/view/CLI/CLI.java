@@ -180,8 +180,9 @@ public class CLI implements ViewInterface {
 
 
     public void timeout(){
-        printer.println("You finished your time for choosing");
         printer.closeRequest();
+        printer.println(printer.colorToAnsi(Color.RED) + "TIME IS FINISHED" + printer.colorToAnsi(Color.WHITE));
+
     }
 
     @Override
@@ -189,7 +190,5 @@ public class CLI implements ViewInterface {
         printer.printAllInfo(board, myPowerups, skullBoard);
 
     }
-
-
 
 }
