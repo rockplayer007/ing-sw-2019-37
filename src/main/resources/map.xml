@@ -345,7 +345,7 @@
 
     </board>
 
-    <board n="0" description ="good for any number of players">
+    <board n="3" description ="good for any number of players">
 
         <square n="0">
             <color>RED</color>
