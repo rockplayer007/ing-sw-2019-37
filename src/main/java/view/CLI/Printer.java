@@ -67,9 +67,51 @@ public class Printer {
 
                     if(choice < 1 || choice > nRequests){
                         println("Write a valid input:");
-                        println("to THREAD   " + thread.getName());
                     }
                 }while (choice < 1 || choice > nRequests);
+                selection.accept(choice - 1);
+
+            }catch (IOException|InterruptedException e) {
+                //dont println anything for cli
+            }
+
+        });
+        thread.start();
+    }
+
+    public void displaySquares(List<String> possibilities, List<Integer> ids, Consumer<Integer> selection){
+        //bofore asking something else cancel the previous request
+        if(thread != null){
+            closeRequest();
+        }
+        thread = new Thread( () ->
+        {
+
+            for(String temp : possibilities){
+                println(temp);
+            }
+            //println("THREAD IS  " + thread.getName());
+            println("Choose a square: ");
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+            Scanner reader = new Scanner(bufferedReader);
+
+            try {
+                do {
+                    while (!bufferedReader.ready()) {
+
+                        Thread.sleep(100);
+                    }
+                    if (reader.hasNextInt()) {
+                        choice = reader.nextInt();
+                    } else {
+                        reader.next();
+                        choice = -1;
+                    }
+
+                    if(!ids.contains(choice - 1)){
+                        println("Write a valid input:");
+                    }
+                }while (!ids.contains(choice - 1));
                 selection.accept(choice - 1);
 
             }catch (IOException|InterruptedException e) {
@@ -121,12 +163,24 @@ public class Printer {
 
     public void askSquare(List<Square> squares, Consumer<Integer> selection){
         List<String> printable = new ArrayList<>();
+        List<Integer> ids = new ArrayList<>();
         for(Square square : squares){
             String temp = "Move to square " + colorToAnsi(square.getColor()) + (square.getId() + 1) + colorToAnsi(Color.WHITE);
             printable.add(temp);
+            ids.add(square.getId());
         }
 
-        displayRequest(printable, selection);
+        displaySquares(printable, ids, id ->
+        {
+            Square tempS = null;
+            for(Square s : squares){
+                if(s.getId() == id){
+                    tempS = s;
+                    break;
+                }
+            }
+            selection.accept(squares.indexOf(tempS));
+        });
     }
 
     public void askEffect(List<Effect> effects, Consumer<Integer> selection){
