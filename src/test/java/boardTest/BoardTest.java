@@ -5,6 +5,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import model.board.*;
+import model.card.AmmoColor;
+import model.card.Weapon;
 import model.player.Heroes;
 import model.player.Player;
 import network.client.MainClient;
@@ -12,6 +14,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import view.CLI.CLI;
 import view.CLI.Printer;
+
+import java.util.Arrays;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,6 +48,23 @@ public class BoardTest {
         Player player1 = new Player("destructor", Heroes.D_STRUCT_OR);
         Player player2 = new Player("banshee", Heroes.BANSHEE);
         Player player3 = new Player("dozer", Heroes.DOZER);
+        Weapon testWeapon1 = new Weapon("GRENADE LAUNCHER", "", AmmoColor.BLUE,
+                Arrays.asList(AmmoColor.BLUE, AmmoColor.RED, AmmoColor.YELLOW), true,
+                new HashMap<>());
+        Weapon testWeapon2 = new Weapon("GRENADE LAUNCHER", "", AmmoColor.BLUE,
+                Arrays.asList(AmmoColor.BLUE, AmmoColor.RED, AmmoColor.YELLOW), true,
+                new HashMap<>());
+        //setup of the points
+        player1.addWeapon(testWeapon1);
+        testWeapon2.setCharged(false);
+        player1.addWeapon(testWeapon2);
+        player1.addWeapon(testWeapon2);
+
+        player1.getPlayerBoard().addDamage(player2, 6);
+        player1.getPlayerBoard().addDamage(player3, 6);
+
+        player1.getPlayerBoard().addMark(player1, 2);
+        player1.getPlayerBoard().addMark(player1, 3);
 
         map.getSquare(0).addPlayer(player1);
         map.getSquare(0).addPlayer(player2);
