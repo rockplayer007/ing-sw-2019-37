@@ -93,7 +93,7 @@ public class TurnController {
                 roomController.sendMessage(room.getCurrentPlayer(), new TimeoutMessage());
                 //set the player as disconnected
                 //continue as normal
-                System.out.println("player: " + room.getCurrentPlayer() + " diconnected");
+                System.out.println("player: " + room.getCurrentPlayer().getNickname() + " disconnected");
                 room.getBoard().fillAmmo();
                 roomController.sendUpdate();
             }

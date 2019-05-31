@@ -225,6 +225,11 @@ public class GUI implements ViewInterface {
     }
 
     @Override
+    public void showInfo(String info) {
+
+    }
+
+    @Override
     public void chooseAction(List<ActionOption> actions) {
         Component component = frame.getContentPane().getComponent(0);
         if ((component.getName().equals("mapPanel"))) {

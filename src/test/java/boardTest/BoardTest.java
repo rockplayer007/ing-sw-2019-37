@@ -45,9 +45,12 @@ public class BoardTest {
     @Test
     public void serializeMapTest(){
 
-        Player player1 = new Player("destructor", Heroes.D_STRUCT_OR);
-        Player player2 = new Player("banshee", Heroes.BANSHEE);
-        Player player3 = new Player("dozer", Heroes.DOZER);
+        Player player1 = new Player("destructor");
+        player1.setHero(Heroes.D_STRUCT_OR);
+        Player player2 = new Player("banshee");
+        player2.setHero(Heroes.BANSHEE);
+        Player player3 = new Player("dozer");
+        player3.setHero(Heroes.DOZER);
         Weapon testWeapon1 = new Weapon("GRENADE LAUNCHER", "", AmmoColor.BLUE,
                 Arrays.asList(AmmoColor.BLUE, AmmoColor.RED, AmmoColor.YELLOW), true,
                 new HashMap<>());
@@ -63,8 +66,9 @@ public class BoardTest {
         player1.getPlayerBoard().addDamage(player2, 6);
         player1.getPlayerBoard().addDamage(player3, 6);
 
-        player1.getPlayerBoard().addMark(player1, 2);
-        player1.getPlayerBoard().addMark(player1, 3);
+        player1.getPlayerBoard().addMark(player2, 2);
+        player1.getPlayerBoard().addMark(player2, 3);
+        //player1.getPlayerBoard().addMark(player2, 3);
 
         map.getSquare(0).addPlayer(player1);
         map.getSquare(0).addPlayer(player2);

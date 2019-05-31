@@ -3,7 +3,10 @@ package network.server;
 import controller.RoomController;
 import model.player.HeroGenerator;
 import model.player.Player;
+import network.messages.Message;
+import network.messages.serverToClient.ServerToClient;
 
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,6 +17,7 @@ import java.util.stream.Collectors;
  */
 public class WaitingRoom {
 
+    private static final int STARTING_PLAYERS = 3;
     private Queue<ClientOnServer> waitingClients;
     private Timer timer;
     private MainServer server;
@@ -35,7 +39,7 @@ public class WaitingRoom {
             waitingClients.add(p);
 
 
-            if(waitingClients.size() == 2){
+            if(waitingClients.size() == STARTING_PLAYERS){
                 //start timer
                 timer = new Timer();
                 startTimer();
@@ -61,9 +65,34 @@ public class WaitingRoom {
         timer.schedule(new TimerTask() {
             @Override
             public void run(){
+                int nPlayers = waitingClients.size();
+                List<ClientOnServer> tempClients = new ArrayList<>(waitingClients);
+                if(nPlayers >= STARTING_PLAYERS && nPlayers <= 5){
+                    for(ClientOnServer client : tempClients){
+                        //remove player if he disconnects before
+                        try {
+                            client.getClientInterface().notifyClient(new ServerToClient(Message.Content.CONNECTION));
+                            if(!client.getPersonalPlayer().isConnected()){
+                                waitingClients.remove(client);
+                                server.removeClient(client);
+                                logger.log(Level.WARNING, "Player: {0} removed because disconnected before start",
+                                        client.getUsername());
+                            }
+                        } catch (RemoteException e) {
 
-                if(waitingClients.size() >=2 && waitingClients.size() <= 5){
-                    startGame();
+                            waitingClients.remove(client);
+                            server.removeClient(client);
+                            logger.log(Level.WARNING, "Player: {0} removed because disconnected before start",
+                                    client.getUsername());
+                        }
+
+                    }
+                    if(waitingClients.size() < STARTING_PLAYERS){
+                        startTimer();
+                    }
+                    else{
+                        startGame();
+                    }
                 }
                 else{
                     // if there are not enough players start the timer again
@@ -85,8 +114,8 @@ public class WaitingRoom {
 
         HeroGenerator heroGen = new HeroGenerator();
         for(ClientOnServer waitingClient : waitingClients){
-            Player player = new Player(waitingClient.getUsername(), heroGen.getHero());
-            waitingClient.setPersonalPlayer(player);
+
+            waitingClient.getPersonalPlayer().setHero(heroGen.getHero());
             playingRoom.addPlayer(waitingClient);
             usernames.add(waitingClient.getUsername());
         }

@@ -259,6 +259,8 @@ public class MainClient {
                 stringed.forEach(square -> rooms.add(gson.fromJson(square, Color.class)));
                 view.chooseRoom(rooms);
                 break;
+            case INFO:
+                view.showInfo(((InfoMessage) message).getInfo());
             default:
                 logger.log(Level.WARNING, "Unregistered message");
 
