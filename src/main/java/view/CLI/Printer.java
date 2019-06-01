@@ -1,5 +1,6 @@
 package view.CLI;
 
+import com.sun.source.tree.WhileLoopTree;
 import model.board.*;
 
 import java.io.BufferedReader;
@@ -66,9 +67,51 @@ public class Printer {
 
                     if(choice < 1 || choice > nRequests){
                         println("Write a valid input:");
-                        println("to THREAD   " + thread.getName());
                     }
                 }while (choice < 1 || choice > nRequests);
+                selection.accept(choice - 1);
+
+            }catch (IOException|InterruptedException e) {
+                //dont println anything for cli
+            }
+
+        });
+        thread.start();
+    }
+
+    public void displaySquares(List<String> possibilities, List<Integer> ids, Consumer<Integer> selection){
+        //bofore asking something else cancel the previous request
+        if(thread != null){
+            closeRequest();
+        }
+        thread = new Thread( () ->
+        {
+
+            for(String temp : possibilities){
+                println(temp);
+            }
+            //println("THREAD IS  " + thread.getName());
+            println("Choose a square: ");
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+            Scanner reader = new Scanner(bufferedReader);
+
+            try {
+                do {
+                    while (!bufferedReader.ready()) {
+
+                        Thread.sleep(100);
+                    }
+                    if (reader.hasNextInt()) {
+                        choice = reader.nextInt();
+                    } else {
+                        reader.next();
+                        choice = -1;
+                    }
+
+                    if(!ids.contains(choice - 1)){
+                        println("Write a valid input:");
+                    }
+                }while (!ids.contains(choice - 1));
                 selection.accept(choice - 1);
 
             }catch (IOException|InterruptedException e) {
@@ -105,7 +148,8 @@ public class Printer {
             for(int n = 0; n < weapon.getChargeCost().size(); n++){
                 charge.append(colorToAnsi(weapon.getChargeCost().get(n))).append("O");
             }
-            String temp = colorToAnsi(Color.WHITE) + weapon.getName()
+            String temp = (weapon.getCharged() ? colorToAnsi(Color.GREEN) : colorToAnsi(Color.RED))
+                    + weapon.getName() + colorToAnsi(Color.WHITE)
                     + " buy cost: " + buy.toString() + colorToAnsi(Color.WHITE)
                     + " charge cost: " + charge.toString() + colorToAnsi(Color.WHITE);
 
@@ -120,12 +164,24 @@ public class Printer {
 
     public void askSquare(List<Square> squares, Consumer<Integer> selection){
         List<String> printable = new ArrayList<>();
+        List<Integer> ids = new ArrayList<>();
         for(Square square : squares){
             String temp = "Move to square " + colorToAnsi(square.getColor()) + (square.getId() + 1) + colorToAnsi(Color.WHITE);
             printable.add(temp);
+            ids.add(square.getId());
         }
 
-        displayRequest(printable, selection);
+        displaySquares(printable, ids, id ->
+        {
+            Square tempS = null;
+            for(Square s : squares){
+                if(s.getId() == id){
+                    tempS = s;
+                    break;
+                }
+            }
+            selection.accept(squares.indexOf(tempS));
+        });
     }
 
     public void askEffect(List<Effect> effects, Consumer<Integer> selection){
@@ -135,7 +191,7 @@ public class Printer {
             temp.append(colorToAnsi(Color.WHITE)).append("Effect: ").append(effect.getDescription());
             temp.append("Extra cost: ");
             for(AmmoColor color : effect.getExtraCost()){
-                temp.append(colorToAnsi(color)).append("O");
+                temp.append(colorToAnsi(color)).append("O").append(colorToAnsi(Color.WHITE));
             }
 
             printable.add(temp.toString());
@@ -274,7 +330,7 @@ public class Printer {
                                         }
                                     }
                                     else{
-                                        line.append("   ");
+                                        line.append(colorToAnsi(tempSquare.getColor())).append("|     |");
                                     }
                                 }
                                 break;
@@ -466,25 +522,40 @@ public class Printer {
                 for(AmmoColor ammo : player.getAmmo().keySet()){
                     for(int i = 0; i < player.getAmmo().get(ammo); i++){
                         playerInfo.append(colorToAnsi(ammo)).append("O");
-
                     }
                 }
-                //println(playerInfo.toString());
+
+                playerInfo.append("   ");
+
+                //add points
+                for(Color hp : player.getPlayerBoard().getHpColor()){
+                    playerInfo.append(colorToAnsi(hp)).append("X");
+                }
+                playerInfo.append(colorToAnsi(Color.WHITE)).append("   ");
+
+                //add marks
+
+                for(Color marks : player.getPlayerBoard().getMarksColor()){
+                    playerInfo.append(colorToAnsi(marks)).append("@");
+                }
+
+
+                playerInfo.append(colorToAnsi(Color.WHITE));
                 stringedInfo.add(playerInfo.toString());
 
                 if(player.getNickname().equals(cli.getMainClient().getUsername())){
                     stringedPowerups.append(colorToAnsi(Color.WHITE)).append("Powerups: ");
                     for(Powerup powerup : myPowerups){
-                        stringedPowerups.append(colorToAnsi(Color.WHITE)).append(" ").append(powerup.getName());
-                        stringedPowerups.append(colorToAnsi(powerup.getAmmo())).append(" O");
+                        stringedPowerups.append(colorToAnsi(powerup.getAmmo())).append(powerup.getName());
+                        stringedPowerups.append(colorToAnsi(Color.WHITE));
                     }
                     stringedInfo.add(stringedPowerups.toString());
                 }
 
                 stringedWeapons.append(colorToAnsi(Color.WHITE)).append("Weapons: ");
                 for(Weapon weapon : player.getWeapons()){
-                    stringedWeapons.append(weapon.getName());
-                    stringedWeapons.append(weapon.getCharged() ? " (CHARGED) " : " (NOT CHARGED) ");
+                    stringedWeapons.append(weapon.getCharged() ? colorToAnsi(Color.GREEN) : colorToAnsi(Color.RED));
+                    stringedWeapons.append(weapon.getName()).append(colorToAnsi(Color.WHITE)).append(" ");
                 }
                 stringedInfo.add(stringedWeapons.toString());
 
@@ -499,7 +570,7 @@ public class Printer {
         List<String> stringedWeapons = printWeaponsOnBoard(board);
         List<String> stringedPlayers = printPlayersInfo(board, myPowerups);
 
-        String header = String.format("%19s %12s %22s %12s %12s %13s",
+        String header = String.format("%19s %10s %22s %10s %10s %13s",
                 "GAME BOARD","|", "WEAPONS ON GAME BOARD", "COST", "|", "PLAYERS");
 
         println(header);
@@ -510,15 +581,17 @@ public class Printer {
             line.append(stringedBoard.get(i));
 
             if(j < stringedWeapons.size()){
-                line.append("   |   ").append(stringedWeapons.get(j));
+                line.append(" | ").append(stringedWeapons.get(j));
                 j++;
+            }
+            else{
+                line.append(String.format("%30s", " "));
             }
 
             if(k < stringedPlayers.size()){
-                line.append("   |   ").append(stringedPlayers.get(k));
+                line.append(" | ").append(stringedPlayers.get(k));
                 k++;
             }
-
 
             println(line.toString());
         }

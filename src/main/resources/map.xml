@@ -3,7 +3,7 @@
 <!-- go from left to right, from top to bottom -->
 <!-- type can be only generationSquare and ammoSquare -->
 <!-- colors can be only RED, BLUE, YELLOW, GREEN, PURPLE, WHITE -->
-<!-- squares in the same room have the same colo-->
+<!-- squares in the same room have the same color-->
 <maps>
 
     <board n="0" description ="good for 3-4 players">
@@ -107,7 +107,353 @@
 
     </board>
 
-    <board n="1" description="good for test">
+    <board n="1" description ="good for any number of players">
+
+        <square n="0">
+            <color>BLUE</color>
+            <xy>0-0</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>1</id>
+                <id>4</id>
+            </connection>
+        </square>
+        <square n="1">
+            <color>BLUE</color>
+            <xy>1-0</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>0</id>
+                <id>2</id>
+            </connection>
+        </square>
+        <square n="2">
+            <color>BLUE</color>
+            <xy>2-0</xy>
+            <type>generationSquare</type>
+            <connection>
+                <id>1</id>
+                <id>3</id>
+                <id>6</id>
+            </connection>
+        </square>
+
+        <square n="3">
+            <color>GREEN</color>
+            <xy>3-0</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>2</id>
+                <id>7</id>
+            </connection>
+        </square>
+        <square n="4">
+            <color>RED</color>
+            <xy>0-1</xy>
+            <type>generationSquare</type>
+            <connection>
+                <id>0</id>
+                <id>5</id>
+            </connection>
+        </square>
+        <square n="5">
+            <color>RED</color>
+            <xy>1-1</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>4</id>
+                <id>8</id>
+            </connection>
+        </square>
+
+        <square n="6">
+            <color>YELLOW</color>
+            <xy>2-1</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>2</id>
+                <id>7</id>
+                <id>9</id>
+            </connection>
+        </square>
+
+        <square n="7">
+            <color>YELLOW</color>
+            <xy>3-1</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>3</id>
+                <id>6</id>
+                <id>10</id>
+            </connection>
+        </square>
+        <square n="8">
+            <color>WHITE</color>
+            <xy>1-2</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>5</id>
+                <id>9</id>
+            </connection>
+        </square>
+
+        <square n="9">
+            <color>YELLOW</color>
+            <xy>2-2</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>6</id>
+                <id>8</id>
+                <id>10</id>
+            </connection>
+        </square>
+
+        <square n="10">
+            <color>YELLOW</color>
+            <xy>3-2</xy>
+            <type>generationSquare</type>
+            <connection>
+                <id>7</id>
+                <id>9</id>
+            </connection>
+        </square>
+
+    </board>
+
+    <board n="2" description ="good for 4-5 players">
+
+        <square n="0">
+            <color>RED</color>
+            <xy>0-0</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>1</id>
+                <id>4</id>
+            </connection>
+        </square>
+        <square n="1">
+            <color>BLUE</color>
+            <xy>1-0</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>0</id>
+                <id>2</id>
+                <id>5</id>
+            </connection>
+        </square>
+        <square n="2">
+            <color>BLUE</color>
+            <xy>2-0</xy>
+            <type>generationSquare</type>
+            <connection>
+                <id>1</id>
+                <id>3</id>
+                <id>6</id>
+            </connection>
+        </square>
+
+        <square n="3">
+            <color>GREEN</color>
+            <xy>3-0</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>2</id>
+                <id>7</id>
+            </connection>
+        </square>
+        <square n="4">
+            <color>RED</color>
+            <xy>0-1</xy>
+            <type>generationSquare</type>
+            <connection>
+                <id>0</id>
+                <id>8</id>
+            </connection>
+        </square>
+        <square n="5">
+            <color>PURPLE</color>
+            <xy>1-1</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>1</id>
+                <id>9</id>
+            </connection>
+        </square>
+
+        <square n="6">
+            <color>YELLOW</color>
+            <xy>2-1</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>2</id>
+                <id>7</id>
+                <id>10</id>
+            </connection>
+        </square>
+
+        <square n="7">
+            <color>YELLOW</color>
+            <xy>3-1</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>3</id>
+                <id>6</id>
+                <id>11</id>
+            </connection>
+        </square>
+        <square n="8">
+            <color>WHITE</color>
+            <xy>0-2</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>4</id>
+                <id>9</id>
+            </connection>
+        </square>
+
+        <square n="9">
+            <color>WHITE</color>
+            <xy>1-2</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>5</id>
+                <id>8</id>
+                <id>10</id>
+            </connection>
+        </square>
+
+        <square n="10">
+            <color>YELLOW</color>
+            <xy>2-2</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>6</id>
+                <id>9</id>
+                <id>11</id>
+            </connection>
+        </square>
+
+        <square n="11">
+            <color>YELLOW</color>
+            <xy>3-2</xy>
+            <type>generationSquare</type>
+            <connection>
+                <id>7</id>
+                <id>10</id>
+            </connection>
+        </square>
+
+    </board>
+
+    <board n="3" description ="good for any number of players">
+
+        <square n="0">
+            <color>RED</color>
+            <xy>0-0</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>1</id>
+                <id>3</id>
+            </connection>
+        </square>
+        <square n="1">
+            <color>BLUE</color>
+            <xy>1-0</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>0</id>
+                <id>2</id>
+                <id>4</id>
+            </connection>
+        </square>
+        <square n="2">
+            <color>BLUE</color>
+            <xy>2-0</xy>
+            <type>generationSquare</type>
+            <connection>
+                <id>1</id>
+                <id>5</id>
+            </connection>
+        </square>
+
+        <square n="3">
+            <color>RED</color>
+            <xy>0-1</xy>
+            <type>generationSquare</type>
+            <connection>
+                <id>0</id>
+                <id>7</id>
+            </connection>
+        </square>
+        <square n="4">
+            <color>PURPLE</color>
+            <xy>1-1</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>1</id>
+                <id>5</id>
+                <id>8</id>
+            </connection>
+        </square>
+        <square n="5">
+            <color>PURPLE</color>
+            <xy>2-1</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>2</id>
+                <id>4</id>
+                <id>6</id>
+            </connection>
+        </square>
+
+        <square n="6">
+            <color>YELLOW</color>
+            <xy>3-1</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>5</id>
+                <id>10</id>
+            </connection>
+        </square>
+
+        <square n="7">
+            <color>WHITE</color>
+            <xy>0-2</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>3</id>
+                <id>8</id>
+            </connection>
+        </square>
+        <square n="8">
+            <color>WHITE</color>
+            <xy>1-2</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>4</id>
+                <id>7</id>
+                <id>9</id>
+            </connection>
+        </square>
+
+        <square n="9">
+            <color>WHITE</color>
+            <xy>2-2</xy>
+            <type>ammoSquare</type>
+            <connection>
+                <id>8</id>
+                <id>10</id>
+            </connection>
+        </square>
+        <square n="10">
+            <color>YELLOW</color>
+            <xy>3-2</xy>
+            <type>generationSquare</type>
+            <connection>
+                <id>9</id>
+                <id>6</id>
+            </connection>
+        </square>
 
     </board>
 

@@ -40,8 +40,9 @@ public class MessageHandler {
         RoomController roomController = room.getRoomController();
         List<String> send = roomController
                 .toJsonSquareList(validPositions);
+        ServerToClient message = new AnswerRequest(send, Message.Content.SQUARE_REQUEST, "Choose a square");
         ListResponse square = (ListResponse) roomController
-                .sendAndReceive(player, new AnswerRequest(send, Message.Content.SQUARE_REQUEST));
+                .sendAndReceive(player, message);
 
         List<Square> tempSquares;
         try{
@@ -68,7 +69,7 @@ public class MessageHandler {
                 .toJsonEffectList(effects);
 
         ListResponse effect = (ListResponse) roomController
-                .sendAndReceive(player, new AnswerRequest(send, Message.Content.EFFECT_REQUEST));
+                .sendAndReceive(player, new AnswerRequest(send, Message.Content.EFFECT_REQUEST, "Choose an effect"));
 
         try{
             return effects.get(effect.getSelectedItem());
@@ -92,7 +93,7 @@ public class MessageHandler {
             List<String> send = roomController
                     .toJsonPlayerList(possiblePlayers);
             ListResponse chosenPlayer = (ListResponse) roomController
-                    .sendAndReceive(player, new AnswerRequest(send, Message.Content.PLAYER_REQUEST));
+                    .sendAndReceive(player, new AnswerRequest(send, Message.Content.PLAYER_REQUEST, "Choose a player"));
 
             try{
                 playersToAttack.add(possiblePlayers.get(chosenPlayer.getSelectedItem()));
@@ -112,7 +113,7 @@ public class MessageHandler {
                 .toJsonDirectionList(directions);
 
         ListResponse direction = (ListResponse) roomController
-                .sendAndReceive(player, new AnswerRequest(send, Message.Content.DIRECTION_REQUEST));
+                .sendAndReceive(player, new AnswerRequest(send, Message.Content.DIRECTION_REQUEST, "Choose a direction"));
 
         try{
             return directions.get(direction.getSelectedItem());
@@ -129,7 +130,7 @@ public class MessageHandler {
                 .toJsonAmmoColorList(ammo);
 
         ListResponse chosenAmmo = (ListResponse) roomController
-                .sendAndReceive(player, new AnswerRequest(send, Message.Content.AMMOCOLOR_REQUEST));
+                .sendAndReceive(player, new AnswerRequest(send, Message.Content.AMMOCOLOR_REQUEST, "Choose an ammo color"));
 
         try{
             return ammo.get(chosenAmmo.getSelectedItem());
@@ -146,7 +147,7 @@ public class MessageHandler {
                 .toJsonColorList(rooms);
 
         ListResponse chosenRoom = (ListResponse) roomController
-                .sendAndReceive(player, new AnswerRequest(send, Message.Content.ROOM_REQUEST));
+                .sendAndReceive(player, new AnswerRequest(send, Message.Content.ROOM_REQUEST, "Choose a room"));
 
         try{
             return rooms.get(chosenRoom.getSelectedItem());
@@ -172,7 +173,7 @@ public class MessageHandler {
                 .getRoomController()
                 .toJsonCardList(cards),
                 //send message corrisponding to the request
-                isWeapon ? Message.Content.WEAPON_REQUEST : Message.Content.POWERUP_REQUEST);
+                isWeapon ? Message.Content.WEAPON_REQUEST : Message.Content.POWERUP_REQUEST, "Choose a card");
         if(isOptional){
             message.setIsOptional();
         }

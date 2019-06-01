@@ -31,6 +31,7 @@ public class CountDown {
 
     public void cancelTimer(){
         timer.cancel();
+        timer.purge();
     }
 }
 

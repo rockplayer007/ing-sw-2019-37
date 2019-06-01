@@ -266,8 +266,6 @@ public class ActionHandler {
                     for (AmmoColor ammo : tempCost) {
                         try {
                             player.removeAmmo(ammo);
-                            //this gives an error, dont need anyway
-                            //tempCost.remove(ammo);
                         } catch (AmmoException e) {
                             throw new NotEnoughException(e.getMessage());
                         }

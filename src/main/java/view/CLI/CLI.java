@@ -109,6 +109,12 @@ public class CLI implements ViewInterface {
         }
     }
 
+    @Override
+    public void showInfo(String info) {
+        printer.closeRequest();
+        printer.println(printer.colorToAnsi(AmmoColor.RED) + info + printer.colorToAnsi(Color.WHITE));
+    }
+
     /**
      * Allows the user to choose a board
      * @param maps possible boards to choose from

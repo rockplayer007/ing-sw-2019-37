@@ -25,8 +25,9 @@ public class Player implements Serializable {
     private transient ActionState actionStatus;
     private RoundStatus roundStatus;
     private boolean live;
+    private boolean connected;
 
-    public Player(String nickname, Heroes hero) {
+    public Player(String nickname) {
         this.nickname = nickname;
         this.hero = hero;
         ammo = new EnumMap<>(AmmoColor.class);
@@ -40,6 +41,7 @@ public class Player implements Serializable {
         position = null;
         live = false;
         this.roundStatus = RoundStatus.FIRST_ROUND;
+        connected = true;
 
 
     }
@@ -58,6 +60,10 @@ public class Player implements Serializable {
 
     public Heroes getHero() {
         return hero;
+    }
+
+    public void setHero(Heroes hero){
+        this.hero = hero;
     }
 
     public Color getColor(){ return hero.getColor();}
@@ -104,9 +110,17 @@ public class Player implements Serializable {
         if(roundStatus == RoundStatus.FIRST_ROUND){
             roundStatus = RoundStatus.NORMAL_ROUND;
         }
-        else if(roundStatus == RoundStatus.NORMAL_ROUND){
-            roundStatus = RoundStatus.FINAL_ROUND;
-        }
+
+    }
+
+    public void setConnected(){
+        connected = true;
+    }
+    public void setDisconnected(){
+        connected = false;
+    }
+    public boolean isConnected(){
+        return connected;
     }
 
     public void movePlayer(Square square){
@@ -205,7 +219,7 @@ public class Player implements Serializable {
 
 
     public enum RoundStatus{
-        FIRST_ROUND, NORMAL_ROUND, FINAL_ROUND;
+    FIRST_ROUND, NORMAL_ROUND;
     }
 
 

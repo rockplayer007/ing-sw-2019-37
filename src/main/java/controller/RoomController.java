@@ -48,6 +48,7 @@ public class RoomController {
 
     public void handleMessages(ClientToServer message) {
 
+
         if(checkReceiver(message)) {
 
             mockMessage = message;
@@ -59,6 +60,7 @@ public class RoomController {
 
         /*
         switch (message.getContent()) {
+
             case CARD_RESPONSE:
                 if(checkReceiver(message)) {
 
@@ -171,29 +173,33 @@ public class RoomController {
 
     public void sendMessage(Player player, ServerToClient message){
         try{
-            connectionToClient.get(player).getClientInterface()
-                    .notifyClient(message);
             logger.log(Level.INFO, "Sending message to: {0}, for {1}",
                     new String[]{player.getNickname(), String.valueOf(message.getContent())});
+
+            connectionToClient.get(player).getClientInterface()
+                    .notifyClient(message);
         } catch (RemoteException e) {
-            logger.log(Level.WARNING, "Connection error", e);
+            disconnectPlayer(player);
+            logger.log(Level.WARNING, "Player {0} disconnected", player.getNickname());
+            //TODO send message to all others
+            sendMessageToAll(new InfoMessage(player.getNickname() + " has disconnected"));
         }
 
     }
 
 
     public void sendMessageToAll(ServerToClient message){
-        players.forEach(x -> sendMessage(x, message));
+        //send the message only to who is connected
+        players.stream().filter(Player::isConnected).forEach(x -> sendMessage(x, message));
     }
 
     public void sendUpdate(){
         //send a message that includes the board and other things
 
         //sendMessageToAll(new BoardInfo(gson.toJson(room.getBoard().getMap())));
-        for(Player p :players){
-            sendMessage(p, new UpdateMessage(
-                    toJsonGameBoard(), toJsonCardList(p.getPowerups()), toJsonSkullBoard()));
-        }
+        players.stream().filter(Player::isConnected).forEach(p ->
+                sendMessage(p, new UpdateMessage(
+                toJsonGameBoard(), toJsonCardList(p.getPowerups()), toJsonSkullBoard())));
 
     }
 
@@ -215,9 +221,9 @@ public class RoomController {
 
         //timeout happens before sending
         if(wait == false){
-            //send timout message
-            wait = true;
             resetReceiver();
+
+            wait = true;
 
             throw new TimeFinishedException();
         }
@@ -231,8 +237,9 @@ public class RoomController {
 
         //timeout happens after sending
         if (wait == false){
-            wait = true;
             resetReceiver();
+            wait = true;
+
             throw new TimeFinishedException();
         }
 
@@ -249,8 +256,26 @@ public class RoomController {
     public void resetReceiver(){
         mockMessage = null;
         expectedType = null;
-        //TODO expected receiver??
+        expectedReceiver = null;
     }
+
+    public void disconnectPlayer(String playerName){
+        for(Player player : players){
+            if(player.getNickname().equals(playerName)){
+                disconnectPlayer(player);
+            }
+            break;
+        }
+    }
+
+    public void disconnectPlayer(Player player){
+        player.setDisconnected();
+        if(expectedReceiver != null && expectedReceiver.equals(player.getNickname())){
+            stopWaiting();
+        }
+        logger.log(Level.WARNING, "Player {0} disconnected", player.getNickname());
+    }
+
 
     //TODO check this
     //public <T> List<String> toJsonCardList(List<T> cards){

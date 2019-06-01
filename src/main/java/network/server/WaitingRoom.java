@@ -3,7 +3,10 @@ package network.server;
 import controller.RoomController;
 import model.player.HeroGenerator;
 import model.player.Player;
+import network.messages.Message;
+import network.messages.serverToClient.ServerToClient;
 
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,6 +17,10 @@ import java.util.stream.Collectors;
  */
 public class WaitingRoom {
 
+    private static final int STARTING_PLAYERS = 3;
+    private static final int MAX_PLAYERS = 5;
+    private static final int WAITING_TIME = 30; //seconds
+    private int temp = 0;
     private Queue<ClientOnServer> waitingClients;
     private Timer timer;
     private MainServer server;
@@ -30,27 +37,34 @@ public class WaitingRoom {
      * @param p Client to add to the queue
      */
     public synchronized void addClient(ClientOnServer p){
-        if(waitingClients.size() < 5){
+        if(waitingClients.size() < MAX_PLAYERS){
 
             waitingClients.add(p);
+            temp++;
 
-
-            if(waitingClients.size() == 3){
+            if(waitingClients.size() == STARTING_PLAYERS){
                 //start timer
                 timer = new Timer();
                 startTimer();
             }
-            if (waitingClients.size() == 5){
-                //remove timer
-                timer.cancel();
-                startGame();
+            if (waitingClients.size() == MAX_PLAYERS){
+                removeDisconnectedClients();
+                if (waitingClients.size() >= STARTING_PLAYERS) {
+                    //remove timer if the number of players is enough
+                    timer.cancel();
+
+                    List<ClientOnServer> newPlayers = new ArrayList<>(waitingClients);
+                    waitingClients.clear();
+                    startGame(newPlayers);
+                }
+
+
             }
         }
         else {
+            //TODO create new queue
             logger.log(Level.WARNING, "full room");
         }
-
-
 
     }
 
@@ -61,9 +75,20 @@ public class WaitingRoom {
         timer.schedule(new TimerTask() {
             @Override
             public void run(){
+                int nPlayers = waitingClients.size();
 
-                if(waitingClients.size() >=3 && waitingClients.size() <= 5){
-                    startGame();
+                if(nPlayers >= STARTING_PLAYERS && nPlayers <= MAX_PLAYERS){
+
+                    removeDisconnectedClients();
+
+                    if(waitingClients.size() < STARTING_PLAYERS){
+                        startTimer();
+                    }
+                    else{
+                        List<ClientOnServer> newPlayers = new ArrayList<>(waitingClients);
+                        waitingClients.clear();
+                        startGame(newPlayers);
+                    }
                 }
                 else{
                     // if there are not enough players start the timer again
@@ -71,22 +96,22 @@ public class WaitingRoom {
                 }
             }
 
-        }, 1*5*1000);
+        }, 1*WAITING_TIME*1000);
 
     }
 
     /**
      * Creates a new room where the players can play
      */
-    private void startGame(){
+    private void startGame(List<ClientOnServer> waitingClients){
 
         RoomController playingRoom = new RoomController();
         List<String> usernames = new ArrayList<>();
 
         HeroGenerator heroGen = new HeroGenerator();
         for(ClientOnServer waitingClient : waitingClients){
-            Player player = new Player(waitingClient.getUsername(), heroGen.getHero());
-            waitingClient.setPersonalPlayer(player);
+
+            waitingClient.getPersonalPlayer().setHero(heroGen.getHero());
             playingRoom.addPlayer(waitingClient);
             usernames.add(waitingClient.getUsername());
         }
@@ -97,10 +122,33 @@ public class WaitingRoom {
 
 
 
-        waitingClients.clear();
+        //waitingClients.clear();
         server.setUsernameInRoom(usernames, playingRoom);
 
         playingRoom.matchSetup();
 
+    }
+
+    private void removeDisconnectedClients(){
+        List<ClientOnServer> tempClients = new ArrayList<>(waitingClients);
+        for(ClientOnServer client : tempClients){
+            //remove player if he disconnects before
+            try {
+                client.getClientInterface().notifyClient(new ServerToClient(Message.Content.CONNECTION));
+                if(!client.getPersonalPlayer().isConnected()){
+                    waitingClients.remove(client);
+                    server.removeClient(client);
+                    logger.log(Level.WARNING, "Player: {0} removed because disconnected before start",
+                            client.getUsername());
+                }
+            } catch (RemoteException e) {
+
+                waitingClients.remove(client);
+                server.removeClient(client);
+                logger.log(Level.WARNING, "Player: {0} removed because disconnected before start",
+                        client.getUsername());
+            }
+
+        }
     }
 }

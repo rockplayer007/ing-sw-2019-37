@@ -3,14 +3,9 @@ package view.GUI;
 import model.card.AmmoColor;
 import model.player.Player;
 import model.player.PlayerBoard;
-
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.html.StyleSheet;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,22 +14,24 @@ public class PlayerBoardPanel extends JPanel{
 
     private List<JLabel> ammoColors = new ArrayList<>();
     private List<WeaponButton> weaponButtons = new ArrayList<>();
+    private List<JLabel> boards=new ArrayList<>();
     public PlayerBoardPanel(List<Player> players) {
         this.setLayout(null);
         int y=0;
         for(int i=0;i<players.size();i++){
            PlayerBoard playerBoard=players.get(i).getPlayerBoard();
            int x=12;
-           for (int j=0;j<playerBoard.getHp().size();j++){
+           for (int j=0;j<players.get(i).getPlayerBoard().getHpColor().size();j++){
                JLabel point = new JLabel();
                point.setLocation(x,i*205+74);
                point.setSize(40,52);
-               x=x+48;
                StyleSheet s = new StyleSheet();
-               point.setBackground(s.stringToColor(playerBoard.getHp().get(j).getColor().toString()));
+               point.setBackground(s.stringToColor(playerBoard.getHpColor().get(j).toString()));
+               point.setOpaque(false);
                this.add(point);
+               x=x+48;
            }
-           JButton board = new JButton();
+           JLabel board = new JLabel();
             board.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"
                     +File.separatorChar+"resources"+File.separatorChar +"heroes"+File.separatorChar+players.get(i).getHero().getName()+"board.png"));
             board.setOpaque(false);
@@ -63,14 +60,16 @@ public class PlayerBoardPanel extends JPanel{
                     ammoColors.add(label);
                 }
             }
+            weaponButtons=new ArrayList<>();
             for(int c=0;c<players.get(i).getWeapons().size();c++){
                 WeaponButton weaponButton= new WeaponButton(players.get(i).getWeapons().get(c));
                 weaponButton.setSize(150,205);
                 int size= weaponButtons.size();
                 if(size>0){
-                    weaponButton.setLocation(weaponButtons.get(size-1).getX()+152,y);}
+                    weaponButton.setLocation(weaponButtons.get(size-1).getX()+152,board.getY());
+                }
                 else
-                    weaponButton.setLocation(800,y);
+                    weaponButton.setLocation(800,board.getY());
                 weaponButton.setContentAreaFilled(false);
                 weaponButton.setBorder(null);
                 weaponButton.setFocusPainted(false);

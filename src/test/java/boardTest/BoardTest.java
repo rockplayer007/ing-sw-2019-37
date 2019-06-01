@@ -5,6 +5,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import model.board.*;
+import model.card.AmmoColor;
+import model.card.Weapon;
 import model.player.Heroes;
 import model.player.Player;
 import network.client.MainClient;
@@ -13,17 +15,22 @@ import org.junit.jupiter.api.Test;
 import view.CLI.CLI;
 import view.CLI.Printer;
 
+import java.util.Arrays;
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
 public class BoardTest {
 
     private GameBoard map;
+    private Board board;
 
     @BeforeEach
     public void createBoard(){
-        Board board = new Board();
-        map = new BoardGenerator(board).createMap(0);
+        board = new Board();
+        map = new BoardGenerator(board).createMap(3);
+        board.setMap(map);
 
 
     }
@@ -38,13 +45,36 @@ public class BoardTest {
     @Test
     public void serializeMapTest(){
 
-        Player player1 = new Player("destructor", Heroes.D_STRUCT_OR);
-        Player player2 = new Player("banshee", Heroes.BANSHEE);
-        Player player3 = new Player("dozer", Heroes.DOZER);
+        Player player1 = new Player("destructor");
+        player1.setHero(Heroes.D_STRUCT_OR);
+        Player player2 = new Player("banshee");
+        player2.setHero(Heroes.BANSHEE);
+        Player player3 = new Player("dozer");
+        player3.setHero(Heroes.DOZER);
+        Weapon testWeapon1 = new Weapon("GRENADE LAUNCHER", "", AmmoColor.BLUE,
+                Arrays.asList(AmmoColor.BLUE, AmmoColor.RED, AmmoColor.YELLOW), true,
+                new HashMap<>());
+        Weapon testWeapon2 = new Weapon("GRENADE LAUNCHER", "", AmmoColor.BLUE,
+                Arrays.asList(AmmoColor.BLUE, AmmoColor.RED, AmmoColor.YELLOW), true,
+                new HashMap<>());
+        //setup of the points
+        player1.addWeapon(testWeapon1);
+        testWeapon2.setCharged(false);
+        player1.addWeapon(testWeapon2);
+        player1.addWeapon(testWeapon2);
+
+        player1.getPlayerBoard().addDamage(player2, 6);
+        player1.getPlayerBoard().addDamage(player3, 6);
+
+        player1.getPlayerBoard().addMark(player2, 2);
+        player1.getPlayerBoard().addMark(player2, 3);
+        //player1.getPlayerBoard().addMark(player2, 3);
 
         map.getSquare(0).addPlayer(player1);
         map.getSquare(0).addPlayer(player2);
         map.getSquare(2).addPlayer(player3);
+        ((AmmoSquare)map.getSquare(0)).removeAmmoCard();
+        board.fillAmmo();
 
 
         RuntimeTypeAdapterFactory<Square> rfSquare = RuntimeTypeAdapterFactory
@@ -78,6 +108,8 @@ public class BoardTest {
         assertEquals(gameBoard.getGenerationPoint(Color.BLUE).getY(), 0);
 
         Printer printer = new Printer(new CLI(new MainClient()));
+        //((AmmoSquare) gameBoard.getSquare(0)).removeAmmoCard();
+
         //printer.printBoard(gameBoard);
         //printer.printWeaponsOnBoard(gameBoard);
         printer.printAllInfo(gameBoard, player1.getPowerups(), new SkullBoard(5));
@@ -89,6 +121,7 @@ public class BoardTest {
     @Test
     public void printBoardTest(){
         Printer printer = new Printer(new CLI(new MainClient()));
+
         printer.printBoard(map);
     }
 

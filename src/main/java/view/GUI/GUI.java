@@ -2,21 +2,21 @@ package view.GUI;
 import model.board.GameBoard;
 import model.board.SkullBoard;
 import model.board.Square;
-import model.card.AmmoColor;
-import model.card.Effect;
-import model.card.Powerup;
-import model.card.Weapon;
+import model.card.*;
 import model.player.ActionOption;
 import model.player.Player;
 import network.client.MainClient;
 import view.ViewInterface;
 
 import javax.swing.*;
+import javax.xml.catalog.Catalog;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.rmi.NotBoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +29,7 @@ public class GUI implements ViewInterface {
     private boolean first=true;
     private boolean firstUpdate=true;
     private MapPanel mapPanel;
+    private JDialog jDialog= new JDialog(frame,"TIMEOUT");
 
 
     public GUI(MainClient mainClient) {
@@ -126,7 +127,6 @@ public class GUI implements ViewInterface {
 
     @Override
     public void timeout() {
-        JDialog jDialog= new JDialog(frame,"TIMEOUT");
         JLabel label = new JLabel("The time to perform the action has expired.");
         jDialog.add(label);
         jDialog.setSize(300, 100);
@@ -141,7 +141,7 @@ public class GUI implements ViewInterface {
         }
         if ((component.getName().equals("mapPanel"))){
             MapPanel mapPanel = (MapPanel) component;
-            //mapPanel.blockAll; devo implementarlo
+            mapPanel.blockAll();
         }
 
     }
@@ -160,7 +160,7 @@ public class GUI implements ViewInterface {
             firstUpdate=false;
         }
 
-        mapPanel.updBoardGui(board);
+        mapPanel.updBoardGui(board,mainClient);
         mapPanel.updatePlayerBoard(board);
         mapPanel.updateWeapon(board,mainClient);
         mapPanel.updatePowerup(myPowerups);
@@ -169,44 +169,72 @@ public class GUI implements ViewInterface {
 
     @Override
     public void choosePowerup(List<Powerup> powerups, boolean optional) {
-        Component component =frame.getContentPane().getComponent(0);
-        if ((component.getName().equals("mapPanel"))){
-            MapPanel mapPanel = (MapPanel) component;
-            mapPanel.getCardSelected(powerups,optional,mainClient);
-        }
+        Component component = frame.getContentPane().getComponent(0);
+          if ((component.getName().equals("mapPanel"))) {
+              MapPanel mapPanel = (MapPanel) component;
+              mapPanel.getPowerupSelected(powerups, optional, mainClient);
+              jDialog.setVisible(false);
+          }
     }
 
     @Override
     public void chooseWeapon(List<Weapon> weapons, boolean optional) {
-        Component component =frame.getContentPane().getComponent(0);
-        if ((component.getName().equals("mapPanel"))){
-            MapPanel mapPanel = (MapPanel) component;
-            mapPanel.getWeaponSelected(weapons,optional,mainClient);
-        }
+
+        Component component = frame.getContentPane().getComponent(0);
+          if ((component.getName().equals("mapPanel"))) {
+              MapPanel mapPanel = (MapPanel) component;
+              mapPanel.getWeaponSelected(weapons,optional,mainClient);
+          }
     }
 
     @Override
     public void chooseEffect(List<Effect> effects) {
-
+        Component component =frame.getContentPane().getComponent(0);
+        if ((component.getName().equals("mapPanel"))){
+            MapPanel map = (MapPanel) component;
+            map.getEffect(effects,mainClient);
+        }
     }
 
     @Override
     public void choosePlayer(List<Player> players) {
-
+        Component component = frame.getContentPane().getComponent(0);
+        if ((component.getName().equals("mapPanel"))) {
+            MapPanel mapPanel = (MapPanel) component;
+            mapPanel.getPlayer(players,mainClient);
+        }
     }
 
     @Override
     public void chooseDirection(List<Square.Direction> directions) {
-
+        Component component = frame.getContentPane().getComponent(0);
+        if ((component.getName().equals("mapPanel"))) {
+            MapPanel mapPanel = (MapPanel) component;
+            mapPanel.getDirection(directions,mainClient);
+        }
     }
 
     @Override
     public void chooseAmmoColor(List<AmmoColor> ammoColors) {
+        Component component = frame.getContentPane().getComponent(0);
+        if ((component.getName().equals("mapPanel"))) {
+            MapPanel mapPanel = (MapPanel) component;
+            mapPanel.getAmmoColor(ammoColors,mainClient);
+        }
 
     }
 
     @Override
     public void chooseRoom(List<model.board.Color> rooms) {
+        Component component = frame.getContentPane().getComponent(0);
+        if ((component.getName().equals("mapPanel"))) {
+            MapPanel mapPanel = (MapPanel) component;
+            mapPanel.getRoom(rooms,mainClient);
+        }
+    }
+
+    @Override
+    public void showInfo(String info) {
 
     }
 
@@ -216,6 +244,7 @@ public class GUI implements ViewInterface {
         if ((component.getName().equals("mapPanel"))) {
             MapPanel mapPanel = (MapPanel) component;
             mapPanel.getAction(actions, mainClient);
+            jDialog.setVisible(false);
         }
     }
 
