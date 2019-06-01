@@ -22,6 +22,7 @@ public class Room {
     private Player currentPlayer;
     private Player startingPlayer;
     private AttackHandler attackHandler;
+    private PaymentRecord paymentRecord;
     private int frenzyCounter;
 
     private static final Logger logger = Logger.getLogger(Room.class.getName());
@@ -100,6 +101,10 @@ public class Room {
         return startingPlayer;
     }
 
+    public void setPaymentRecord(PaymentRecord paymentRecord) {
+        this.paymentRecord = paymentRecord;
+    }
+
     public void setPlayers(List<Player> player){
         players.addAll(player);
         frenzyCounter = players.size();
@@ -149,5 +154,12 @@ public class Room {
                 .collect(Collectors.toList());
     }
 
+    public void undoPayment(){
+        paymentRecord.getUsedAmmo().forEach(currentPlayer::addAmmo);
+        paymentRecord.getUsedPowerups().forEach(x->{
+            currentPlayer.addPowerup(x);
+            board.getPowerDeck().returnCard(x);
+        });
+    }
 
 }

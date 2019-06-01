@@ -49,4 +49,11 @@ public abstract class Deck <T extends Card>{
         usedCard.add(card);
     }
 
+    public T returnCard(T card){
+        if (usedCard.remove(card))
+            return card;
+        return null;
+
+    }
+
 }

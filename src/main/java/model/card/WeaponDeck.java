@@ -68,7 +68,7 @@ public class WeaponDeck extends Deck<Weapon>{
         effects.put(new Effect("Focus shot",description,Collections.singletonList(AmmoColor.YELLOW), operations), 1);
         description ="Deal 1 additional damage to the other of " +
                 "those targets and/or deal 1 damage to a different target you can see.\n" ;
-        operations= Arrays.asList( selectFromSelectedTargets1, selectTarget1, damage1);
+        operations= Arrays.asList( selectFromSelectedTargets1, selectTarget1, damage1, setTargetToSelected);
         effects.put(new Effect("Turret tripod",description, Collections.singletonList(AmmoColor.BLUE), operations), 1);
         description="Notes: If you deal both additional points of damage, they must be dealt to 2 different targets. " +
                 "If you see only 2 targets, you deal 2 to each if you use both optional effects. If you use the basic " +
@@ -99,7 +99,7 @@ public class WeaponDeck extends Deck<Weapon>{
         effects = new LinkedHashMap<>();
         description ="Deal 2 damage to 1 target you can see.\n" ;
         operations = Arrays.asList(visiblePlayers, selectTarget1, damage2, setTargetToSelected);
-        effects.put(new Effect(basicEffect,description, Collections.emptyList(), operations),0);
+        effects.put(new Effect(basicEffect, description, Collections.emptyList(), operations), 0);
         description = "Move 1 or 2 squares. This effect can be used either before or after the basic effect.\n";
         operations = Collections.singletonList(run2);
         effects.put(new Effect("Phase glide",description ,Collections.emptyList(), operations), -1);

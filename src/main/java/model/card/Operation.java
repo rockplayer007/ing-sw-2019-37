@@ -597,6 +597,23 @@ class Update implements Operation{
     }
 }
 
+class Payment implements Operation{
+    private List<AmmoColor> cost;
+
+    public Payment(List<AmmoColor> cost){
+        this.cost = cost;
+    }
+    @Override
+    public void execute(Room room) throws NotExecutedException, TimeFinishedException {
+
+        try {
+            ActionHandler.payment(room.getCurrentPlayer(),cost,room);
+        } catch (NotEnoughException e) {
+            throw new NotExecutedException(e.getMessage());
+        }
+
+    }
+}
 
 
 

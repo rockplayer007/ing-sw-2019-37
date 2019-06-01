@@ -10,6 +10,7 @@ import model.exceptions.AmmoException;
 import model.exceptions.NotEnoughException;
 import model.exceptions.NotExecutedException;
 import model.gamehandler.AttackHandler;
+import model.gamehandler.PaymentRecord;
 import model.gamehandler.Room;
 import model.player.Player;
 
@@ -59,7 +60,6 @@ public class ActionHandler {
 
             try {
                 payment(player,effectSelect.getExtraCost(), room);
-                //TODO fare un funzione del tipo payment che permette undo
                 effectSelect.execute(room);
                 // if the effect used is not level -1, means the weapon is used so i need set state of "Charged"
                 if (!used && effects.get(effectSelect)!=-1) {
@@ -70,13 +70,13 @@ public class ActionHandler {
                 if (!weapon.getOptional())
                     break;
             } catch (NotExecutedException e) {
-                throw new NotExecutedException("Effect is not possible used");
-            } catch (NotEnoughException e) {
-                //TODO
-            }finally {
-                if (!used)
+                room.undoPayment();         // do undo payment
+                if (!used) {                // if the weapon is not used do undo position for player and throw exception
                     player.movePlayer(playerPosition);
-                //TODO da vedere come e fatto il undo della payment.
+                    throw new NotExecutedException("Effect is not possible used");
+                }
+            } catch (NotEnoughException e) {
+                MessageHandler.sendInfo(player,"you can not use this effect:"+e.getMessage(),room); // send message to player
             }
 
             if (validEffect.isEmpty()|| validEffect.stream().allMatch(x->effects.get(x)==-1)){
@@ -233,6 +233,7 @@ public class ActionHandler {
             throw new NotEnoughException("Not enough ammo to pay");
         }
 
+        PowerDeck powerDeck =room.getBoard().getPowerDeck();
         // put only powerups that he can use to pay
         List<Powerup> possiblePowerups = player.getPowerups().stream().filter(x->tempCost.contains(x.getAmmo())).collect(Collectors.toList());
         // the effective powerups need to pay
@@ -261,6 +262,7 @@ public class ActionHandler {
                 possiblePowerups.remove(chosenCard);
             }
             else {
+                room.setPaymentRecord(new PaymentRecord(powerupToPay,tempCost));
                 if (player.enoughAmmos(tempCost, false)) {
                     //pay the remaining with ammo instead
                     for (AmmoColor ammo : tempCost) {
@@ -269,7 +271,10 @@ public class ActionHandler {
                         } catch (AmmoException e) {
                             throw new NotEnoughException(e.getMessage());
                         }
-                        powerupToPay.forEach(x->player.getPowerups().remove(x));
+                        powerupToPay.forEach(x->{
+                            player.removePowerup(x);
+                            powerDeck.usedCard(x);
+                        });
                     }
                     tempCost.clear();
                 }else
