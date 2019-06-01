@@ -2,7 +2,6 @@ package network.server;
 
 import controller.RoomController;
 import model.player.HeroGenerator;
-import model.player.Player;
 import network.messages.Message;
 import network.messages.serverToClient.ServerToClient;
 
@@ -20,7 +19,6 @@ public class WaitingRoom {
     private static final int STARTING_PLAYERS = 3;
     private static final int MAX_PLAYERS = 5;
     private static final int WAITING_TIME = 30; //seconds
-    private int temp = 0;
     private Queue<ClientOnServer> waitingClients;
     private Timer timer;
     private MainServer server;
@@ -40,7 +38,6 @@ public class WaitingRoom {
         if(waitingClients.size() < MAX_PLAYERS){
 
             waitingClients.add(p);
-            temp++;
 
             if(waitingClients.size() == STARTING_PLAYERS){
                 //start timer
@@ -55,7 +52,9 @@ public class WaitingRoom {
 
                     List<ClientOnServer> newPlayers = new ArrayList<>(waitingClients);
                     waitingClients.clear();
-                    startGame(newPlayers);
+
+                    Thread playingThread = new Thread(() -> startGame(newPlayers));
+                    playingThread.start();
                 }
 
 
@@ -87,6 +86,7 @@ public class WaitingRoom {
                     else{
                         List<ClientOnServer> newPlayers = new ArrayList<>(waitingClients);
                         waitingClients.clear();
+
                         startGame(newPlayers);
                     }
                 }
