@@ -67,4 +67,6 @@ public interface ViewInterface {
     void chooseAmmoColor(List<AmmoColor> ammoColors);
 
     void chooseRoom(List<Color> rooms);
+
+    void showInfo(String info);
 }

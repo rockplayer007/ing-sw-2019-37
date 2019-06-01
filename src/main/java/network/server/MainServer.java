@@ -1,6 +1,7 @@
 package network.server;
 
 import controller.RoomController;
+import network.client.ClientInterface;
 import network.messages.Message;
 import network.messages.clientToServer.ClientToServer;
 import network.messages.clientToServer.LoginRequest;
@@ -25,6 +26,7 @@ public class MainServer {
 
     //clientID and username
     private Map<String, String> oldClients= new HashMap<>();
+    private List<ClientOnServer> allClients = new ArrayList<>();
 
     private ServerRMI serverRMI;
     private ServerSOCKET serverSocket;
@@ -81,6 +83,8 @@ public class MainServer {
      */
     public void handleMessage(ClientToServer message){
         //verify that the user corresponds with clientID
+        logger.log(Level.INFO, "arrived message type: {0}, from player: {1}",
+                new String[]{String.valueOf(message.getContent()), message.getSender()});
 
         //TODO send the message to the right roomController
         //TODO move this to the roomController
@@ -136,6 +140,7 @@ public class MainServer {
             String clientID = UUID.randomUUID().toString();
             ClientOnServer newClient = new ClientOnServer(message.getSender(),
                     message.getClientInterface(), clientID);
+            allClients.add(newClient);
             oldClients.put(clientID, message.getSender());
             waitingRoom.addClient(newClient);
 
@@ -148,6 +153,16 @@ public class MainServer {
         }
     }
 
+    public void disconnectPlayer(ClientInterface clientInterface){
+        for(ClientOnServer client : allClients){
+            //TODO check this
+            if(client.getClientInterface() == clientInterface){
+                client.getPersonalPlayer().setDisconnected();
+                logger.log(Level.WARNING, "Player {0} disconnected", client.getUsername());
+                break;
+            }
+        }
+    }
     /**
      * Defines which user is in which room
      * @param usernames
@@ -155,6 +170,13 @@ public class MainServer {
      */
     public void setUsernameInRoom(List<String> usernames, RoomController playingRoom){
         usernames.forEach(name -> usernameInRoom.put(name, playingRoom));
+    }
+
+    public void removeClient(ClientOnServer client){
+        allClients.remove(client);
+        if(oldClients.containsKey(client.getClientID())){
+            oldClients.remove(client.getClientID());
+        }
     }
 
 }

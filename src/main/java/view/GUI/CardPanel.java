@@ -15,8 +15,7 @@ import java.util.List;
 
 public class CardPanel extends JPanel {
 
-    private Image imageCard;
-    private List<JButton> buttonEffect=new ArrayList<>();
+    private List<JButton> buttonEffect;
     private Weapon weapon;
 
     public CardPanel(Weapon weapon, List<Effect> effects, MainClient mainClient, JFrame frame){
@@ -25,6 +24,7 @@ public class CardPanel extends JPanel {
         createButtons();
         for(int i=0;i<effects.size();i++){
             int x=i;
+            buttonEffect.get(effects.get(i).getId()).setVisible(true);
             buttonEffect.get(effects.get(i).getId()).addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -32,7 +32,7 @@ public class CardPanel extends JPanel {
                     frame.setVisible(false);
                 }
             });
-            buttonEffect.get(effects.get(i).getId()).setVisible(true);
+
         }
 
         JLabel image = new JLabel();
@@ -44,30 +44,30 @@ public class CardPanel extends JPanel {
     }
 
     private void createButtons(){
-        JButton jButton=new JButton();
-        jButton.setSize(193,64);
-        jButton.setLocation(1,117);
-        Border border= BorderFactory.createLineBorder(Color.yellow,3);
-        jButton.setBorder (border);
-        jButton.setBorderPainted (true);
-        jButton.setContentAreaFilled(false);
-        jButton.setVisible(false);
-        buttonEffect.add(jButton);
-        this.add(jButton);
+        buttonEffect=new ArrayList<>();
+        JButton button1=new JButton();
+        createButton(button1,193,64,1,117);
         if(weapon.getNumberOfEffect()==2){
-            jButton.setLocation(1,195);
-            buttonEffect.add(jButton);
-            this.add(jButton);
+           JButton button2=new JButton();
+           createButton(button2,193,64,1,187);
         }
         else {
-            jButton.setSize(86,77);
-            jButton.setLocation(8,187);
-            buttonEffect.add(jButton);
-            this.add(jButton);
-            jButton.setLocation(100,187);
-            buttonEffect.add(jButton);
-            this.add(jButton);
+            JButton button3 =new JButton();
+            createButton(button3,86,77,8,187);
+            JButton button4 =new JButton();
+            createButton(button4,86,77,100,187);
         }
     }
 
+    private void createButton(JButton button,int width,int height,int x,int y){
+        button.setVisible(false);
+        button.setSize(width,height);
+        button.setLocation(x,y);
+        Border border= BorderFactory.createLineBorder(Color.yellow,3);
+        button.setBorder (border);
+        button.setBorderPainted (true);
+        button.setContentAreaFilled(false);
+        buttonEffect.add(button);
+        this.add(button);
+    }
 }

@@ -226,6 +226,15 @@ public class GUI implements ViewInterface {
 
     @Override
     public void chooseRoom(List<model.board.Color> rooms) {
+        Component component = frame.getContentPane().getComponent(0);
+        if ((component.getName().equals("mapPanel"))) {
+            MapPanel mapPanel = (MapPanel) component;
+            mapPanel.getRoom(rooms,mainClient);
+        }
+    }
+
+    @Override
+    public void showInfo(String info) {
 
     }
 

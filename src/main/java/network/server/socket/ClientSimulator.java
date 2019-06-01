@@ -48,6 +48,7 @@ public class ClientSimulator implements Runnable, ClientInterface{
      */
     @Override
     public void run(){
+
         try {
             while (clientConnected){
                 ClientToServer message = (ClientToServer) in.readObject();
@@ -57,7 +58,9 @@ public class ClientSimulator implements Runnable, ClientInterface{
                 server.newMessage(message);
             }
         }catch (IOException | ClassNotFoundException e){
-            logger.log(Level.WARNING, e.toString(), e);
+            //notify server
+            server.disconnectClient(this);
+            //logger.log(Level.WARNING, e.toString(), e);
         }
     }
 
@@ -68,11 +71,12 @@ public class ClientSimulator implements Runnable, ClientInterface{
     @Override
     public void notifyClient(ServerToClient message)  {
         try {
-            //out.reset();
+            out.reset();
             out.writeObject(message);
-            //out.flush();
+            out.flush();
         } catch (IOException e) {
-            logger.log(Level.WARNING,"Message not sent", e);
+            server.disconnectClient(this);
+            //logger.log(Level.WARNING,"Message not sent", e);
         }
     }
 

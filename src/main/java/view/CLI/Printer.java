@@ -148,7 +148,8 @@ public class Printer {
             for(int n = 0; n < weapon.getChargeCost().size(); n++){
                 charge.append(colorToAnsi(weapon.getChargeCost().get(n))).append("O");
             }
-            String temp = colorToAnsi(Color.WHITE) + weapon.getName()
+            String temp = (weapon.getCharged() ? colorToAnsi(Color.GREEN) : colorToAnsi(Color.RED))
+                    + weapon.getName() + colorToAnsi(Color.WHITE)
                     + " buy cost: " + buy.toString() + colorToAnsi(Color.WHITE)
                     + " charge cost: " + charge.toString() + colorToAnsi(Color.WHITE);
 
@@ -521,25 +522,40 @@ public class Printer {
                 for(AmmoColor ammo : player.getAmmo().keySet()){
                     for(int i = 0; i < player.getAmmo().get(ammo); i++){
                         playerInfo.append(colorToAnsi(ammo)).append("O");
-
                     }
                 }
-                //println(playerInfo.toString());
+
+                playerInfo.append("   ");
+
+                //add points
+                for(Color hp : player.getPlayerBoard().getHpColor()){
+                    playerInfo.append(colorToAnsi(hp)).append("X");
+                }
+                playerInfo.append(colorToAnsi(Color.WHITE)).append("   ");
+
+                //add marks
+
+                for(Color marks : player.getPlayerBoard().getMarksColor()){
+                    playerInfo.append(colorToAnsi(marks)).append("@");
+                }
+
+
+                playerInfo.append(colorToAnsi(Color.WHITE));
                 stringedInfo.add(playerInfo.toString());
 
                 if(player.getNickname().equals(cli.getMainClient().getUsername())){
                     stringedPowerups.append(colorToAnsi(Color.WHITE)).append("Powerups: ");
                     for(Powerup powerup : myPowerups){
-                        stringedPowerups.append(colorToAnsi(Color.WHITE)).append(" ").append(powerup.getName());
-                        stringedPowerups.append(colorToAnsi(powerup.getAmmo())).append(" O");
+                        stringedPowerups.append(colorToAnsi(powerup.getAmmo())).append(powerup.getName());
+                        stringedPowerups.append(colorToAnsi(Color.WHITE));
                     }
                     stringedInfo.add(stringedPowerups.toString());
                 }
 
                 stringedWeapons.append(colorToAnsi(Color.WHITE)).append("Weapons: ");
                 for(Weapon weapon : player.getWeapons()){
-                    stringedWeapons.append(weapon.getName());
-                    stringedWeapons.append(weapon.getCharged() ? " (CHARGED) " : " (NOT CHARGED) ");
+                    stringedWeapons.append(weapon.getCharged() ? colorToAnsi(Color.GREEN) : colorToAnsi(Color.RED));
+                    stringedWeapons.append(weapon.getName()).append(colorToAnsi(Color.WHITE)).append(" ");
                 }
                 stringedInfo.add(stringedWeapons.toString());
 
@@ -554,7 +570,7 @@ public class Printer {
         List<String> stringedWeapons = printWeaponsOnBoard(board);
         List<String> stringedPlayers = printPlayersInfo(board, myPowerups);
 
-        String header = String.format("%19s %12s %22s %12s %12s %13s",
+        String header = String.format("%19s %10s %22s %10s %10s %13s",
                 "GAME BOARD","|", "WEAPONS ON GAME BOARD", "COST", "|", "PLAYERS");
 
         println(header);
@@ -565,15 +581,17 @@ public class Printer {
             line.append(stringedBoard.get(i));
 
             if(j < stringedWeapons.size()){
-                line.append("   |   ").append(stringedWeapons.get(j));
+                line.append(" | ").append(stringedWeapons.get(j));
                 j++;
+            }
+            else{
+                line.append(String.format("%30s", " "));
             }
 
             if(k < stringedPlayers.size()){
-                line.append("   |   ").append(stringedPlayers.get(k));
+                line.append(" | ").append(stringedPlayers.get(k));
                 k++;
             }
-
 
             println(line.toString());
         }

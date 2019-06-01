@@ -174,12 +174,15 @@ public class RoomController {
 
     public void sendMessage(Player player, ServerToClient message){
         try{
-            connectionToClient.get(player).getClientInterface()
-                    .notifyClient(message);
             logger.log(Level.INFO, "Sending message to: {0}, for {1}",
                     new String[]{player.getNickname(), String.valueOf(message.getContent())});
+
+            connectionToClient.get(player).getClientInterface()
+                    .notifyClient(message);
         } catch (RemoteException e) {
-            logger.log(Level.WARNING, "Connection error", e);
+            player.setDisconnected();
+            logger.log(Level.WARNING, "Player {0} disconnected", player.getNickname());
+            //TODO send message to all others
         }
 
     }

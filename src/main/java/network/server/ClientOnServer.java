@@ -17,6 +17,7 @@ public class ClientOnServer {
         this.username = username;
         this.clientInterface = clientInterface;
         this.clientID = clientID;
+        this.personalPlayer = new Player(username);
     }
 
     public String getUsername() {

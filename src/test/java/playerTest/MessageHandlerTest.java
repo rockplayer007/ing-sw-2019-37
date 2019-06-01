@@ -21,8 +21,10 @@ public class MessageHandlerTest {
     @BeforeEach
     public void before(){
 
-        Player p1=new Player("p1", Heroes.BANSHEE);
-        Player p2=new Player("p2", Heroes.D_STRUCT_OR);
+        Player p1=new Player("p1");
+        p1.setHero(Heroes.BANSHEE);
+        Player p2=new Player("p2");
+        p2.setHero(Heroes.D_STRUCT_OR);
 
         room =new Room(new RoomController());
         room.setStartingPlayer(p1);

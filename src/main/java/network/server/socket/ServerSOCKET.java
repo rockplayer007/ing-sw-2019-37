@@ -1,5 +1,6 @@
 package network.server.socket;
 
+import network.client.ClientInterface;
 import network.messages.clientToServer.ClientToServer;
 import network.server.MainServer;
 
@@ -63,6 +64,10 @@ public class ServerSOCKET extends Thread{
      */
     public void newMessage(ClientToServer message){
         server.handleMessage(message);
+    }
+
+    public void disconnectClient(ClientInterface client){
+        server.disconnectPlayer(client);
     }
 
     /**

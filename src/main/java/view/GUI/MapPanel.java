@@ -36,9 +36,11 @@ public class MapPanel extends JLayeredPane {
     JFrame selectEffect = new JFrame("Choose Effect");
     // private JFrame chooseCard = new JFrame();
     private JFrame playerboards = new JFrame("BOARDS");
+    private JFrame chooseRoom;
     private List<JLabel> ammocards = new ArrayList<>();
     private List<JButton> actions = new ArrayList<>();
     private List<Weapon> weaponList = new ArrayList<>();
+    private List<JLabel> infoWeapon=new ArrayList<>();
     private Player myplayer = null;
     private Weapon weaponSelected;
 
@@ -108,7 +110,7 @@ public class MapPanel extends JLayeredPane {
                     playerIcon.get(j).addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            removeActionList();
+                            removePlayerActions();
                             mainClient.sendSelectedPlayer(s);
                             enablePlayers();
                             //setVisibleRooms();
@@ -119,7 +121,7 @@ public class MapPanel extends JLayeredPane {
         }
     }
 
-    private void removeActionList() {
+    private void removePlayerActions() {
         for (int i = 0; i < playerIcon.size(); i++) {
             ActionListener actionListener[] = playerIcon.get(i).getActionListeners();
             for (int k = 0; k < actionListener.length; k++) {
@@ -169,13 +171,28 @@ public class MapPanel extends JLayeredPane {
         weaponButton.setOpaque(false);
         myWeapon.add(weaponButton);
         this.add(weaponButton);
+        JLabel label=new JLabel();
+        label.setSize(80,20);
+        if (weapon.getCharged()) {
+            label.setText("Charge");
+            label.setForeground(Color.green);
+        }
+        else{
+            label.setText("Discharge");
+            label.setForeground(Color.red);
+        }
+        label.setLocation(weaponButton.getX(),weaponButton.getY()-22);
+        infoWeapon.add(label);
+        this.add(label);
+
     }
 
     public void removeWeapon() {
         for (int i = 0; i < myWeapon.size(); i++) {
             myWeapon.get(i).setVisible(false);
             this.remove(myWeapon.get(i));
-
+            infoWeapon.get(i).setVisible(false);
+            this.remove(infoWeapon.get(i));
         }
     }
 
@@ -215,6 +232,7 @@ public class MapPanel extends JLayeredPane {
     public void updateWeapon(GameBoard board, MainClient mainClient) {
         removeWeapon();
         myWeapon = new ArrayList<>();
+        infoWeapon=new ArrayList<>();
         for (int i = 0; i < board.getPlayersOnMap().size(); i++) {
             if (board.getPlayersOnMap().get(i).getNickname().equals(mainClient.getUsername())) {
                 updateAmmo(board.getPlayersOnMap().get(i).getAmmo());
@@ -278,45 +296,51 @@ public class MapPanel extends JLayeredPane {
     public void movePlayer(int cell, Player player) {
         //aggiungere controllo se si muove nella stessa cella
         boolean created = false;
+        JButton icon = new JButton();
         for (int i = 0; i < playerIcon.size(); i++) {
-            if (player.getHero().getName().equals(playerIcon.get(i).getPlayer().getHero().getName()))
+            if (player.getHero().getName().equals(playerIcon.get(i).getPlayer().getHero().getName())) {
                 created = true;
+                icon = playerIcon.get(i);
+            }
         }
         if (!created)
             createPlayerIcon(player);
+        if( !(icon.getX()>= roomButton.get(cell).getX() && icon.getY() >= roomButton.get(cell).getY()-14 &&
+                icon.getX()<=roomButton.get(cell).getX()+roomButton.get(cell).getWidth() &&
+                icon.getY() <= roomButton.get(cell).getY()-14+roomButton.get(cell).getHeight())) {
+            boolean occupied = false;
+            int c;
+            int k = 0;
+            int j;
+            int x = 0;
+            Point[] positions = new Point[5];
+            positions[0] = new Point(roomButton.get(cell).getX(), roomButton.get(cell).getY() - 14);
+            positions[1] = new Point(roomButton.get(cell).getX() + 51, roomButton.get(cell).getY() - 14);
+            positions[2] = new Point(roomButton.get(cell).getX() + 101, roomButton.get(cell).getY() - 14);
+            positions[3] = new Point(roomButton.get(cell).getX(), roomButton.get(cell).getY() + 60);
+            positions[4] = new Point(roomButton.get(cell).getX() + 51, roomButton.get(cell).getY() + 60);
 
-        boolean occupied = false;
-        int c;
-        int k = 0;
-        int j;
-        int x = 0;
-        Point[] positions = new Point[5];
-        positions[0] = new Point(roomButton.get(cell).getX(), roomButton.get(cell).getY() - 14);
-        positions[1] = new Point(roomButton.get(cell).getX() + 51, roomButton.get(cell).getY() - 14);
-        positions[2] = new Point(roomButton.get(cell).getX() + 101, roomButton.get(cell).getY() - 14);
-        positions[3] = new Point(roomButton.get(cell).getX(), roomButton.get(cell).getY() + 60);
-        positions[4] = new Point(roomButton.get(cell).getX() + 51, roomButton.get(cell).getY() + 60);
+            for (int i = 0; i < playerIcon.size(); i++) {
+                if (player.getNickname().equals(playerIcon.get(i).getPlayer().getNickname())) {
+                    c = i;
 
-        for (int i = 0; i < playerIcon.size(); i++) {
-            if (player.getNickname().equals(playerIcon.get(i).getPlayer().getNickname())) {
-                c = i;
-
-                while (x < 5 && !occupied) {
-                    for (j = 0; j < playerIcon.size(); j++) {
-                        if (playerIcon.get(j).getLocation().equals(positions[x]))
+                    while (x < 5 && !occupied) {
+                        for (j = 0; j < playerIcon.size(); j++) {
+                            if (playerIcon.get(j).getLocation().equals(positions[x]))
+                                occupied = true;
+                        }
+                        if (!occupied) {
+                            k = x;
                             occupied = true;
+                        } else occupied = false;
+                        x++;
                     }
-                    if (!occupied) {
-                        k = x;
-                        occupied = true;
-                    } else occupied = false;
-                    x++;
+
+                    playerIcon.get(c).setLocation(positions[k]);
                 }
-
-                playerIcon.get(c).setLocation(positions[k]);
             }
-        }
 
+        }
     }
 
     private void loadImages(Image imga) {
@@ -573,7 +597,7 @@ public class MapPanel extends JLayeredPane {
     }
 
     public void getAmmoColor(List<AmmoColor> ammoColors, MainClient mainClient) {
-        choose.removeAll();
+        choose.getContentPane().removeAll();
         for (int i = 0; i < ammoColors.size(); i++) {
             JButton ammoColor = new JButton();
             int x = i;
@@ -608,9 +632,28 @@ public class MapPanel extends JLayeredPane {
         choose.setVisible(false);
         chooseCard.setVisible(false);
         selectEffect.setVisible(false);
+        chooseRoom.setVisible(false);
         resetRooms();
         //setVisibleRooms();
         resetActions();
+        removePlayerActions();
+    }
+
+    public void getRoom(List<model.board.Color> rooms, MainClient mainClient){
+        chooseRoom=new JFrame();
+        chooseRoom.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        chooseRoom.setSize(450, 300);
+        chooseRoom.setLocation(300,50);
+        chooseRoom.setResizable(false);
+        chooseRoom.setLayout(new GridLayout(2,3));
+        StyleSheet s= new StyleSheet();
+        for(int i=0;i<rooms.size();i++){
+            JLabel color =new JLabel();
+            color.setBackground(s.stringToColor(rooms.get(i).toString()));
+            color.setOpaque(false);
+            chooseRoom.add(color);
+        }
+        chooseRoom.setVisible(true);
     }
 
     public void setWeaponSelected(String name) {
