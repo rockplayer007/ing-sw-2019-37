@@ -115,7 +115,7 @@ public class ActionHandler {
             card.getAmmoList().forEach(player::addAmmo);
 
             if (card.hasPowerup() && player.getPowerups().size() < 3) {
-                player.addPowerup((Powerup) board.getPowerDeck().getCard());
+                player.addPowerup(board.getPowerDeck().getCard());
             }
             //put the card int the used card deck
             room.getBoard().getAmmoDeck().usedCard(card);
@@ -179,7 +179,7 @@ public class ActionHandler {
                 }
                 else{
                     //replace the weapon in the deck with a new one if there are cards
-                    Weapon temp = (Weapon) room.getBoard().getWeaponDeck().getCard();
+                Weapon temp = room.getBoard().getWeaponDeck().getCard();
                     if( temp != null){
                         currentSquare.getWeaponDeck()
                                 .set(currentSquare.getWeaponDeck().indexOf(weapon), temp);

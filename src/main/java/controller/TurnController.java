@@ -25,7 +25,7 @@ public class TurnController {
     private CountDown timer;
     private boolean gameFinished;
 
-    private static final int WAITING_TIME = 30; //seconds
+    private static final int WAITING_TIME = 120; //seconds
 
     private RoundController roundController;
 
@@ -108,7 +108,7 @@ public class TurnController {
             }
 
 
-            room.endTurnControl(); //returns true if frenezy starts
+            room.endTurnControl(); //when return true means is end of game
             room.setNextPlayer();
 
 
@@ -118,7 +118,7 @@ public class TurnController {
 
     public void firstRound(Player currentPlayer) throws TimeFinishedException {
 
-        List<Card> powerup = room.getBoard().getPowerDeck().getCard(2);
+        List<Powerup> powerup = room.getBoard().getPowerDeck().getCard(2);
         AnswerRequest message = new AnswerRequest(roomController.toJsonCardList(powerup), Message.Content.POWERUP_REQUEST,
                 "Pick a powerup where to spawn");
         //sends the cards and receives the chosen one
@@ -127,15 +127,15 @@ public class TurnController {
         try {
             chosenCard = (ListResponse) roomController.sendAndReceive(currentPlayer, message);
         } catch (TimeFinishedException e) {
-            room.getBoard().getPowerDeck().usedCard(((Powerup) powerup.get(0)));
-            room.getBoard().getPowerDeck().usedCard(((Powerup) powerup.get(1)));
+            room.getBoard().getPowerDeck().usedCard(( powerup.get(0)));
+            room.getBoard().getPowerDeck().usedCard(( powerup.get(1)));
             throw new TimeFinishedException();
         }
 
         Powerup playerCard;
         try{
             //check if the size is not different
-            playerCard = (Powerup) powerup.get(chosenCard.getSelectedItem());
+            playerCard =  powerup.get(chosenCard.getSelectedItem());
         }catch (RuntimeException e){
             logger.log(Level.WARNING, "CHEATER DETECTED: {0}", currentPlayer.getNickname());
             return;
@@ -146,7 +146,7 @@ public class TurnController {
         currentPlayer.addPowerup(playerCard);
 
         //discard the second card (that is in first position now)
-        room.getBoard().getPowerDeck().usedCard((Powerup) powerup.get(0));
+        room.getBoard().getPowerDeck().usedCard( powerup.get(0));
 
 
         //put the player on the generation square

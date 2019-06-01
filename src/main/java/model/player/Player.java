@@ -29,7 +29,6 @@ public class Player implements Serializable {
 
     public Player(String nickname) {
         this.nickname = nickname;
-        this.hero = hero;
         ammo = new EnumMap<>(AmmoColor.class);
         for (AmmoColor c : AmmoColor.values()) {
             ammo.put(c, 1);

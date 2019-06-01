@@ -115,14 +115,14 @@ public class BoardGenerator {
                 }
 
                 if(((Element) square).getElementsByTagName("type").item(0).getTextContent().equals("generationSquare")){
-                    GenerationSquare genSquare = new GenerationSquare(id,color,x, y,(List<Weapon>)(List<?>) board.getWeaponDeck().getCard(3));
+                    GenerationSquare genSquare = new GenerationSquare(id,color,x, y, board.getWeaponDeck().getCard(3));
                     genPoints.add( genSquare);
                     allSquares.put(id, genSquare);
 
                     squaresInRoom.get(color).add(genSquare);
                 }
                 else if(((Element) square).getElementsByTagName("type").item(0).getTextContent().equals("ammoSquare")) {
-                    AmmoSquare ammoSquare = new AmmoSquare(id, color, x, y,(AmmoCard) board.getAmmoDeck().getCard() );
+                    AmmoSquare ammoSquare = new AmmoSquare(id, color, x, y, board.getAmmoDeck().getCard() );
                     allSquares.put(id, ammoSquare);
 
                     squaresInRoom.get(color).add(ammoSquare);
