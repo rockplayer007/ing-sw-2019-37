@@ -33,7 +33,7 @@ public class TurnController {
         this.room = room;
         roundController = new RoundController(roomController);
         gameFinished = false;
-        timer = new CountDown(1*10*1000, () -> {
+        timer = new CountDown(1*200*1000, () -> {
             System.out.println("time finished");
             roomController.stopWaiting();
 

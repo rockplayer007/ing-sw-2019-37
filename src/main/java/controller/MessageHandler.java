@@ -166,7 +166,8 @@ public class MessageHandler {
 
     public static <T extends Card> T chooseCard(List<T> cards, boolean isOptional, Room room, boolean isWeapon) throws TimeFinishedException {
 //        TODO make it more general for other uses
-
+        if (cards.isEmpty())
+            return null;
         AnswerRequest message = new AnswerRequest(room
                 .getRoomController()
                 .toJsonCardList(cards),
