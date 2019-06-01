@@ -66,6 +66,7 @@ public class ActionHandler {
                     used = true;
                     weapon.setCharged(false);
                 }
+                room.getRoomController().sendUpdate();
                 if (!weapon.getOptional())
                     break;
             } catch (NotExecutedException e) {
@@ -114,7 +115,7 @@ public class ActionHandler {
             card.getAmmoList().forEach(player::addAmmo);
 
             if (card.hasPowerup() && player.getPowerups().size() < 3) {
-                player.addPowerup((Powerup) board.getPowerDeck().getCard());
+                player.addPowerup(board.getPowerDeck().getCard());
             }
             //put the card int the used card deck
             room.getBoard().getAmmoDeck().usedCard(card);
@@ -178,7 +179,7 @@ public class ActionHandler {
                 }
                 else{
                     //replace the weapon in the deck with a new one if there are cards
-                    Weapon temp = (Weapon) room.getBoard().getWeaponDeck().getCard();
+                Weapon temp = room.getBoard().getWeaponDeck().getCard();
                     if( temp != null){
                         currentSquare.getWeaponDeck()
                                 .set(currentSquare.getWeaponDeck().indexOf(weapon), temp);
@@ -233,65 +234,48 @@ public class ActionHandler {
         }
 
         // put only powerups that he can use to pay
-        List<Powerup> powerupsToPay = new ArrayList<>();// player.getPowerups().stream().filter(x->tempCost.contains(x.getAmmo())).collect(Collectors.toList());
-        for(Powerup powerup : player.getPowerups()){
-            for(AmmoColor ammo : tempCost){
-                if(powerup.getAmmo() == ammo){
-                    powerupsToPay.add(powerup);
-                }
-            }
-        }
-
+        List<Powerup> possiblePowerups = player.getPowerups().stream().filter(x->tempCost.contains(x.getAmmo())).collect(Collectors.toList());
+        // the effective powerups need to pay
+        List<Powerup> powerupToPay = new ArrayList<>();
 
         //the player has to choose a card if he has no ammo
         //the player can choose to not use a card if he has ammo
 
         while (!tempCost.isEmpty()) {
 
-            if (!powerupsToPay.isEmpty()) {
+            //is optional only if has enough ammo to pay
+            Powerup chosenCard = null;
+            try {
+                chosenCard = MessageHandler
+                        .chooseCard(possiblePowerups, true, room, false);
+            } catch (TimeFinishedException e) {
+                //TODO dont pay (go back function)
+                throw new TimeFinishedException();
+            }
 
-                //is optional only if has enough ammo to pay
-                Powerup chosenCard = null;
-                try {
-                    chosenCard = MessageHandler
-                            .chooseCard(powerupsToPay, player.enoughAmmos(cost, false), room, false);
-                } catch (TimeFinishedException e) {
-                    //TODO dont pay (go back function) or pay with what he has
-                    throw new TimeFinishedException();
-                }
-
-                //null means the player doesnt want to use powerups
-                if (chosenCard != null) {
-                    //the chosen powerup will be used to pay
-                    player.removePowerup(chosenCard);
-                    tempCost.remove(chosenCard.getAmmo());
-                    powerupsToPay.remove(chosenCard);
-                }
-                else {
-                    //pay the remaining with ammo instead
-                    for(AmmoColor ammo : tempCost){
-                        try {
-                            player.removeAmmo(ammo);
-                            //this gives an error, dont need anyway
-                            //tempCost.remove(ammo);
-                        } catch (AmmoException e) {
-                            throw new NotEnoughException("no ammo");
-                        }
-                    }
-                    tempCost.clear();
-                }
+            //null means the player doesnt want to use powerups
+            if (chosenCard != null) {
+                //the chosen powerup will be used to pay
+                powerupToPay.add(chosenCard);
+                tempCost.remove(chosenCard.getAmmo());
+                possiblePowerups.remove(chosenCard);
             }
             else {
-                //pay with ammo instead of paying with powerups
-                for(AmmoColor ammo : tempCost){
-                    try {
-                        player.removeAmmo(ammo);
-                    } catch (AmmoException e) {
-                        throw new NotEnoughException("no ammo");
+                if (player.enoughAmmos(tempCost, false)) {
+                    //pay the remaining with ammo instead
+                    for (AmmoColor ammo : tempCost) {
+                        try {
+                            player.removeAmmo(ammo);
+                        } catch (AmmoException e) {
+                            throw new NotEnoughException(e.getMessage());
+                        }
+                        powerupToPay.forEach(x->player.getPowerups().remove(x));
                     }
-                }
-                tempCost.clear();
+                    tempCost.clear();
+                }else
+                    throw new NotEnoughException("have not enough ammo");
             }
+
         }
     }
 

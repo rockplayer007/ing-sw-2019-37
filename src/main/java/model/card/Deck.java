@@ -11,15 +11,15 @@ public abstract class Deck <T extends Card>{
         Collections.shuffle((List<?>) cardDeck);
     }
 
-    public Card getCard(){
+    public T getCard(){
         if(cardDeck.isEmpty()){
             reMix();
         }
         return cardDeck.pop();
     }
 
-    public List<Card> getCard(int n){
-        List<Card> cards = new ArrayList<>();
+    public List<T> getCard(int n){
+        List<T> cards = new ArrayList<>();
         for (int i = 0; i < n; i++){
             cards.add(getCard());
         }

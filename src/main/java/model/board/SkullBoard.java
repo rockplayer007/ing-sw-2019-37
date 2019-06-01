@@ -23,6 +23,11 @@ public class SkullBoard {
         return numberSkulls;
     }
 
+    public void takeOneSkulls(){
+        if (numberSkulls>0)
+            numberSkulls--;
+    }
+
     public List<Cell> getCells() {
         return cells;
     }

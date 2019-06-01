@@ -37,7 +37,7 @@ public class WeaponDeck extends Deck<Weapon>{
         MinOrMaxDistance minDistance0 = new MinOrMaxDistance(0,false);
         MinOrMaxDistance maxDistance1 = new MinOrMaxDistance(1,true);
         Run run2 = new Run(2);
-        MoveTargetToEffevtSquare moveTargetToEffevtSquare = new MoveTargetToEffevtSquare();
+        MoveTargetToEffectSquare moveTargetToEffectSquare = new MoveTargetToEffectSquare();
         MoveToTarget moveToTarget = new MoveToTarget();
         MoveTarget moveTarget1 = new MoveTarget(1);
         Damage damage1 = new Damage(1);
@@ -45,6 +45,7 @@ public class WeaponDeck extends Deck<Weapon>{
         Damage damage3 = new Damage(3);
         Mark mark1 = new Mark(1);
         Mark mark2 = new Mark(2);
+        Update update = new Update();
 
 
         String description = "Deal 2 damage and 1 mark to 1 target  you can see.\n" ;
@@ -145,7 +146,7 @@ public class WeaponDeck extends Deck<Weapon>{
         description = "Choose a target 0, 1, or 2 moves away from you. " +
                 "Move the target to your square and deal 3 damage to it.\n";
         operations = Arrays.asList(visiblePlayers, new AddPossibleTargetBeforeMove(2,true),
-                selectTarget1, new SetPlayerPositionAsEffectSquare(), moveTargetToEffevtSquare, selectTarget1, damage1);
+                selectTarget1, new SetPlayerPositionAsEffectSquare(), moveTargetToEffectSquare, damage3);
         effects.put(new Effect("Punisher mode",description, Arrays.asList(AmmoColor.RED, AmmoColor.YELLOW), operations), 0);
         description = "Notes: You can move a target even if you can't see it. The target ends up in a place where you can see and " +
                 "damage it. The moves do not have to be in the same direction.\n";
@@ -157,11 +158,11 @@ public class WeaponDeck extends Deck<Weapon>{
         effects=new LinkedHashMap<>();
         description = "Choose a square you can see, but not your square. Call it \"the vortex\". " +
                 "Choose a target on the vortex or 1 move away from it. Move it onto the vortex and give it 2 damage.\n";
-        operations= Arrays.asList(new SelectEffectSquare(1),selectTarget1, moveTargetToEffevtSquare, damage1, setTargetToSelected);
+        operations= Arrays.asList(new SelectEffectSquare(1),selectTarget1, moveTargetToEffectSquare, damage1, setTargetToSelected);
         effects.put(new Effect(basicEffect,description, Collections.emptyList(), operations),0);
         description = "Choose up to 2 other targets on the vortex or 1 move away from it. " +
                 "Move them onto the vortex and give them each 1 damage.\n";
-        operations= Arrays.asList(selectTargets2, damage1);
+        operations= Arrays.asList(selectTargets2, moveTargetToEffectSquare, damage1);
         effects.put(new Effect("Black hole",description, Collections.singletonList(AmmoColor.RED), operations), 1);
         description = "Notes: The 3 targets must be different, but some might start on the same square. It is legal " +
                 "to choose targets on your square, on the vortex, or even on squares you can't see. They all end up on the vortex.\n";
@@ -184,7 +185,7 @@ public class WeaponDeck extends Deck<Weapon>{
 
         effects = new LinkedHashMap<>();
         description = "Choose 1 target you cannot see and deal 3 damage to it.\n";
-        operations = Arrays.asList(visiblePlayers, new Heatseekker(), selectTarget1, damage3);
+        operations = Arrays.asList(visiblePlayers, new Heatseeker(), selectTarget1, damage3);
         effects.put(new Effect("Effect",description, Collections.emptyList(), operations), 0);
         description = "Notes: Yes, this can only hit targets you cannot see.\n";
 
@@ -253,7 +254,7 @@ public class WeaponDeck extends Deck<Weapon>{
         effects.put(new Effect("Rocket jump",description, Collections.singletonList(AmmoColor.BLUE), operations), -1);
         description = "During the basic effect, deal 1 damage to " +
                 "every player on your target's original square – including the target, even if you move it.\n";
-        operations = Arrays.asList(new SelectEffectSquare(0), selectAllTarget,damage1);
+        operations = Arrays.asList(selectAllTarget, damage1);
         effects.put(new Effect("Fragmenting warhead",description, Collections.singletonList(AmmoColor.YELLOW), operations), 1);
         description = "Notes: If you use the rocket jump before the basic effect, you consider only your new square when " +
                 "determining if a target is legal. You can even move off a square so you can shoot someone on it. If you " +
@@ -333,7 +334,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 "If you want, you may move 1 more square in that same direction (but only if it is a legal " +
                 "move). You may deal 2 damage to 1 target there, as well.\n";
         operations = Arrays.asList(maxDistance1, minDistance0, selectTarget1, new NextSquareInDirection(),
-                moveToTarget, damage2, targetOnEffectSquare, selectTarget1, moveToTarget, damage2);
+                moveToTarget, damage2, update, targetOnEffectSquare, selectTarget1, moveToTarget, damage2);
         effects.put(new Effect("Rocket fist mode",description, Collections.emptyList(), operations), 0);
         description = "Notes: In rocket fist mode, you're flying 2 squares in a straight line, punching 1 person per square.\n";
 

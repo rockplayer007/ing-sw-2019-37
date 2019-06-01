@@ -22,7 +22,7 @@ public interface Operation {
 class VisiblePlayers implements Operation{
 
     @Override
-    public void execute(Room room){
+    public void execute(Room room)throws NotExecutedException{
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         Set<Square> visible = new HashSet<>(currentPlayer.getPosition().visibleSquare(room.getBoard().getMap()));
@@ -30,7 +30,8 @@ class VisiblePlayers implements Operation{
 
         visible.forEach(x-> visiblePlayers.addAll(x.getPlayersOnSquare()));
         visiblePlayers.remove(currentPlayer);
-
+        if (visiblePlayers.isEmpty())
+            throw new NotExecutedException("there are not possible players can be shoot ");
         attackHandler.setPossibleTargets(visiblePlayers);
     }
 }
@@ -45,10 +46,12 @@ class SelectTargets implements Operation{
     }
 
     @Override
-    public void execute(Room room)throws TimeFinishedException{
+    public void execute(Room room)throws NotExecutedException, TimeFinishedException{
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> possibleTargets =attackHandler.getPossibleTargets();
+        if (possibleTargets.isEmpty())
+            throw new NotExecutedException("there are not possible players can be shoot ");
         List<Player> targets=new ArrayList<>();
         if (distinctSquare) {
             for (int i=0; i< numberTragets;i++){
@@ -74,10 +77,12 @@ class SelectFromSelectedTargets implements Operation{
     }
 
     @Override
-    public void execute(Room room) throws TimeFinishedException{
+    public void execute(Room room) throws NotExecutedException, TimeFinishedException{
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> selectedTargets =attackHandler.getSelectedTargets();
+        if (selectedTargets.isEmpty())
+            throw new NotExecutedException("there are not possible players can be shoot ");
         List<Player> targets = MessageHandler.choosePlayers(currentPlayer,selectedTargets,numberTragets,room);
     // TODO se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
         selectedTargets.removeAll(targets);
@@ -100,7 +105,6 @@ class Damage implements Operation{
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> targets = attackHandler.getTargetsToShot();
         targets.forEach(x->attackHandler.addDamage(x,points));
-//        TODO
         targets.forEach(x->x.getPlayerBoard().addDamage(currentPlayer,points));
 
     }
@@ -216,6 +220,9 @@ class  AddPossibleTargetBeforeMove implements Operation{
         AttackHandler attackHandler = room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> possiblePlayers = new ArrayList<>(room.getPlayers());
+
+        possiblePlayers = possiblePlayers.stream().filter(x->x.getPosition()!=null).collect(Collectors.toList());
+
         Set<Square> visibleSquare=new HashSet<>(currentPlayer.getPosition().visibleSquare(room.getBoard().getMap()));
         if (!yourSquare){
             possiblePlayers.removeAll(attackHandler.getPossibleTargets());
@@ -242,12 +249,14 @@ class  MoveTargetToVisible implements Operation{
     }
 
     @Override
-    public void execute(Room room) throws TimeFinishedException{
+    public void execute(Room room) throws NotExecutedException, TimeFinishedException{
         Player currentPlayer = room.getCurrentPlayer();
         Player target = room.getAttackHandler().getTargetsToShot().get(0); // dovrebbe essere sempre uno solo quando lancia questo operazione
-        Set<Square> visibleSquare=currentPlayer.getPosition().visibleSquare(room.getBoard().getMap());
+        if (target == null)
+            throw new NotExecutedException("there are not possible players can be shoot ");
+        Set<Square> visibleSquare = currentPlayer.getPosition().visibleSquare(room.getBoard().getMap());
         Set<Square> validSquare;
-        validSquare=target.getPosition().getValidPosition(distance).stream().filter(visibleSquare::contains).collect(Collectors.toSet());
+        validSquare = target.getPosition().getValidPosition(distance).stream().filter(visibleSquare::contains).collect(Collectors.toSet());
 
         target.movePlayer(MessageHandler.chooseSquare(currentPlayer,validSquare, room));
         //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
@@ -271,24 +280,26 @@ class SelectEffectSquare implements Operation{
         this.zone=zone;
     }
     @Override
-    public void execute(Room room) throws TimeFinishedException{
+    public void execute(Room room) throws NotExecutedException, TimeFinishedException{
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> possibleTargets = new ArrayList<>();
         Set<Square> visibleSquare=currentPlayer.getPosition().visibleSquare(room.getBoard().getMap())
-                .stream()
-                .filter(x->x.getValidPosition(zone).stream().anyMatch(p->!p.getPlayersOnSquare().isEmpty()))
-                .collect(Collectors.toSet());
+                    .stream()
+                    .filter(x -> x.getValidPosition(zone).stream().anyMatch(p -> !p.getPlayersOnSquare().isEmpty()))
+                    .collect(Collectors.toSet());
+        if (visibleSquare.isEmpty())
+            throw new NotExecutedException("there are not possible Square can be choose ");
 
-        Square vortex= MessageHandler.chooseSquare(currentPlayer,visibleSquare, room);
+        Square effectSquare= MessageHandler.chooseSquare(currentPlayer,visibleSquare, room);
         //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
-        vortex.getValidPosition(1).forEach(x-> possibleTargets.addAll(x.getPlayersOnSquare()));
+        effectSquare.getValidPosition(zone).forEach(x-> possibleTargets.addAll(x.getPlayersOnSquare()));
         attackHandler.setPossibleTargets(possibleTargets);
-        attackHandler.setEffectSquare(vortex);
+        attackHandler.setEffectSquare(effectSquare);
     }
 }
 
-class MoveTargetToEffevtSquare implements Operation{
+class MoveTargetToEffectSquare implements Operation{
     @Override
     public void execute(Room room) {
         AttackHandler attackHandler=room.getAttackHandler();
@@ -303,7 +314,7 @@ class Furance implements Operation{
         this.selectSquare=selectSquare;
     }
     @Override
-    public void execute(Room room) throws TimeFinishedException{
+    public void execute(Room room) throws NotExecutedException, TimeFinishedException{
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         if (!selectSquare){
@@ -311,7 +322,8 @@ class Furance implements Operation{
             List<Player> targets = new ArrayList<>();
             currentPlayer.getPosition().getNeighbourSquare().forEach(x->rooms.add(x.getColor()));
             rooms.remove(currentPlayer.getPosition().getColor());
-
+            if (rooms.isEmpty())
+                throw new NotExecutedException("there are not possible room can be choose ");
             Color color = MessageHandler.chooseRoom(currentPlayer,new ArrayList<>(rooms),room);
             //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
             room.getBoard().getMap().getSquaresInRoom().get(color).forEach(x-> targets.addAll(x.getPlayersOnSquare()));
@@ -320,6 +332,8 @@ class Furance implements Operation{
             Set<Square> squares=new HashSet<>(currentPlayer.getPosition().getNeighbourSquare());
             squares.remove(currentPlayer.getPosition());
             squares=squares.stream().filter(x->!x.getPlayersOnSquare().isEmpty()).collect(Collectors.toSet());
+            if (squares.isEmpty())
+                throw new NotExecutedException("there are not possible players can be shoot ");
             attackHandler.setTargetsToShot(MessageHandler.chooseSquare(currentPlayer,squares, room).getPlayersOnSquare());
             //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
         }
@@ -330,13 +344,14 @@ class Furance implements Operation{
 /**
  *  need launch first "VisiblePlayers"
  */
-class Heatseekker implements Operation{
+class Heatseeker implements Operation{
     @Override
     public void execute(Room room) {
         AttackHandler attackHandler=room.getAttackHandler();
-        List<Player> possibleTarets=new ArrayList<>(room.getPlayers());
-        possibleTarets.removeAll(attackHandler.getPossibleTargets());
-        attackHandler.setPossibleTargets(possibleTarets);
+        List<Player> possibleTargets=new ArrayList<>(room.getPlayers());
+        possibleTargets = possibleTargets.stream().filter(x->x.getPosition()!=null).collect(Collectors.toList());
+        possibleTargets.removeAll(attackHandler.getPossibleTargets());
+        attackHandler.setPossibleTargets(possibleTargets);
     }
 }
 
@@ -352,7 +367,7 @@ class DirectionTargets implements Operation{
         this.penetrate=penetrate;
     }
     @Override
-    public void execute(Room room) throws TimeFinishedException{
+    public void execute(Room room) throws NotExecutedException, TimeFinishedException{
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         Map<Square.Direction,Set<Square>> map;
@@ -365,6 +380,8 @@ class DirectionTargets implements Operation{
         map=map.entrySet().stream()
                 .filter(x -> x.getValue().stream().anyMatch(s -> s.getPlayersOnSquare().isEmpty()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        if (map.isEmpty())
+            throw new NotExecutedException("there are not possible players can be shoot ");
 
         Square.Direction choice = MessageHandler.chooseDirection(currentPlayer,new ArrayList<>(map.keySet()),room);
         //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
@@ -381,9 +398,12 @@ class DirectionTargets implements Operation{
 
 class SelectAllTarget implements Operation{
     @Override
-    public void execute(Room room) {
+    public void execute(Room room) throws NotExecutedException {
         AttackHandler attackHandler=room.getAttackHandler();
-        attackHandler.setTargetsToShot(new ArrayList<>(attackHandler.getPossibleTargets()));
+        List<Player> possibleTargets = attackHandler.getPossibleTargets();
+        if (possibleTargets.isEmpty())
+            throw new NotExecutedException("there are not possible players can be shoot ");
+        attackHandler.setTargetsToShot(new ArrayList<>(possibleTargets));
         attackHandler.setPossibleTargets(new ArrayList<>());
     }
 }
@@ -402,9 +422,11 @@ class MoveTarget implements Operation{
         this.distance=distance;
     }
     @Override
-    public void execute(Room room) throws TimeFinishedException{
+    public void execute(Room room) throws NotExecutedException, TimeFinishedException{
         Player currentPlayer = room.getCurrentPlayer();
         Player target = room.getAttackHandler().getTargetsToShot().get(0); // dovrebbe essere sempre uno solo quando lancia questo operazione
+        if (target == null)
+            throw new NotExecutedException("there are not possible players can be move ");
         Set<Square> validSquare;
         validSquare=target.getPosition().getValidPosition(distance);
         target.movePlayer(MessageHandler.chooseSquare(currentPlayer,validSquare, room));
@@ -414,9 +436,11 @@ class MoveTarget implements Operation{
 
 class SetTargetPositionAsEffectSquare implements Operation{
     @Override
-    public void execute(Room room) {
+    public void execute(Room room)throws NotExecutedException {
         AttackHandler attackHandler=room.getAttackHandler();
         Player target = attackHandler.getTargetsToShot().get(0);
+        if (target == null)
+            throw new NotExecutedException("there are not target choice");
         attackHandler.setEffectSquare(target.getPosition());
     }
 }
@@ -455,7 +479,7 @@ class ThorTargets implements Operation{
 
 class NextSquareInDirection implements Operation {
     @Override
-    public void execute(Room room) {
+    public void execute(Room room){
         AttackHandler attackHandler = room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         Square targetPosition = attackHandler.getSelectedTargets().get(0).getPosition();
@@ -468,6 +492,8 @@ class NextSquareInDirection implements Operation {
         } else if (diffy == 0) {
             nextSquare = targetPosition.getOneOfNeighbour(targetPosition.getX() - diffx, targetPosition.getY());
         }
+        if (nextSquare == null)
+            MessageHandler.sendInfo(currentPlayer,"You are end of map have not next square",room);
         attackHandler.setEffectSquare(nextSquare);
 
 
@@ -512,9 +538,11 @@ class Repel implements Operation{
         this.distance=distance;
     }
     @Override
-    public void execute(Room room) throws TimeFinishedException{
+    public void execute(Room room) throws NotExecutedException, TimeFinishedException{
         AttackHandler attackHandler = room.getAttackHandler();
         Player target = attackHandler.getTargetsToShot().get(0);
+        if (target == null)
+            throw new NotExecutedException("there are not possible players can be move ");
         Set<Square> validPosition = new HashSet<>();
         target.getPosition().directions(distance).forEach((key,value)->validPosition.addAll(value));
         target.movePlayer(MessageHandler.chooseSquare(room.getCurrentPlayer(),validPosition, room));
@@ -537,6 +565,8 @@ class TargetingScope implements Operation{
         AttackHandler attackHandler = room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         List<AmmoColor> ammoColors = currentPlayer.allAmmo().entrySet().stream().filter(x->x.getValue()>0).map(Map.Entry::getKey).collect(Collectors.toList());
+        if (ammoColors.isEmpty())
+            throw new NotExecutedException("You have not enough ammo to pay");
         AmmoColor ammoColor = MessageHandler.chooseAmmoColor(currentPlayer,ammoColors,room);
         //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
         try {
@@ -556,6 +586,14 @@ class Teleporter implements Operation{
         currentPlayer.movePlayer(MessageHandler.chooseSquare(currentPlayer,room.getBoard().getMap().allSquares(), room));
         //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
 
+    }
+}
+
+class Update implements Operation{
+
+    @Override
+    public void execute(Room room){
+        room.getRoomController().sendUpdate();
     }
 }
 

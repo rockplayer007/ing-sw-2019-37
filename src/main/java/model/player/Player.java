@@ -29,7 +29,6 @@ public class Player implements Serializable {
 
     public Player(String nickname) {
         this.nickname = nickname;
-        this.hero = hero;
         ammo = new EnumMap<>(AmmoColor.class);
         for (AmmoColor c : AmmoColor.values()) {
             ammo.put(c, 1);
@@ -150,7 +149,7 @@ public class Player implements Serializable {
         if (ammo.get(ammoColor)>0)
             ammo.put(ammoColor, ammo.get(ammoColor)-1);
         else
-            throw new AmmoException("error! you haven't enough ammo"+ammoColor);
+            throw new AmmoException("you haven't enough ammo"+ammoColor);
     }
 
     public void addPowerup(Powerup powerup){

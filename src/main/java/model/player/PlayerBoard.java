@@ -37,10 +37,6 @@ public class PlayerBoard implements Serializable{
 
     }
 
-    public int getDeathTimes() {
-        return deathTimes;
-    }
-
     public void setFrenzy(Boolean frenzy) {
         isFrenzy = frenzy;
     }
@@ -69,12 +65,11 @@ public class PlayerBoard implements Serializable{
             this.addDamage(player, c);
         }
         if (!isFrenzy){
-//            if (hp.size()>5)
-//                this.player.setActionStatus(ActionState.ADRENALINEACTIONS2);
-//            else if (hp.size()>2)
-//                this.player.setActionStatus(ActionState.ADRENALINEACTIONS1);
+            if (hp.size()>5)
+                this.player.setActionStatus(ActionState.ADRENALINEACTIONS2);
+            else if (hp.size()>2)
+                this.player.setActionStatus(ActionState.ADRENALINEACTIONS1);
         }
-        //TODO bisogna vedere come funziona con gli pattern observer
     }
 
     /**
@@ -159,6 +154,8 @@ public class PlayerBoard implements Serializable{
         List<Player> listForLiquidation = listForLiquidation();
         Cell cell = new Cell();
         int i=0;
+        if (listForLiquidation.isEmpty())
+            return cell;
         for (Player p:listForLiquidation){
             p.getPlayerBoard().addPoints(isFrenzy ? frenzyPoints[deathTimes+i] : pointArray[deathTimes+i]);
             i++;
@@ -180,10 +177,7 @@ public class PlayerBoard implements Serializable{
 
         hp=new ArrayList<>();
 
-        if (cell.getKill()==null)
-            return null;
-        else
-            return cell;
+        return cell;
 
     }
 

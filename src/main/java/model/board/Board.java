@@ -80,7 +80,7 @@ public class Board {
         for(Square square : map.allSquares()){
             if(!square.isGenerationPoint()){
                 if(((AmmoSquare) square).getAmmoCard() == null){
-                    ((AmmoSquare) square).setAmmoCard((AmmoCard) ammoDeck.getCard());
+                    ((AmmoSquare) square).setAmmoCard( ammoDeck.getCard());
                 }
             }
         }
