@@ -29,6 +29,7 @@ public class GUI implements ViewInterface {
     private boolean first=true;
     private boolean firstUpdate=true;
     private MapPanel mapPanel;
+    private JDialog jDialog= new JDialog(frame,"TIMEOUT");
 
 
     public GUI(MainClient mainClient) {
@@ -126,7 +127,6 @@ public class GUI implements ViewInterface {
 
     @Override
     public void timeout() {
-        JDialog jDialog= new JDialog(frame,"TIMEOUT");
         JLabel label = new JLabel("The time to perform the action has expired.");
         jDialog.add(label);
         jDialog.setSize(300, 100);
@@ -173,6 +173,7 @@ public class GUI implements ViewInterface {
           if ((component.getName().equals("mapPanel"))) {
               MapPanel mapPanel = (MapPanel) component;
               mapPanel.getPowerupSelected(powerups, optional, mainClient);
+              jDialog.setVisible(false);
           }
     }
 
@@ -188,7 +189,11 @@ public class GUI implements ViewInterface {
 
     @Override
     public void chooseEffect(List<Effect> effects) {
-
+        Component component =frame.getContentPane().getComponent(0);
+        if ((component.getName().equals("mapPanel"))){
+            MapPanel map = (MapPanel) component;
+            map.getEffect(effects,mainClient);
+        }
     }
 
     @Override
@@ -230,6 +235,7 @@ public class GUI implements ViewInterface {
         if ((component.getName().equals("mapPanel"))) {
             MapPanel mapPanel = (MapPanel) component;
             mapPanel.getAction(actions, mainClient);
+            jDialog.setVisible(false);
         }
     }
 

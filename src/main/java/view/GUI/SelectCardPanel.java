@@ -18,7 +18,7 @@ public class SelectCardPanel extends JPanel{
 
     private List<JButton> cardsButton = new ArrayList<>();
 
-    public SelectCardPanel(List<String> cards, boolean optional, MainClient mainClient,JFrame frame){
+    public SelectCardPanel(List<String> cards, boolean optional, MainClient mainClient,JFrame frame,MapPanel mapPanel){
         this.setLayout(new GridLayout(1,4));
         for (int i=0;i<cards.size();i++){
             JButton button=new JButton();
@@ -30,8 +30,8 @@ public class SelectCardPanel extends JPanel{
             button.setContentAreaFilled(false);
             button.setBorder(null);
             button.setFocusPainted(false);
-            int x=i;
-            button.addActionListener(new ActionL(mainClient,x,frame));
+            //int x=i;
+            button.addActionListener(new ActionWeaponS(mainClient,i,frame,mapPanel,cards.get(i)));
             this.add(button);
 
 
@@ -45,6 +45,10 @@ public class SelectCardPanel extends JPanel{
             this.add(opt);
         }
 
+    }
+
+    public String getName(){
+        return getName();
     }
 
 }
