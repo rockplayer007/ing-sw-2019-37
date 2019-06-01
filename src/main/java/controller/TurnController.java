@@ -57,7 +57,7 @@ public class TurnController {
                 timer = new CountDown(1*WAITING_TIME*1000, () -> {
                 roomController.stopWaiting();
                 System.out.println("timer stopped");
-            }); 
+            });
 
             timer.startTimer();
             try {
