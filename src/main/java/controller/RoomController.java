@@ -59,7 +59,6 @@ public class RoomController {
         }
 
         /*
->>>>>>> 87a8ada166e7f207673b3d4d9e29a2c4096abb79
         switch (message.getContent()) {
 
             case CARD_RESPONSE:
@@ -180,26 +179,27 @@ public class RoomController {
             connectionToClient.get(player).getClientInterface()
                     .notifyClient(message);
         } catch (RemoteException e) {
-            player.setDisconnected();
+            disconnectPlayer(player);
             logger.log(Level.WARNING, "Player {0} disconnected", player.getNickname());
             //TODO send message to all others
+            sendMessageToAll(new InfoMessage(player.getNickname() + " has disconnected"));
         }
 
     }
 
 
     public void sendMessageToAll(ServerToClient message){
-        players.forEach(x -> sendMessage(x, message));
+        //send the message only to who is connected
+        players.stream().filter(Player::isConnected).forEach(x -> sendMessage(x, message));
     }
 
     public void sendUpdate(){
         //send a message that includes the board and other things
 
         //sendMessageToAll(new BoardInfo(gson.toJson(room.getBoard().getMap())));
-        for(Player p :players){
-            sendMessage(p, new UpdateMessage(
-                    toJsonGameBoard(), toJsonCardList(p.getPowerups()), toJsonSkullBoard()));
-        }
+        players.stream().filter(Player::isConnected).forEach(p ->
+                sendMessage(p, new UpdateMessage(
+                toJsonGameBoard(), toJsonCardList(p.getPowerups()), toJsonSkullBoard())));
 
     }
 
@@ -258,6 +258,24 @@ public class RoomController {
         expectedType = null;
         expectedReceiver = null;
     }
+
+    public void disconnectPlayer(String playerName){
+        for(Player player : players){
+            if(player.getNickname().equals(playerName)){
+                disconnectPlayer(player);
+            }
+            break;
+        }
+    }
+
+    public void disconnectPlayer(Player player){
+        player.setDisconnected();
+        if(expectedReceiver != null && expectedReceiver.equals(player.getNickname())){
+            stopWaiting();
+        }
+        logger.log(Level.WARNING, "Player {0} disconnected", player.getNickname());
+    }
+
 
     //TODO check this
     //public <T> List<String> toJsonCardList(List<T> cards){

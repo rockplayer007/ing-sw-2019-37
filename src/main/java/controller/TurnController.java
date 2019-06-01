@@ -9,6 +9,7 @@ import model.player.Player;
 import network.messages.Message;
 import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
+import network.messages.serverToClient.InfoMessage;
 import network.messages.serverToClient.TimeoutMessage;
 
 import java.util.List;
@@ -23,6 +24,8 @@ public class TurnController {
     private Room room;
     private CountDown timer;
     private boolean gameFinished;
+
+    private static final int WAITING_TIME = 30; //seconds
 
     private RoundController roundController;
 
@@ -51,10 +54,10 @@ public class TurnController {
             Player player = room.getCurrentPlayer();
             //in case the timer finished reset the shoot for the next player
             roundController.resetShot();
-            timer = new CountDown(1*30*1000, () -> {
+                timer = new CountDown(1*WAITING_TIME*1000, () -> {
                 roomController.stopWaiting();
-                System.out.println("time finished");
-            }); //10 seconds
+                System.out.println("timer stopped");
+            }); 
 
             timer.startTimer();
             try {
@@ -89,11 +92,15 @@ public class TurnController {
                 room.getBoard().fillAmmo();
 
             } catch (TimeFinishedException e) {
+                //set the player as disconnected
+                player.setDisconnected();
+
                 //send message
                 roomController.sendMessage(room.getCurrentPlayer(), new TimeoutMessage());
-                //set the player as disconnected
+                roomController.sendMessageToAll(new InfoMessage(player.getNickname() + " has disconnected (time exceeded)"));
+
                 //continue as normal
-                System.out.println("player: " + room.getCurrentPlayer().getNickname() + " disconnected");
+                logger.log(Level.INFO,"player: {0} finished his time", player.getNickname());
                 room.getBoard().fillAmmo();
                 roomController.sendUpdate();
             }

@@ -127,7 +127,8 @@ public class MainServer {
                 try {
                     message.getClientInterface().notifyClient(new LoginResponse(true, ""));
                 }catch (RemoteException e){
-                    logger.log(Level.WARNING, "Connection error", e);
+                    disconnectPlayer(message.getClientInterface());
+                    //logger.log(Level.WARNING, "Player {0} disconnected", message.getSender());
                 }
 
 
@@ -147,7 +148,8 @@ public class MainServer {
             try {
                 message.getClientInterface().notifyClient(new LoginResponse(false, clientID));
             }catch (RemoteException e){
-                logger.log(Level.WARNING, "Connection error", e);
+                disconnectPlayer(message.getClientInterface());
+                //logger.log(Level.WARNING, "Player {0} disconnected", message.getSender());
 
             }
         }
@@ -155,10 +157,16 @@ public class MainServer {
 
     public void disconnectPlayer(ClientInterface clientInterface){
         for(ClientOnServer client : allClients){
-            //TODO check this
+
+            //check needed because if the player is not in the room already
             if(client.getClientInterface() == clientInterface){
-                client.getPersonalPlayer().setDisconnected();
-                logger.log(Level.WARNING, "Player {0} disconnected", client.getUsername());
+                if(usernameInRoom.containsKey(client.getUsername())){
+                    usernameInRoom.get(client.getUsername()).disconnectPlayer(client.getUsername());
+                }
+                else {
+                    client.getPersonalPlayer().setDisconnected();
+                    logger.log(Level.WARNING, "Player {0} disconnected", client.getUsername());
+                }
                 break;
             }
         }
@@ -174,9 +182,8 @@ public class MainServer {
 
     public void removeClient(ClientOnServer client){
         allClients.remove(client);
-        if(oldClients.containsKey(client.getClientID())){
-            oldClients.remove(client.getClientID());
-        }
+        oldClients.remove(client.getClientID());
+
     }
 
 }

@@ -256,7 +256,7 @@ public class ActionHandler {
                     chosenCard = MessageHandler
                             .chooseCard(powerupsToPay, player.enoughAmmos(cost, false), room, false);
                 } catch (TimeFinishedException e) {
-                    //TODO dont pay (go back function)
+                    //TODO dont pay (go back function) or pay with what he has
                     throw new TimeFinishedException();
                 }
 
