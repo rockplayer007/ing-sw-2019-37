@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -68,5 +69,8 @@ public interface ViewInterface {
 
     void chooseRoom(List<Color> rooms);
 
+    void showAttack(Player attacker, Map<Player, Integer> hp, Map<Player, Integer> marks);
+
     void showInfo(String info);
+
 }

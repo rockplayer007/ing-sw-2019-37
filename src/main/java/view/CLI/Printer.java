@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -596,6 +597,38 @@ public class Printer {
             println(line.toString());
         }
 
+
+    }
+
+    public void printAttack(Player attacker, Map<Player, Integer> hp, Map<Player, Integer> marks){
+        StringBuilder attack = new StringBuilder();
+
+        attack.append(colorToAnsi(attacker.getColor()));
+        if(attacker.getNickname().equals(cli.getMainClient().getUsername())){
+            attack.append("YOU");
+        }
+        else{
+            attack.append(attacker.getNickname());
+        }
+        attack.append(colorToAnsi(AmmoColor.RED)).append(" attacked:\n");
+        hp.forEach((x, y) -> {
+            attack.append(colorToAnsi(x.getColor())).append(x.getNickname())
+                    .append(colorToAnsi(Color.WHITE)).append(" giving ");
+            for(int i = 0; i < y; i ++){
+                attack.append(colorToAnsi(attacker.getColor())).append("X");
+            }
+
+            attack.append(colorToAnsi(Color.WHITE)).append("\n");
+        });
+
+        marks.forEach((x, y) -> {
+            attack.append(colorToAnsi(x.getColor())).append(x.getNickname())
+                    .append(colorToAnsi(Color.WHITE)).append(" giving ");
+            for(int i = 0; i < y; i ++){
+                attack.append(colorToAnsi(attacker.getColor())).append("@");
+            }
+            attack.append(colorToAnsi(Color.WHITE)).append("\n");
+        });
 
     }
 

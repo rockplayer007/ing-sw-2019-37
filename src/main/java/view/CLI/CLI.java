@@ -160,6 +160,7 @@ public class CLI implements ViewInterface {
         printer.askRoom(rooms, room -> mainClient.sendSelectedRoom(room));
     }
 
+
     public void choosePowerup(List<Powerup> powerups, boolean optional){
         printer.askPowerup(powerups, powerup -> {
             if(powerup >= powerups.size()){
@@ -184,6 +185,10 @@ public class CLI implements ViewInterface {
         printer.askSquare(squares, square -> mainClient.sendSelectedSquare(square));
     }
 
+    @Override
+    public void showAttack(Player attacker, Map<Player, Integer> hp, Map<Player, Integer> marks) {
+        printer.printAttack(attacker, hp, marks);
+    }
 
     public void timeout(){
         printer.closeRequest();
