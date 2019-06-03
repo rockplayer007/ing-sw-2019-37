@@ -86,7 +86,7 @@ public class ActionHandler {
             validEffect = validEffect.stream().filter(x->player.enoughAmmos(x.getExtraCost(),true)).collect(Collectors.toList());
             effectSelect = MessageHandler.chooseEffect(player,validEffect, room);
         }
-
+        MessageHandler.sendAttack(player,room.getAttackHandler().getDamaged(),room.getAttackHandler().getMarked(),room);
     }
 
 

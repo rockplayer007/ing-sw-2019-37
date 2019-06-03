@@ -59,7 +59,11 @@ public class AttackHandler {
         return damaged;
     }
 
-    public void addDamage(Player player,int point){
+    public Map<Player, Integer> getMarked() {
+        return marked;
+    }
+
+    public void addDamage(Player player, int point){
         if (damaged.containsKey(player))
             damaged.put(player, damaged.get(player)+point);
         else

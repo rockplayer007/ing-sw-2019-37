@@ -145,11 +145,11 @@ public class Room {
         }
     }
 
-    public List<Player> endScoreboard(){
+    public Map<Player,Integer> endScoreboard(){
         players.forEach(p->p.getPlayerBoard().liquidation());
-        return players.stream()
-                .sorted(Comparator.comparingInt(p->p.getPlayerBoard().getPoints()))
-                .collect(Collectors.toList());
+        Map<Player,Integer> map = new TreeMap<>(Comparator.comparingInt(p->p.getPlayerBoard().getPoints()));
+        players.forEach(x->map.put(x,x.getPlayerBoard().getPoints()));
+        return map;
     }
 
     public void undoPayment(){
