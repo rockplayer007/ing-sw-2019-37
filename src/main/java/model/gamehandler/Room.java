@@ -58,8 +58,6 @@ public class Room {
         board.setMap(gameBoard);
 
         logger.log(Level.INFO, "selected board is {0}", description);
-
-        //TODO add update all message
     }
 
     public RoomController getRoomController() {
