@@ -1,6 +1,7 @@
 package boardTest;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import com.google.gson.GsonBuilder;
 
@@ -15,8 +16,11 @@ import org.junit.jupiter.api.Test;
 import view.CLI.CLI;
 import view.CLI.Printer;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -123,6 +127,41 @@ public class BoardTest {
         Printer printer = new Printer(new CLI(new MainClient()));
 
         printer.printBoard(map);
+    }
+
+    @Test
+    public void serializationTest(){
+
+        Gson gson = new Gson();
+        Player attacker = new Player("pippo");
+        HashMap<Player, Integer> hp = new HashMap<>();
+        hp.put(attacker, 10);
+
+
+
+        Player dAttacker = gson.fromJson(gson.toJson(attacker), Player.class);
+
+        HashMap<String, Integer> stringed = new HashMap<>();
+        hp.forEach((x, y) -> stringed.put(gson.toJson(x), y));
+
+        String gsonString = gson.toJson(stringed);
+
+        Type type = new TypeToken<HashMap<String, Integer>>(){}.getType();
+
+
+        //HashMap dHp = gson.fromJson(stringed, type);
+        HashMap<String, Integer> dHp =  gson.fromJson(gsonString, type);
+
+        assertEquals(dAttacker.getNickname(), "pippo");
+        //assertEquals(dHp.get(dAttacker), 10);
+        System.out.println(attacker.getNickname());
+
+        for(String p :  dHp.keySet()){
+            Player pl = gson.fromJson(p, Player.class);
+            System.out.println(pl.getNickname());
+        }
+        //dHp.forEach((x,y) -> System.out.println("x: " + x.getNickname()));
+
     }
 
     @Test

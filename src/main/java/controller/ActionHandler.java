@@ -94,6 +94,7 @@ public class ActionHandler {
      * run actions let current player to changes position
      * @param player that do this action.
      * @param  distanceMax Max distance that the player can move
+     * @param room needed for choosing running square
      */
     public static void run(Player player, int distanceMax, Room room) throws TimeFinishedException {
         Set<Square> validPositions = player.getPosition().getValidPosition(distanceMax);
@@ -103,9 +104,10 @@ public class ActionHandler {
 
 
     /**
-     * basic grab method let player to grab all card that they can
+     * basic grab method let player to grab what is on that square
      * @param player that do this action.
      * @param board that the player play.
+     * @param room used to fill the square with new cards
      */
     public static void grab(Player player, Board board, Room room) throws NotExecutedException, TimeFinishedException {
 
@@ -201,6 +203,7 @@ public class ActionHandler {
     /**
      * reload the weapon
      * @param player that do this action
+     * @param room needed for the payment method
      */
     public static void reload(Player player, Room room) throws TimeFinishedException {
         List<Weapon> weapons = player.getWeapons().stream().filter(x->!x.getCharged()).collect(Collectors.toList());
@@ -222,7 +225,14 @@ public class ActionHandler {
         }
     }
 
-    //payment method
+    /**
+     * Allows the player to pay with ammo ro with powerups
+     * @param player player that needs to pay
+     * @param cost amount of ammo to pay
+     * @param room room where the player is in
+     * @throws NotEnoughException when the player doesn't have enough ammo to pay
+     * @throws TimeFinishedException when the client takes too long for choosing
+     */
     public static void payment(Player player, List<AmmoColor> cost, Room room) throws NotEnoughException, TimeFinishedException {
 
         List<AmmoColor> tempCost = new ArrayList<>(cost);

@@ -2,6 +2,7 @@ package network.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import model.board.*;
 import model.card.AmmoColor;
 import model.card.Effect;
@@ -21,11 +22,10 @@ import view.GUI.GUI;
 import view.ViewInterface;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.rmi.NotBoundException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -259,8 +259,28 @@ public class MainClient {
                 stringed.forEach(square -> rooms.add(gson.fromJson(square, Color.class)));
                 view.chooseRoom(rooms);
                 break;
+            case ATTACK:
+                Type type = new TypeToken<HashMap<String, Integer>>(){}.getType();
+
+                Player attacker = gson.fromJson(((AttackMessage) message).getAttacker(), Player.class);
+                HashMap<String, Integer> sHp = gson.fromJson(((AttackMessage) message).getHp(), type);
+                HashMap<String, Integer> sMarks = gson.fromJson(((AttackMessage) message).getMarks(), type);
+
+                Map<Player, Integer> hp = new HashMap<>();
+                Map<Player, Integer> marks = new HashMap<>();
+
+                sHp.forEach((x, y) -> hp.put(gson.fromJson(x, Player.class), y));
+                sMarks.forEach((x, y) -> marks.put(gson.fromJson(x, Player.class), y));
+
+                view.showAttack(attacker, hp, marks);
+
+                break;
             case INFO:
                 view.showInfo(((InfoMessage) message).getInfo());
+                break;
+            case CONNECTION:
+                //if this message arrives, the connection is succesfull
+                break;
             default:
                 logger.log(Level.WARNING, "Unregistered message");
 

@@ -234,6 +234,11 @@ public class GUI implements ViewInterface {
     }
 
     @Override
+    public void showAttack(Player attacker, Map<Player, Integer> hp, Map<Player, Integer> marks) {
+
+    }
+
+    @Override
     public void showInfo(String info) {
 
     }

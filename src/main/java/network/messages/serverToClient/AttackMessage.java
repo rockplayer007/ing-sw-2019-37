@@ -7,26 +7,26 @@ import java.util.Map;
 
 public class AttackMessage extends ServerToClient{
 
-    Player attacker;
-    Map<Player, Integer> hp;
-    Map<Player, Integer> marks;
+    private String attacker;
+    private String hp;
+    private String marks;
 
-    public AttackMessage(Player attacker, Map<Player, Integer> hp, Map<Player, Integer> marks){
+        public AttackMessage(String attacker, String hp, String marks){
         super(Content.ATTACK);
         this.attacker = attacker;
         this.hp = hp;
         this.marks = marks;
     }
 
-    public Player getAttacker() {
+    public String getAttacker() {
         return attacker;
     }
 
-    public Map<Player, Integer> getHp() {
+    public String getHp() {
         return hp;
     }
 
-    public Map<Player, Integer> getMarks() {
+    public String getMarks() {
         return marks;
     }
 }
