@@ -21,6 +21,7 @@ public class AttackHandler {
         targetsToShot = new ArrayList<>();
         selectedTargets = new ArrayList<>();
         damaged = new HashMap<>();
+        marked = new HashMap<>();
     }
 
     public List<Player> getPossibleTargets() {

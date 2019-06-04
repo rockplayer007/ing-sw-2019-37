@@ -13,7 +13,7 @@ public class CountDown {
 
     public CountDown(int time, Runnable timeoutAction){
         timer = new Timer();
-        this.time = time;
+        this.time = time*1000;
         this.timoutAction = timeoutAction;
     }
 

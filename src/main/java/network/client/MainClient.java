@@ -233,7 +233,7 @@ public class MainClient {
                 stringed = ((AnswerRequest) message).getRequests();
                 List<Effect> effects = new ArrayList<>();
                 stringed.forEach(square -> effects.add(gson.fromJson(square, Effect.class)));
-                view.chooseEffect(effects);
+                view.chooseEffect(effects, ((AnswerRequest) message).isOptional());
                 break;
             case PLAYER_REQUEST:
                 stringed = ((AnswerRequest) message).getRequests();

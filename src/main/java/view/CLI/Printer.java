@@ -189,7 +189,7 @@ public class Printer {
         });
     }
 
-    public void askEffect(List<Effect> effects, Consumer<Integer> selection){
+    public void askEffect(List<Effect> effects, Consumer<Integer> selection, boolean optional){
         List<String> printable = new ArrayList<>();
         for(Effect effect : effects){
             StringBuilder temp = new StringBuilder();
@@ -200,6 +200,10 @@ public class Printer {
             }
 
             printable.add(temp.toString());
+        }
+
+        if(optional){
+            printable.add("Dont use effect");
         }
 
         displayRequest(printable, selection);
@@ -229,7 +233,7 @@ public class Printer {
     public void askRoom(List<Color> rooms, Consumer<Integer> selection){
         List<String> printable = new ArrayList<>();
         for(Color room : rooms){
-            String temp = colorToAnsi(room) + room.toString() + colorToAnsi(Color.WHITE) + "room";
+            String temp = colorToAnsi(room) + room.toString() + colorToAnsi(Color.WHITE) + " room";
             printable.add(temp);
         }
 
@@ -552,7 +556,7 @@ public class Printer {
                     stringedPowerups.append(colorToAnsi(Color.WHITE)).append("Powerups: ");
                     for(Powerup powerup : myPowerups){
                         stringedPowerups.append(colorToAnsi(powerup.getAmmo())).append(powerup.getName());
-                        stringedPowerups.append(colorToAnsi(Color.WHITE));
+                        stringedPowerups.append(colorToAnsi(Color.WHITE)).append(" ");
                     }
                     stringedInfo.add(stringedPowerups.toString());
                 }

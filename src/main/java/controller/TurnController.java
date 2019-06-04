@@ -5,6 +5,7 @@ import model.card.Card;
 import model.card.Powerup;
 import model.exceptions.TimeFinishedException;
 import model.gamehandler.Room;
+import model.player.ActionState;
 import model.player.Player;
 import network.messages.Message;
 import network.messages.clientToServer.ListResponse;
@@ -12,12 +13,14 @@ import network.messages.serverToClient.AnswerRequest;
 import network.messages.serverToClient.InfoMessage;
 import network.messages.serverToClient.TimeoutMessage;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class TurnController {
     private RoomController roomController;
@@ -25,7 +28,8 @@ public class TurnController {
     private CountDown timer;
     private boolean gameFinished;
 
-    private static final int WAITING_TIME = 120; //seconds
+    private static final int WAITING_TIME = 180; //seconds
+    private static final int POWERUP_TIME = 5;
 
     private RoundController roundController;
 
@@ -56,7 +60,7 @@ public class TurnController {
             Player player = room.getCurrentPlayer();
             //in case the timer finished reset the shoot for the next player
             roundController.resetShot();
-                timer = new CountDown(1*WAITING_TIME*1000, () -> {
+                timer = new CountDown(WAITING_TIME, () -> {
                 roomController.stopWaiting();
                 System.out.println("timer stopped");
             });
@@ -66,7 +70,9 @@ public class TurnController {
 
                 if(player.getRoundStatus() == Player.RoundStatus.FIRST_ROUND){
 
-                    firstRound(player);
+
+                    firstRound(player, 2);
+
                     player.setNextRoundstatus();
 
                     //continue with normal round
@@ -79,6 +85,11 @@ public class TurnController {
 
                 }
                 else if (player.getRoundStatus() == Player.RoundStatus.NORMAL_ROUND){
+                    //if he is dead
+                    if(!player.isLive()){
+                        firstRound(player, 1);
+                        player.setLive(true);
+                    }
                     normalRound(player);
                 }
 
@@ -107,18 +118,21 @@ public class TurnController {
                 roomController.sendUpdate();
             }
 
-
-            room.endTurnControl(); //when return true means is end of game
-            room.setNextPlayer();
-
+            if(room.endTurnControl()){
+                 //when return true means is end of game
+                break;
+            }
+            //when there are less than 3 connected players quit
+            if(!room.setNextPlayer()){
+                break;
+            }
 
         }
-
     }
 
-    public void firstRound(Player currentPlayer) throws TimeFinishedException {
+    public void firstRound(Player currentPlayer, int cards) throws TimeFinishedException {
 
-        List<Powerup> powerup = room.getBoard().getPowerDeck().getCard(2);
+        List<Powerup> powerup = room.getBoard().getPowerDeck().getCard(cards);
         AnswerRequest message = new AnswerRequest(roomController.toJsonCardList(powerup), Message.Content.POWERUP_REQUEST,
                 "Pick a powerup where to spawn");
         //sends the cards and receives the chosen one
@@ -159,7 +173,13 @@ public class TurnController {
     public void normalRound(Player player) throws TimeFinishedException{
         //in normal round do this 2 times
 
-        for(int i = 0; i < 2; i++){
+        int iterations = 2;
+
+        if(player.getActionStatus() == ActionState.FRENETICACTIONS2){
+            iterations = 1;
+        }
+
+        for(int i = 0; i < iterations; i++){
             //first ask for powerup
 
             roundController.powerupController(player);
@@ -168,6 +188,9 @@ public class TurnController {
             //ask for action
             roundController.actionController(player);
             roomController.sendUpdate();
+            if(roundController.shoot()){
+                sendTagBack(player);
+            }
         }
         //ask last time
         roundController.powerupController(player);
@@ -181,5 +204,69 @@ public class TurnController {
 
     }
 
+    public void sendScore(){
+
+    }
+
+
+    public void sendTagBack(Player player) throws TimeFinishedException {
+        List<Player> haveTagBack = room.getAttackHandler().getDamaged()
+                .keySet().stream().filter(x -> x
+                        .getPowerups().stream().anyMatch(y -> y
+                                .getName().equals("TAGBACK GRENADE"))).collect(Collectors.toList());
+
+
+        haveTagBack.remove(player);
+
+        Powerup tempPowerup;
+        for(Player attacker : haveTagBack){
+
+            int iterations = attacker.getPowerups().size();
+            for(int i = 0; i < iterations; i++){
+
+                AnswerRequest message = new AnswerRequest(room
+                        .getRoomController()
+                        .toJsonCardList(attacker.getPowerups()),
+                        //send message corresponding to the request
+                        Message.Content.POWERUP_REQUEST, "Choose a card");
+
+                message.setIsOptional();
+
+                //set timer for choosing
+                CountDown cd = new CountDown(POWERUP_TIME, () -> {
+                    roomController.stopPowerup();
+                    roomController.sendMessage(attacker, new InfoMessage("Too slow! Use TAGBACK GRANADE next time"));
+
+                });
+
+                cd.startTimer();
+
+                ListResponse chosenCard = (ListResponse) room
+                            .getRoomController().sendAndReceive(attacker, message);
+
+                try{
+                    cd.cancelTimer();
+                }catch (IllegalStateException e){
+                    System.out.println("ooops, timer already stopped, dont worry");
+                    //nothing, just continue
+                }
+
+                    //-1 means the player doesnt want to use powerups
+                if (chosenCard.getSelectedItem() < player.getPowerups().size() && chosenCard.getSelectedItem() >= 0) {
+                    //the chosen powerup will be executed
+                    tempPowerup = player.getPowerups().get(chosenCard.getSelectedItem());
+                }
+                else {
+                    break;
+                }
+
+                attacker.removePowerup(tempPowerup);
+                room.getBoard().getPowerDeck().usedCard(tempPowerup);
+
+                player.getPlayerBoard().addMark(attacker, 1);
+
+            }
+        }
+    }
 
 }

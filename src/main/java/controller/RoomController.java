@@ -34,6 +34,7 @@ public class RoomController {
     private Thread askingThread;
     private TurnController turnController;
     private boolean wait;
+    private boolean powerup;
 
     private static final Logger logger = Logger.getLogger(RoomController.class.getName());
 
@@ -44,6 +45,7 @@ public class RoomController {
         connectionToClient = new HashMap<>();
         turnController = new TurnController(this, room);
         wait = true;
+        powerup = true;
     }
 
     public void handleMessages(ClientToServer message) {
@@ -171,7 +173,7 @@ public class RoomController {
         resetReceiver();
     }
 
-    public void sendMessage(Player player, ServerToClient message){
+        public void sendMessage(Player player, ServerToClient message){
         try{
             logger.log(Level.INFO, "Sending message to: {0}, for {1}",
                     new String[]{player.getNickname(), String.valueOf(message.getContent())});
@@ -230,9 +232,13 @@ public class RoomController {
         sendMessage(player, message);
 
         //dont wait for the sending when wait is false
-        while (mockMessage == null && wait){
+        while (mockMessage == null && wait && powerup){
             Thread.onSpinWait();
             //System.out.println("waiting");
+        }
+        if(powerup == false){
+            powerup = true;
+            return new ListResponse("", "", -1, Message.Content.CARD_RESPONSE);
         }
 
         //timeout happens after sending
@@ -251,6 +257,10 @@ public class RoomController {
 
     public void stopWaiting(){
         wait = false;
+    }
+
+    public void stopPowerup(){
+        powerup = false;
     }
 
     public void resetReceiver(){

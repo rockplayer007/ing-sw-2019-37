@@ -34,6 +34,9 @@ public class RoundController {
     public void resetShot(){
         shot = false;
     }
+    public boolean shoot(){
+        return shot;
+    }
 
 
     public void powerupController(Player player) throws TimeFinishedException {
@@ -100,6 +103,7 @@ public class RoundController {
             powerup.getEffect().execute(roomController.getRoom());
         } catch (NotExecutedException e) {
             logger.log(Level.WARNING, "Powerup operation has no targets", e);
+            MessageHandler.sendInfo(player, "Powerup operation has no targets", roomController.getRoom());
         }
         //remove the powerup from the player
         player.removePowerup(powerup);
@@ -209,6 +213,8 @@ public class RoundController {
                 //execute this card
                 try {
                     ActionHandler.shoot(roomController.getRoom(), chosenWeapon);
+                    //flag for shooting, needed to decide to use a powerup or not
+                    shot = true;
                 } catch (NotExecutedException e) {
                     //send message
                     System.out.println("not executed");
@@ -216,8 +222,6 @@ public class RoundController {
                     actionController(player);
                 }
 
-                //flag for shooting, needed to decide to use a powerup or not
-                shot = true;
                 break;
 
             case MOVE1_SHOOT:
@@ -230,12 +234,14 @@ public class RoundController {
 
                 if (chosenWeapon == null) {
                     //cheater
-                    return;
+                    actionController(player);
                 }
 
                 //execute this card
                 try {
                     ActionHandler.shoot(roomController.getRoom(), chosenWeapon);
+                    //flag for shooting, needed to decide to use a powerup or not
+                    shot = true;
                 } catch (NotExecutedException e) {
                     //set the player back
                     player.movePlayer(goBackSquare);
@@ -263,6 +269,37 @@ public class RoundController {
                 //execute this card
                 try {
                     ActionHandler.shoot(roomController.getRoom(), chosenWeapon);
+                    //flag for shooting, needed to decide to use a powerup or not
+                    shot = true;
+                } catch (NotExecutedException e) {
+                    //set the player back
+                    player.movePlayer(goBackSquare);
+
+                    System.out.println("not executed");
+                    MessageHandler.sendInfo(player, e.getMessage(), roomController.getRoom());
+
+                    actionController(player);
+                }
+                break;
+            case MOVE2_RELOAD_SHOOT:
+                goBackSquare = player.getPosition();
+                ActionHandler.run(player, 2, roomController.getRoom());
+                ActionHandler.reload(player, roomController.getRoom());
+
+                //ask card
+                usableWeapons = player.getWeapons().stream().filter(Weapon::getCharged).collect(Collectors.toList());
+                chosenWeapon = MessageHandler.chooseCard(usableWeapons, false, roomController.getRoom(), true);
+
+                if (chosenWeapon == null) {
+                    //cheater
+                    return;
+                }
+
+                //execute this card
+                try {
+                    ActionHandler.shoot(roomController.getRoom(), chosenWeapon);
+                    //flag for shooting, needed to decide to use a powerup or not
+                    shot = true;
                 } catch (NotExecutedException e) {
                     //set the player back
                     player.movePlayer(goBackSquare);

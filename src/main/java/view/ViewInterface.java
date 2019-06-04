@@ -59,7 +59,7 @@ public interface ViewInterface {
 
     void chooseWeapon(List<Weapon> weapons, boolean optional);
 
-    void chooseEffect(List<Effect> effects);
+    void chooseEffect(List<Effect> effects, boolean optional);
 
     void choosePlayer(List<Player> players);
 
