@@ -1,4 +1,4 @@
-package boardTest;
+package model.board;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

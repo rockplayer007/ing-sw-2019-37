@@ -127,8 +127,9 @@ public class MainServer {
                 try {
                     message.getClientInterface().notifyClient(new LoginResponse(true, ""));
                 }catch (RemoteException e){
+                    //logger.log(Level.WARNING, "Player {0} disconnected", e);
+
                     disconnectPlayer(message.getClientInterface());
-                    //logger.log(Level.WARNING, "Player {0} disconnected", message.getSender());
                 }
 
 

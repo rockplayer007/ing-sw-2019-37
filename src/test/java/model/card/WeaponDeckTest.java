@@ -1,4 +1,4 @@
-package cardTest;
+package model.card;
 
 import model.card.WeaponDeck;
 import org.junit.jupiter.api.BeforeEach;

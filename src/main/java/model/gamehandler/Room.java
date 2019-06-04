@@ -36,6 +36,7 @@ public class Room {
         //needs to be null at the beginning to be set later
         startingPlayer = null;
         attackHandler = new AttackHandler();
+        frenzyCounter = 0;
 
     }
 
@@ -87,6 +88,7 @@ public class Room {
     public BoardGenerator getBoardGenerator(){
         return boardGenerator;
     }
+
     public Board getBoard() {
         return board;
     }
@@ -113,7 +115,6 @@ public class Room {
 
     public void setPlayers(List<Player> player){
         players.addAll(player);
-        frenzyCounter = players.size();
     }
 
 
@@ -137,9 +138,8 @@ public class Room {
             startFrenzy();
         ActionState actionState = currentPlayer.getActionStatus();
         if (actionState==ActionState.FRENETICACTIONS1||actionState==ActionState.FRENETICACTIONS2) {
-            frenzyCounter--;
-
-            return frenzyCounter==0;
+            frenzyCounter++;
+            return frenzyCounter==players.stream().filter(Player::isConnected).collect(Collectors.toList()).size();
         }
         return false;
 

@@ -1,4 +1,4 @@
-package cardTest;
+package model.card;
 
 import model.card.AmmoColor;
 import model.card.Powerup;

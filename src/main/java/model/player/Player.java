@@ -115,9 +115,11 @@ public class Player implements Serializable {
     public void setConnected(){
         connected = true;
     }
+
     public void setDisconnected(){
         connected = false;
     }
+
     public boolean isConnected(){
         return connected;
     }

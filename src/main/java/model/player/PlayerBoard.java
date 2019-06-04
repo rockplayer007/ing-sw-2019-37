@@ -196,4 +196,8 @@ public class PlayerBoard implements Serializable{
     public List<Player> getMarks() {
         return marks;
     }
+
+    public int getDeathTimes() {
+        return deathTimes;
+    }
 }

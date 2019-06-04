@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -235,12 +236,20 @@ public class GUI implements ViewInterface {
 
     @Override
     public void showAttack(Player attacker, Map<Player, Integer> hp, Map<Player, Integer> marks) {
-
+        Component component = frame.getContentPane().getComponent(0);
+        if ((component.getName().equals("mapPanel"))) {
+            MapPanel mapPanel = (MapPanel) component;
+            mapPanel.addAttack(attacker,hp,marks);
+        }
     }
 
     @Override
     public void showInfo(String info) {
-
+        Component component = frame.getContentPane().getComponent(0);
+        if ((component.getName().equals("mapPanel"))) {
+            MapPanel mapPanel = (MapPanel) component;
+            mapPanel.addInfo(info);
+        }
     }
 
     @Override
