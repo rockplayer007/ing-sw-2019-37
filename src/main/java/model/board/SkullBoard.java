@@ -8,10 +8,12 @@ public class SkullBoard {
 
     private static int[] pointArray = {8, 6, 4, 2, 1, 1};
     private int numberSkulls;
+    private int initSkulls;
     private List<Cell> cells;
 
     public SkullBoard(int numberSkulls){
         this.numberSkulls = numberSkulls;
+        this.initSkulls = numberSkulls;
         cells = new ArrayList<>();
     }
 
@@ -21,6 +23,10 @@ public class SkullBoard {
 
     public int getNumberSkulls() {
         return numberSkulls;
+    }
+
+    public int getInitSkulls(){
+        return initSkulls;
     }
 
     public void takeOneSkulls(){

@@ -1,4 +1,4 @@
-package boardTest;
+package model.board;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -19,8 +19,6 @@ import view.CLI.Printer;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -80,6 +78,25 @@ public class BoardTest {
         ((AmmoSquare)map.getSquare(0)).removeAmmoCard();
         board.fillAmmo();
 
+        for(int i = 0; i < 3; i++){
+            Cell cell = new Cell();
+            cell.setKill(player1);
+            board.getSkullBoard().addCell(cell);
+        }
+
+        for(int i = 0; i < 5; i++){
+            Cell cell = new Cell();
+            cell.setKill(player2);
+            cell.setOverKill();
+            board.getSkullBoard().addCell(cell);
+        }
+
+        for(int i = 0; i < 5; i++){
+            Cell cell = new Cell();
+            cell.setKill(player3);
+            cell.setOverKill();
+            board.getSkullBoard().addCell(cell);
+        }
 
         RuntimeTypeAdapterFactory<Square> rfSquare = RuntimeTypeAdapterFactory
                 .of(Square.class, "Square")
@@ -116,7 +133,7 @@ public class BoardTest {
 
         //printer.printBoard(gameBoard);
         //printer.printWeaponsOnBoard(gameBoard);
-        printer.printAllInfo(gameBoard, player1.getPowerups(), new SkullBoard(5));
+        printer.printAllInfo(gameBoard, player1.getPowerups(), board.getSkullBoard());
 
         printer.printPlayersInfo(gameBoard, player1.getPowerups());
 

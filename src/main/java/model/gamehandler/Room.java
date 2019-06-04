@@ -59,8 +59,6 @@ public class Room {
         board.setMap(gameBoard);
 
         logger.log(Level.INFO, "selected board is {0}", description);
-
-        //TODO add update all message
     }
 
     public RoomController getRoomController() {
@@ -133,8 +131,7 @@ public class Room {
         ActionState actionState = currentPlayer.getActionStatus();
         if (actionState==ActionState.FRENETICACTIONS1||actionState==ActionState.FRENETICACTIONS2) {
             frenzyCounter++;
-//            players.stream().filter(Player::isConnected).d
-            return frenzyCounter==0;
+            return frenzyCounter==players.stream().filter(Player::isConnected).collect(Collectors.toList()).size();
         }
         return false;
 

@@ -43,6 +43,10 @@ public class MapPanel extends JLayeredPane {
     private List<JLabel> infoWeapon=new ArrayList<>();
     private Player myplayer = null;
     private Weapon weaponSelected;
+    private List<JLabel> skullboard=new ArrayList<>();
+    private JScrollPane messageScrollPane;
+    private JPanel messagePanel;
+    private int rows =1;
 
     public MapPanel(GameBoard board) {
         JButton pBoards;
@@ -62,7 +66,6 @@ public class MapPanel extends JLayeredPane {
             }
         });
         add(pBoards);
-
         chooseCard = new JFrame();
         chooseCard.setLocation(300, 50);
         chooseCard.setMinimumSize(new Dimension(600, 280));
@@ -74,6 +77,11 @@ public class MapPanel extends JLayeredPane {
         choose.setMaximumSize(new Dimension(300, 300));
         choose.setLayout(new GridLayout(2, 2));
         choose.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        messagePanel =new JPanel();
+        messagePanel.setLayout(new GridLayout(rows,1));
+        messageScrollPane=new JScrollPane(messagePanel);
+        setMessageScrollPane();
+        this.add(messageScrollPane);
 
     }
 
@@ -101,11 +109,6 @@ public class MapPanel extends JLayeredPane {
             for (int j = 0; j < playerIcon.size(); j++) {
                 if (players.get(i).getNickname().equals(playerIcon.get(j).getPlayer().getNickname())) {
                     playerIcon.get(j).setEnabled(true);
-                    /*
-                    ActionListener actionListener[]=playerIcon.get(j).getActionListeners();
-                    for (int k=0;k<actionListener.length;k++){
-                        playerIcon.get(j).removeActionListener(actionListener[k]);
-                    }*/
                     int s = i;
                     playerIcon.get(j).addActionListener(new ActionListener() {
                         @Override
@@ -113,7 +116,6 @@ public class MapPanel extends JLayeredPane {
                             removePlayerActions();
                             mainClient.sendSelectedPlayer(s);
                             enablePlayers();
-                            //setVisibleRooms();
                         }
                     });
                 }
@@ -144,7 +146,6 @@ public class MapPanel extends JLayeredPane {
 
     public void resetRooms() {
         for (int i = 0; i < roomButton.size(); i++) {
-            //roomButton.get(i).setEnabled(false);
             roomButton.get(i).setVisible(false);
         }
     }
@@ -366,7 +367,8 @@ public class MapPanel extends JLayeredPane {
             JMapButton room = new JMapButton(board.getSquare(i).getX(), board.getSquare(i).getY(), board.getSquare(i).getColor());
             room.setOpaque(false);
             room.setSize(149, 116);
-            Border border = BorderFactory.createLineBorder(Color.red);
+            StyleSheet styleSheet=new StyleSheet();
+            Border border = BorderFactory.createLineBorder(styleSheet.stringToColor(board.getSquare(i).getColor().toString()),3);
             room.setBorder(border);
             room.setBorderPainted(true);
             room.setContentAreaFilled(false);
@@ -425,12 +427,9 @@ public class MapPanel extends JLayeredPane {
                 }
             } else {
                 AmmoSquare ammoSquare = (AmmoSquare) square;
-                // ImageIcon imageIcon=new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"ammocard"+File.separatorChar+ ammoSquare.getAmmoCard().getName() + ".png");
                 JLabel ammo = new JLabel();
                 ammo.setSize(46, 68);
-                //   ammo.setContentAreaFilled(false);
                 ammo.setBorder(null);
-                //  ammo.setFocusPainted(false);
                 if (ammoSquare.getAmmoCard() != null)
                     ammo.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main" +
                             File.separatorChar + "resources" + File.separatorChar + "ammocard" + File.separatorChar
@@ -458,7 +457,7 @@ public class MapPanel extends JLayeredPane {
 
     public void updatePlayerBoard(GameBoard board) {
         playerboards.getContentPane().removeAll();
-        playerboards.setSize(1280, 1024);
+        playerboards.setSize(830, 1024);
         PlayerBoardPanel pbl = new PlayerBoardPanel(board.getPlayersOnMap());
         playerboards.getContentPane().add(pbl);
         playerboards.repaint();
@@ -523,10 +522,10 @@ public class MapPanel extends JLayeredPane {
 
 
     public void getAction(List<ActionOption> actionOptions, MainClient mainClient) {
-        //bloccare altre azioni possibili
         resetRooms();
         actions = new ArrayList<>();
-        JLabel text = new JLabel("Select action:"); //centrare il testo
+        JLabel text = new JLabel("Select action:");
+        text.setHorizontalAlignment(SwingConstants.CENTER);
         text.setSize(250, 20);
         text.setLocation(1030, 24);
         this.add(text);
@@ -634,12 +633,12 @@ public class MapPanel extends JLayeredPane {
         selectEffect.setVisible(false);
         chooseRoom.setVisible(false);
         resetRooms();
-        //setVisibleRooms();
         resetActions();
         removePlayerActions();
     }
 
     public void getRoom(List<model.board.Color> rooms, MainClient mainClient){
+        //modificare frame
         chooseRoom=new JFrame();
         chooseRoom.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         chooseRoom.setSize(450, 300);
@@ -648,9 +647,17 @@ public class MapPanel extends JLayeredPane {
         chooseRoom.setLayout(new GridLayout(2,3));
         StyleSheet s= new StyleSheet();
         for(int i=0;i<rooms.size();i++){
-            JLabel color =new JLabel();
+            JButton color =new JButton();
             color.setBackground(s.stringToColor(rooms.get(i).toString()));
-            color.setOpaque(false);
+            color.setOpaque(true);
+            int x=i;
+            color.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    mainClient.sendSelectedRoom(x);
+                    chooseRoom.setVisible(false);
+                }
+            });
             chooseRoom.add(color);
         }
         chooseRoom.setVisible(true);
@@ -663,6 +670,66 @@ public class MapPanel extends JLayeredPane {
 
             }
         }
+    }
+
+    private void resetSkullboard(){
+        for(int i=0;i<skullboard.size();i++){
+            skullboard.get(i).setVisible(false);
+            this.remove(skullboard.get(i));
+        }
+        skullboard=new ArrayList<>();
+    }
+
+    public void updateSkullboard(SkullBoard skullBoard){
+        resetSkullboard();
+    }
+
+    public void setMessageScrollPane(){
+        messageScrollPane.setLocation(1030,240);
+        messageScrollPane.setSize(250,170);
+        messageScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        messageScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        messageScrollPane.setVisible(true);
+    }
+
+    public void addAttack(Player attacker, Map<Player, Integer> hp, Map<Player, Integer> marks){
+        this.remove(messageScrollPane);
+        messagePanel.setLayout(new GridLayout(rows++,1));
+        JLabel text=new JLabel(attacker.getNickname()+ "  attacked : ");
+        messagePanel.add(text);
+
+        for(Map.Entry<Player,Integer> entry: hp.entrySet()) {
+            messagePanel.setLayout(new GridLayout(rows++,1));
+            Player key = entry.getKey();
+            Integer value = entry.getValue();
+            JLabel att = new JLabel(key.getNickname() + " Damage : " + value);
+            att.setHorizontalAlignment(SwingConstants.CENTER);
+            messagePanel.add(att);
+        }
+        for(Map.Entry<Player,Integer> entry: marks.entrySet()) {
+            messagePanel.setLayout(new GridLayout(rows++,1));
+            Player key = entry.getKey();
+            Integer value = entry.getValue();
+            JLabel mark = new JLabel(key.getNickname() + " Marks : " + value);
+            mark.setHorizontalAlignment(SwingConstants.CENTER);
+            messagePanel.add(mark);
+        }
+        messageScrollPane =new JScrollPane(messagePanel);
+        setMessageScrollPane();
+        this.add(messageScrollPane);
+    }
+
+    public void addInfo(String message){
+        this.remove(messageScrollPane);
+        rows+=2;
+        messagePanel.setLayout(new GridLayout(rows,1));
+        JLabel text=new JLabel("INFO: ");
+        JLabel info=new JLabel(message);
+        messagePanel.add(text);
+        messagePanel.add(info);
+        messageScrollPane =new JScrollPane(messagePanel);
+        setMessageScrollPane();
+        this.add(messageScrollPane);
     }
 }
 

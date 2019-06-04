@@ -20,7 +20,7 @@ public class Board {
         weaponDeck = new WeaponDeck();
 
         //TODO fare l'utente a scegliere quandi skull mette.
-        skullBoard = new SkullBoard(5);
+        skullBoard = new SkullBoard(8);
     }
 
     /**

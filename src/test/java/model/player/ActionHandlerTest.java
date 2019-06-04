@@ -1,4 +1,4 @@
-package playerTest;
+package model.player;
 
 import controller.RoomController;
 import model.gamehandler.Room;
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-public class MessageHandlerTest {
+public class ActionHandlerTest {
 
     private Room room;
     private AmmoCard ammoCard, ammoCard1;

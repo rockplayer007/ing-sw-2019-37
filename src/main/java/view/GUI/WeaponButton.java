@@ -14,7 +14,8 @@ public class WeaponButton extends JButton {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFrame frame=new JFrame(weapon.getName());
-                JOptionPane.showMessageDialog(frame,weapon.getName());
+                JOptionPane.showMessageDialog(frame,weapon.getName()+"\n"+weapon.getDescription());
+                //fare un jdialog
             }
         });
     }

@@ -25,6 +25,10 @@ public class Printer {
     private Thread thread;
     private int choice;
     private CLI cli;
+    private static final String AMMO = "O";
+    private static final String MARK = "@";
+    private static final String DROP = "X";
+    private static final String SKULL = "$";
 
     //private static final Logger logger = Logger.getLogger(Printer.class.getName());
 
@@ -126,7 +130,7 @@ public class Printer {
     public void askPowerup(List<Powerup> powerups, Consumer<Integer> selection, boolean optional){
         List<String> printable = new ArrayList<>();
         for(Powerup powerup : powerups){
-            String temp = powerup.getName() + colorToAnsi(powerup.getAmmo()) + " O" + colorToAnsi(Color.WHITE);
+            String temp = powerup.getName() + colorToAnsi(powerup.getAmmo()) + " " + AMMO + colorToAnsi(Color.WHITE);
             printable.add(temp);
         }
         if(optional){
@@ -143,11 +147,11 @@ public class Printer {
             StringBuilder buy = new StringBuilder();
 
             for(int n = 0; n < weapon.getBuyCost().size(); n++){
-                buy.append(colorToAnsi(weapon.getBuyCost().get(n))).append("O");
+                buy.append(colorToAnsi(weapon.getBuyCost().get(n))).append(AMMO);
             }
 
             for(int n = 0; n < weapon.getChargeCost().size(); n++){
-                charge.append(colorToAnsi(weapon.getChargeCost().get(n))).append("O");
+                charge.append(colorToAnsi(weapon.getChargeCost().get(n))).append(AMMO);
             }
             String temp = (weapon.getCharged() ? colorToAnsi(Color.GREEN) : colorToAnsi(Color.RED))
                     + weapon.getName() + colorToAnsi(Color.WHITE)
@@ -192,7 +196,7 @@ public class Printer {
             temp.append(colorToAnsi(Color.WHITE)).append("Effect: ").append(effect.getDescription());
             temp.append("Extra cost: ");
             for(AmmoColor color : effect.getExtraCost()){
-                temp.append(colorToAnsi(color)).append("O").append(colorToAnsi(Color.WHITE));
+                temp.append(colorToAnsi(color)).append(AMMO).append(colorToAnsi(Color.WHITE));
             }
 
             printable.add(temp.toString());
@@ -215,7 +219,7 @@ public class Printer {
     public void askAmmoColor(List<AmmoColor> ammoColors, Consumer<Integer> selection)   {
         List<String> printable = new ArrayList<>();
         for(AmmoColor ammo : ammoColors){
-            String temp = colorToAnsi(Color.WHITE) + "Pay with: " + colorToAnsi(ammo) + "O" + colorToAnsi(Color.WHITE);
+            String temp = colorToAnsi(Color.WHITE) + "Pay with: " + colorToAnsi(ammo) + AMMO + colorToAnsi(Color.WHITE);
             printable.add(temp);
         }
 
@@ -318,14 +322,14 @@ public class Printer {
                                         if (((AmmoSquare) tempSquare).getAmmoCard().hasPowerup()) {
                                             line.append(colorToAnsi(tempSquare.getColor())).append("| ");
                                             for (int n = 0; n < 2; n++) {
-                                                line.append(colorToAnsi(((AmmoSquare) tempSquare).getAmmoCard().getAmmoList().get(n))).append("O");
+                                                line.append(colorToAnsi(((AmmoSquare) tempSquare).getAmmoCard().getAmmoList().get(n))).append(AMMO);
                                             }
                                             line.append(colorToAnsi(Color.WHITE)).append("?");
                                             line.append(colorToAnsi(tempSquare.getColor())).append(" |");
                                         } else {
                                             line.append(colorToAnsi(tempSquare.getColor())).append("| ");
                                             for (int n = 0; n < 3; n++) {
-                                                line.append(colorToAnsi(((AmmoSquare) tempSquare).getAmmoCard().getAmmoList().get(n))).append("O");
+                                                line.append(colorToAnsi(((AmmoSquare) tempSquare).getAmmoCard().getAmmoList().get(n))).append(AMMO);
                                             }
                                             line.append(colorToAnsi(tempSquare.getColor())).append(" |");
                                         }
@@ -474,7 +478,7 @@ public class Printer {
                 if(!weapon.getBuyCost().isEmpty()){
                     line.append(colorToAnsi(Color.WHITE)).append(" Buy: ");
                     for(int n = 0; n < weapon.getBuyCost().size(); n++){
-                        line.append(colorToAnsi(weapon.getBuyCost().get(n))).append("O");
+                        line.append(colorToAnsi(weapon.getBuyCost().get(n))).append(AMMO);
                     }
                     for(int n = weapon.getBuyCost().size(); n < 3; n++){
                         line.append(" ");
@@ -486,7 +490,7 @@ public class Printer {
 
                 line.append(colorToAnsi(Color.WHITE)).append(" Charge: ");
                 for(int n = 0; n < weapon.getChargeCost().size(); n++){
-                    line.append(colorToAnsi(weapon.getChargeCost().get(n))).append("O");
+                    line.append(colorToAnsi(weapon.getChargeCost().get(n))).append(AMMO);
                 }
 
                 for(int n = weapon.getChargeCost().size(); n < 3; n++){
@@ -522,7 +526,7 @@ public class Printer {
                 //add the ammo
                 for(AmmoColor ammo : player.getAmmo().keySet()){
                     for(int i = 0; i < player.getAmmo().get(ammo); i++){
-                        playerInfo.append(colorToAnsi(ammo)).append("O");
+                        playerInfo.append(colorToAnsi(ammo)).append(AMMO);
                     }
                 }
 
@@ -530,14 +534,14 @@ public class Printer {
 
                 //add points
                 for(Color hp : player.getPlayerBoard().getHpColor()){
-                    playerInfo.append(colorToAnsi(hp)).append("X");
+                    playerInfo.append(colorToAnsi(hp)).append(DROP);
                 }
                 playerInfo.append(colorToAnsi(Color.WHITE)).append("   ");
 
                 //add marks
 
                 for(Color marks : player.getPlayerBoard().getMarksColor()){
-                    playerInfo.append(colorToAnsi(marks)).append("@");
+                    playerInfo.append(colorToAnsi(marks)).append(MARK);
                 }
 
 
@@ -566,17 +570,75 @@ public class Printer {
         return stringedInfo;
     }
 
+    public List<String> printSkullBoard(SkullBoard skullBoard){
+        StringBuilder raw1 = new StringBuilder();
+        StringBuilder raw2 = new StringBuilder();
+        List<String> stringed = new ArrayList<>();
+
+        int nSkulls = skullBoard.getInitSkulls();
+
+        for(int i = 0; i < nSkulls ; i++){
+            raw1.append("+---");
+            raw2.append("| ");
+            StringBuilder drops = new StringBuilder();
+
+            if(i < skullBoard.getCells().size()){
+                for(int j = 0; j < skullBoard.getCells().get(i).getPoint(); j++){
+                    drops.append(colorToAnsi(skullBoard.getCells().get(i).getKillColor())).append(DROP);
+                }
+                for(int k = skullBoard.getCells().get(i).getPoint(); k < 2; k++){
+                    drops.append(" ");
+                }
+            }
+            else {
+                drops.append(" ");
+            }
+
+            raw2.append(colorToAnsi(Color.WHITE)).append(String.format("%2s", drops.toString()))
+                    .append(colorToAnsi(Color.WHITE));
+
+        }
+        raw2.append(colorToAnsi(Color.WHITE)).append("| ");
+        raw1.append("+");
+        if(nSkulls < skullBoard.getCells().size()){
+            raw1.append("-");
+            for(int k = nSkulls; k < skullBoard.getCells().size(); k++){
+                for (int w = 0; w < skullBoard.getCells().get(k).getPoint(); w++){
+                    raw1.append("-");
+                    raw2.append(colorToAnsi(skullBoard.getCells().get(k).getKillColor()))
+                            .append(DROP);
+                }
+            }
+            raw1.append("-+");
+            raw2.append(colorToAnsi(Color.WHITE)).append(" |");
+        }
+
+
+
+        stringed.add(raw1.toString());
+        stringed.add(raw2.toString());
+        stringed.add(raw1.toString());
+
+        return stringed;
+    }
+
     public void printAllInfo(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard){
         List<String> stringedBoard = printBoard(board);
         List<String> stringedWeapons = printWeaponsOnBoard(board);
         List<String> stringedPlayers = printPlayersInfo(board, myPowerups);
+        List<String> stringedSkullBoard = printSkullBoard(skullBoard);
+
+        int nWeapons = stringedWeapons.size();
 
         String header = String.format("%19s %10s %22s %10s %10s %13s",
                 "GAME BOARD","|", "WEAPONS ON GAME BOARD", "COST", "|", "PLAYERS");
 
         println(header);
 
-        int j = 0, k = 0;
+        int j = 0;
+        int k = 0;
+        int w = -2;
+        boolean skullB = false;
         for(int i = 0; i < stringedBoard.size(); i++){
             StringBuilder line = new StringBuilder();
             line.append(stringedBoard.get(i));
@@ -585,9 +647,33 @@ public class Printer {
                 line.append(" | ").append(stringedWeapons.get(j));
                 j++;
             }
-            else{
-                line.append(String.format("%30s", " "));
+
+            else if(skullB){
+                if(w == -1){
+                    line.append(" | ").append(String.format("%20s","SKULL BOARD"));
+                    w++;
+                }
+                else if (w < -1){
+                    line.append(String.format(" %45s", " "));
+                    w++;
+                }
+                else {
+                    line.append(" |  ").append(stringedSkullBoard.get(w));
+                    w++;
+                }
+
             }
+            else{
+                //add extra space when there are less weapons
+                if(nWeapons < 9){
+                    line.append(String.format(" %45s", " "));
+                    nWeapons++;
+                }
+                else {
+                    skullB = true;
+                }
+            }
+
 
             if(k < stringedPlayers.size()){
                 line.append(" | ").append(stringedPlayers.get(k));
@@ -615,7 +701,7 @@ public class Printer {
             attack.append(colorToAnsi(x.getColor())).append(x.getNickname())
                     .append(colorToAnsi(Color.WHITE)).append(" giving ");
             for(int i = 0; i < y; i ++){
-                attack.append(colorToAnsi(attacker.getColor())).append("X");
+                attack.append(colorToAnsi(attacker.getColor())).append(DROP);
             }
 
             attack.append(colorToAnsi(Color.WHITE)).append("\n");
@@ -625,7 +711,7 @@ public class Printer {
             attack.append(colorToAnsi(x.getColor())).append(x.getNickname())
                     .append(colorToAnsi(Color.WHITE)).append(" giving ");
             for(int i = 0; i < y; i ++){
-                attack.append(colorToAnsi(attacker.getColor())).append("@");
+                attack.append(colorToAnsi(attacker.getColor())).append(MARK);
             }
             attack.append(colorToAnsi(Color.WHITE)).append("\n");
         });

@@ -1,4 +1,4 @@
-package boardTest;
+package model.board;
 ;
 import model.board.Board;
 import model.board.BoardGenerator;
