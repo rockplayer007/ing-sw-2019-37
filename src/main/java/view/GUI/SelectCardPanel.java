@@ -1,22 +1,13 @@
 package view.GUI;
 
-import com.sun.tools.javac.Main;
-import model.card.Card;
-import model.card.Powerup;
 import network.client.MainClient;
-
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SelectCardPanel extends JPanel{
 
-    private List<JButton> cardsButton = new ArrayList<>();
 
     public SelectCardPanel(List<String> cards, boolean optional, MainClient mainClient,JFrame frame,MapPanel mapPanel){
         this.setLayout(new GridLayout(1,4));
@@ -30,7 +21,6 @@ public class SelectCardPanel extends JPanel{
             button.setContentAreaFilled(false);
             button.setBorder(null);
             button.setFocusPainted(false);
-            //int x=i;
             button.addActionListener(new ActionWeaponS(mainClient,i,frame,mapPanel,cards.get(i)));
             this.add(button);
 
@@ -46,9 +36,4 @@ public class SelectCardPanel extends JPanel{
         }
 
     }
-
-    public String getName(){
-        return getName();
-    }
-
 }
