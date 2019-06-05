@@ -163,9 +163,10 @@ public class PlayerBoard implements Serializable{
         if (hp.get(0)!=null&&!isFrenzy)
             hp.get(0).getPlayerBoard().addPoints(1);
 
-        Player player1 = hp.get(10);
+
 
         if (hp.size()==11&&hp.get(10)!=null) {
+            Player player1 = hp.get(10);
             cell.setKill(player1);
             player.setLive(false);
         }

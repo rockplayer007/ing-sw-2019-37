@@ -234,6 +234,7 @@ class  AddPossibleTargetBeforeMove implements Operation{
             possiblePlayers=possiblePlayers.stream()
                     .filter(player-> player.getPosition().getValidPosition(distance).contains(currentPlayer.getPosition()))
                     .collect(Collectors.toList());
+            possiblePlayers.remove(currentPlayer);
             attackHandler.setPossibleTargets(possiblePlayers);
         }
 

@@ -1,17 +1,25 @@
 package model.card;
 
+import controller.MessageHandler;
 import controller.RoomController;
 import model.card.*;
+import model.exceptions.NotExecutedException;
 import model.gamehandler.AttackHandler;
 import model.gamehandler.Room;
 import model.player.Heroes;
 import model.player.Player;
+import network.client.MainClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import view.CLI.CLI;
+import view.CLI.Printer;
 
 import java.util.Arrays;
 
-public class WeaponTest {
+import static org.mockito.Mockito.mock;
+
+public class OperationTest {
 
     Room room;
     WeaponDeck weaponDeck;
@@ -35,26 +43,24 @@ public class WeaponTest {
         player5.setHero(Heroes.VIOLET);
         room.setPlayers(Arrays.asList(player1,player2,player3,player4,player5));
         room.setCurrentPlayer(player1);
-        player1.movePlayer(room.getBoard().getMap().getSquare(1));
-        player2.movePlayer(room.getBoard().getMap().getSquare(3));
-        player3.movePlayer(room.getBoard().getMap().getSquare(5));
-        player4.movePlayer(room.getBoard().getMap().getSquare(7));
-        player5.movePlayer(room.getBoard().getMap().getSquare(8));
+        player1.movePlayer(room.getBoard().getMap().getSquare(0));
+        player2.movePlayer(room.getBoard().getMap().getSquare(2));
+        player3.movePlayer(room.getBoard().getMap().getSquare(4));
+        player4.movePlayer(room.getBoard().getMap().getSquare(6));
+        player5.movePlayer(room.getBoard().getMap().getSquare(7));
 
+        MessageHandler messageHandler = mock(MessageHandler.class);
+
+        Printer printer = new Printer(new CLI(new MainClient()));
+        printer.printAllInfo(room.getBoard().getMap(), player1.getPowerups(), room.getBoard().getSkullBoard());
+        printer.printPlayersInfo(room.getBoard().getMap(), player1.getPowerups());
     }
 
     @Test
-    public void operation1 (){
-//        List<Weapon> weapons = new ArrayList<>(weaponDeck.getCardDeck());
-//        Weapon weapon = weapons.stream().filter(x->x.getName()=="LOCK RIFLE").collect(Collectors.toList()).get(0);
-//        List<Effect> effects = new ArrayList<>(weapon.getEffects().keySet());
-//
-//        try {
-//            effects.get(0).getOperations().get(0).execute(room);
-//        } catch (NullTargetsException e) {
-//            e.printStackTrace();
-//        }
-//        room.getAttackHandler().getPossibleTargets().forEach(x->System.out.println(x.getNickname()));
+    public void operation1 () throws NotExecutedException {
+        VisiblePlayers visiblePlayers = new VisiblePlayers();
+        visiblePlayers.execute(room);
+
 
 
 
