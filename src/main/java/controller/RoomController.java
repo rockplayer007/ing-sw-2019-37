@@ -117,6 +117,13 @@ public class RoomController {
         System.out.println("next steeeeeeeeeeeep");
         turnController.startPlayerRound();
 
+        Gson gson = new Gson();
+        Map<Player, Integer> score = room.endScoreboard();
+        HashMap<String, Integer> messageMap = new HashMap<>();
+        score.forEach((x, y) -> messageMap.put(gson.toJson(x), y));
+
+        sendMessageToAll(new ScoreMessage(messageMap));
+
     }
 
 

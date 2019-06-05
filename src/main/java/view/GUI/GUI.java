@@ -253,6 +253,11 @@ public class GUI implements ViewInterface {
     }
 
     @Override
+    public void showScore(Map<Player, Integer> score) {
+        
+    }
+
+    @Override
     public void chooseAction(List<ActionOption> actions) {
         Component component = frame.getContentPane().getComponent(0);
         if ((component.getName().equals("mapPanel"))) {

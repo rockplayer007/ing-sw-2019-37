@@ -6,10 +6,7 @@ import model.board.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -18,6 +15,7 @@ import model.card.Effect;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.player.Player;
+import network.messages.clientToServer.ListResponse;
 import org.fusesource.jansi.AnsiConsole;
 
 public class Printer {
@@ -134,7 +132,7 @@ public class Printer {
             printable.add(temp);
         }
         if(optional){
-            printable.add("Dont use any powerup");
+            printable.add("Dont choose any powerup");
         }
 
         displayRequest(printable, selection);
@@ -161,7 +159,7 @@ public class Printer {
             printable.add(temp);
         }
         if(optional){
-            printable.add("Dont use any weapon");
+            printable.add("Dont choose any weapon");
         }
 
         displayRequest(printable, selection);
@@ -203,7 +201,7 @@ public class Printer {
         }
 
         if(optional){
-            printable.add("Dont use effect");
+            printable.add("Dont choose effect");
         }
 
         displayRequest(printable, selection);
@@ -720,6 +718,25 @@ public class Printer {
             attack.append(colorToAnsi(Color.WHITE)).append("\n");
         });
 
+        print(attack.toString());
+
+    }
+
+    public void printScore(Map<Player, Integer> score) {
+        if(thread != null){
+            closeRequest();
+        }
+        Player winner = score.keySet().stream().findFirst().get();
+        List<String> lines = new ArrayList<>();
+        score.forEach((x, y) -> lines.add(colorToAnsi(x.getColor())+ x.getNickname()
+                + colorToAnsi(Color.WHITE) + " point: " + y));
+
+        println( colorToAnsi(winner.getColor()) + winner.getNickname()
+                + colorToAnsi(AmmoColor.RED) + "WON" + colorToAnsi(Color.WHITE));
+        int i = 1;
+        for(String line : lines){
+            println(i + " - " + line);
+        }
     }
 
     public String colorToAnsi(AmmoColor color){
@@ -750,6 +767,7 @@ public class Printer {
                 return "\u001B[0;37m"; //white
         }
     }
+
 
 
 }

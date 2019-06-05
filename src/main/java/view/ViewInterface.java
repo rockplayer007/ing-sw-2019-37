@@ -73,4 +73,5 @@ public interface ViewInterface {
 
     void showInfo(String info);
 
+    void showScore(Map<Player, Integer> score);
 }

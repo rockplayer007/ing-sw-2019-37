@@ -202,4 +202,9 @@ public class CLI implements ViewInterface {
 
     }
 
+    @Override
+    public void showScore(Map<Player, Integer> score) {
+        printer.printScore(score);
+    }
+
 }

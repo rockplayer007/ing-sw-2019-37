@@ -127,6 +127,9 @@ public class WaitingRoom {
 
         playingRoom.matchSetup();
 
+        //remove controller
+        //remove players
+        server.removeClientFromServer(usernames);
     }
 
     private void removeDisconnectedClients(){

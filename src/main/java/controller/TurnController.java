@@ -200,14 +200,6 @@ public class TurnController {
 
     }
 
-    public void finalFrenzy(){
-
-    }
-
-    public void sendScore(){
-
-    }
-
 
     public void sendTagBack(Player player) throws TimeFinishedException {
         List<Player> haveTagBack = room.getAttackHandler().getDamaged()
