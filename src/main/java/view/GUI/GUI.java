@@ -189,7 +189,7 @@ public class GUI implements ViewInterface {
     }
 
     @Override
-    public void chooseEffect(List<Effect> effects) {
+    public void chooseEffect(List<Effect> effects, boolean optional) {
         Component component =frame.getContentPane().getComponent(0);
         if ((component.getName().equals("mapPanel"))){
             MapPanel map = (MapPanel) component;
@@ -250,6 +250,11 @@ public class GUI implements ViewInterface {
             MapPanel mapPanel = (MapPanel) component;
             mapPanel.addInfo(info);
         }
+    }
+
+    @Override
+    public void showScore(Map<Player, Integer> score) {
+        
     }
 
     @Override

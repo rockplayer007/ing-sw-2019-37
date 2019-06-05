@@ -158,6 +158,7 @@ public class MainClient {
      */
     public void handleMessage(ServerToClient message){
 
+        Type type = new TypeToken<HashMap<String, Integer>>(){}.getType();
         Gson gson = new Gson();
         List<String> stringed;
 
@@ -233,7 +234,7 @@ public class MainClient {
                 stringed = ((AnswerRequest) message).getRequests();
                 List<Effect> effects = new ArrayList<>();
                 stringed.forEach(square -> effects.add(gson.fromJson(square, Effect.class)));
-                view.chooseEffect(effects);
+                view.chooseEffect(effects, ((AnswerRequest) message).isOptional());
                 break;
             case PLAYER_REQUEST:
                 stringed = ((AnswerRequest) message).getRequests();
@@ -260,7 +261,6 @@ public class MainClient {
                 view.chooseRoom(rooms);
                 break;
             case ATTACK:
-                Type type = new TypeToken<HashMap<String, Integer>>(){}.getType();
 
                 Player attacker = gson.fromJson(((AttackMessage) message).getAttacker(), Player.class);
                 HashMap<String, Integer> sHp = gson.fromJson(((AttackMessage) message).getHp(), type);
@@ -280,6 +280,13 @@ public class MainClient {
                 break;
             case CONNECTION:
                 //if this message arrives, the connection is succesfull
+                break;
+            case SCORE:
+
+                Map<Player, Integer> score = new HashMap<>();
+                HashMap<String, Integer> scoreMessage = gson.fromJson(((AttackMessage) message).getHp(), type);
+                scoreMessage.forEach((x, y) -> score.put(gson.fromJson(x, Player.class), y));
+                view.showScore(score);
                 break;
             default:
                 logger.log(Level.WARNING, "Unregistered message");

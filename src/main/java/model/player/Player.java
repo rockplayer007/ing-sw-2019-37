@@ -38,7 +38,7 @@ public class Player implements Serializable {
         playerBoard=new PlayerBoard(this);
         actionStatus = ActionState.TURNACTIONS;
         position = null;
-        live = false;
+        live = true;
         this.roundStatus = RoundStatus.FIRST_ROUND;
         connected = true;
 

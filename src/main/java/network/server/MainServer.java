@@ -181,6 +181,19 @@ public class MainServer {
         usernames.forEach(name -> usernameInRoom.put(name, playingRoom));
     }
 
+    public void removeClientFromServer(List<String> usernames){
+        usernames.forEach(name -> {
+            usernameInRoom.remove(name);
+            List<ClientOnServer> temp = allClients;
+            for(ClientOnServer cs : temp){
+                if(cs.getUsername().equals(name)){
+                    removeClient(cs);
+                }
+            }
+        });
+
+    }
+
     public void removeClient(ClientOnServer client){
         allClients.remove(client);
         oldClients.remove(client.getClientID());

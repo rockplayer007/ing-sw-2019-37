@@ -40,16 +40,24 @@ public class Room {
 
     }
 
-    public void setNextPlayer() {
+    public boolean setNextPlayer() {
+        long connectedPlayers = players.stream().filter(Player::isConnected).count();
+        if(connectedPlayers < 3){
+            return false;
+        }
 
-        if (players != null) {
-            if (currentPlayer == null)
-                currentPlayer = players.get(0);
-            else if (players.indexOf(currentPlayer) < players.size() - 1)
+        if(currentPlayer.isConnected()){
+
+            if (players.indexOf(currentPlayer) < players.size() - 1)
                 currentPlayer = players.get(players.indexOf(currentPlayer) + 1);
             else
                 currentPlayer = players.get(0);
         }
+        else {
+            setNextPlayer();
+        }
+
+        return true;
     }
 
 

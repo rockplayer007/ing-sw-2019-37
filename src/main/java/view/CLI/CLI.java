@@ -136,8 +136,8 @@ public class CLI implements ViewInterface {
     }
 
     @Override
-    public void chooseEffect(List<Effect> effects) {
-        printer.askEffect(effects, effect -> mainClient.sendSelectedCard(effect));
+    public void chooseEffect(List<Effect> effects, boolean optional) {
+        printer.askEffect(effects, effect -> mainClient.sendSelectedCard(effect), optional);
     }
 
     @Override
@@ -200,6 +200,11 @@ public class CLI implements ViewInterface {
     public void updateAll(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard) {
         printer.printAllInfo(board, myPowerups, skullBoard);
 
+    }
+
+    @Override
+    public void showScore(Map<Player, Integer> score) {
+        printer.printScore(score);
     }
 
 }

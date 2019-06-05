@@ -76,14 +76,16 @@ public class MessageHandler {
         List<String> send = roomController
                 .toJsonEffectList(effects);
 
+        AnswerRequest message = new AnswerRequest(send, Message.Content.EFFECT_REQUEST, "Choose an effect");
+        message.setIsOptional();
         ListResponse effect = (ListResponse) roomController
-                .sendAndReceive(player, new AnswerRequest(send, Message.Content.EFFECT_REQUEST, "Choose an effect"));
+                .sendAndReceive(player, message);
 
-        try{
+        if (effect.getSelectedItem() < effects.size() && effect.getSelectedItem() >= 0){
+            //the chosen powerup will be executed
             return effects.get(effect.getSelectedItem());
-        }catch (RuntimeException e){
-            //cheater
-            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
+        }
+        else{
             return null;
         }
 
