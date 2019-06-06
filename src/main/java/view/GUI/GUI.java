@@ -254,7 +254,7 @@ public class GUI implements ViewInterface {
 
     @Override
     public void showScore(Map<Player, Integer> score) {
-        
+
     }
 
     @Override
