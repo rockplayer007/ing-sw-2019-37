@@ -173,10 +173,10 @@ public class WeaponDeck extends Deck<Weapon>{
 
         effects = new LinkedHashMap<>();
         description = "Choose a room you can see, but not the room you are in. Deal 1 damage to everyone in that room.\n ";
-        operations=Arrays.asList(new Furance(false), selectAllTarget, damage1);
+        operations=Arrays.asList(new Furance(false), damage1);
         effects.put(new Effect("Basic mode: ",description, Collections.emptyList(), operations), 0);
         description = "Choose a square exactly one move away. Deal 1 damage and 1 mark to everyone on that square.\n";
-        operations = Arrays.asList(new Furance(true), selectAllTarget, damage1, mark1);
+        operations = Arrays.asList(new Furance(true), damage1, mark1);
         effects.put(new Effect("Cozy fire mode",description,Collections.emptyList(), operations), 0);
 
         weapons.add(new Weapon("FURNACE", "", AmmoColor.RED, Collections.singletonList(AmmoColor.BLUE),

@@ -73,7 +73,7 @@ public class ActionHandler {
                 room.undoPayment();         // do undo payment
                 if (!used) {                // if the weapon is not used do undo position for player and throw exception
                     player.movePlayer(playerPosition);
-                    throw new NotExecutedException("Effect is not possible used");
+                    throw new NotExecutedException("Effect is not possible used"+e.getMessage());
                 }
             } catch (NotEnoughException e) {
                 MessageHandler.sendInfo(player,"you can not use this effect:"+e.getMessage(),room); // send message to player
