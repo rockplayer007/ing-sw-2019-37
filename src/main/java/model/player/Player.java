@@ -38,7 +38,7 @@ public class Player implements Serializable {
         playerBoard=new PlayerBoard(this);
         actionStatus = ActionState.TURNACTIONS;
         position = null;
-        live = false;
+        live = true;
         this.roundStatus = RoundStatus.FIRST_ROUND;
         connected = true;
 
@@ -115,9 +115,11 @@ public class Player implements Serializable {
     public void setConnected(){
         connected = true;
     }
+
     public void setDisconnected(){
         connected = false;
     }
+
     public boolean isConnected(){
         return connected;
     }

@@ -18,7 +18,8 @@ public class WaitingRoom {
 
     private static final int STARTING_PLAYERS = 3;
     private static final int MAX_PLAYERS = 5;
-    private static final int WAITING_TIME = 10; //seconds
+    private static final int WAITING_TIME = 15; //seconds
+
     private Queue<ClientOnServer> waitingClients;
     private Timer timer;
     private MainServer server;
@@ -127,6 +128,9 @@ public class WaitingRoom {
 
         playingRoom.matchSetup();
 
+        //remove controller
+        //remove players
+        server.removeClientFromServer(usernames);
     }
 
     private void removeDisconnectedClients(){

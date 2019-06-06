@@ -34,7 +34,6 @@ public class MapPanel extends JLayeredPane {
     private JFrame chooseCard;
     private JFrame choose;
     JFrame selectEffect = new JFrame("Choose Effect");
-    // private JFrame chooseCard = new JFrame();
     private JFrame playerboards = new JFrame("BOARDS");
     private JFrame chooseRoom;
     private List<JLabel> ammocards = new ArrayList<>();
@@ -46,7 +45,7 @@ public class MapPanel extends JLayeredPane {
     private List<JLabel> skullboard=new ArrayList<>();
     private JScrollPane messageScrollPane;
     private JPanel messagePanel;
-    private int rows =1;
+    private int rows =8;
 
     public MapPanel(GameBoard board) {
         JButton pBoards;
@@ -295,7 +294,6 @@ public class MapPanel extends JLayeredPane {
 
 
     public void movePlayer(int cell, Player player) {
-        //aggiungere controllo se si muove nella stessa cella
         boolean created = false;
         JButton icon = new JButton();
         for (int i = 0; i < playerIcon.size(); i++) {
@@ -387,8 +385,6 @@ public class MapPanel extends JLayeredPane {
     }
 
     public void updBoardGui(GameBoard board, MainClient mainClient) {
-        //this.board=b;
-        //this.mainClient=mainClient;
         resetWeaponIcon();
         weaponIcon = new ArrayList<>();
         resetAmmo();
@@ -502,6 +498,7 @@ public class MapPanel extends JLayeredPane {
         SelectCardPanel selectCardPanel = new SelectCardPanel(cards, optional, mainClient, chooseCard, this);
         chooseCard.getContentPane().removeAll();
         chooseCard.getContentPane().add(selectCardPanel);
+        chooseCard.setTitle("Choose Powerup");
         chooseCard.pack();
         chooseCard.setVisible(true);
     }
@@ -515,16 +512,16 @@ public class MapPanel extends JLayeredPane {
         chooseCard.getContentPane().removeAll();
         SelectCardPanel selectCardPanel = new SelectCardPanel(cards, optional, mainClient, chooseCard, this);
         chooseCard.getContentPane().add(selectCardPanel);
+        chooseCard.setTitle("Choose Weapon");
         chooseCard.pack();
         chooseCard.setVisible(true);
-
     }
 
 
     public void getAction(List<ActionOption> actionOptions, MainClient mainClient) {
         resetRooms();
         actions = new ArrayList<>();
-        JLabel text = new JLabel("Select action:");
+        JLabel text = new JLabel("Select one action:");
         text.setHorizontalAlignment(SwingConstants.CENTER);
         text.setSize(250, 20);
         text.setLocation(1030, 24);
@@ -580,7 +577,7 @@ public class MapPanel extends JLayeredPane {
             int s = i;
             dir.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar
                     + "main" + File.separatorChar + "resources" + File.separatorChar
-                    + "directions" + File.separatorChar + directions.get(i).toString() + ".jpg"));
+                    + "directions" + File.separatorChar + directions.get(i).name() + ".jpg"));
             dir.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -615,14 +612,27 @@ public class MapPanel extends JLayeredPane {
         choose.setVisible(true);
     }
 
-    public void getEffect(List<Effect> effects, MainClient mainClient) {
+    public void getEffect(List<Effect> effects, MainClient mainClient,boolean optional) {
         selectEffect.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        selectEffect.setSize(220, 300);
+        selectEffect.setLayout(new BorderLayout());
+        selectEffect.setSize(220, 350);
         selectEffect.setLocation(300,50);
         selectEffect.setResizable(false);
         selectEffect.getContentPane().removeAll();
         CardPanel cardPanel = new CardPanel(weaponSelected, effects, mainClient, selectEffect);
-        selectEffect.getContentPane().add(cardPanel);
+        selectEffect.getContentPane().add(cardPanel,BorderLayout.CENTER);
+        if(optional){
+            JButton opt=new JButton("Don't use effect");
+            opt.setSize(220,20);
+            opt.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    mainClient.sendSelectedEffect(effects.size());
+                    selectEffect.setVisible(false);
+                }
+            });
+            selectEffect.getContentPane().add(opt,BorderLayout.SOUTH);
+        }
         selectEffect.setVisible(true);
     }
 
@@ -649,7 +659,8 @@ public class MapPanel extends JLayeredPane {
         for(int i=0;i<rooms.size();i++){
             JButton color =new JButton();
             color.setBackground(s.stringToColor(rooms.get(i).toString()));
-            color.setOpaque(true);
+            color.setOpaque(false);
+            color.repaint();
             int x=i;
             color.addActionListener(new ActionListener() {
                 @Override
@@ -681,7 +692,44 @@ public class MapPanel extends JLayeredPane {
     }
 
     public void updateSkullboard(SkullBoard skullBoard){
+        int y=37;
+        int x= 79;
         resetSkullboard();
+        StyleSheet styleSheet=new StyleSheet();
+        for(int i=0;i<skullBoard.getCells().size();i++){
+            if (skullBoard.getCells().get(i).getPoint()==1) {
+                JLabel point = new JLabel();
+                point.setSize(37,48);
+                point.setLocation(x,y);
+                point.setBackground(styleSheet.stringToColor(skullBoard.getCells().get(i).getKillColor().toString()));
+                point.setOpaque(true);
+                this.add(point);
+                skullboard.add(point);
+            }
+            else {
+                JLabel point1 =new JLabel();
+                point1.setSize(37,35);
+                point1.setLocation(x,y-15);
+                point1.setBackground(styleSheet.stringToColor(skullBoard.getCells().get(i).getKillColor().toString()));
+                point1.setOpaque(true);
+
+                this.add(point1);
+
+
+                JLabel point2 =new JLabel();
+                point2.setSize(37,26);
+                point2.setLocation(x,y+23);
+                point2.setBackground(styleSheet.stringToColor(skullBoard.getCells().get(i).getKillColor().toString()));
+                point2.setOpaque(true);
+                skullboard.add(point1);
+                skullboard.add(point2);
+                this.add(point2);
+            }
+            if(i>skullBoard.getInitSkulls())
+                x+=22;
+            else
+                x+=45;
+        }
     }
 
     public void setMessageScrollPane(){
@@ -702,16 +750,16 @@ public class MapPanel extends JLayeredPane {
             messagePanel.setLayout(new GridLayout(rows++,1));
             Player key = entry.getKey();
             Integer value = entry.getValue();
-            JLabel att = new JLabel(key.getNickname() + " Damage : " + value);
-            att.setHorizontalAlignment(SwingConstants.CENTER);
+            JLabel att = new JLabel(key.getNickname() + " \t Damage : " + value);
+            att.setHorizontalAlignment(SwingConstants.RIGHT);
             messagePanel.add(att);
         }
         for(Map.Entry<Player,Integer> entry: marks.entrySet()) {
             messagePanel.setLayout(new GridLayout(rows++,1));
             Player key = entry.getKey();
             Integer value = entry.getValue();
-            JLabel mark = new JLabel(key.getNickname() + " Marks : " + value);
-            mark.setHorizontalAlignment(SwingConstants.CENTER);
+            JLabel mark = new JLabel(key.getNickname() + " \t Marks : " + value);
+            mark.setHorizontalAlignment(SwingConstants.RIGHT);
             messagePanel.add(mark);
         }
         messageScrollPane =new JScrollPane(messagePanel);

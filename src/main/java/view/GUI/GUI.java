@@ -41,9 +41,9 @@ public class GUI implements ViewInterface {
     public void launch() throws NotBoundException, IOException {
 
         logIn(true);
-        mainClient.connect();
 
     }
+
 
     public void logIn(boolean ask) {
         if (ask) {
@@ -58,7 +58,7 @@ public class GUI implements ViewInterface {
             submitButton.setFont(f);
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridx=2;
-            gbc.gridy=8;
+            gbc.gridy=9;
             gbc.anchor = GridBagConstraints.CENTER;
             gbc.insets = new Insets(50, 0, 0, 3);
             if(!first) {
@@ -76,13 +76,26 @@ public class GUI implements ViewInterface {
                         loginPanel.setConnectionError(true);
                     }  else loginPanel.setConnectionError(false);
 
-                    if (loginPanel.getConnectionErr()&&loginPanel.getNicknameErr()) {
-                        first=false;
+                    if (loginPanel.getConnectionErr()&&loginPanel.getNicknameErr()&&!loginPanel.getIp().isEmpty()) {
                         frame.getContentPane().removeAll();
                         LoadingPanel loadingPanel = new LoadingPanel();
                         frame.getContentPane().add(loadingPanel);
+                        MainClient.setSocket(loginPanel.getConnection());
+                        if(loginPanel.getIp().equals("127.0.0.1"))
+                            MainClient.setServerIp("localhost");
+                        else
+                            MainClient.setServerIp(loginPanel.getIp());
+                        if(first){
+                            try {
+                                mainClient.connect();
+                            } catch (NotBoundException e1) {
+                                //e1.printStackTrace();
+                            } catch (IOException e1) {
+                                //e1.printStackTrace();
+                            }
+                        }
+                        first=false;
                         mainClient.setUsername(loginPanel.getInsNickname());
-                        mainClient.setSocket(loginPanel.getConnection());
                         mainClient.sendCredentials();
                     }
                 }});
@@ -165,7 +178,7 @@ public class GUI implements ViewInterface {
         mapPanel.updatePlayerBoard(board);
         mapPanel.updateWeapon(board,mainClient);
         mapPanel.updatePowerup(myPowerups);
-
+        mapPanel.updateSkullboard(skullBoard);
     }
 
     @Override
@@ -189,11 +202,11 @@ public class GUI implements ViewInterface {
     }
 
     @Override
-    public void chooseEffect(List<Effect> effects) {
+    public void chooseEffect(List<Effect> effects, boolean optional) {
         Component component =frame.getContentPane().getComponent(0);
         if ((component.getName().equals("mapPanel"))){
             MapPanel map = (MapPanel) component;
-            map.getEffect(effects,mainClient);
+            map.getEffect(effects,mainClient,optional);
         }
     }
 
@@ -250,6 +263,17 @@ public class GUI implements ViewInterface {
             MapPanel mapPanel = (MapPanel) component;
             mapPanel.addInfo(info);
         }
+    }
+
+    @Override
+    public void showScore(Map<Player, Integer> score) {
+        frame.getContentPane().removeAll();
+        frame.setSize(750,800);
+        frame.setLocation(300,0);
+        frame.setResizable(false);
+        ScorePanel scorePanel= new ScorePanel(score);
+        frame.getContentPane().add(scorePanel);
+        frame.setVisible(true);
     }
 
     @Override

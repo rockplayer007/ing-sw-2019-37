@@ -37,11 +37,11 @@ class VisiblePlayers implements Operation{
 }
 
 class SelectTargets implements Operation{
-    private int numberTragets;
+    private int numberTargets;
     private Boolean distinctSquare;
 
     SelectTargets(int number,Boolean distinctSquare){
-        numberTragets=number;
+        numberTargets =number;
         this.distinctSquare=distinctSquare;
     }
 
@@ -54,14 +54,14 @@ class SelectTargets implements Operation{
             throw new NotExecutedException("there are not possible players can be shoot ");
         List<Player> targets=new ArrayList<>();
         if (distinctSquare) {
-            for (int i=0; i< numberTragets;i++){
+            for (int i = 0; i < Integer.min(numberTargets,possibleTargets.size()); i++){
                 targets.addAll(MessageHandler.choosePlayers(currentPlayer,possibleTargets,1,room));
                 Square targetPostion = targets.get(i).getPosition();
                 possibleTargets = possibleTargets.stream().filter(x->x.getPosition()!=targetPostion).collect(Collectors.toList());
             }
 
         }else {
-           targets = MessageHandler.choosePlayers(currentPlayer,possibleTargets,numberTragets,room);
+           targets = MessageHandler.choosePlayers(currentPlayer,possibleTargets, numberTargets,room);
         }
         // TODO se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
         possibleTargets.removeAll(targets);
@@ -71,9 +71,9 @@ class SelectTargets implements Operation{
 }
 
 class SelectFromSelectedTargets implements Operation{
-    private int numberTragets;
+    private int numberTargets;
     SelectFromSelectedTargets(int number) {
-        numberTragets = number;
+        numberTargets = number;
     }
 
     @Override
@@ -83,7 +83,7 @@ class SelectFromSelectedTargets implements Operation{
         List<Player> selectedTargets =attackHandler.getSelectedTargets();
         if (selectedTargets.isEmpty())
             throw new NotExecutedException("there are not possible players can be shoot ");
-        List<Player> targets = MessageHandler.choosePlayers(currentPlayer,selectedTargets,numberTragets,room);
+        List<Player> targets = MessageHandler.choosePlayers(currentPlayer,selectedTargets, numberTargets,room);
     // TODO se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
         selectedTargets.removeAll(targets);
         attackHandler.setTargetsToShot(targets);
@@ -574,7 +574,9 @@ class TargetingScope implements Operation{
         } catch (NotEnoughException e) {
             throw new NotExecutedException(e.getMessage());
         }
-        attackHandler.setPossibleTargets(new ArrayList<>(attackHandler.getDamaged().keySet()));
+        Set<Player> possibleTargets = new HashSet<>(attackHandler.getDamaged().keySet());
+        possibleTargets.addAll(attackHandler.getMarked().keySet());
+        attackHandler.setPossibleTargets(new ArrayList<>(possibleTargets));
     }
 }
 

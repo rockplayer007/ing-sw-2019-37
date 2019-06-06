@@ -127,8 +127,9 @@ public class MainServer {
                 try {
                     message.getClientInterface().notifyClient(new LoginResponse(true, ""));
                 }catch (RemoteException e){
+                    //logger.log(Level.WARNING, "Player {0} disconnected", e);
+
                     disconnectPlayer(message.getClientInterface());
-                    //logger.log(Level.WARNING, "Player {0} disconnected", message.getSender());
                 }
 
 
@@ -178,6 +179,19 @@ public class MainServer {
      */
     public void setUsernameInRoom(List<String> usernames, RoomController playingRoom){
         usernames.forEach(name -> usernameInRoom.put(name, playingRoom));
+    }
+
+    public void removeClientFromServer(List<String> usernames){
+        usernames.forEach(name -> {
+            usernameInRoom.remove(name);
+            List<ClientOnServer> temp = allClients;
+            for(ClientOnServer cs : temp){
+                if(cs.getUsername().equals(name)){
+                    removeClient(cs);
+                }
+            }
+        });
+
     }
 
     public void removeClient(ClientOnServer client){

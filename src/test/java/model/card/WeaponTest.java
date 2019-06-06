@@ -1,4 +1,4 @@
-package cardTest;
+package model.card;
 
 import controller.RoomController;
 import model.card.*;
@@ -55,6 +55,7 @@ public class WeaponTest {
 //            e.printStackTrace();
 //        }
 //        room.getAttackHandler().getPossibleTargets().forEach(x->System.out.println(x.getNickname()));
+
 
 
     }
