@@ -17,4 +17,6 @@ public interface ClientInterface extends Remote {
      * @throws RemoteException
      */
     void notifyClient(ServerToClient message) throws RemoteException;
+
+    void closeConnection() throws RemoteException;
 }

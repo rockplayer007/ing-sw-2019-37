@@ -9,6 +9,7 @@ import model.card.Effect;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.player.ActionOption;
+import model.player.Heroes;
 import model.player.Player;
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
@@ -56,17 +57,6 @@ public class MainClient {
 
         if (choice.equals("g")) {
             view = new GUI(mainClient);
-
-        /*
-            //usato solo per test
-            Map<Integer, String> map = new HashMap<>();
-            map.put(1, "ideale per 3/4 giocatori");
-            map.put(2, "ideale per 3/4 giocatori");
-            map.put(3, "third");
-            map.put(0, "zero");
-            view.chooseBoard(map);
-        */
-           // ((GUI) view).map();
 
         }
         else {
@@ -284,7 +274,7 @@ public class MainClient {
             case SCORE:
 
                 Map<Player, Integer> score = new HashMap<>();
-                HashMap<String, Integer> scoreMessage = gson.fromJson(((AttackMessage) message).getHp(), type);
+                Map<String, Integer> scoreMessage = ((ScoreMessage) message).getScore();//gson.fromJson(((ScoreMessage) message).getScore(), type);
                 scoreMessage.forEach((x, y) -> score.put(gson.fromJson(x, Player.class), y));
                 view.showScore(score);
                 break;

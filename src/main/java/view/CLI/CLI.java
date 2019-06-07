@@ -20,6 +20,7 @@ import java.rmi.NotBoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -191,8 +192,15 @@ public class CLI implements ViewInterface {
     }
 
     public void timeout(){
-        printer.closeRequest();
-        printer.println(printer.colorToAnsi(Color.RED) + "TIME IS FINISHED" + printer.colorToAnsi(Color.WHITE));
+
+        printer.askReconnect(reconnect -> {
+            if(reconnect) {
+                mainClient.sendCredentials();
+            }
+            else {
+                printer.println("Bye bey " + mainClient.getUsername());
+            }
+        });
 
     }
 

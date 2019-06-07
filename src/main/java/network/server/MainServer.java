@@ -5,6 +5,7 @@ import network.client.ClientInterface;
 import network.messages.Message;
 import network.messages.clientToServer.ClientToServer;
 import network.messages.clientToServer.LoginRequest;
+import network.messages.serverToClient.InfoMessage;
 import network.messages.serverToClient.LoginResponse;
 import network.server.rmi.ServerRMI;
 import network.server.socket.ServerSOCKET;
@@ -86,14 +87,12 @@ public class MainServer {
         logger.log(Level.INFO, "arrived message type: {0}, from player: {1}",
                 new String[]{String.valueOf(message.getContent()), message.getSender()});
 
-        //TODO send the message to the right roomController
-        //TODO move this to the roomController
 
         if(message.getContent().equals(Message.Content.LOGIN_REQUEST)){
             addClient((LoginRequest) message);
         }
         else {
-            //security check player
+
             usernameInRoom.get(message.getSender()).handleMessages(message);
         }
 
@@ -111,15 +110,23 @@ public class MainServer {
      * @param message
      */
     public void addClient(LoginRequest message){
-        logger.log(Level.INFO, "{0} adding to the server", message.getSender());
-        //TODO manage users that were already logged
-        //
-        //consider a map that tells in which room the user is
+        logger.log(Level.INFO, "{0} wants to login to the server", message.getSender());
+
         if(oldClients.containsValue(message.getSender())){
             //contains username
             if (oldClients.containsKey(message.getClientID())){
                 //client already exists
                 //let him continue
+                ClientOnServer client = allClients.stream()
+                        .filter(x -> x.getUsername().equals(message.getSender()))
+                        .findFirst().get();
+                client.getPersonalPlayer().setConnected();
+                try {
+                    client.getClientInterface().notifyClient(new InfoMessage("Welcome back"));
+                } catch (RemoteException e) {
+                    disconnectPlayer(message.getClientInterface());
+                }
+
             }
             else{
 
@@ -182,14 +189,27 @@ public class MainServer {
     }
 
     public void removeClientFromServer(List<String> usernames){
+
         usernames.forEach(name -> {
+            //remove from room map
             usernameInRoom.remove(name);
-            List<ClientOnServer> temp = allClients;
-            for(ClientOnServer cs : temp){
-                if(cs.getUsername().equals(name)){
-                    removeClient(cs);
+
+            ClientOnServer toRemove = null;
+
+            for(ClientOnServer all : allClients){
+                if(all.getUsername().equals(name)){
+                    toRemove = all;
                 }
+
             }
+            oldClients.remove(toRemove.getClientID());
+            //this is for disconnecting the socket client
+            try {
+                toRemove.getClientInterface().closeConnection();
+            } catch (RemoteException e) {
+                //dont worry about this
+            }
+            removeClient(toRemove);
         });
 
     }

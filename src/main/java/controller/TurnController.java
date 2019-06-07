@@ -12,6 +12,7 @@ import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
 import network.messages.serverToClient.InfoMessage;
 import network.messages.serverToClient.TimeoutMessage;
+import network.server.Configs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,8 @@ public class TurnController {
     private CountDown timer;
     private boolean gameFinished;
 
-    private static final int WAITING_TIME = 180; //seconds
-    private static final int POWERUP_TIME = 5;
+    private static final int WAITING_TIME = Configs.getInstance().getTurnTime();
+    private static final int POWERUP_TIME = Configs.getInstance().getTimeForTagBackRequest();
 
     private RoundController roundController;
 

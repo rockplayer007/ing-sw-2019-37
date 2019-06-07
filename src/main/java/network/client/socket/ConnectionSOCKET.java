@@ -36,6 +36,11 @@ public class ConnectionSOCKET implements ConnectionInterface, ClientInterface {
         client.handleMessage(message);
     }
 
+    @Override
+    public void closeConnection() {
+
+    }
+
     /**
      * Redirects the message to the {@link ServerSimulator}
      * to send it to the {@link network.server.MainServer}

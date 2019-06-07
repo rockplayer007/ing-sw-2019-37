@@ -23,4 +23,9 @@ public class ClientImplementation implements ClientInterface {
         mainClient.handleMessage(message);
     }
 
+    @Override
+    public void closeConnection() {
+
+    }
+
 }

@@ -8,20 +8,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
 
 import model.card.AmmoColor;
 import model.card.Effect;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.player.Player;
-import network.messages.clientToServer.ListResponse;
 import org.fusesource.jansi.AnsiConsole;
 
 public class Printer {
 
     private Thread thread;
     private int choice;
+    private String decision;
     private CLI cli;
     private static final String AMMO = "O";
     private static final String MARK = "@";
@@ -53,8 +52,7 @@ public class Printer {
             println("Choose an option between 1 and " + nRequests  + ":");
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
             Scanner reader = new Scanner(bufferedReader);
-            ///int choice;
-            String tmp;
+
             try {
                 do {
                     while (!bufferedReader.ready()) {
@@ -248,6 +246,63 @@ public class Printer {
         displayRequest(printable, selection);
     }
 
+    public void askReconnect(Consumer<Boolean> reconnect){
+        if(thread != null){
+            closeRequest();
+        }
+        println(colorToAnsi(Color.RED) + "TIME IS FINISHED" + colorToAnsi(Color.WHITE));
+        println(colorToAnsi(Color.WHITE) + "Want to reconnect? [Y/N]");
+
+        thread = new Thread( () ->
+        {
+            //println("THREAD IS  " + thread.getName());
+
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+            Scanner reader = new Scanner(bufferedReader);
+
+            try {
+
+                boolean cont = false;
+                boolean yesNo = false;
+                do {
+                    while (!bufferedReader.ready()) {
+
+                        Thread.sleep(100);
+                    }
+
+                    if(reader.hasNextLine()){
+                        decision = reader.nextLine().toLowerCase();
+                        if(decision.equals("y")){
+                            yesNo = true;
+                            cont = false;
+                        }
+                        else if(decision.equals("n")){
+                            cont = false;
+                        }
+                        else{
+                            cont = true;
+                        }
+                    }
+
+
+                    //yesNo = decision.toLowerCase().substring(0, 1);
+                    //cont = yesNo.equals("y") || yesNo.equals("n");
+
+                    if(cont){
+                        println("Write a valid input: ");
+                    }
+                }while (cont);
+
+
+                reconnect.accept(yesNo);
+
+            }catch (IOException|InterruptedException e) {
+                //dont println anything for cli
+            }
+
+        });
+        thread.start();
+    }
 
     public void closeRequest(){
         if(thread != null && !thread.isInterrupted()){
@@ -586,7 +641,7 @@ public class Printer {
 
             if(i < skullBoard.getCells().size()){
                 for(int j = 0; j < skullBoard.getCells().get(i).getPoint(); j++){
-                    drops.append(colorToAnsi(skullBoard.getCells().get(i).getKillColor())).append(DROP);
+                    drops.append(colorToAnsi(skullBoard.getCells().get(i).getKillColor())).append(SKULL);
                 }
                 for(int k = skullBoard.getCells().get(i).getPoint(); k < 2; k++){
                     drops.append(" ");
@@ -667,7 +722,7 @@ public class Printer {
             }
             else{
                 //add extra space when there are less weapons
-                if(nWeapons < 9){
+                if(nWeapons < 11){
                     line.append(String.format(" %45s", " "));
                     nWeapons++;
                 }
@@ -729,10 +784,10 @@ public class Printer {
         Player winner = score.keySet().stream().findFirst().get();
         List<String> lines = new ArrayList<>();
         score.forEach((x, y) -> lines.add(colorToAnsi(x.getColor())+ x.getNickname()
-                + colorToAnsi(Color.WHITE) + " point: " + y));
+                + colorToAnsi(Color.WHITE) + " points: " + y));
 
         println( colorToAnsi(winner.getColor()) + winner.getNickname()
-                + colorToAnsi(AmmoColor.RED) + "WON" + colorToAnsi(Color.WHITE));
+                + colorToAnsi(AmmoColor.RED) + "  WON" + colorToAnsi(Color.WHITE));
         int i = 1;
         for(String line : lines){
             println(i + " - " + line);

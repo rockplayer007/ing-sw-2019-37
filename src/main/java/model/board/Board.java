@@ -1,6 +1,7 @@
 package model.board;
 
 import model.card.*;
+import network.server.Configs;
 
 /**
  * Class for managing the cards and the boards
@@ -20,7 +21,7 @@ public class Board {
         weaponDeck = new WeaponDeck();
 
         //TODO fare l'utente a scegliere quandi skull mette.
-        skullBoard = new SkullBoard(8);
+        skullBoard = new SkullBoard(Configs.getInstance().getSkulls());
     }
 
     /**

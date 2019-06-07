@@ -113,6 +113,10 @@ public class ActionHandler {
 
         if (!player.getPosition().isGenerationPoint()){
 
+            if(((AmmoSquare) player.getPosition()).getAmmoCard() == null){
+                //in case there is no ammo card in the square
+                throw new NotExecutedException("Nothing to grab here");
+            }
             AmmoCard card = ((AmmoSquare) player.getPosition()).getAmmoCard();
             card.getAmmoList().forEach(player::addAmmo);
 
@@ -154,13 +158,12 @@ public class ActionHandler {
                 if (player.limitWeapon()) {
                     //choose weapon to discard
 
-                    Weapon discardWeapon = null;
+                    Weapon discardWeapon;
                     try {
                         discardWeapon = MessageHandler.chooseCard(player.getWeapons(), false, room, true);
                     } catch (TimeFinishedException e) {
-                        //TODO pay back function
-                        //handle exception
 
+                        room.undoPayment();
                         throw new TimeFinishedException();
                     }
 
@@ -216,12 +219,12 @@ public class ActionHandler {
 
             try {
                 payment(player,cost, room); //questa eccezione può far continuare
+                weapon.setCharged(true);
+                weapons.remove(weapon);
             } catch (NotEnoughException e) {
-                //TODO send message
                 //The player can continue to reload another
             }
-            weapon.setCharged(true);
-            weapons.remove(weapon);
+
         }
     }
 
@@ -260,7 +263,6 @@ public class ActionHandler {
                 chosenCard = MessageHandler
                         .chooseCard(possiblePowerups, true, room, false);
             } catch (TimeFinishedException e) {
-                //TODO dont pay (go back function)
                 throw new TimeFinishedException();
             }
 
@@ -281,11 +283,13 @@ public class ActionHandler {
                         } catch (AmmoException e) {
                             throw new NotEnoughException(e.getMessage());
                         }
-                        powerupToPay.forEach(x->{
-                            player.removePowerup(x);
-                            powerDeck.usedCard(x);
-                        });
+
                     }
+                    powerupToPay.forEach(x->{
+                        player.removePowerup(x);
+                        powerDeck.usedCard(x);
+                    });
+
                     tempCost.clear();
                 }else
                     throw new NotEnoughException("have not enough ammo");
