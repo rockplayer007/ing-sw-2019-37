@@ -6,6 +6,7 @@ import model.card.Card;
 import model.card.Powerup;
 import model.gamehandler.Room;
 import model.player.Player;
+import network.server.Configs;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -43,6 +44,17 @@ public class RoomControllerTest {
 
         assertEquals((powerups.get(1)).getAmmo(), (arrivedCard2).getAmmo());
 
+
+    }
+
+    @Test
+    public void fileTest(){
+        Configs configs = Configs.getInstance();
+        configs.getTurnTime();
+        configs.getMaximumPlayers();
+        configs.getMinimumPlayers();
+        configs.getSkulls();
+        configs.getTimeForTagBackRequest();
 
     }
 

@@ -17,10 +17,12 @@ public class LoginPanel extends JPanel implements ActionListener {
     private JRadioButton socket;
     private ButtonGroup connGroup = new ButtonGroup();
     private String connSelected="null";
+    private JTextField ip;
     private boolean nicknameErr;
     private boolean connectionErr;
 
  public LoginPanel()  {
+        JLabel ipText;
         image = Toolkit.getDefaultToolkit().createImage("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"backgroundimage.png");
         loadImage(image);
         this.setLayout(new GridBagLayout());
@@ -38,8 +40,6 @@ public class LoginPanel extends JPanel implements ActionListener {
         this.nickname = new JLabel("Nickname:");
         gbc.gridx = 1;
         gbc.gridy = 3;
-        gbc.anchor = GridBagConstraints.LINE_END;
-        gbc.insets = new Insets(5, 0, 0, 10);
         this.add(this.nickname, gbc);
 
         this.insNickname = new JTextField(15);
@@ -82,6 +82,16 @@ public class LoginPanel extends JPanel implements ActionListener {
         gbc.gridy = 7;
         gbc.anchor = GridBagConstraints.LINE_START;
         this.add(this.connectionError, gbc);
+
+        ipText=new JLabel("IP address of the server");
+        gbc.gridx = 1;
+        gbc.gridy = 8;
+        this.add(ipText, gbc);
+
+        ip=new JTextField("127.0.0.1",15);
+        gbc.gridx=2;
+        gbc.gridy=8;
+     this.add(ip, gbc);
     }
 
     private void loadImage(Image img) {
@@ -129,6 +139,9 @@ public class LoginPanel extends JPanel implements ActionListener {
     public void setConnectionError(Boolean err){
         this.connectionError.setVisible(err);
         this.connectionErr=!err;
+    }
+    public String getIp(){
+     return ip.getText();
     }
 
     public boolean getConnectionErr(){

@@ -7,6 +7,7 @@ import model.board.GameBoard;
 import model.board.SkullBoard;
 import model.player.ActionState;
 import model.player.Player;
+import network.server.Configs;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -42,18 +43,19 @@ public class Room {
 
     public boolean setNextPlayer() {
         long connectedPlayers = players.stream().filter(Player::isConnected).count();
-        if(connectedPlayers < 3){
+        if(connectedPlayers < Configs.getInstance().getMinimumPlayers()){
             return false;
         }
 
-        if(currentPlayer.isConnected()){
-
-            if (players.indexOf(currentPlayer) < players.size() - 1)
-                currentPlayer = players.get(players.indexOf(currentPlayer) + 1);
-            else
-                currentPlayer = players.get(0);
+        if (players.indexOf(currentPlayer) < players.size() - 1){
+            currentPlayer = players.get(players.indexOf(currentPlayer) + 1);
         }
-        else {
+        else{
+            currentPlayer = players.get(0);
+        }
+
+
+        if(!currentPlayer.isConnected()){
             setNextPlayer();
         }
 

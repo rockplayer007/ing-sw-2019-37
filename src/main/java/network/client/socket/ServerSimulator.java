@@ -39,8 +39,6 @@ public class ServerSimulator implements ServerInterface {
         this.out = new ObjectOutputStream(connection.getOutputStream());
         this.in = new ObjectInputStream(connection.getInputStream());
 
-        //TODO if it doesnt connect set a flag to retry the connection
-
         receiveMessages();
     }
 
@@ -73,7 +71,7 @@ public class ServerSimulator implements ServerInterface {
      * Sends a message to the {@link network.server.MainServer}
      * through the output stream
      * @param message message that arrives from the {@link network.client.MainClient}
-     *                and is sent to the {@link MainServer}
+     *                and is sent to the {@link network.server.MainServer}
      */
     @Override
     public synchronized void notifyServer(ClientToServer message) {

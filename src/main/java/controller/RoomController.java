@@ -188,10 +188,15 @@ public class RoomController {
             connectionToClient.get(player).getClientInterface()
                     .notifyClient(message);
         } catch (RemoteException e) {
-            disconnectPlayer(player);
-            logger.log(Level.WARNING, "Player {0} disconnected", player.getNickname());
-            //TODO send message to all others
-            sendMessageToAll(new InfoMessage(player.getNickname() + " has disconnected"));
+            logger.log(Level.WARNING, "disconnection", e);
+
+            if(player.isConnected()){
+                disconnectPlayer(player);
+                //logger.log(Level.WARNING, "Player {0} disconnected", player.getNickname());
+                //TODO send message to all others
+                sendMessageToAll(new InfoMessage(player.getNickname() + " not online anymore"));
+            }
+
         }
 
     }

@@ -80,5 +80,9 @@ public class ClientSimulator implements Runnable, ClientInterface{
         }
     }
 
-    //TODO set client connection
+    @Override
+    public void closeConnection() {
+         clientConnected = false;
+    }
+
 }
