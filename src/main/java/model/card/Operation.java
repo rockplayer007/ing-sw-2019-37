@@ -220,7 +220,7 @@ class  AddPossibleTargetBeforeMove implements Operation{
         AttackHandler attackHandler = room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> possiblePlayers = new ArrayList<>(room.getPlayers());
-
+        possiblePlayers.remove(currentPlayer);
         possiblePlayers = possiblePlayers.stream().filter(x->x.getPosition()!=null).collect(Collectors.toList());
 
         Set<Square> visibleSquare=new HashSet<>(currentPlayer.getPosition().visibleSquare(room.getBoard().getMap()));
@@ -234,7 +234,6 @@ class  AddPossibleTargetBeforeMove implements Operation{
             possiblePlayers=possiblePlayers.stream()
                     .filter(player-> player.getPosition().getValidPosition(distance).contains(currentPlayer.getPosition()))
                     .collect(Collectors.toList());
-            possiblePlayers.remove(currentPlayer);
             attackHandler.setPossibleTargets(possiblePlayers);
         }
 
@@ -352,6 +351,7 @@ class Heatseeker implements Operation{
         List<Player> possibleTargets=new ArrayList<>(room.getPlayers());
         possibleTargets = possibleTargets.stream().filter(x->x.getPosition()!=null).collect(Collectors.toList());
         possibleTargets.removeAll(attackHandler.getPossibleTargets());
+        possibleTargets.remove(room.getCurrentPlayer());
         attackHandler.setPossibleTargets(possibleTargets);
     }
 }
@@ -451,7 +451,6 @@ class TargetOnEffectSquare implements Operation{
     public void execute(Room room) {
         AttackHandler attackHandler=room.getAttackHandler();
         List<Player> targets=new ArrayList<>(attackHandler.getEffectSquare().getPlayersOnSquare());
-        targets.addAll(attackHandler.getSelectedTargets());
         targets=targets.stream().distinct().collect(Collectors.toList());
         attackHandler.setPossibleTargets(targets);
     }
@@ -483,7 +482,7 @@ class NextSquareInDirection implements Operation {
     public void execute(Room room){
         AttackHandler attackHandler = room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
-        Square targetPosition = attackHandler.getSelectedTargets().get(0).getPosition();
+        Square targetPosition = attackHandler.getTargetsToShot().get(0).getPosition();
         Square currentPlayerPosition = currentPlayer.getPosition();
         int diffx = currentPlayerPosition.getX() - targetPosition.getX();
         int diffy = currentPlayerPosition.getY() - targetPosition.getY();
@@ -600,23 +599,6 @@ class Update implements Operation{
     }
 }
 
-class Payment implements Operation{
-    private List<AmmoColor> cost;
-
-    public Payment(List<AmmoColor> cost){
-        this.cost = cost;
-    }
-    @Override
-    public void execute(Room room) throws NotExecutedException, TimeFinishedException {
-
-        try {
-            ActionHandler.payment(room.getCurrentPlayer(),cost,room);
-        } catch (NotEnoughException e) {
-            throw new NotExecutedException(e.getMessage());
-        }
-
-    }
-}
 
 
 
