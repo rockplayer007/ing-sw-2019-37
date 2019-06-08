@@ -35,7 +35,7 @@ public class MapPanel extends JLayeredPane {
     private JFrame choose;
     JFrame selectEffect = new JFrame("Choose Effect");
     private JFrame playerboards = new JFrame("BOARDS");
-    private JFrame chooseRoom;
+    private JFrame chooseRoom= new JFrame();
     private List<JLabel> ammocards = new ArrayList<>();
     private List<JButton> actions = new ArrayList<>();
     private List<Weapon> weaponList = new ArrayList<>();
@@ -750,7 +750,7 @@ public class MapPanel extends JLayeredPane {
             messagePanel.setLayout(new GridLayout(rows++,1));
             Player key = entry.getKey();
             Integer value = entry.getValue();
-            JLabel att = new JLabel(key.getNickname() + " \t Damage : " + value);
+            JLabel att = new JLabel(key.getNickname() + " Damage : " + value);
             att.setHorizontalAlignment(SwingConstants.RIGHT);
             messagePanel.add(att);
         }
@@ -758,7 +758,7 @@ public class MapPanel extends JLayeredPane {
             messagePanel.setLayout(new GridLayout(rows++,1));
             Player key = entry.getKey();
             Integer value = entry.getValue();
-            JLabel mark = new JLabel(key.getNickname() + " \t Marks : " + value);
+            JLabel mark = new JLabel(key.getNickname() + "  Marks : " + value);
             mark.setHorizontalAlignment(SwingConstants.RIGHT);
             messagePanel.add(mark);
         }
