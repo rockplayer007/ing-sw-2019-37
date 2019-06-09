@@ -6,19 +6,13 @@ import model.board.GenerationSquare;
 import model.board.Square;
 import model.card.*;
 
-import model.exceptions.AmmoException;
-import model.exceptions.NotEnoughException;
-import model.exceptions.NotExecutedException;
+import model.exceptions.*;
 import model.gamehandler.AttackHandler;
 import model.gamehandler.PaymentRecord;
 import model.gamehandler.Room;
 import model.player.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import model.exceptions.TimeFinishedException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ActionHandler {
@@ -73,10 +67,12 @@ public class ActionHandler {
                 room.undoPayment();         // do undo payment
                 if (!used) {                // if the weapon is not used do undo position for player and throw exception
                     player.movePlayer(playerPosition);
-                    throw new NotExecutedException("Effect is not possible used"+e.getMessage());
+                    throw new NotExecutedException("Effect is not possible used, "+e.getMessage());
                 }
             } catch (NotEnoughException e) {
                 MessageHandler.sendInfo(player,"you can not use this effect:"+e.getMessage(),room); // send message to player
+            } catch (InterruptOperationException e) {
+                MessageHandler.sendInfo(player,e.getMessage(),room); // send message to player
             }
 
             if (validEffect.isEmpty()|| validEffect.stream().allMatch(x->effects.get(x)==-1)){
@@ -237,7 +233,7 @@ public class ActionHandler {
      * @throws TimeFinishedException when the client takes too long for choosing
      */
     public static void payment(Player player, List<AmmoColor> cost, Room room) throws NotEnoughException, TimeFinishedException {
-
+        room.setPaymentRecord(new PaymentRecord(Collections.emptyList(),Collections.emptyList()));
         List<AmmoColor> tempCost = new ArrayList<>(cost);
         if (cost.isEmpty()){
             return;
@@ -273,29 +269,26 @@ public class ActionHandler {
                 tempCost.remove(chosenCard.getAmmo());
                 possiblePowerups.remove(chosenCard);
             }
-            else {
-                room.setPaymentRecord(new PaymentRecord(powerupToPay,tempCost));
-                if (player.enoughAmmos(tempCost, false)) {
-                    //pay the remaining with ammo instead
-                    for (AmmoColor ammo : tempCost) {
-                        try {
-                            player.removeAmmo(ammo);
-                        } catch (AmmoException e) {
-                            throw new NotEnoughException(e.getMessage());
-                        }
-
-                    }
-                    powerupToPay.forEach(x->{
-                        player.removePowerup(x);
-                        powerDeck.usedCard(x);
-                    });
-
-                    tempCost.clear();
-                }else
-                    throw new NotEnoughException("have not enough ammo");
-            }
-
+            else
+                break;
         }
+        room.setPaymentRecord(new PaymentRecord(powerupToPay,tempCost));
+        if (player.enoughAmmos(tempCost, false)) {
+            //pay the remaining with ammo instead
+            for (AmmoColor ammo : tempCost) {
+                try {
+                    player.removeAmmo(ammo);
+                } catch (AmmoException e) {
+                    throw new NotEnoughException(e.getMessage());
+                }
+            }
+            powerupToPay.forEach(x->{
+                player.removePowerup(x);
+                powerDeck.usedCard(x);
+            });
+
+        }else
+            throw new NotEnoughException("have not enough ammo");
     }
 
 }

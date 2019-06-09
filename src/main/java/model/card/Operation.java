@@ -2,6 +2,7 @@ package model.card;
 
 import controller.MessageHandler;
 import controller.ActionHandler;
+import model.exceptions.InterruptOperationException;
 import model.gamehandler.Room;
 import model.board.Color;
 import model.board.Square;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 
 public interface Operation {
 
-    void execute(Room room)throws NotExecutedException, TimeFinishedException;
+    void execute(Room room)throws NotExecutedException, TimeFinishedException, InterruptOperationException;
 }
 
 class VisiblePlayers implements Operation{
@@ -448,10 +449,11 @@ class SetTargetPositionAsEffectSquare implements Operation{
 
 class TargetOnEffectSquare implements Operation{
     @Override
-    public void execute(Room room) {
+    public void execute(Room room) throws InterruptOperationException{
         AttackHandler attackHandler=room.getAttackHandler();
+        if (attackHandler.getEffectSquare()==null)
+            throw new InterruptOperationException("You are end of map have not next square");
         List<Player> targets=new ArrayList<>(attackHandler.getEffectSquare().getPlayersOnSquare());
-        targets=targets.stream().distinct().collect(Collectors.toList());
         attackHandler.setPossibleTargets(targets);
     }
 }
@@ -492,8 +494,6 @@ class NextSquareInDirection implements Operation {
         } else if (diffy == 0) {
             nextSquare = targetPosition.getOneOfNeighbour(targetPosition.getX() - diffx, targetPosition.getY());
         }
-        if (nextSquare == null)
-            MessageHandler.sendInfo(currentPlayer,"You are end of map have not next square",room);
         attackHandler.setEffectSquare(nextSquare);
 
 
@@ -565,6 +565,10 @@ class TargetingScope implements Operation{
         AttackHandler attackHandler = room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         List<AmmoColor> ammoColors = currentPlayer.allAmmo().entrySet().stream().filter(x->x.getValue()>0).map(Map.Entry::getKey).collect(Collectors.toList());
+        Set<Player> possibleTargets = new HashSet<>(attackHandler.getDamaged().keySet());
+        possibleTargets.addAll(attackHandler.getMarked().keySet());
+        if (possibleTargets.isEmpty())
+            throw new  NotExecutedException("there are not possible players can be shoot ");
         if (ammoColors.isEmpty())
             throw new NotExecutedException("You have not enough ammo to pay");
         AmmoColor ammoColor = MessageHandler.chooseAmmoColor(currentPlayer,ammoColors,room);
@@ -574,8 +578,7 @@ class TargetingScope implements Operation{
         } catch (NotEnoughException e) {
             throw new NotExecutedException(e.getMessage());
         }
-        Set<Player> possibleTargets = new HashSet<>(attackHandler.getDamaged().keySet());
-        possibleTargets.addAll(attackHandler.getMarked().keySet());
+
         attackHandler.setPossibleTargets(new ArrayList<>(possibleTargets));
     }
 }

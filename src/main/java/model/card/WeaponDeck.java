@@ -158,7 +158,7 @@ public class WeaponDeck extends Deck<Weapon>{
         effects=new LinkedHashMap<>();
         description = "Choose a square you can see, but not your square. Call it \"the vortex\". " +
                 "Choose a target on the vortex or 1 move away from it. Move it onto the vortex and give it 2 damage.\n";
-        operations= Arrays.asList(new SelectEffectSquare(1),selectTarget1, moveTargetToEffectSquare, damage1, setTargetToSelected);
+        operations= Arrays.asList(new SelectEffectSquare(1),selectTarget1, moveTargetToEffectSquare, damage2, setTargetToSelected);
         effects.put(new Effect(basicEffect,description, Collections.emptyList(), operations),0);
         description = "Choose up to 2 other targets on the vortex or 1 move away from it. " +
                 "Move them onto the vortex and give them each 1 damage.\n";
@@ -335,7 +335,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 "move). You may deal 2 damage to 1 target there, as well.\n";
         operations = Arrays.asList(maxDistance1, minDistance0, selectTarget1, new NextSquareInDirection(),
                 moveToTarget, damage2, update, targetOnEffectSquare, selectTarget1, moveToTarget, damage2);
-        effects.put(new Effect("Rocket fist mode",description, Collections.emptyList(), operations), 0);
+        effects.put(new Effect("Rocket fist mode",description, Collections.singletonList(AmmoColor.BLUE), operations), 0);
         description = "Notes: In rocket fist mode, you're flying 2 squares in a straight line, punching 1 person per square.\n";
 
         weapons.add(new Weapon("POWER GLOVE", description, AmmoColor.YELLOW, Collections.singletonList(AmmoColor.BLUE),
@@ -349,7 +349,7 @@ public class WeaponDeck extends Deck<Weapon>{
         effects.put(new Effect(basicMode,description, Collections.emptyList(), operations), 0);
         description = "Deal 1 damage to all targets that are exactly 1 move away.\n";
         operations = Arrays.asList(maxDistance1, minDistance0, selectAllTarget, damage1);
-        effects.put(new Effect("Tin tsunami mode",description, Collections.emptyList(), operations), 0);
+        effects.put(new Effect("Tin tsunami mode",description, Collections.singletonList(AmmoColor.YELLOW), operations), 0);
 
         weapons.add(new Weapon("SHOCKWAVE", "", AmmoColor.YELLOW, Collections.emptyList(),
                 false, effects));
@@ -362,7 +362,7 @@ public class WeaponDeck extends Deck<Weapon>{
         description = "Deal 3 damage to 1 target on your square, then move that target 0, 1, " +
                 "or 2 squares in one direction.\n";
         operations=Arrays.asList(sameSquare,selectTarget1,damage3,new Repel(2));
-        effects.put(new Effect("Pulverize mode",description,Collections.emptyList(), operations),0);
+        effects.put(new Effect("Pulverize mode",description,Collections.singletonList(AmmoColor.RED), operations),0);
         description = "Notes: Remember that moves go through doors, but not walls.\n";
         weapons.add(new Weapon("SLEDGEHAMMER", description, AmmoColor.YELLOW, Collections.emptyList(),
                 false,effects));
