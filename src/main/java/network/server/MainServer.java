@@ -54,7 +54,7 @@ public class MainServer {
 
         try {
             MainServer server = new MainServer();
-            server.startServer(1099, 8000);
+            server.startServer(Configs.getInstance().getRmiPort(), Configs.getInstance().getSocketPort());
         }catch (Exception e){
             logger.log(Level.SEVERE, e.toString(), e);
         }

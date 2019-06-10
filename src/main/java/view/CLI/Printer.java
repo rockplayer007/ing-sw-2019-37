@@ -663,7 +663,7 @@ public class Printer {
                 for (int w = 0; w < skullBoard.getCells().get(k).getPoint(); w++){
                     raw1.append("-");
                     raw2.append(colorToAnsi(skullBoard.getCells().get(k).getKillColor()))
-                            .append(DROP);
+                            .append(SKULL);
                 }
             }
             raw1.append("-+");
@@ -722,11 +722,12 @@ public class Printer {
             }
             else{
                 //add extra space when there are less weapons
-                if(nWeapons < 11){
+                if(nWeapons < 9){
                     line.append(String.format(" %45s", " "));
                     nWeapons++;
                 }
                 else {
+                    line.append(String.format(" %45s", " "));
                     skullB = true;
                 }
             }

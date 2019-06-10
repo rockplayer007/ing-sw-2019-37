@@ -20,7 +20,6 @@ import java.rmi.NotBoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -201,7 +200,6 @@ public class CLI implements ViewInterface {
                 printer.println("Bye bey " + mainClient.getUsername());
             }
         });
-
     }
 
     @Override
