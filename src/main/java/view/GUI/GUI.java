@@ -194,7 +194,7 @@ public class GUI implements ViewInterface {
     }
 
     @Override
-    public void choosePowerup(List<Powerup> powerups, boolean optional) {
+    public void choosePowerup(List<Powerup> powerups, boolean optional, String info) {
         Component component = frame.getContentPane().getComponent(0);
           if ((component.getName().equals("mapPanel"))) {
               MapPanel mapPanel = (MapPanel) component;
@@ -204,7 +204,7 @@ public class GUI implements ViewInterface {
     }
 
     @Override
-    public void chooseWeapon(List<Weapon> weapons, boolean optional) {
+    public void chooseWeapon(List<Weapon> weapons, boolean optional, String info) {
 
         Component component = frame.getContentPane().getComponent(0);
           if ((component.getName().equals("mapPanel"))) {
@@ -223,7 +223,7 @@ public class GUI implements ViewInterface {
     }
 
     @Override
-    public void choosePlayer(List<Player> players) {
+    public void choosePlayer(List<Player> players, String info) {
         Component component = frame.getContentPane().getComponent(0);
         if ((component.getName().equals("mapPanel"))) {
             MapPanel mapPanel = (MapPanel) component;
@@ -232,7 +232,7 @@ public class GUI implements ViewInterface {
     }
 
     @Override
-    public void chooseDirection(List<Square.Direction> directions) {
+    public void chooseDirection(List<Square.Direction> directions, String info) {
         Component component = frame.getContentPane().getComponent(0);
         if ((component.getName().equals("mapPanel"))) {
             MapPanel mapPanel = (MapPanel) component;
@@ -302,7 +302,7 @@ public class GUI implements ViewInterface {
     }
 
     @Override
-    public void chooseSquare(List<Square> squares) {
+    public void chooseSquare(List<Square> squares, String info) {
         Component component =frame.getContentPane().getComponent(0);
         if ((component.getName().equals("mapPanel"))){
             MapPanel map = (MapPanel) component;

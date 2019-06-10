@@ -29,7 +29,6 @@ public enum  ActionState {
         List<Weapon> possibleWeapons = player.getWeapons().stream()
                 .filter(Weapon::getCharged).collect(Collectors.toList());
 
-
         if(possibleWeapons.isEmpty() || dontShoot){
             List<ActionOption> noWeaponOption = new ArrayList<>(options);
 
