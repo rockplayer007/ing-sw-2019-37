@@ -101,7 +101,7 @@ public class MapPanel extends JLayeredPane {
 
     }
 
-    public void getPlayer(List<Player> players, MainClient mainClient) {
+    public void getPlayer(List<Player> players, MainClient mainClient,String info) {
         resetRooms();
         resetPlayersEnabled();
         for (int i = 0; i < players.size(); i++) {
@@ -120,7 +120,9 @@ public class MapPanel extends JLayeredPane {
                 }
             }
         }
+        addActionInfo(info);
     }
+
 
     private void removePlayerActions() {
         for (int i = 0; i < playerIcon.size(); i++) {
@@ -460,7 +462,7 @@ public class MapPanel extends JLayeredPane {
     }
 
 
-    public void getSquareSelected(List<Square> squares, MainClient mainClient) {
+    public void getSquareSelected(List<Square> squares, MainClient mainClient,String info) {
         resetRooms();
         for (int i = 0; i < squares.size(); i++) {
             Square square = squares.get(i);
@@ -479,6 +481,7 @@ public class MapPanel extends JLayeredPane {
                 }
             });
         }
+        addActionInfo(info);
     }
 
     private void resetPowerups() {
@@ -490,7 +493,7 @@ public class MapPanel extends JLayeredPane {
     }
 
 
-    public void getPowerupSelected(List<Powerup> powerups, boolean optional, MainClient mainClient) {
+    public void getPowerupSelected(List<Powerup> powerups, boolean optional, MainClient mainClient,String info) {
         List<String> cards = new ArrayList<>();
         for (int i = 0; i < powerups.size(); i++) {
             cards.add(powerups.get(i).getName() + powerups.get(i).getAmmo().toString());
@@ -498,12 +501,13 @@ public class MapPanel extends JLayeredPane {
         SelectCardPanel selectCardPanel = new SelectCardPanel(cards, optional, mainClient, chooseCard, this);
         chooseCard.getContentPane().removeAll();
         chooseCard.getContentPane().add(selectCardPanel);
-        chooseCard.setTitle("Choose Powerup");
+        chooseCard.setTitle(info);
+        addActionInfo(info);
         chooseCard.pack();
         chooseCard.setVisible(true);
     }
 
-    public void getWeaponSelected(List<Weapon> weapons, boolean optional, MainClient mainClient) {
+    public void getWeaponSelected(List<Weapon> weapons, boolean optional, MainClient mainClient,String info) {
         List<String> cards = new ArrayList<>();
         for (int i = 0; i < weapons.size(); i++) {
             cards.add(weapons.get(i).getName());
@@ -512,7 +516,8 @@ public class MapPanel extends JLayeredPane {
         chooseCard.getContentPane().removeAll();
         SelectCardPanel selectCardPanel = new SelectCardPanel(cards, optional, mainClient, chooseCard, this);
         chooseCard.getContentPane().add(selectCardPanel);
-        chooseCard.setTitle("Choose Weapon");
+        chooseCard.setTitle(info);
+        addActionInfo(info);
         chooseCard.pack();
         chooseCard.setVisible(true);
     }
@@ -569,7 +574,7 @@ public class MapPanel extends JLayeredPane {
         }
     }
 
-    public void getDirection(List<Square.Direction> directions, MainClient mainClient) {
+    public void getDirection(List<Square.Direction> directions, MainClient mainClient, String info) {
         choose.getContentPane().removeAll();
         choose.setLayout(new GridLayout(2,2));
         choose.setLocation(300, 50);
@@ -591,7 +596,8 @@ public class MapPanel extends JLayeredPane {
 
             choose.add(dir);
         }
-        choose.setTitle("Choose Direction");
+        choose.setTitle(info);
+        addActionInfo(info);
         choose.pack();
         choose.setVisible(true);
     }
@@ -785,6 +791,17 @@ public class MapPanel extends JLayeredPane {
         JLabel info=new JLabel(message);
         messagePanel.add(text);
         messagePanel.add(info);
+        messageScrollPane =new JScrollPane(messagePanel);
+        setMessageScrollPane();
+        this.add(messageScrollPane);
+    }
+
+    private void addActionInfo(String info){
+        this.remove(messageScrollPane);
+        messagePanel.setLayout(new GridLayout(rows++,1));
+        JLabel text=new JLabel(info);
+        text.setFont(new Font(null,Font.BOLD,14));
+        messagePanel.add(text);
         messageScrollPane =new JScrollPane(messagePanel);
         setMessageScrollPane();
         this.add(messageScrollPane);

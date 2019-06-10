@@ -80,6 +80,7 @@ public class GUI implements ViewInterface {
                         frame.getContentPane().removeAll();
                         LoadingPanel loadingPanel = new LoadingPanel();
                         frame.getContentPane().add(loadingPanel);
+                        frame.setVisible(true);
                         MainClient.setSocket(loginPanel.getConnection());
                         if(loginPanel.getIp().equals("127.0.0.1"))
                             MainClient.setServerIp("localhost");
@@ -198,7 +199,7 @@ public class GUI implements ViewInterface {
         Component component = frame.getContentPane().getComponent(0);
           if ((component.getName().equals("mapPanel"))) {
               MapPanel mapPanel = (MapPanel) component;
-              mapPanel.getPowerupSelected(powerups, optional, mainClient);
+              mapPanel.getPowerupSelected(powerups, optional, mainClient,info);
               jDialog.setVisible(false);
           }
     }
@@ -209,7 +210,7 @@ public class GUI implements ViewInterface {
         Component component = frame.getContentPane().getComponent(0);
           if ((component.getName().equals("mapPanel"))) {
               MapPanel mapPanel = (MapPanel) component;
-              mapPanel.getWeaponSelected(weapons,optional,mainClient);
+              mapPanel.getWeaponSelected(weapons,optional,mainClient,info);
           }
     }
 
@@ -227,7 +228,7 @@ public class GUI implements ViewInterface {
         Component component = frame.getContentPane().getComponent(0);
         if ((component.getName().equals("mapPanel"))) {
             MapPanel mapPanel = (MapPanel) component;
-            mapPanel.getPlayer(players,mainClient);
+            mapPanel.getPlayer(players,mainClient,info);
         }
     }
 
@@ -236,7 +237,7 @@ public class GUI implements ViewInterface {
         Component component = frame.getContentPane().getComponent(0);
         if ((component.getName().equals("mapPanel"))) {
             MapPanel mapPanel = (MapPanel) component;
-            mapPanel.getDirection(directions,mainClient);
+            mapPanel.getDirection(directions,mainClient,info);
         }
     }
 
@@ -306,7 +307,7 @@ public class GUI implements ViewInterface {
         Component component =frame.getContentPane().getComponent(0);
         if ((component.getName().equals("mapPanel"))){
             MapPanel map = (MapPanel) component;
-            map.getSquareSelected(squares,mainClient);
+            map.getSquareSelected(squares,mainClient,info);
         }
     }
 
