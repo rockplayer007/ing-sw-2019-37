@@ -30,7 +30,7 @@ public class GUI implements ViewInterface {
     private boolean first=true;
     private boolean firstUpdate=true;
     private MapPanel mapPanel;
-    private JDialog jDialog= new JDialog(frame,"TIMEOUT");
+    private JFrame jDialog= new JFrame("TIMEOUT");
 
 
     public GUI(MainClient mainClient) {
@@ -141,10 +141,22 @@ public class GUI implements ViewInterface {
 
     @Override
     public void timeout() {
+        jDialog.getContentPane().removeAll();
         JLabel label = new JLabel("The time to perform the action has expired.");
-        jDialog.add(label);
+        jDialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         jDialog.setSize(300, 100);
         jDialog.setLocation(500,10);
+        jDialog.setLayout(new BorderLayout());
+        jDialog.add(label,BorderLayout.CENTER);
+        JButton reconnect = new JButton("Reconnect");
+        reconnect.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                mainClient.sendCredentials();
+                jDialog.setVisible(false);
+            }
+        });
+        jDialog.add(reconnect,BorderLayout.SOUTH);
         jDialog.setVisible(true);
         Component component =frame.getContentPane().getComponent(0);
         if (component.getName().equals("chooseBoard")){
@@ -275,6 +287,7 @@ public class GUI implements ViewInterface {
         ScorePanel scorePanel= new ScorePanel(score);
         frame.getContentPane().add(scorePanel);
         frame.setVisible(true);
+        jDialog.setVisible(false);
 
     }
 

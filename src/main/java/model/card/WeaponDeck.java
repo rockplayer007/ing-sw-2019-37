@@ -196,12 +196,12 @@ public class WeaponDeck extends Deck<Weapon>{
         effects = new LinkedHashMap<>();
         description = "Deal 1 damage to 1 target you can see at least 1 move away. " +
                 "Then give 1 mark to that target and everyone else on that square.\n";
-        operations = Arrays.asList(visiblePlayers, minDistance0, selectTarget1, damage1, mark1,
+        operations = Arrays.asList(visiblePlayers, minDistance0, selectTarget1, damage1,
                 setTargetPositionAsEffectSquare, targetOnEffectSquare, selectAllTarget, mark1);
         effects.put(new Effect(basicMode,description, Collections.emptyList(), operations), 0);
         description = "Deal 1 damage to 1 target you can see at least 1 move away. " +
                 "Then give 2 marks to that target and everyone else on that square.\n";
-        operations = Arrays.asList(visiblePlayers, minDistance0, selectTarget1, damage1, mark1,
+        operations = Arrays.asList(visiblePlayers, minDistance0, selectTarget1, damage1,
                 setTargetPositionAsEffectSquare, targetOnEffectSquare, selectAllTarget, mark2);
         effects.put(new Effect("Nano-tracer mode",description,Collections.singletonList(AmmoColor.RED), operations), 0);
 
@@ -242,7 +242,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 "and 1 to everyone on a different square. If you target your own square, you will not be moved or damaged.\n";
 
         weapons.add(new Weapon("GRENADE LAUNCHER", description, AmmoColor.RED, Collections.singletonList(AmmoColor.RED),
-                false, effects));
+                true, effects));
 
 
         effects = new LinkedHashMap<>();
@@ -262,7 +262,7 @@ public class WeaponDeck extends Deck<Weapon>{
                 "– your target will take 3 damage total.\n";
 
         weapons.add(new Weapon("ROCKET LAUNCHER",description, AmmoColor.RED, Collections.singletonList(AmmoColor.RED),
-                false, effects));
+                true, effects));
 
 
         effects = new LinkedHashMap<>();
