@@ -194,7 +194,8 @@ public class MainClient {
                 for(String powerup : stringed){
                     powerups.add( gson.fromJson(powerup, Powerup.class));
                 }
-                view.choosePowerup(powerups, ((AnswerRequest) message).isOptional());
+                view.choosePowerup(powerups, ((AnswerRequest) message).isOptional(),
+                        ((AnswerRequest) message).getInfo());
                 break;
 
             case WEAPON_REQUEST:
@@ -204,7 +205,7 @@ public class MainClient {
                 for(String weapon : stringed){
                     weapons.add( gson.fromJson(weapon, Weapon.class));
                 }
-                view.chooseWeapon(weapons, ((AnswerRequest) message).isOptional());
+                view.chooseWeapon(weapons, ((AnswerRequest) message).isOptional(), ((AnswerRequest) message).getInfo());
                 break;
             case ACTION_REQUEST:
 
@@ -218,7 +219,7 @@ public class MainClient {
                 stringed = ((AnswerRequest) message).getRequests();
                 List<Square> squares = new ArrayList<>();
                 stringed.forEach(square -> squares.add(gson.fromJson(square, Square.class)));
-                view.chooseSquare(squares);
+                view.chooseSquare(squares, ((AnswerRequest) message).getInfo());
                 break;
             case EFFECT_REQUEST:
                 stringed = ((AnswerRequest) message).getRequests();
@@ -230,13 +231,13 @@ public class MainClient {
                 stringed = ((AnswerRequest) message).getRequests();
                 List<Player> players = new ArrayList<>();
                 stringed.forEach(square -> players.add(gson.fromJson(square, Player.class)));
-                view.choosePlayer(players);
+                view.choosePlayer(players, ((AnswerRequest) message).getInfo());
                 break;
             case DIRECTION_REQUEST:
                 stringed = ((AnswerRequest) message).getRequests();
                 List<Square.Direction> directions = new ArrayList<>();
                 stringed.forEach(square -> directions.add(gson.fromJson(square, Square.Direction.class)));
-                view.chooseDirection(directions);
+                view.chooseDirection(directions, ((AnswerRequest) message).getInfo());
                 break;
             case AMMOCOLOR_REQUEST:
                 stringed = ((AnswerRequest) message).getRequests();

@@ -46,7 +46,8 @@ public class RoundController {
             if(!powerups.isEmpty()){
 
                 Powerup chosenCard = MessageHandler
-                        .chooseCard(powerups, true, roomController.getRoom(), false);
+                        .chooseCard(powerups, true, roomController.getRoom(), false,
+                                "Want to attack with one of your powerups?");
 
                 //null means the player doesnt want to use powerups
                 if (chosenCard != null){
@@ -202,7 +203,8 @@ public class RoundController {
             case SHOOT:
                 //ask card
                 usableWeapons = player.getWeapons().stream().filter(Weapon::getCharged).collect(Collectors.toList());
-                chosenWeapon = MessageHandler.chooseCard(usableWeapons, false, roomController.getRoom(), true);
+                chosenWeapon = MessageHandler.chooseCard(usableWeapons, false, roomController.getRoom(), true,
+                        "Shoot with one of your weapons!");
 
                 if (chosenWeapon == null) {
                     //cheater
@@ -228,7 +230,8 @@ public class RoundController {
 
                 //ask card
                 usableWeapons = player.getWeapons().stream().filter(Weapon::getCharged).collect(Collectors.toList());
-                chosenWeapon = MessageHandler.chooseCard(usableWeapons, false, roomController.getRoom(), true);
+                chosenWeapon = MessageHandler.chooseCard(usableWeapons, false, roomController.getRoom(), true,
+                        "Shoot with one of your weapons!");
 
                 if (chosenWeapon == null) {
                     //cheater
@@ -257,7 +260,8 @@ public class RoundController {
 
                 //ask card
                 usableWeapons = player.getWeapons().stream().filter(Weapon::getCharged).collect(Collectors.toList());
-                chosenWeapon = MessageHandler.chooseCard(usableWeapons, false, roomController.getRoom(), true);
+                chosenWeapon = MessageHandler.chooseCard(usableWeapons, false, roomController.getRoom(), true,
+                        "Shoot with one of your weapons!");
 
                 if (chosenWeapon == null) {
                     //cheater
@@ -286,7 +290,8 @@ public class RoundController {
 
                 //ask card
                 usableWeapons = player.getWeapons().stream().filter(Weapon::getCharged).collect(Collectors.toList());
-                chosenWeapon = MessageHandler.chooseCard(usableWeapons, false, roomController.getRoom(), true);
+                chosenWeapon = MessageHandler.chooseCard(usableWeapons, false, roomController.getRoom(), true,
+                        "Shoot with one of your weapons!");
 
                 if (chosenWeapon == null) {
                     //cheater

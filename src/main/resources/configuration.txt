@@ -1,6 +1,8 @@
 turn time: 300
-minimum players: 2
+minimum players: 3
 maximum players: 5
 time for TAGBACK GRANADE: 10
-creating room time: 5
+creating room time: 10
 skulls: 8
+RMI port: 1099
+Socket port: 8000

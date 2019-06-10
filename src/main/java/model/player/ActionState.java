@@ -1,10 +1,12 @@
 package model.player;
 
 import com.google.gson.Gson;
+import model.card.Weapon;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public enum  ActionState {
 
@@ -23,7 +25,11 @@ public enum  ActionState {
 
     }
     public List<ActionOption> getChoices(Player player, boolean dontShoot){
-        if(player.getWeapons().isEmpty() || dontShoot){
+
+        List<Weapon> possibleWeapons = player.getWeapons().stream()
+                .filter(Weapon::getCharged).collect(Collectors.toList());
+
+        if(possibleWeapons.isEmpty() || dontShoot){
             List<ActionOption> noWeaponOption = new ArrayList<>(options);
 
             //remove all possible shoot options when the player doesnt have weapons

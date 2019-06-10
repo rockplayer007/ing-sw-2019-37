@@ -53,17 +53,17 @@ public interface ViewInterface {
 
     void chooseAction(List<ActionOption> actions);
 
-    void chooseSquare(List<Square> squares);
+    void chooseSquare(List<Square> squares, String info);
 
-    void choosePowerup(List<Powerup> powerups, boolean optional);
+    void choosePowerup(List<Powerup> powerups, boolean optional, String info);
 
-    void chooseWeapon(List<Weapon> weapons, boolean optional);
+    void chooseWeapon(List<Weapon> weapons, boolean optional, String info);
 
     void chooseEffect(List<Effect> effects, boolean optional);
 
-    void choosePlayer(List<Player> players);
+    void choosePlayer(List<Player> players, String info);
 
-    void chooseDirection(List<Square.Direction> directions);
+    void chooseDirection(List<Square.Direction> directions, String info);
 
     void chooseAmmoColor(List<AmmoColor> ammoColors);
 

@@ -6,19 +6,13 @@ import model.board.GenerationSquare;
 import model.board.Square;
 import model.card.*;
 
-import model.exceptions.AmmoException;
-import model.exceptions.NotEnoughException;
-import model.exceptions.NotExecutedException;
+import model.exceptions.*;
 import model.gamehandler.AttackHandler;
 import model.gamehandler.PaymentRecord;
 import model.gamehandler.Room;
 import model.player.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import model.exceptions.TimeFinishedException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ActionHandler {
@@ -73,10 +67,12 @@ public class ActionHandler {
                 room.undoPayment();         // do undo payment
                 if (!used) {                // if the weapon is not used do undo position for player and throw exception
                     player.movePlayer(playerPosition);
-                    throw new NotExecutedException("Effect is not possible used"+e.getMessage());
+                    throw new NotExecutedException("Effect is not possible used, "+e.getMessage());
                 }
             } catch (NotEnoughException e) {
                 MessageHandler.sendInfo(player,"you can not use this effect:"+e.getMessage(),room); // send message to player
+            } catch (InterruptOperationException e) {
+                MessageHandler.sendInfo(player,e.getMessage(),room); // send message to player
             }
 
             if (validEffect.isEmpty()|| validEffect.stream().allMatch(x->effects.get(x)==-1)){
@@ -98,7 +94,7 @@ public class ActionHandler {
      */
     public static void run(Player player, int distanceMax, Room room) throws TimeFinishedException {
         Set<Square> validPositions = player.getPosition().getValidPosition(distanceMax);
-        Square destination = MessageHandler.chooseSquare(player, validPositions, room);
+        Square destination = MessageHandler.chooseSquare(player, validPositions, room,"Which square do you like to move?");
         player.movePlayer(destination);
     }
 
@@ -139,7 +135,8 @@ public class ActionHandler {
 
             if (!weapons.isEmpty()){
                 //weapon to choose
-                Weapon weapon = MessageHandler.chooseCard(weapons, true, room, true);
+                Weapon weapon = MessageHandler.chooseCard(weapons, true, room, true,
+                        "Which card do you like to pick?");
 
                 if (weapon==null){
                     throw new NotExecutedException("No card has been chosen");
@@ -160,7 +157,8 @@ public class ActionHandler {
 
                     Weapon discardWeapon;
                     try {
-                        discardWeapon = MessageHandler.chooseCard(player.getWeapons(), false, room, true);
+                        discardWeapon = MessageHandler.chooseCard(player.getWeapons(), false, room, true,
+                                "You have too many weapons, leave one!");
                     } catch (TimeFinishedException e) {
 
                         room.undoPayment();
@@ -212,7 +210,8 @@ public class ActionHandler {
         List<Weapon> weapons = player.getWeapons().stream().filter(x->!x.getCharged()).collect(Collectors.toList());
         weapons =  weapons.stream().filter(x->player.enoughAmmos(x.getChargeCost(),true)).collect(Collectors.toList());
         while (!weapons.isEmpty()) {
-            Weapon weapon = MessageHandler.chooseCard(weapons, true, room, true);
+            Weapon weapon = MessageHandler.chooseCard(weapons, true, room, true,
+                    "Want to reload one of your weapons?");
             if (weapon == null)
                 break;
             List<AmmoColor> cost = weapon.getChargeCost();
@@ -237,7 +236,7 @@ public class ActionHandler {
      * @throws TimeFinishedException when the client takes too long for choosing
      */
     public static void payment(Player player, List<AmmoColor> cost, Room room) throws NotEnoughException, TimeFinishedException {
-
+        room.setPaymentRecord(new PaymentRecord(Collections.emptyList(),Collections.emptyList()));
         List<AmmoColor> tempCost = new ArrayList<>(cost);
         if (cost.isEmpty()){
             return;
@@ -261,7 +260,8 @@ public class ActionHandler {
             Powerup chosenCard = null;
             try {
                 chosenCard = MessageHandler
-                        .chooseCard(possiblePowerups, true, room, false);
+                        .chooseCard(possiblePowerups, true, room, false,
+                                "Want to pay with one of your powerups?");
             } catch (TimeFinishedException e) {
                 throw new TimeFinishedException();
             }
@@ -273,29 +273,26 @@ public class ActionHandler {
                 tempCost.remove(chosenCard.getAmmo());
                 possiblePowerups.remove(chosenCard);
             }
-            else {
-                room.setPaymentRecord(new PaymentRecord(powerupToPay,tempCost));
-                if (player.enoughAmmos(tempCost, false)) {
-                    //pay the remaining with ammo instead
-                    for (AmmoColor ammo : tempCost) {
-                        try {
-                            player.removeAmmo(ammo);
-                        } catch (AmmoException e) {
-                            throw new NotEnoughException(e.getMessage());
-                        }
-
-                    }
-                    powerupToPay.forEach(x->{
-                        player.removePowerup(x);
-                        powerDeck.usedCard(x);
-                    });
-
-                    tempCost.clear();
-                }else
-                    throw new NotEnoughException("have not enough ammo");
-            }
-
+            else
+                break;
         }
+        room.setPaymentRecord(new PaymentRecord(powerupToPay,tempCost));
+        if (player.enoughAmmos(tempCost, false)) {
+            //pay the remaining with ammo instead
+            for (AmmoColor ammo : tempCost) {
+                try {
+                    player.removeAmmo(ammo);
+                } catch (AmmoException e) {
+                    throw new NotEnoughException(e.getMessage());
+                }
+            }
+            powerupToPay.forEach(x->{
+                player.removePowerup(x);
+                powerDeck.usedCard(x);
+            });
+
+        }else
+            throw new NotEnoughException("have not enough ammo");
     }
 
 }
