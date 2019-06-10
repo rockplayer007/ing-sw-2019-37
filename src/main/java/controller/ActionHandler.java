@@ -94,7 +94,7 @@ public class ActionHandler {
      */
     public static void run(Player player, int distanceMax, Room room) throws TimeFinishedException {
         Set<Square> validPositions = player.getPosition().getValidPosition(distanceMax);
-        Square destination = MessageHandler.chooseSquare(player, validPositions, room);
+        Square destination = MessageHandler.chooseSquare(player, validPositions, room,"Which square do you like to move?");
         player.movePlayer(destination);
     }
 
@@ -135,7 +135,8 @@ public class ActionHandler {
 
             if (!weapons.isEmpty()){
                 //weapon to choose
-                Weapon weapon = MessageHandler.chooseCard(weapons, true, room, true);
+                Weapon weapon = MessageHandler.chooseCard(weapons, true, room, true,
+                        "Which card do you like to pick?");
 
                 if (weapon==null){
                     throw new NotExecutedException("No card has been chosen");
@@ -156,7 +157,8 @@ public class ActionHandler {
 
                     Weapon discardWeapon;
                     try {
-                        discardWeapon = MessageHandler.chooseCard(player.getWeapons(), false, room, true);
+                        discardWeapon = MessageHandler.chooseCard(player.getWeapons(), false, room, true,
+                                "You have too many weapons, leave one!");
                     } catch (TimeFinishedException e) {
 
                         room.undoPayment();
@@ -208,7 +210,8 @@ public class ActionHandler {
         List<Weapon> weapons = player.getWeapons().stream().filter(x->!x.getCharged()).collect(Collectors.toList());
         weapons =  weapons.stream().filter(x->player.enoughAmmos(x.getChargeCost(),true)).collect(Collectors.toList());
         while (!weapons.isEmpty()) {
-            Weapon weapon = MessageHandler.chooseCard(weapons, true, room, true);
+            Weapon weapon = MessageHandler.chooseCard(weapons, true, room, true,
+                    "Want to reload one of your weapons?");
             if (weapon == null)
                 break;
             List<AmmoColor> cost = weapon.getChargeCost();
@@ -257,7 +260,8 @@ public class ActionHandler {
             Powerup chosenCard = null;
             try {
                 chosenCard = MessageHandler
-                        .chooseCard(possiblePowerups, true, room, false);
+                        .chooseCard(possiblePowerups, true, room, false,
+                                "Want to pay with one of your powerups?");
             } catch (TimeFinishedException e) {
                 throw new TimeFinishedException();
             }

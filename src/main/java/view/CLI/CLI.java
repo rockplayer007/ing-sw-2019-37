@@ -20,7 +20,6 @@ import java.rmi.NotBoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -121,11 +120,12 @@ public class CLI implements ViewInterface {
      * @param maps possible boards to choose from
      */
     public void chooseBoard(Map<Integer, String> maps){
-        printer.displayRequest(new ArrayList<>(maps.values()), board -> mainClient.sendSelectedBoard(board));
+        printer.displayRequest(new ArrayList<>(maps.values()), board -> mainClient.sendSelectedBoard(board),
+                "Where do you want to fight?" );
     }
 
     @Override
-    public void chooseWeapon(List<Weapon> weapons, boolean optional) {
+    public void chooseWeapon(List<Weapon> weapons, boolean optional, String info) {
         printer.askWeapon(weapons, weapon -> {
             if(weapon >= weapons.size()){
                 mainClient.sendSelectedCard(-1);
@@ -133,7 +133,7 @@ public class CLI implements ViewInterface {
             else {
                 mainClient.sendSelectedCard(weapon);
             }
-        }, optional);
+        }, optional, info);
     }
 
     @Override
@@ -142,13 +142,13 @@ public class CLI implements ViewInterface {
     }
 
     @Override
-    public void choosePlayer(List<Player> players) {
-        printer.askPlayer(players, player -> mainClient.sendSelectedPlayer(player));
+    public void choosePlayer(List<Player> players, String info) {
+        printer.askPlayer(players, player -> mainClient.sendSelectedPlayer(player), info);
     }
 
     @Override
-    public void chooseDirection(List<Square.Direction> directions) {
-        printer.askDirection(directions, direction -> mainClient.sendSelectedDirection(direction));
+    public void chooseDirection(List<Square.Direction> directions, String info) {
+        printer.askDirection(directions, direction -> mainClient.sendSelectedDirection(direction), info);
     }
 
     @Override
@@ -162,7 +162,7 @@ public class CLI implements ViewInterface {
     }
 
 
-    public void choosePowerup(List<Powerup> powerups, boolean optional){
+    public void choosePowerup(List<Powerup> powerups, boolean optional, String info){
         printer.askPowerup(powerups, powerup -> {
             if(powerup >= powerups.size()){
                 mainClient.sendSelectedCard(-1);
@@ -170,7 +170,7 @@ public class CLI implements ViewInterface {
             else {
                 mainClient.sendSelectedCard(powerup);
             }
-        }, optional);
+        }, optional, info);
     }
 
 
@@ -178,12 +178,13 @@ public class CLI implements ViewInterface {
     public void chooseAction(List<ActionOption> actions) {
         List<String> stringed = new ArrayList<>();
         actions.forEach(x -> stringed.add(x.explenation));
-        printer.displayRequest(stringed, board -> mainClient.sendSelectedBoard(board));
+        printer.displayRequest(stringed, board -> mainClient.sendSelectedBoard(board),
+                "What do you want to do?");
     }
 
     @Override
-    public void chooseSquare(List<Square> squares) {
-        printer.askSquare(squares, square -> mainClient.sendSelectedSquare(square));
+    public void chooseSquare(List<Square> squares, String info) {
+        printer.askSquare(squares, square -> mainClient.sendSelectedSquare(square), info);
     }
 
     @Override
@@ -201,7 +202,6 @@ public class CLI implements ViewInterface {
                 printer.println("Bye bey " + mainClient.getUsername());
             }
         });
-
     }
 
     @Override

@@ -35,7 +35,7 @@ public class MapPanel extends JLayeredPane {
     private JFrame choose;
     JFrame selectEffect = new JFrame("Choose Effect");
     private JFrame playerboards = new JFrame("BOARDS");
-    private JFrame chooseRoom;
+    private JFrame chooseRoom= new JFrame();
     private List<JLabel> ammocards = new ArrayList<>();
     private List<JButton> actions = new ArrayList<>();
     private List<Weapon> weaponList = new ArrayList<>();
@@ -693,15 +693,16 @@ public class MapPanel extends JLayeredPane {
 
     public void updateSkullboard(SkullBoard skullBoard){
         int y=37;
-        int x= 79;
+        int x= 79+45*(8-skullBoard.getInitSkulls());
         resetSkullboard();
         StyleSheet styleSheet=new StyleSheet();
-        for(int i=0;i<skullBoard.getCells().size();i++){
+        List<Cell> cells=skullBoard.getCells();
+        for(int i=0;i<cells.size();i++){
             if (skullBoard.getCells().get(i).getPoint()==1) {
                 JLabel point = new JLabel();
                 point.setSize(37,48);
                 point.setLocation(x,y);
-                point.setBackground(styleSheet.stringToColor(skullBoard.getCells().get(i).getKillColor().toString()));
+                point.setBackground(styleSheet.stringToColor(cells.get(i).getKillColor().name()));
                 point.setOpaque(true);
                 this.add(point);
                 skullboard.add(point);
@@ -710,16 +711,15 @@ public class MapPanel extends JLayeredPane {
                 JLabel point1 =new JLabel();
                 point1.setSize(37,35);
                 point1.setLocation(x,y-15);
-                point1.setBackground(styleSheet.stringToColor(skullBoard.getCells().get(i).getKillColor().toString()));
+                point1.setBackground(styleSheet.stringToColor(cells.get(i).getKillColor().name()));
                 point1.setOpaque(true);
-
                 this.add(point1);
 
 
                 JLabel point2 =new JLabel();
                 point2.setSize(37,26);
                 point2.setLocation(x,y+23);
-                point2.setBackground(styleSheet.stringToColor(skullBoard.getCells().get(i).getKillColor().toString()));
+                point2.setBackground(styleSheet.stringToColor(cells.get(i).getKillColor().name()));
                 point2.setOpaque(true);
                 skullboard.add(point1);
                 skullboard.add(point2);
@@ -736,7 +736,7 @@ public class MapPanel extends JLayeredPane {
         messageScrollPane.setLocation(1030,240);
         messageScrollPane.setSize(250,170);
         messageScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        messageScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+       // messageScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         messageScrollPane.setVisible(true);
     }
 
@@ -750,16 +750,15 @@ public class MapPanel extends JLayeredPane {
             messagePanel.setLayout(new GridLayout(rows++,1));
             Player key = entry.getKey();
             Integer value = entry.getValue();
-            JLabel att = new JLabel(key.getNickname() + " \t Damage : " + value);
-            att.setHorizontalAlignment(SwingConstants.RIGHT);
+            JLabel att = new JLabel(key.getNickname() + "\tDamage : " + value);
             messagePanel.add(att);
         }
         for(Map.Entry<Player,Integer> entry: marks.entrySet()) {
             messagePanel.setLayout(new GridLayout(rows++,1));
             Player key = entry.getKey();
             Integer value = entry.getValue();
-            JLabel mark = new JLabel(key.getNickname() + " \t Marks : " + value);
-            mark.setHorizontalAlignment(SwingConstants.RIGHT);
+            JLabel mark = new JLabel(key.getNickname() + "\tMarks  : " + value);
+
             messagePanel.add(mark);
         }
         messageScrollPane =new JScrollPane(messagePanel);

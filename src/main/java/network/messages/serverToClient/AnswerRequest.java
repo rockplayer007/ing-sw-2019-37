@@ -10,10 +10,9 @@ public class AnswerRequest extends ServerToClient {
     private Boolean isOptional = false; //isOptional = true the player can choose if he wants to use the card or not
     private String info;
 
-    public AnswerRequest(List<String> requests, Content content, String info){
+    public AnswerRequest(List<String> requests, Content content){
         super(content);
         this.requests = requests;
-        this.info = info;
     }
 
     public List<String> getRequests() {

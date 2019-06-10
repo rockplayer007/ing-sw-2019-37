@@ -37,11 +37,12 @@ public class MessageHandler {
      * @param  validPositions all square that you can choose.
      * @return the Square that the player choose to move
      */
-    public static Square chooseSquare(Player player,Set<Square> validPositions, Room room) throws TimeFinishedException {
+    public static Square chooseSquare(Player player,Set<Square> validPositions, Room room, String reason) throws TimeFinishedException {
         RoomController roomController = room.getRoomController();
         List<String> send = roomController
                 .toJsonSquareList(validPositions);
-        ServerToClient message = new AnswerRequest(send, Message.Content.SQUARE_REQUEST, "Choose a square");
+        AnswerRequest message = new AnswerRequest(send, Message.Content.SQUARE_REQUEST);
+        message.setInfo(reason);
         ListResponse square = (ListResponse) roomController
                 .sendAndReceive(player, message);
 
@@ -76,7 +77,7 @@ public class MessageHandler {
         List<String> send = roomController
                 .toJsonEffectList(effects);
 
-        AnswerRequest message = new AnswerRequest(send, Message.Content.EFFECT_REQUEST, "Choose an effect");
+        AnswerRequest message = new AnswerRequest(send, Message.Content.EFFECT_REQUEST);
         message.setIsOptional();
         ListResponse effect = (ListResponse) roomController
                 .sendAndReceive(player, message);
@@ -100,7 +101,7 @@ public class MessageHandler {
      * @return the players that the player has chosen
      * @throws TimeFinishedException when the client finishes the time for choosing
      */
-    public static List<Player> choosePlayers(Player player, List<Player> possiblePlayers, int maxPlayerToChoose, Room room) throws TimeFinishedException {
+    public static List<Player> choosePlayers(Player player, List<Player> possiblePlayers, int maxPlayerToChoose, Room room, String info) throws TimeFinishedException {
 
         List<Player> playersToAttack = new ArrayList<>();
         int askIterations = (maxPlayerToChoose < possiblePlayers.size() ? maxPlayerToChoose : possiblePlayers.size());
@@ -111,8 +112,11 @@ public class MessageHandler {
 
             List<String> send = roomController
                     .toJsonPlayerList(possiblePlayers);
+            AnswerRequest message = new AnswerRequest(send, Message.Content.PLAYER_REQUEST);
+            message.setInfo(info);
             ListResponse chosenPlayer = (ListResponse) roomController
-                    .sendAndReceive(player, new AnswerRequest(send, Message.Content.PLAYER_REQUEST, "Choose a player"));
+                    .sendAndReceive(player, message);
+
 
             try{
                 playersToAttack.add(possiblePlayers.get(chosenPlayer.getSelectedItem()));
@@ -134,13 +138,15 @@ public class MessageHandler {
      * @return the chosen direction
      * @throws TimeFinishedException when the client finishes the time for choosing
      */
-    public static Square.Direction chooseDirection(Player player, List<Square.Direction> directions, Room room) throws TimeFinishedException {
+    public static Square.Direction chooseDirection(Player player, List<Square.Direction> directions, Room room, String info) throws TimeFinishedException {
         RoomController roomController = room.getRoomController();
         List<String> send = roomController
                 .toJsonDirectionList(directions);
 
+        AnswerRequest message = new AnswerRequest(send, Message.Content.DIRECTION_REQUEST);
+        message.setInfo(info);
         ListResponse direction = (ListResponse) roomController
-                .sendAndReceive(player, new AnswerRequest(send, Message.Content.DIRECTION_REQUEST, "Choose a direction"));
+                .sendAndReceive(player, message);
 
         try{
             return directions.get(direction.getSelectedItem());
@@ -165,7 +171,7 @@ public class MessageHandler {
                 .toJsonAmmoColorList(ammo);
 
         ListResponse chosenAmmo = (ListResponse) roomController
-                .sendAndReceive(player, new AnswerRequest(send, Message.Content.AMMOCOLOR_REQUEST, "Choose an ammo color"));
+                .sendAndReceive(player, new AnswerRequest(send, Message.Content.AMMOCOLOR_REQUEST));
 
         try{
             return ammo.get(chosenAmmo.getSelectedItem());
@@ -190,7 +196,7 @@ public class MessageHandler {
                 .toJsonColorList(rooms);
 
         ListResponse chosenRoom = (ListResponse) roomController
-                .sendAndReceive(player, new AnswerRequest(send, Message.Content.ROOM_REQUEST, "Choose a room"));
+                .sendAndReceive(player, new AnswerRequest(send, Message.Content.ROOM_REQUEST));
 
         try{
             return rooms.get(chosenRoom.getSelectedItem());
@@ -210,14 +216,17 @@ public class MessageHandler {
      * @return position of card choose in the List
      * @throws TimeFinishedException when the client finishes the time for choosing
      */
-    public static <T extends Card> T chooseCard(List<T> cards, boolean isOptional, Room room, boolean isWeapon) throws TimeFinishedException {
+    public static <T extends Card> T chooseCard(List<T> cards, boolean isOptional, Room room, boolean isWeapon, String reason) throws TimeFinishedException {
         if (cards.isEmpty())
             return null;
         AnswerRequest message = new AnswerRequest(room
                 .getRoomController()
                 .toJsonCardList(cards),
                 //send message corresponding to the request
-                isWeapon ? Message.Content.WEAPON_REQUEST : Message.Content.POWERUP_REQUEST, "Choose a card");
+                isWeapon ? Message.Content.WEAPON_REQUEST : Message.Content.POWERUP_REQUEST);
+
+        message.setInfo(reason);
+
         if(isOptional){
             message.setIsOptional();
         }

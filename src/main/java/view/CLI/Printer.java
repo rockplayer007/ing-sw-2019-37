@@ -36,13 +36,14 @@ public class Printer {
     }
 
 
-    public void displayRequest(List<String> possibilities, Consumer<Integer> selection){
+    public void displayRequest(List<String> possibilities, Consumer<Integer> selection, String info){
         //bofore asking something else cancel the previous request
         if(thread != null){
             closeRequest();
         }
         thread = new Thread( () ->
         {
+            println(colorToAnsi(AmmoColor.RED) + info + colorToAnsi(Color.WHITE));
             int nRequests = possibilities.size();
             for(int i = 0; i < nRequests; i ++){
                 println((i + 1) + ") " + possibilities.get(i));
@@ -80,7 +81,7 @@ public class Printer {
         thread.start();
     }
 
-    public void displaySquares(List<String> possibilities, List<Integer> ids, Consumer<Integer> selection){
+    public void displaySquares(List<String> possibilities, List<Integer> ids, Consumer<Integer> selection, String info){
         //bofore asking something else cancel the previous request
         if(thread != null){
             closeRequest();
@@ -88,6 +89,7 @@ public class Printer {
         thread = new Thread( () ->
         {
 
+            println(colorToAnsi(AmmoColor.RED) + info + colorToAnsi(Color.WHITE));
             for(String temp : possibilities){
                 println(temp);
             }
@@ -123,7 +125,8 @@ public class Printer {
         thread.start();
     }
 
-    public void askPowerup(List<Powerup> powerups, Consumer<Integer> selection, boolean optional){
+    public void askPowerup(List<Powerup> powerups, Consumer<Integer> selection, boolean optional, String info){
+
         List<String> printable = new ArrayList<>();
         for(Powerup powerup : powerups){
             String temp = powerup.getName() + colorToAnsi(powerup.getAmmo()) + " " + AMMO + colorToAnsi(Color.WHITE);
@@ -133,10 +136,10 @@ public class Printer {
             printable.add("Dont choose any powerup");
         }
 
-        displayRequest(printable, selection);
+        displayRequest(printable, selection, info);
     }
 
-    public void askWeapon(List<Weapon> weapons, Consumer<Integer> selection, boolean optional){
+    public void askWeapon(List<Weapon> weapons, Consumer<Integer> selection, boolean optional, String info){
         List<String> printable = new ArrayList<>();
         for(Weapon weapon : weapons){
             StringBuilder charge = new StringBuilder();
@@ -160,10 +163,10 @@ public class Printer {
             printable.add("Dont choose any weapon");
         }
 
-        displayRequest(printable, selection);
+        displayRequest(printable, selection, info);
     }
 
-    public void askSquare(List<Square> squares, Consumer<Integer> selection){
+    public void askSquare(List<Square> squares, Consumer<Integer> selection, String info){
         List<String> printable = new ArrayList<>();
         List<Integer> ids = new ArrayList<>();
         for(Square square : squares){
@@ -182,7 +185,7 @@ public class Printer {
                 }
             }
             selection.accept(squares.indexOf(tempS));
-        });
+        }, info);
     }
 
     public void askEffect(List<Effect> effects, Consumer<Integer> selection, boolean optional){
@@ -202,10 +205,10 @@ public class Printer {
             printable.add("Dont choose effect");
         }
 
-        displayRequest(printable, selection);
+        displayRequest(printable, selection, "How do you want to attack your enemies?");
     }
 
-    public void askPlayer(List<Player> players, Consumer<Integer> selection){
+    public void askPlayer(List<Player> players, Consumer<Integer> selection, String info){
         List<String> printable = new ArrayList<>();
         for(Player player : players){
             String temp = colorToAnsi(Color.WHITE) + "Attack "
@@ -213,7 +216,7 @@ public class Printer {
             printable.add(temp);
         }
 
-        displayRequest(printable, selection);
+        displayRequest(printable, selection, info);
     }
 
     public void askAmmoColor(List<AmmoColor> ammoColors, Consumer<Integer> selection)   {
@@ -223,7 +226,7 @@ public class Printer {
             printable.add(temp);
         }
 
-        displayRequest(printable, selection);
+        displayRequest(printable, selection, "What color do you want to use to pay TARGETING SCOPE?");
     }
 
     public void askRoom(List<Color> rooms, Consumer<Integer> selection){
@@ -233,17 +236,17 @@ public class Printer {
             printable.add(temp);
         }
 
-        displayRequest(printable, selection);
+        displayRequest(printable, selection, "In which room do you want to fire?");
     }
 
-    public void askDirection(List<Square.Direction> directions, Consumer<Integer> selection){
+    public void askDirection(List<Square.Direction> directions, Consumer<Integer> selection, String info){
         List<String> printable = new ArrayList<>();
         for(Square.Direction direction : directions){
             String temp = colorToAnsi(Color.WHITE) + "Shoot " + direction.toString();
             printable.add(temp);
         }
 
-        displayRequest(printable, selection);
+        displayRequest(printable, selection, info);
     }
 
     public void askReconnect(Consumer<Boolean> reconnect){
@@ -663,7 +666,7 @@ public class Printer {
                 for (int w = 0; w < skullBoard.getCells().get(k).getPoint(); w++){
                     raw1.append("-");
                     raw2.append(colorToAnsi(skullBoard.getCells().get(k).getKillColor()))
-                            .append(DROP);
+                            .append(SKULL);
                 }
             }
             raw1.append("-+");
@@ -722,11 +725,12 @@ public class Printer {
             }
             else{
                 //add extra space when there are less weapons
-                if(nWeapons < 11){
+                if(nWeapons < 9){
                     line.append(String.format(" %45s", " "));
                     nWeapons++;
                 }
                 else {
+                    line.append(String.format(" %45s", " "));
                     skullB = true;
                 }
             }
