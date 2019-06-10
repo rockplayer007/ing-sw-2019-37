@@ -81,7 +81,7 @@ public class Printer {
         thread.start();
     }
 
-    public void displaySquares(List<String> possibilities, List<Integer> ids, Consumer<Integer> selection){
+    public void displaySquares(List<String> possibilities, List<Integer> ids, Consumer<Integer> selection, String info){
         //bofore asking something else cancel the previous request
         if(thread != null){
             closeRequest();
@@ -89,6 +89,7 @@ public class Printer {
         thread = new Thread( () ->
         {
 
+            println(colorToAnsi(AmmoColor.RED) + info + colorToAnsi(Color.WHITE));
             for(String temp : possibilities){
                 println(temp);
             }
@@ -184,7 +185,7 @@ public class Printer {
                 }
             }
             selection.accept(squares.indexOf(tempS));
-        });
+        }, info);
     }
 
     public void askEffect(List<Effect> effects, Consumer<Integer> selection, boolean optional){
