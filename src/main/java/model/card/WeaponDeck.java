@@ -58,7 +58,7 @@ public class WeaponDeck extends Deck<Weapon>{
         weapons.add(new Weapon("LOCK RIFLE", "", AmmoColor.BLUE, Collections.singletonList(AmmoColor.BLUE),
                 true, effects));
 
-
+/*
         effects = new HashMap<> ();
         description ="Choose 1 or 2 targets you can see and deal 1 damage to each.\n";
         operations =Arrays.asList( visiblePlayers, selectTargets2, damage1, setTargetToSelected);
@@ -136,7 +136,7 @@ public class WeaponDeck extends Deck<Weapon>{
 
         weapons.add(new Weapon("ELECTROSCYTHE", "", AmmoColor.BLUE, Collections.emptyList(),
                 false, effects));
-
+*/
 
         effects = new LinkedHashMap<>();
         description = "Move a target 0, 1, or 2 squares to a square you can see, and give it 1 damage.\n";
@@ -145,16 +145,17 @@ public class WeaponDeck extends Deck<Weapon>{
         effects.put(new Effect(basicMode,description, Collections.emptyList(), operations), 0);
         description = "Choose a target 0, 1, or 2 moves away from you. " +
                 "Move the target to your square and deal 3 damage to it.\n";
-        operations = Arrays.asList(visiblePlayers, new AddPossibleTargetBeforeMove(2,true),
+        operations = Arrays.asList(new AddPossibleTargetBeforeMove(2,true),
                 selectTarget1, new SetPlayerPositionAsEffectSquare(), moveTargetToEffectSquare, damage3);
         effects.put(new Effect("Punisher mode",description, Arrays.asList(AmmoColor.RED, AmmoColor.YELLOW), operations), 0);
         description = "Notes: You can move a target even if you can't see it. The target ends up in a place where you can see and " +
                 "damage it. The moves do not have to be in the same direction.\n";
+        for (int c = 0;c<20;c++) {
+            weapons.add(new Weapon("TRACTOR BEAM", description, AmmoColor.BLUE, Collections.emptyList(),
+                    false, effects));
+        }
 
-        weapons.add(new Weapon("TRACTOR BEAM", description, AmmoColor.BLUE, Collections.emptyList(),
-                false, effects));
-
-
+/*
         effects=new LinkedHashMap<>();
         description = "Choose a square you can see, but not your square. Call it \"the vortex\". " +
                 "Choose a target on the vortex or 1 move away from it. Move it onto the vortex and give it 2 damage.\n";
@@ -351,6 +352,7 @@ public class WeaponDeck extends Deck<Weapon>{
         operations = Arrays.asList(maxDistance1, minDistance0, selectAllTarget, damage1);
         effects.put(new Effect("Tin tsunami mode",description, Collections.singletonList(AmmoColor.YELLOW), operations), 0);
 
+
         weapons.add(new Weapon("SHOCKWAVE", "", AmmoColor.YELLOW, Collections.emptyList(),
                 false, effects));
 
@@ -367,7 +369,7 @@ public class WeaponDeck extends Deck<Weapon>{
         weapons.add(new Weapon("SLEDGEHAMMER", description, AmmoColor.YELLOW, Collections.emptyList(),
                 false,effects));
 
-
+*/
         return weapons;
     }
 }

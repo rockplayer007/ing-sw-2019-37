@@ -23,7 +23,7 @@ public interface Operation {
 class VisiblePlayers implements Operation{
 
     @Override
-    public void execute(Room room)throws NotExecutedException{
+    public void execute(Room room){
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
         Set<Square> visible = new HashSet<>(currentPlayer.getPosition().visibleSquare(room.getBoard().getMap()));
@@ -31,8 +31,6 @@ class VisiblePlayers implements Operation{
 
         visible.forEach(x-> visiblePlayers.addAll(x.getPlayersOnSquare()));
         visiblePlayers.remove(currentPlayer);
-        if (visiblePlayers.isEmpty())
-            throw new NotExecutedException("there are not possible players can be shoot ");
         attackHandler.setPossibleTargets(visiblePlayers);
     }
 }
@@ -55,7 +53,7 @@ class SelectTargets implements Operation{
             throw new NotExecutedException("there are not possible players can be shoot ");
         List<Player> targets=new ArrayList<>();
         if (distinctSquare) {
-            for (int i = 0; i < Integer.min(numberTargets,possibleTargets.size()); i++){
+            for (int i = 0; i <numberTargets&&!possibleTargets.isEmpty(); i++){
                 targets.addAll(MessageHandler.choosePlayers(currentPlayer,possibleTargets,1,room,"Which player do you want to attack?"));
                 Square targetPostion = targets.get(i).getPosition();
                 possibleTargets = possibleTargets.stream().filter(x->x.getPosition()!=targetPostion).collect(Collectors.toList());
@@ -224,7 +222,7 @@ class  AddPossibleTargetBeforeMove implements Operation{
         possiblePlayers.remove(currentPlayer);
         possiblePlayers = possiblePlayers.stream().filter(x->x.getPosition()!=null).collect(Collectors.toList());
 
-        Set<Square> visibleSquare=new HashSet<>(currentPlayer.getPosition().visibleSquare(room.getBoard().getMap()));
+        Set<Square> visibleSquare = currentPlayer.getPosition().visibleSquare(room.getBoard().getMap());
         if (!yourSquare){
             possiblePlayers.removeAll(attackHandler.getPossibleTargets());
             possiblePlayers=possiblePlayers.stream()
@@ -380,7 +378,7 @@ class DirectionTargets implements Operation{
             map= currentPlayer.getPosition().directionAbsolute(room.getBoard().getMap());
 
         map=map.entrySet().stream()
-                .filter(x -> x.getValue().stream().anyMatch(s -> s.getPlayersOnSquare().isEmpty()))
+                .filter(x -> x.getValue().stream().anyMatch(s ->(!s.getPlayersOnSquare().isEmpty())&&s.getPlayersOnSquare().stream().anyMatch(p->p!=currentPlayer)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         if (map.isEmpty())
             throw new NotExecutedException("there are not possible players can be shoot ");
@@ -391,6 +389,7 @@ class DirectionTargets implements Operation{
         Set<Square> squares=map.get(choice);
         List<Player> possibleTargets=new ArrayList<>();
         squares.forEach(x->possibleTargets.addAll(x.getPlayersOnSquare()));
+        possibleTargets.remove(currentPlayer);
         attackHandler.setPossibleTargets(possibleTargets);
     }
 }

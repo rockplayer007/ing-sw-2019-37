@@ -226,6 +226,7 @@ public class Square implements Serializable {
 
         for(Direction direction : Direction.values()){
             tempSquare = oneDirectionAbsolute(direction, gameBoard);
+            tempSquare.add(this);
             if(!tempSquare.isEmpty()){
                 allSquares.put(direction, tempSquare);
             }
