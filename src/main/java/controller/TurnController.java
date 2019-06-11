@@ -123,6 +123,7 @@ public class TurnController {
                  //when return true means is end of game
                 break;
             }
+            roomController.sendUpdate();//when the player dead need a update
             //when there are less than 3 connected players quit
             if(!room.setNextPlayer()){
                 break;

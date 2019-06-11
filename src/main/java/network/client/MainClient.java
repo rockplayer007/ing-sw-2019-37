@@ -49,6 +49,7 @@ public class MainClient {
     private static final Logger logger = Logger.getLogger(MainServer.class.getName());
 
     public static void main(String[] args) {
+//        System.setProperty("java.rmi.server.hostname","192.168.1.73");
         Scanner reader = new Scanner(System.in);
         System.out.println("CLI or GUI?[C/G]");
         String choice = reader.nextLine().toLowerCase();
