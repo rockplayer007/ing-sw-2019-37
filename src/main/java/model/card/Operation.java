@@ -293,6 +293,7 @@ class SelectEffectSquare implements Operation{
         Square effectSquare= MessageHandler.chooseSquare(currentPlayer,visibleSquare, room,"Which square do you want to apply this effect?");
         //TODO  se messaggio da qualche errore come devo gestire cioè quando mi null il targers.
         effectSquare.getValidPosition(zone).forEach(x-> possibleTargets.addAll(x.getPlayersOnSquare()));
+        possibleTargets.remove(currentPlayer);
         attackHandler.setPossibleTargets(possibleTargets);
         attackHandler.setEffectSquare(effectSquare);
     }
