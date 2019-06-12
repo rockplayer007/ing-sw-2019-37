@@ -1,12 +1,15 @@
 package model.gamehandler;
 
 import controller.RoomController;
+import model.board.Cell;
 import model.player.Heroes;
 import model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class RoomTest {
     private Room room;
@@ -47,6 +50,11 @@ public class RoomTest {
 
     @Test
     void endTurnControllTest(){
+        room.getCurrentPlayer().getPlayerBoard().addDamage(room.getPlayers().get(1),11);
+        room.endTurnControl();
+        assertSame(room.getBoard().getSkullBoard().getCells().get(0).getPoint(),1);
+        assertSame(room.getPlayers().get(1).getPlayerBoard().getPoints(),9);
+
 
     }
 }
