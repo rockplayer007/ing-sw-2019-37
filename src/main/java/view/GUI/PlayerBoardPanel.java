@@ -29,12 +29,15 @@ public class PlayerBoardPanel extends JPanel{
                x=x+33;
            }
             x=121;
+            if(players.get(i).getActionStatus().name().equals("FRENETICACTIONS1") ||
+                    players.get(i).getActionStatus().name().equals("FRENETICACTIONS2"))
+                x=130;
            for (int k=0;k<players.get(i).getPlayerBoard().getDeathTimes();k++){
                JLabel death = new JLabel();
                death.setLocation(x,i*142+103);
                death.setSize(27,32);
                death.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"
-                       +File.separatorChar+"resources"+File.separatorChar +"heroes"+File.separatorChar+"skull.png"));
+                       +File.separatorChar + "resources"+File.separatorChar + "heroes" + File.separatorChar+"skull.png"));
                death.setOpaque(false);
                this.add(death);
                x=x+31;
@@ -55,6 +58,10 @@ public class PlayerBoardPanel extends JPanel{
            JLabel board = new JLabel();
             board.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"
                     +File.separatorChar+"resources"+File.separatorChar +"heroes"+File.separatorChar+players.get(i).getHero().getName()+"board.png"));
+            if(players.get(i).getActionStatus().name().equals("FRENETICACTIONS1") ||
+                    players.get(i).getActionStatus().name().equals("FRENETICACTIONS2"))
+                board.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"
+                        +File.separatorChar+"resources"+File.separatorChar +"heroes"+File.separatorChar+players.get(i).getHero().getName()+"Freneticboard.png"));
             board.setOpaque(false);
             board.setLocation(0,y);
             board.setSize(577,141);

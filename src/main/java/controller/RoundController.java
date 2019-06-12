@@ -120,8 +120,7 @@ public class RoundController {
                 roomController.getRoom().getBoard().getMap().getPlayersOnMap().size() <= 1);
 
         ListResponse selected = (ListResponse) roomController
-                .sendAndReceive(player, new AnswerRequest(send, Message.Content.ACTION_REQUEST,
-                        "Choose an action"));
+                .sendAndReceive(player, new AnswerRequest(send, Message.Content.ACTION_REQUEST));
 
         ActionOption choice;
         try{

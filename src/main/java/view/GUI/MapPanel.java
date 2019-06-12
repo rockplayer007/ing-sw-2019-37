@@ -46,6 +46,7 @@ public class MapPanel extends JLayeredPane {
     private JScrollPane messageScrollPane;
     private JPanel messagePanel;
     private int rows =8;
+    private JLabel help;
 
     public MapPanel(GameBoard board) {
         JButton pBoards;
@@ -81,6 +82,14 @@ public class MapPanel extends JLayeredPane {
         messageScrollPane=new JScrollPane(messagePanel);
         setMessageScrollPane();
         this.add(messageScrollPane);
+        help=new JLabel();
+        help.setLocation(168,107);
+        help.setSize(320,34);
+        help.setFont(new Font(null,Font.BOLD,12));
+        help.setBackground(Color.WHITE);
+        help.setOpaque(true);
+        help.setBorder(BorderFactory.createLineBorder(Color.black,3));
+        this.add(help);
 
     }
 
@@ -184,6 +193,8 @@ public class MapPanel extends JLayeredPane {
             label.setForeground(Color.red);
         }
         label.setLocation(weaponButton.getX(),weaponButton.getY()-22);
+        label.setFont(new Font(null ,Font.BOLD,12));
+        label.setHorizontalAlignment(SwingConstants.CENTER);
         infoWeapon.add(label);
         this.add(label);
 
@@ -483,14 +494,14 @@ public class MapPanel extends JLayeredPane {
         }
         addActionInfo(info);
     }
-
+/*
     private void resetPowerups() {
 
         for (int i = 0; i < powerupButton.size(); i++) {
             powerupButton.get(i).setVisible(false);
             powerupButton.get(i).setEnabled(false);
         }
-    }
+    }*/
 
 
     public void getPowerupSelected(List<Powerup> powerups, boolean optional, MainClient mainClient,String info) {
@@ -502,6 +513,8 @@ public class MapPanel extends JLayeredPane {
         chooseCard.getContentPane().removeAll();
         chooseCard.getContentPane().add(selectCardPanel);
         chooseCard.setTitle(info);
+        if(info==null)
+            chooseCard.setTitle("Choose Powerup");
         addActionInfo(info);
         chooseCard.pack();
         chooseCard.setVisible(true);
@@ -528,6 +541,7 @@ public class MapPanel extends JLayeredPane {
         actions = new ArrayList<>();
         JLabel text = new JLabel("Select one action:");
         text.setHorizontalAlignment(SwingConstants.CENTER);
+        text.setFont(new Font(null ,Font.BOLD,12));
         text.setSize(250, 20);
         text.setLocation(1030, 24);
         this.add(text);
@@ -586,14 +600,15 @@ public class MapPanel extends JLayeredPane {
             dir.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar
                     + "main" + File.separatorChar + "resources" + File.separatorChar
                     + "directions" + File.separatorChar + directions.get(i).name() + ".jpg"));
-            dir.addActionListener(new ActionListener() {
+            dir.addActionListener(new ChooseActionListener(mainClient,choose,i));
+            /*dir.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     mainClient.sendSelectedDirection(s);
                     choose.setVisible(false);
                 }
             });
-
+            */
             choose.add(dir);
         }
         choose.setTitle(info);
@@ -610,18 +625,20 @@ public class MapPanel extends JLayeredPane {
         for (int i = 0; i < ammoColors.size(); i++) {
             JButton ammoColor = new JButton();
             ammoColor.setSize(150,150);
-            int x = i;
+           // int x = i;
             StyleSheet styleSheet = new StyleSheet();
             ammoColor.setBackground(styleSheet.stringToColor(ammoColors.get(i).name()));
             ammoColor.setOpaque(true);
             ammoColor.setBorderPainted(false);
+            ammoColor.addActionListener(new ChooseActionListener(mainClient,choose,i));
+            /*
             ammoColor.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     choose.setVisible(false);
                     mainClient.sendSelectedAmmoColor(x);
                 }
-            });
+            });*/
             choose.add(ammoColor);
         }
         choose.setTitle("Choose Ammocolor");
@@ -641,6 +658,8 @@ public class MapPanel extends JLayeredPane {
         if(optional){
             JButton opt=new JButton("Don't use effect");
             opt.setSize(220,20);
+            //opt.addActionListener(new ChooseActionListener(mainClient,selectEffect,effects.size()));
+
             opt.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -673,17 +692,18 @@ public class MapPanel extends JLayeredPane {
         StyleSheet s= new StyleSheet();
         for(int i=0;i<rooms.size();i++){
             JButton color =new JButton();
+            color.addActionListener(new ChooseActionListener(mainClient,choose,i));
             color.setBackground(s.stringToColor(rooms.get(i).name()));
             color.setOpaque(true);
             color.setBorderPainted(false);
-            int x=i;
-            color.addActionListener(new ActionListener() {
+
+            /*color.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     mainClient.sendSelectedRoom(x);
                     choose.setVisible(false);
                 }
-            });
+            });*/
             choose.add(color);
         }
         choose.setTitle("Choose Room Color");
@@ -788,6 +808,7 @@ public class MapPanel extends JLayeredPane {
         rows+=2;
         messagePanel.setLayout(new GridLayout(rows,1));
         JLabel text=new JLabel("INFO: ");
+        text.setFont(new Font(null,Font.BOLD,12));
         JLabel info=new JLabel(message);
         messagePanel.add(text);
         messagePanel.add(info);
@@ -796,15 +817,8 @@ public class MapPanel extends JLayeredPane {
         this.add(messageScrollPane);
     }
 
-    private void addActionInfo(String info){
-        this.remove(messageScrollPane);
-        messagePanel.setLayout(new GridLayout(rows++,1));
-        JLabel text=new JLabel(info);
-        text.setFont(new Font(null,Font.BOLD,14));
-        messagePanel.add(text);
-        messageScrollPane =new JScrollPane(messagePanel);
-        setMessageScrollPane();
-        this.add(messageScrollPane);
+    public void addActionInfo(String info){
+        help.setText("HELP: " + info);
     }
 }
 
