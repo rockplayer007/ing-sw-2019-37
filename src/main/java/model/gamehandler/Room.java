@@ -157,7 +157,7 @@ public class Room {
 
     public Map<Player,Integer> endScoreboard(){
         players.forEach(p->p.getPlayerBoard().liquidation());
-        Map<Player,Integer> map = new TreeMap<>(Comparator.comparingInt(p->p.getPlayerBoard().getPoints()));
+        Map<Player,Integer> map = new TreeMap<>((Player p1,Player p2)->p2.getPlayerBoard().getPoints()-p1.getPlayerBoard().getPoints());
         players.forEach(x->map.put(x,x.getPlayerBoard().getPoints()));
         return map;
     }
