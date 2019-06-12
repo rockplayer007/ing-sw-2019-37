@@ -143,7 +143,9 @@ public class TurnController {
             chosenCard = (ListResponse) roomController.sendAndReceive(currentPlayer, message);
         } catch (TimeFinishedException e) {
             room.getBoard().getPowerDeck().usedCard(( powerup.get(0)));
-            room.getBoard().getPowerDeck().usedCard(( powerup.get(1)));
+            if(cards > 1){
+                room.getBoard().getPowerDeck().usedCard(( powerup.get(1)));
+            }
             throw new TimeFinishedException();
         }
 
@@ -160,8 +162,10 @@ public class TurnController {
         //give the chosen card to the player
         currentPlayer.addPowerup(playerCard);
 
-        //discard the second card (that is in first position now)
-        room.getBoard().getPowerDeck().usedCard( powerup.get(0));
+        if(cards > 1){
+            //discard the second card (that is in first position now)
+            room.getBoard().getPowerDeck().usedCard( powerup.get(0));
+        }
 
 
         //put the player on the generation square
@@ -170,6 +174,7 @@ public class TurnController {
 
         roomController.sendUpdate();
     }
+
 
     public void normalRound(Player player) throws TimeFinishedException{
         //in normal round do this 2 times
@@ -214,16 +219,20 @@ public class TurnController {
         Powerup tempPowerup;
         for(Player attacker : haveTagBack){
 
-            int iterations = attacker.getPowerups().size();
+            int iterations = (int) attacker.getPowerups().stream()
+                    .filter(x -> x.getName().equals("TAGBACK GRENADE")).count();
             for(int i = 0; i < iterations; i++){
 
                 AnswerRequest message = new AnswerRequest(room
                         .getRoomController()
-                        .toJsonCardList(attacker.getPowerups()),
+                        .toJsonCardList(attacker.getPowerups().stream()
+                                //sends only the tagback cards
+                                .filter(x -> x.getName().equals("TAGBACK GRENADE")).collect(Collectors.toList())),
                         //send message corresponding to the request
                         Message.Content.POWERUP_REQUEST);
 
                 message.setIsOptional();
+                message.setInfo("You have a TAGBACK GRENADE, want to use one? Be fast!");
 
                 //set timer for choosing
                 CountDown cd = new CountDown(POWERUP_TIME, () -> {
