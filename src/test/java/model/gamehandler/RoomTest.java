@@ -39,11 +39,12 @@ public class RoomTest {
 
     @Test
     void endScoreTest(){
-        room.getPlayers().get(0).getPlayerBoard().addPoints(10);
-        room.getPlayers().get(1).getPlayerBoard().addPoints(11);
-        room.getPlayers().get(2).getPlayerBoard().addPoints(12);
-        room.getPlayers().get(3).getPlayerBoard().addPoints(20);
-        room.getPlayers().get(4).getPlayerBoard().addPoints(5);
+        room.getPlayers().get(0).getPlayerBoard().addPoints(10);//ciao
+        room.getPlayers().get(0).setDisconnected();
+        room.getPlayers().get(1).getPlayerBoard().addPoints(11);//hello
+        room.getPlayers().get(2).getPlayerBoard().addPoints(12);//lol
+        room.getPlayers().get(3).getPlayerBoard().addPoints(20);//kek
+        room.getPlayers().get(4).getPlayerBoard().addPoints(5);//rip
         room.endScoreboard().keySet().forEach(x->System.out.println(x.getNickname()));
 
     }
@@ -54,6 +55,7 @@ public class RoomTest {
         room.endTurnControl();
         assertSame(room.getBoard().getSkullBoard().getCells().get(0).getPoint(),1);
         assertSame(room.getPlayers().get(1).getPlayerBoard().getPoints(),9);
+        assertSame(room.getCurrentPlayer().getPlayerBoard().getHp().size(),0);
 
 
     }

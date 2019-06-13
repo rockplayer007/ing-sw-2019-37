@@ -68,7 +68,8 @@ public class ActionHandler {
                 if (!used) {                // if the weapon is not used do undo position for player and throw exception
                     player.movePlayer(playerPosition);
                     throw new NotExecutedException("Effect is not possible used, "+e.getMessage());
-                }
+                }else
+                    MessageHandler.sendInfo(player,e.getMessage(),room);
             } catch (NotEnoughException e) {
                 MessageHandler.sendInfo(player,"you can not use this effect:"+e.getMessage(),room); // send message to player
             } catch (InterruptOperationException e) {
