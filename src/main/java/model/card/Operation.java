@@ -603,6 +603,15 @@ class Update implements Operation{
 }
 
 
+class InterruptControll implements Operation{
+    @Override
+    public void execute(Room room) throws InterruptOperationException {
+        if(room.getAttackHandler().getPossibleTargets().isEmpty())
+            throw new InterruptOperationException("effect finished because there are not other possible players can be shoot ");
+    }
+}
+
+
 
 
 

@@ -40,6 +40,7 @@ public class RoomTest {
     @Test
     void endScoreTest(){
         room.getPlayers().get(0).getPlayerBoard().addPoints(10);//ciao
+        room.getPlayers().get(0).setDisconnected();
         room.getPlayers().get(1).getPlayerBoard().addPoints(11);//hello
         room.getPlayers().get(2).getPlayerBoard().addPoints(12);//lol
         room.getPlayers().get(3).getPlayerBoard().addPoints(20);//kek

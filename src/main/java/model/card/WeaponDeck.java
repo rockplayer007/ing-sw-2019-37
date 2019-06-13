@@ -68,7 +68,7 @@ public class WeaponDeck extends Deck<Weapon>{
         effects.put(new Effect("Focus shot",description,Collections.singletonList(AmmoColor.YELLOW), operations), 1);
         description ="Deal 1 additional damage to the other of " +
                 "those targets and/or deal 1 damage to a different target you can see.\n" ;
-        operations= Arrays.asList( selectFromSelectedTargets1, selectTarget1, damage1, setTargetToSelected);
+        operations= Arrays.asList( selectFromSelectedTargets1, damage1, setTargetToSelected, new InterruptControll(), selectTarget1, damage1, setTargetToSelected);
         effects.put(new Effect("Turret tripod",description, Collections.singletonList(AmmoColor.BLUE), operations), 1);
         description="Notes: If you deal both additional points of damage, they must be dealt to 2 different targets. " +
                 "If you see only 2 targets, you deal 2 to each if you use both optional effects. If you use the basic " +
