@@ -71,6 +71,7 @@ public class MapPanel extends JLayeredPane {
         chooseCard.setMinimumSize(new Dimension(600, 280));
         chooseCard.setMaximumSize(new Dimension(800, 285));
         chooseCard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        chooseCard.setAlwaysOnTop(true);
         choose = new JFrame();
         choose.setLocation(300, 50);
         choose.setMinimumSize(new Dimension(300, 300));
@@ -733,13 +734,13 @@ public class MapPanel extends JLayeredPane {
         resetSkullboard();
         skullboard=new ArrayList<>();
         StyleSheet styleSheet=new StyleSheet();
-        List<Cell> cells=skullBoard.getCells();
-        for(int i=0;i<cells.size();i++){
+       // List<Cell> cells=skullBoard.getCells();
+        for(int i=0;i<skullBoard.getCells().size();i++){
             if (skullBoard.getCells().get(i).getPoint()==1) {
                 JLabel point = new JLabel();
                 point.setSize(37,48);
                 point.setLocation(x,y);
-                point.setBackground(styleSheet.stringToColor(cells.get(i).getKillColor().name()));
+                point.setBackground(styleSheet.stringToColor(skullBoard.getCells().get(i).getKillColor().name()));
                 point.setOpaque(true);
                 this.add(point);
                 skullboard.add(point);
@@ -748,7 +749,13 @@ public class MapPanel extends JLayeredPane {
                 JLabel point1 =new JLabel();
                 point1.setSize(37,35);
                 point1.setLocation(x,y-15);
-                point1.setBackground(styleSheet.stringToColor(cells.get(i).getKillColor().name()));
+               // point1.setBackground(styleSheet.stringToColor(cells.get(i).getKillColor().name()));
+                if(skullBoard.getCells().get(i).getKillColor()==null)
+                    System.out.println("null");
+                else
+                    point1.setBackground(styleSheet.stringToColor(skullBoard.getCells().get(i).getKillColor().name()));
+
+
                 point1.setOpaque(true);
                 this.add(point1);
 
@@ -756,7 +763,8 @@ public class MapPanel extends JLayeredPane {
                 JLabel point2 =new JLabel();
                 point2.setSize(37,26);
                 point2.setLocation(x,y+23);
-                point2.setBackground(styleSheet.stringToColor(cells.get(i).getKillColor().name()));
+                point2.setBackground(styleSheet.stringToColor(skullBoard.getCells().get(i).getKillColor().name()));
+
                 point2.setOpaque(true);
                 skullboard.add(point1);
                 skullboard.add(point2);
@@ -781,6 +789,7 @@ public class MapPanel extends JLayeredPane {
         this.remove(messageScrollPane);
         messagePanel.setLayout(new GridLayout(rows++,1));
         JLabel text=new JLabel(attacker.getNickname()+ "  attacked : ");
+        text.setFont(new Font(null,Font.BOLD,12));
         messagePanel.add(text);
 
         for(Map.Entry<Player,Integer> entry: hp.entrySet()) {

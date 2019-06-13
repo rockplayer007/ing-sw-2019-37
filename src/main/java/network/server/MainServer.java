@@ -111,7 +111,7 @@ public class MainServer {
      */
     public void addClient(LoginRequest message){
         logger.log(Level.INFO, "{0} wants to login to the server", message.getSender());
-        
+
         if(oldClients.containsValue(message.getSender())){
             //contains username
             if (oldClients.containsKey(message.getClientID())){

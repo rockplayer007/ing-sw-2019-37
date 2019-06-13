@@ -15,7 +15,6 @@ import java.util.Arrays;
 public class ActionHandlerTest {
 
     private Room room;
-    private AmmoCard ammoCard, ammoCard1;
 
 
     @BeforeEach
@@ -31,40 +30,8 @@ public class ActionHandlerTest {
         room.setCurrentPlayer(p1);
         room.setPlayers(Arrays.asList(p1,p2));
 
-        ammoCard=new AmmoCard("",AmmoColor.RED,AmmoColor.YELLOW,AmmoColor.BLUE);
-        ammoCard1=new AmmoCard("",AmmoColor.RED,AmmoColor.BLUE);
-        room.getBoard().setPowerDeck(new PowerDeck());
     }
 
-    @Test
-    public void grabAmmoCard(){
-/*
-        MessageHandler.grabAmmo(room.getCurrentPlayer(),ammoCard, room.getBoard());
-        EnumMap<AmmoColor,Integer> map= (EnumMap<AmmoColor,Integer>) room.getCurrentPlayer().getAmmo();
-
-        System.out.println(map);
-        assertSame(map.get(AmmoColor.RED),2);
-        assertSame(map.get(AmmoColor.BLUE),2);
-        assertSame(map.get(AmmoColor.YELLOW),2);
-
- */
-
-
-    }
-    @Test
-    public void grabAmmoCard1(){
-/*
-        MessageHandler.grabAmmo(room.getCurrentPlayer(),ammoCard1, room.getBoard());
-        EnumMap<AmmoColor,Integer> map= (EnumMap<AmmoColor,Integer>) room.getCurrentPlayer().getAmmo();
-
-        System.out.println(map);
-        assertSame(map.get(AmmoColor.RED),2);
-        assertSame(map.get(AmmoColor.BLUE),2);
-        assertSame(map.get(AmmoColor.YELLOW),1);
-        assertTrue(room.getCurrentPlayer().getPowerups()!=null);
-
- */
-    }
 
     @Test
     public void setNextPlayerTest(){

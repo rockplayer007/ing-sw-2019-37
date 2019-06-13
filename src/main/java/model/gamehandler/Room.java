@@ -135,10 +135,10 @@ public class Room {
             if (diedPlayers.size()>1)
                 currentPlayer.getPlayerBoard().addPoints(1);
         }
-
-        if (skullBoard.getNumberSkulls()==0)
-            startFrenzy();
         ActionState actionState = currentPlayer.getActionStatus();
+        if (skullBoard.getNumberSkulls()==0&&actionState!=ActionState.FRENETICACTIONS1&&actionState!=ActionState.FRENETICACTIONS2)
+            startFrenzy();
+
         if (actionState==ActionState.FRENETICACTIONS1||actionState==ActionState.FRENETICACTIONS2) {
             frenzyCounter++;
             return frenzyCounter==players.stream().filter(Player::isConnected).collect(Collectors.toList()).size();
