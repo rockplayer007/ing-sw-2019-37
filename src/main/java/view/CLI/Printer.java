@@ -129,7 +129,7 @@ public class Printer {
 
         List<String> printable = new ArrayList<>();
         for(Powerup powerup : powerups){
-            String temp = powerup.getName() + colorToAnsi(powerup.getAmmo()) + " " + AMMO + colorToAnsi(Color.WHITE);
+            String temp =  colorToAnsi(powerup.getAmmo()) + powerup.getName() + colorToAnsi(Color.WHITE);
             printable.add(temp);
         }
         if(optional){
@@ -604,6 +604,12 @@ public class Printer {
                     playerInfo.append(colorToAnsi(marks)).append(MARK);
                 }
 
+                //dead times
+                int dead = player.getPlayerBoard().getDeathTimes();
+                if(dead > 0){
+                    playerInfo.append(colorToAnsi(AmmoColor.RED) + "DIED " + dead + " TIMES");
+                }
+
 
                 playerInfo.append(colorToAnsi(Color.WHITE));
                 stringedInfo.add(playerInfo.toString());
@@ -795,6 +801,7 @@ public class Printer {
         int i = 1;
         for(String line : lines){
             println(i + " - " + line);
+            i++;
         }
     }
 

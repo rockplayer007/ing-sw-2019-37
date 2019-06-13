@@ -53,17 +53,20 @@ public class BoardTest {
         player2.setHero(Heroes.BANSHEE);
         Player player3 = new Player("dozer");
         player3.setHero(Heroes.DOZER);
-        Weapon testWeapon1 = new Weapon("GRENADE LAUNCHER", "", AmmoColor.BLUE,
-                Arrays.asList(AmmoColor.BLUE, AmmoColor.RED, AmmoColor.YELLOW), true,
-                new HashMap<>());
-        Weapon testWeapon2 = new Weapon("GRENADE LAUNCHER", "", AmmoColor.BLUE,
-                Arrays.asList(AmmoColor.BLUE, AmmoColor.RED, AmmoColor.YELLOW), true,
-                new HashMap<>());
+        Weapon testWeapon1 = ((GenerationSquare) board.getMap().getGenerationPoint(Color.RED)).getWeaponDeck().get(0);
+        ((GenerationSquare) board.getMap().getGenerationPoint(Color.RED)).removeWeapon(testWeapon1);
+
+        Weapon testWeapon2 = ((GenerationSquare) board.getMap().getGenerationPoint(Color.RED)).getWeaponDeck().get(0);
+        ((GenerationSquare) board.getMap().getGenerationPoint(Color.RED)).removeWeapon(testWeapon2);
+
+        Weapon testWeapon3 = ((GenerationSquare) board.getMap().getGenerationPoint(Color.RED)).getWeaponDeck().get(0);
+        ((GenerationSquare) board.getMap().getGenerationPoint(Color.RED)).removeWeapon(testWeapon3);
+
         //setup of the points
         player1.addWeapon(testWeapon1);
         testWeapon2.setCharged(false);
         player1.addWeapon(testWeapon2);
-        player1.addWeapon(testWeapon2);
+        player1.addWeapon(testWeapon3);
 
         player1.getPlayerBoard().addDamage(player2, 6);
         player1.getPlayerBoard().addDamage(player3, 6);

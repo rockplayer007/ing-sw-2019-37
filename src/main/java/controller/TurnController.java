@@ -137,6 +137,12 @@ public class TurnController {
         List<Powerup> powerup = room.getBoard().getPowerDeck().getCard(cards);
         AnswerRequest message = new AnswerRequest(roomController.toJsonCardList(powerup), Message.Content.POWERUP_REQUEST);
         //sends the cards and receives the chosen one
+        if(cards > 1) {
+            message.setInfo("Take a powerup and hide it! You will be spawned in the discarded one");
+        }
+        else{
+            message.setInfo("Draw this powerup, you will be spawned here!");
+        }
         //chosen card is the card to KEEP
         ListResponse chosenCard;
         try {
@@ -150,26 +156,30 @@ public class TurnController {
         }
 
         Powerup playerCard;
+        Powerup spawnCard;
         try{
             //check if the size is not different
-            playerCard =  powerup.get(chosenCard.getSelectedItem());
+            if(cards > 1){
+                playerCard = powerup.get(chosenCard.getSelectedItem());
+                powerup.remove(playerCard);
+                //give the chosen card to the player
+                currentPlayer.addPowerup(playerCard);
+
+                //the second card is the spawn card
+                spawnCard = powerup.get(0);
+            }
+            else {
+                spawnCard = powerup.get(chosenCard.getSelectedItem());
+            }
+            room.getBoard().getPowerDeck().usedCard(spawnCard);
+
         }catch (RuntimeException e){
             logger.log(Level.WARNING, "CHEATER DETECTED: {0}", currentPlayer.getNickname());
             return;
         }
-        powerup.remove(chosenCard.getSelectedItem());
-
-        //give the chosen card to the player
-        currentPlayer.addPowerup(playerCard);
-
-        if(cards > 1){
-            //discard the second card (that is in first position now)
-            room.getBoard().getPowerDeck().usedCard( powerup.get(0));
-        }
-
 
         //put the player on the generation square
-        Color spawnColor = Color.valueOf(playerCard.getAmmo().toString());
+        Color spawnColor = Color.valueOf(spawnCard.getAmmo().toString());
         currentPlayer.movePlayer(room.getBoard().getMap().getGenerationPoint(spawnColor));
 
         roomController.sendUpdate();
@@ -223,11 +233,14 @@ public class TurnController {
                     .filter(x -> x.getName().equals("TAGBACK GRENADE")).count();
             for(int i = 0; i < iterations; i++){
 
+                List<Powerup> attackerPowerups = attacker.getPowerups().stream()
+                        .filter(x -> x.getName().equals("TAGBACK GRENADE")).collect(Collectors.toList());
+
                 AnswerRequest message = new AnswerRequest(room
                         .getRoomController()
-                        .toJsonCardList(attacker.getPowerups().stream()
+                        .toJsonCardList(
                                 //sends only the tagback cards
-                                .filter(x -> x.getName().equals("TAGBACK GRENADE")).collect(Collectors.toList())),
+                                attackerPowerups),
                         //send message corresponding to the request
                         Message.Content.POWERUP_REQUEST);
 
@@ -254,9 +267,10 @@ public class TurnController {
                 }
 
                     //-1 means the player doesnt want to use powerups
-                if (chosenCard.getSelectedItem() < player.getPowerups().size() && chosenCard.getSelectedItem() >= 0) {
+                if (chosenCard.getSelectedItem() < attacker.getPowerups().size() && chosenCard.getSelectedItem() >= 0) {
                     //the chosen powerup will be executed
-                    tempPowerup = player.getPowerups().get(chosenCard.getSelectedItem());
+                    tempPowerup = attackerPowerups.get(chosenCard.getSelectedItem());
+
                 }
                 else {
                     break;
