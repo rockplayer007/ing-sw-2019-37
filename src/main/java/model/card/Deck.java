@@ -14,6 +14,8 @@ public abstract class Deck <T extends Card>{
     public T getCard(){
         if(cardDeck.isEmpty()){
             reMix();
+            if (cardDeck.isEmpty())//check necessary for the weaponDeck
+                return null;
         }
         return cardDeck.pop();
     }

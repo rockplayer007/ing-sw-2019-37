@@ -55,6 +55,7 @@ public class RoomTest {
         room.endTurnControl();
         assertSame(room.getBoard().getSkullBoard().getCells().get(0).getPoint(),1);
         assertSame(room.getPlayers().get(1).getPlayerBoard().getPoints(),9);
+        assertSame(room.getCurrentPlayer().getPlayerBoard().getHp().size(),0);
 
 
     }
