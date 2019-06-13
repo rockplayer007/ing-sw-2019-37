@@ -169,6 +169,7 @@ public class PlayerBoard implements Serializable{
             Player player1 = hp.get(10);
             cell.setKill(player1);
             player.setLive(false);
+            deathTimes++;
         }
 
         if (hp.size()==12&&hp.get(11)!=null) {
@@ -176,7 +177,8 @@ public class PlayerBoard implements Serializable{
             cell.setOverKill();
         }
 
-        hp=new ArrayList<>();
+        hp = new ArrayList<>();
+        hpColor = new ArrayList<>();
 
         return cell;
 

@@ -1,15 +1,13 @@
 package model.gamehandler;
 
 import controller.RoomController;
-import model.board.Board;
-import model.board.BoardGenerator;
-import model.board.GameBoard;
-import model.board.SkullBoard;
+import model.board.*;
 import model.player.ActionState;
 import model.player.Player;
 import network.server.Configs;
 
 import java.util.*;
+import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -129,11 +127,15 @@ public class Room {
         SkullBoard skullBoard = board.getSkullBoard();
         if (!diedPlayers.isEmpty()){
             diedPlayers.forEach( x-> {
-                skullBoard.addCell(x.getPlayerBoard().liquidation());
-                skullBoard.takeOneSkulls();
+                Cell cell = x.getPlayerBoard().liquidation();
+                if (cell.getKill()!=null) {
+                    skullBoard.addCell(cell);
+                    skullBoard.takeOneSkulls();
+                }
             });
             if (diedPlayers.size()>1)
                 currentPlayer.getPlayerBoard().addPoints(1);
+            roomController.sendUpdate();
         }
         ActionState actionState = currentPlayer.getActionStatus();
         if (skullBoard.getNumberSkulls()==0&&actionState!=ActionState.FRENETICACTIONS1&&actionState!=ActionState.FRENETICACTIONS2)
@@ -158,7 +160,7 @@ public class Room {
     public Map<Player,Integer> endScoreboard(){
         players.forEach(p->p.getPlayerBoard().liquidation());
         Map<Player,Integer> map = new TreeMap<>((Player p1,Player p2)->p2.getPlayerBoard().getPoints()-p1.getPlayerBoard().getPoints());
-        players.forEach(x->map.put(x,x.getPlayerBoard().getPoints()));
+        players.stream().filter(Player::isConnected).forEach(x->map.put(x,x.getPlayerBoard().getPoints()));
         return map;
     }
 
