@@ -47,6 +47,7 @@ public class MapPanel extends JLayeredPane {
     private JPanel messagePanel;
     private int rows =8;
     private JLabel help;
+    private JLabel mypoint= new JLabel("");
 
     public MapPanel(GameBoard board) {
         JButton pBoards;
@@ -91,6 +92,15 @@ public class MapPanel extends JLayeredPane {
         help.setOpaque(true);
         help.setBorder(BorderFactory.createLineBorder(Color.black,3));
         this.add(help);
+        JLabel myPointText= new JLabel("My points : ");
+        myPointText.setLocation(1030, 45);
+        myPointText.setFont(new Font(null,Font.BOLD,12));
+        myPointText.setSize(150,20);
+        this.add(myPointText);
+        mypoint.setSize(50,20);
+        mypoint.setLocation(1180,45);
+        this.add(mypoint);
+
 
     }
 
@@ -243,6 +253,10 @@ public class MapPanel extends JLayeredPane {
         }
     }
 
+    private void updatePoints(){
+
+    }
+
     public void updateWeapon(GameBoard board, MainClient mainClient) {
         removeWeapon();
         myWeapon = new ArrayList<>();
@@ -253,6 +267,7 @@ public class MapPanel extends JLayeredPane {
                 for (int j = 0; j < board.getPlayersOnMap().get(i).getWeapons().size(); j++) {
                     addWeapon(board.getPlayersOnMap().get(i).getWeapons().get(j));
                 }
+                mypoint.setText(String.valueOf(board.getPlayersOnMap().get(i).getPlayerBoard().getPoints()));
             }
         }
     }
@@ -490,6 +505,7 @@ public class MapPanel extends JLayeredPane {
                 public void actionPerformed(ActionEvent e) {
                     mainClient.sendSelectedSquare(x);
                     resetRooms();
+                    addActionInfo("");
                 }
             });
         }
@@ -544,7 +560,7 @@ public class MapPanel extends JLayeredPane {
         text.setHorizontalAlignment(SwingConstants.CENTER);
         text.setFont(new Font(null ,Font.BOLD,12));
         text.setSize(250, 20);
-        text.setLocation(1030, 24);
+        text.setLocation(1030, 66);
         this.add(text);
         for (int i = 0; i < actionOptions.size(); i++) {
             JButton action = new JButton();
@@ -559,7 +575,7 @@ public class MapPanel extends JLayeredPane {
                     + "action" + File.separatorChar + actionOptions.get(i).toString() + ".png"));
 
             if (actions.isEmpty())
-                action.setLocation(1030, 45);
+                action.setLocation(1030, 87);
             else {
                 if (actions.get(i - 1).getX() == 1155)
                     action.setLocation(1030, actions.get(i - 1).getY() + 64);
@@ -601,7 +617,7 @@ public class MapPanel extends JLayeredPane {
             dir.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar
                     + "main" + File.separatorChar + "resources" + File.separatorChar
                     + "directions" + File.separatorChar + directions.get(i).name() + ".jpg"));
-            dir.addActionListener(new ChooseActionListener(mainClient,choose,i));
+            dir.addActionListener(new ChooseActionListener(mainClient,choose,i,this));
             /*dir.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -631,7 +647,7 @@ public class MapPanel extends JLayeredPane {
             ammoColor.setBackground(styleSheet.stringToColor(ammoColors.get(i).name()));
             ammoColor.setOpaque(true);
             ammoColor.setBorderPainted(false);
-            ammoColor.addActionListener(new ChooseActionListener(mainClient,choose,i));
+            ammoColor.addActionListener(new ChooseActionListener(mainClient,choose,i,this));
             /*
             ammoColor.addActionListener(new ActionListener() {
                 @Override
@@ -656,6 +672,7 @@ public class MapPanel extends JLayeredPane {
         selectEffect.getContentPane().removeAll();
         CardPanel cardPanel = new CardPanel(weaponSelected, effects, mainClient, selectEffect);
         selectEffect.getContentPane().add(cardPanel,BorderLayout.CENTER);
+        //addActionInfo("What effect do you want to use?");
         if(optional){
             JButton opt=new JButton("Don't use effect");
             opt.setSize(220,20);
@@ -693,7 +710,7 @@ public class MapPanel extends JLayeredPane {
         StyleSheet s= new StyleSheet();
         for(int i=0;i<rooms.size();i++){
             JButton color =new JButton();
-            color.addActionListener(new ChooseActionListener(mainClient,choose,i));
+            color.addActionListener(new ChooseActionListener(mainClient,choose,i,this));
             color.setBackground(s.stringToColor(rooms.get(i).name()));
             color.setOpaque(true);
             color.setBorderPainted(false);

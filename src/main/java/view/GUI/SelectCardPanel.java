@@ -31,7 +31,7 @@ public class SelectCardPanel extends JPanel{
             opt.setSize(196, 264);
             opt.setBackground(Color.darkGray);
             int s = cards.size();
-            opt.addActionListener(new ActionL(mainClient,s,frame));
+            opt.addActionListener(new ActionL(mainClient,s,frame,mapPanel));
             this.add(opt);
         }
 
