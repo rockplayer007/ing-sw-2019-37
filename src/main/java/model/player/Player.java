@@ -97,7 +97,11 @@ public class Player implements Serializable {
         if (!live) {
             position.getPlayersOnSquare().remove(this);
             position = null;
+            if (actionStatus!=ActionState.FRENETICACTIONS1&&actionStatus!=ActionState.FRENETICACTIONS2)
+                actionStatus=ActionState.TURNACTIONS;
         }
+
+
     }
 
     public boolean isLive() {
