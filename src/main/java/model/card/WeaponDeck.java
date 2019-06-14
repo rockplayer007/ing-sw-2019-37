@@ -247,14 +247,14 @@ public class WeaponDeck extends Deck<Weapon>{
 
         effects = new LinkedHashMap<>();
         description = "Deal 2 damage to 1 target you can see that is not on your square. Then you may move the target 1 square.\n";
-        operations = Arrays.asList(visiblePlayers, minDistance0, selectTarget1, damage2, moveTarget1, setTargetToSelected);
+        operations = Arrays.asList(visiblePlayers, minDistance0, selectTarget1, damage2, setTargetPositionAsEffectSquare, moveTarget1, setTargetToSelected);
         effects.put(new Effect(basicEffect,description, Collections.emptyList(), operations), 0);
         description = "Move 1 or 2 squares. This effect can be used either before or after the basic effect.\n";
         operations = Collections.singletonList(run2);
         effects.put(new Effect("Rocket jump",description, Collections.singletonList(AmmoColor.BLUE), operations), -1);
         description = "During the basic effect, deal 1 damage to " +
                 "every player on your target's original square – including the target, even if you move it.\n";
-        operations = Arrays.asList(selectAllTarget, damage1);
+        operations = Arrays.asList(targetOnEffectSquare, new AddselectedTargetToPossibleTarget(), selectAllTarget, damage1);
         effects.put(new Effect("Fragmenting warhead",description, Collections.singletonList(AmmoColor.YELLOW), operations), 1);
         description = "Notes: If you use the rocket jump before the basic effect, you consider only your new square when " +
                 "determining if a target is legal. You can even move off a square so you can shoot someone on it. If you " +
