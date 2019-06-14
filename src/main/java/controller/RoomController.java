@@ -6,6 +6,7 @@ import model.board.*;
 import model.card.AmmoColor;
 import model.card.Card;
 import model.card.Effect;
+import model.exceptions.NotExecutedException;
 import model.exceptions.TimeFinishedException;
 import model.exceptions.TooManyPlayerException;
 import model.gamehandler.Room;
@@ -15,10 +16,10 @@ import network.messages.clientToServer.ListResponse;
 import network.messages.clientToServer.ClientToServer;
 import network.messages.serverToClient.*;
 import network.server.ClientOnServer;
+import network.server.Configs;
 
 import java.rmi.RemoteException;
 import java.util.*;
-import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,6 +36,8 @@ public class RoomController {
     private TurnController turnController;
     private boolean wait;
     private boolean powerup;
+    private static final int MAX_PLAYERS = Configs.getInstance().getMaximumPlayers();
+    private static final int BOARD_TIME = Configs.getInstance().getBoardRequestTime();
 
     private static final Logger logger = Logger.getLogger(RoomController.class.getName());
 
@@ -60,37 +63,6 @@ public class RoomController {
             System.out.println("CHEATER");
         }
 
-        /*
-        switch (message.getContent()) {
-
-            case CARD_RESPONSE:
-                if(checkReceiver(message)) {
-
-                    mockMessage = message;
-                    //askingThread.interrupt();
-                }
-                break;
-            case BOARD_RESPONSE:
-                if(checkReceiver(message)) {
-
-                    mockMessage = message;
-                    //askingThread.interrupt();
-                }
-                break;
-            case SQUARE_RESPONSE:
-                if(checkReceiver(message)) {
-
-                    mockMessage = message;
-                    //askingThread.interrupt();
-                }
-                break;
-
-            default:
-                logger.log(Level.WARNING, "Unhandled message");
-        }
-
-         */
-
     }
 
 
@@ -101,7 +73,7 @@ public class RoomController {
             //room.setStartingPlayer(player);
             room.setCurrentPlayer(player);
         }
-        if (players.size() < 5) {
+        if (players.size() < MAX_PLAYERS) {
             players.add(player);
             connectionToClient.put(player, client);
         } else
@@ -112,72 +84,73 @@ public class RoomController {
 
         //add players to the room
         room.setPlayers(players);
-        askBoard();
+        try {
+            askBoard();
 
-        System.out.println("next steeeeeeeeeeeep");
-        turnController.startPlayerRound();
+            turnController.startPlayerRound();
 
-        Gson gson = new Gson();
-        Map<Player, Integer> score = room.endScoreboard();
-        HashMap<String, Integer> messageMap = new HashMap<>();
-        score.forEach((x, y) -> messageMap.put(gson.toJson(x), y));
+            Gson gson = new Gson();
+            Map<Player, Integer> score = room.endScoreboard();
+            HashMap<String, Integer> messageMap = new HashMap<>();
+            score.forEach((x, y) -> messageMap.put(gson.toJson(x), y));
 
-        sendMessageToAll(new ScoreMessage(messageMap));
+            sendMessageToAll(new ScoreMessage(messageMap));
+
+        } catch (NotExecutedException e) {
+            sendMessageToAll(new InfoMessage(e.getMessage()));
+        }
 
     }
 
 
-    private void askBoard(){
+    private void askBoard() throws NotExecutedException {
         ServerToClient boardRequest = new BoardRequest(room.getBoardGenerator().getMaps());
+        boolean ask = true;
+        ListResponse boardMessage;
 
-        /*
-        mockMessage = null;
-        askingThread = Thread.currentThread();
+        while (ask){
+            CountDown timer = new CountDown(BOARD_TIME, () -> {
+                stopWaiting();
+                System.out.println("timer stopped");
+            });
+            timer.startTimer();
 
-        sendMessage(room.getCurrentPlayer(), boardRequest);
-        expectedReceiver = room.getCurrentPlayer().getNickname();
-
-        while (mockMessage == null){
 
             try {
+                boardMessage = (ListResponse) sendAndReceive(room.getCurrentPlayer(), boardRequest);
 
-                Thread.sleep(10000);  //10 seconds
+                room.createMap(boardMessage.getSelectedItem());
 
-            } catch (InterruptedException e) {
-                System.out.println("have been interrupted before finishing");
-            }
-            synchronized (this){
-                if(mockMessage == null){
-                    //first send timeout message
-                    sendMessage(room.getCurrentPlayer(), new TimeoutMessage());
-                    room.setNextPlayer();
-                    expectedType = Message.Content.BOARD_RESPONSE;
-                    expectedReceiver = room.getCurrentPlayer().getNickname();
-                    sendMessage(room.getCurrentPlayer(), boardRequest);
+                sendUpdate();
+
+                logger.log(Level.INFO,"board is: {0}", (boardMessage.getSelectedItem()));
+                resetReceiver();
+
+                ask = false;
+
+                try{
+                    timer.cancelTimer();
+                }catch (IllegalStateException e){
+                    System.out.println("ooops, timer already stopped, dont worry");
+                    //nothing, just continue
                 }
+            } catch (TimeFinishedException e) {
+                //set the player as disconnected
+                room.getCurrentPlayer().setDisconnected();
 
+                //send message
+                sendMessage(room.getCurrentPlayer(), new TimeoutMessage());
+                sendMessageToAll(new InfoMessage(room.getCurrentPlayer().getNickname() + " has disconnected (time exceeded)"));
+
+                //continue as normal
+                logger.log(Level.INFO,"player: {0} finished his time", room.getCurrentPlayer().getNickname());
+                if(!room.setNextPlayer()){
+                    throw new NotExecutedException("Sorry, not enough players anymore");
+                }
             }
-
         }
 
-        room.createMap(((ListResponse) mockMessage).getSelectedItem());
 
-         */
-        //TODO in this case ask somebody else
-        ListResponse boardMessage = null;
-        try {
-            boardMessage = (ListResponse) sendAndReceive(room.getCurrentPlayer(), boardRequest);
-        } catch (TimeFinishedException e) {
-            e.printStackTrace();
-        }
-        room.createMap(boardMessage.getSelectedItem());
-
-        //necessary to serialize properly also the sub classes
-        sendUpdate();
-
-
-        logger.log(Level.INFO,"board is: {0}", (boardMessage.getSelectedItem()));
-        resetReceiver();
     }
 
         public void sendMessage(Player player, ServerToClient message){

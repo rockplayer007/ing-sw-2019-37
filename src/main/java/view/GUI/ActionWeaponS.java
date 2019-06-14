@@ -27,6 +27,7 @@ import java.awt.event.ActionListener;
             mainClient.sendSelectedCard(n);
             frame.setVisible(false);
             mapPanel.setWeaponSelected(name);
+            mapPanel.addActionInfo("");
         }
     }
 

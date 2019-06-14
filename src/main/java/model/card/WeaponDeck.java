@@ -223,8 +223,8 @@ public class WeaponDeck extends Deck<Weapon>{
                 "a target you can't see – the flame won't go through walls, but it will go through doors. " +
                 "Think of it as a straight-line blast of flame that can travel 2 squares in a cardinal direction.\n";
 
-        weapons.add(new Weapon("FLAMETHROWER", description, AmmoColor.RED, Collections.emptyList(),
-                false,effects));
+        weapons.add(new Weapon("FLAMETHROWER", description, AmmoColor.RED, Collections.emptyList(),false,
+                    effects));
 
 
         effects = new LinkedHashMap<>();

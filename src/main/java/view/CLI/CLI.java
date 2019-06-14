@@ -31,12 +31,14 @@ public class CLI implements ViewInterface {
 
     private MainClient mainClient;
     private Printer printer;
+    private boolean firstTime;
 
     private static final Logger logger = Logger.getLogger(CLI.class.getName());
 
     public CLI(MainClient mainClient){
         this.mainClient = mainClient;
         printer = new Printer(this);
+        firstTime = true;
     }
 
     MainClient getMainClient(){
@@ -93,7 +95,13 @@ public class CLI implements ViewInterface {
     public void logIn(boolean ask){
 
         if (ask){
-            printer.println("Write a username to login:");
+            if(firstTime){
+                printer.println(printer.colorToAnsi(Color.GREEN) + "Write a username to login:");
+                firstTime = false;
+            }
+            else{
+                printer.println(printer.colorToAnsi(Color.RED) + "Write another username to login:");
+            }
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             String username = null;
             try {
@@ -105,7 +113,8 @@ public class CLI implements ViewInterface {
             mainClient.sendCredentials();
         }
         else {
-            printer.println("Welcome "+ mainClient.getUsername());
+            printer.println(printer.colorToAnsi(Color.GREEN)
+                    + "WELCOME "+ mainClient.getUsername() + "\n\n" + printer.colorToAnsi(Color.WHITE));
         }
     }
 
@@ -179,7 +188,7 @@ public class CLI implements ViewInterface {
         List<String> stringed = new ArrayList<>();
         actions.forEach(x -> stringed.add(x.explenation));
         printer.displayRequest(stringed, board -> mainClient.sendSelectedBoard(board),
-                "What do you want to do?");
+                "Go and fight!");
     }
 
     @Override
