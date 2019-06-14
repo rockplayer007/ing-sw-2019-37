@@ -79,13 +79,14 @@ public class GUI implements ViewInterface {
                     if (loginPanel.getConnectionErr()&&loginPanel.getNicknameErr()&&!loginPanel.getIp().isEmpty()) {
                         frame.getContentPane().removeAll();
                         LoadingPanel loadingPanel = new LoadingPanel();
+                        loadingPanel.setName("loading");
                         frame.getContentPane().add(loadingPanel);
-                        frame.setVisible(true);
                         MainClient.setSocket(loginPanel.getConnection());
                         if(loginPanel.getIp().equals("127.0.0.1"))
                             MainClient.setServerIp("localhost");
                         else
                             MainClient.setServerIp(loginPanel.getIp());
+                        frame.setVisible(true);
                         if(first){
                             try {
                                 mainClient.connect();

@@ -130,6 +130,7 @@ public class MainServer {
             }
             else{
 
+
                 //username already exists
                 try {
                     message.getClientInterface().notifyClient(new LoginResponse(true, ""));

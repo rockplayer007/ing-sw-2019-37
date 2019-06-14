@@ -22,7 +22,7 @@ public class Player implements Serializable {
     private Map<AmmoColor,Integer> ammo;
     private List<Weapon> weapons;
     private transient List<Powerup> powerups;
-    private transient ActionState actionStatus;
+    private ActionState actionStatus;
     private RoundStatus roundStatus;
     private boolean live;
     private boolean connected;
