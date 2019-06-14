@@ -22,6 +22,8 @@ import view.CLI.CLI;
 import view.GUI.GUI;
 import view.ViewInterface;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.rmi.NotBoundException;
@@ -159,6 +161,19 @@ public class MainClient {
                 break;
             case LOGIN_RESPONSE:
                 clientID = ((LoginResponse) message).getClientID();
+
+                try{
+                    String path = "."+ File.separatorChar + "src" + File.separatorChar+
+                            "main" + File.separatorChar + "resources" + File.separatorChar + username + "_data.txt";
+                    FileWriter fw = new FileWriter(path);
+                    fw.write(clientID);
+                    fw.close();
+                }catch(Exception e){
+                    System.out.println("Couldn't write on file");
+
+                }
+
+
                 view.logIn(((LoginResponse) message).getStatus());
                 break;
             case BOARD_REQUEST:

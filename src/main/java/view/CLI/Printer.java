@@ -607,8 +607,14 @@ public class Printer {
                 //dead times
                 int dead = player.getPlayerBoard().getDeathTimes();
                 if(dead > 0){
-                    playerInfo.append(colorToAnsi(AmmoColor.RED) + "DIED " + dead + (dead > 1 ? " TIMES": " TIME"));
+                    playerInfo.append(colorToAnsi(AmmoColor.RED))
+                            .append("DIED ").append(dead).append(dead > 1 ? " TIMES" : " TIME");
                 }
+
+                //add points
+                int points = player.getPlayerBoard().getPoints();
+                playerInfo.append(colorToAnsi(Color.WHITE))
+                        .append("POINTS: ").append(colorToAnsi(Color.GREEN)).append(points);
 
 
                 playerInfo.append(colorToAnsi(Color.WHITE));

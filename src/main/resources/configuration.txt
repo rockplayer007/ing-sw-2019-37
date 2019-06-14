@@ -3,7 +3,7 @@ minimum players: 2
 maximum players: 5
 time for TAGBACK GRANADE: 200
 creating room time: 10
-choosing board time: 5
+choosing board time: 500
 skulls: 2
 RMI port: 1099
 Socket port: 8000
