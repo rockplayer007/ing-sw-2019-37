@@ -74,8 +74,8 @@ public class WeaponDeck extends Deck<Weapon>{
                 "If you see only 2 targets, you deal 2 to each if you use both optional effects. If you use the basic " +
                 "effect on only 1 target, you can still use the the turret tripod to give it 1 additional damage.\n";
 
-        //weapons.add(new Weapon("MACHINE GUN",description, AmmoColor.BLUE , Collections.singletonList(AmmoColor.RED),
-        //        true, effects ));
+        weapons.add(new Weapon("MACHINE GUN",description, AmmoColor.BLUE , Collections.singletonList(AmmoColor.RED),
+                true, effects ));
 
 
         effects = new LinkedHashMap<>();
@@ -92,8 +92,8 @@ public class WeaponDeck extends Deck<Weapon>{
         description="Notes: This card constrains the order in which you can use its effects. " +
                 "(Most cards don't.) Also note that each target must be a different player.\n" ;
 
-        //weapons.add(new Weapon("T.H.O.R.", description, AmmoColor.BLUE, Collections.singletonList(AmmoColor.RED),
-        //        true, effects));
+        weapons.add(new Weapon("T.H.O.R.", description, AmmoColor.BLUE, Collections.singletonList(AmmoColor.RED),
+                true, effects));
 
 
         effects = new LinkedHashMap<>();
@@ -110,8 +110,8 @@ public class WeaponDeck extends Deck<Weapon>{
                 "when you play the card. For example, you can move 2 squares and shoot a target you now see. " +
                 "You cannot use 1 move before shooting and 1 move after.\n";
 
-        //weapons.add(new Weapon("PLASMA GUN", description, AmmoColor.BLUE, Collections.singletonList(AmmoColor.YELLOW),
-        //        true, effects));
+        weapons.add(new Weapon("PLASMA GUN", description, AmmoColor.BLUE, Collections.singletonList(AmmoColor.YELLOW),
+                true, effects));
 
 
         effects = new LinkedHashMap<>();
@@ -122,8 +122,8 @@ public class WeaponDeck extends Deck<Weapon>{
                 "but you can shoot a target on the diagonal. If you are beside a door, you can't shoot a target " +
                 "on the other side of the door, but you can shoot a target on a different square of that room.\n";
 
-        //weapons.add(new Weapon("WHISPER", description, AmmoColor.BLUE, Arrays.asList(AmmoColor.BLUE, AmmoColor.YELLOW),
-        //        false, effects));
+        weapons.add(new Weapon("WHISPER", description, AmmoColor.BLUE, Arrays.asList(AmmoColor.BLUE, AmmoColor.YELLOW),
+                false, effects));
 
 
         effects = new LinkedHashMap<>();
@@ -134,8 +134,8 @@ public class WeaponDeck extends Deck<Weapon>{
         operations = Arrays.asList(sameSquare, selectAllTarget, damage2);
         effects.put(new Effect("Reaper mode",description, Arrays.asList(AmmoColor.BLUE, AmmoColor.RED), operations), 0);
 
-        //weapons.add(new Weapon("ELECTROSCYTHE", "", AmmoColor.BLUE, Collections.emptyList(),
-        //        false, effects));
+        weapons.add(new Weapon("ELECTROSCYTHE", "", AmmoColor.BLUE, Collections.emptyList(),
+                false, effects));
 
 
         effects = new LinkedHashMap<>();
@@ -151,8 +151,8 @@ public class WeaponDeck extends Deck<Weapon>{
         description = "Notes: You can move a target even if you can't see it. The target ends up in a place where you can see and " +
                 "damage it. The moves do not have to be in the same direction.\n";
 
-        //weapons.add(new Weapon("TRACTOR BEAM", description, AmmoColor.BLUE, Collections.emptyList(),
-        //        false, effects));
+        weapons.add(new Weapon("TRACTOR BEAM", description, AmmoColor.BLUE, Collections.emptyList(),
+                false, effects));
 
 
         effects=new LinkedHashMap<>();
@@ -167,8 +167,8 @@ public class WeaponDeck extends Deck<Weapon>{
         description = "Notes: The 3 targets must be different, but some might start on the same square. It is legal " +
                 "to choose targets on your square, on the vortex, or even on squares you can't see. They all end up on the vortex.\n";
 
-        //weapons.add(new Weapon("VORTEX CANNON", description, AmmoColor.RED, Collections.singletonList(AmmoColor.BLUE),
-        //        true, effects));
+        weapons.add(new Weapon("VORTEX CANNON", description, AmmoColor.RED, Collections.singletonList(AmmoColor.BLUE),
+                true, effects));
 
 
         effects = new LinkedHashMap<>();
@@ -179,8 +179,8 @@ public class WeaponDeck extends Deck<Weapon>{
         operations = Arrays.asList(new Furance(true), damage1, mark1);
         effects.put(new Effect("Cozy fire mode",description,Collections.emptyList(), operations), 0);
 
-        //weapons.add(new Weapon("FURNACE", "", AmmoColor.RED, Collections.singletonList(AmmoColor.BLUE),
-        //        false, effects));
+        weapons.add(new Weapon("FURNACE", "", AmmoColor.RED, Collections.singletonList(AmmoColor.BLUE),
+                false, effects));
 
 
         effects = new LinkedHashMap<>();
@@ -189,8 +189,8 @@ public class WeaponDeck extends Deck<Weapon>{
         effects.put(new Effect("Effect",description, Collections.emptyList(), operations), 0);
         description = "Notes: Yes, this can only hit targets you cannot see.\n";
 
-        //weapons.add(new Weapon("HEATSEEKER", description, AmmoColor.RED, Arrays.asList(AmmoColor.RED, AmmoColor.YELLOW),
-        //        false, effects));
+        weapons.add(new Weapon("HEATSEEKER", description, AmmoColor.RED, Arrays.asList(AmmoColor.RED, AmmoColor.YELLOW),
+                false, effects));
 
 
         effects = new LinkedHashMap<>();
@@ -205,8 +205,8 @@ public class WeaponDeck extends Deck<Weapon>{
                 setTargetPositionAsEffectSquare, targetOnEffectSquare, selectAllTarget, mark2);
         effects.put(new Effect("Nano-tracer mode",description,Collections.singletonList(AmmoColor.RED), operations), 0);
 
-        //weapons.add(new Weapon("HELLION", "", AmmoColor.RED, Collections.singletonList(AmmoColor.YELLOW),
-        //        false, effects));
+        weapons.add(new Weapon("HELLION", "", AmmoColor.RED, Collections.singletonList(AmmoColor.YELLOW),
+                false, effects));
 
 
         effects = new LinkedHashMap<>();
@@ -223,8 +223,8 @@ public class WeaponDeck extends Deck<Weapon>{
                 "a target you can't see – the flame won't go through walls, but it will go through doors. " +
                 "Think of it as a straight-line blast of flame that can travel 2 squares in a cardinal direction.\n";
 
-        //weapons.add(new Weapon("FLAMETHROWER", description, AmmoColor.RED, Collections.emptyList(),false,
-        // effects));
+        weapons.add(new Weapon("FLAMETHROWER", description, AmmoColor.RED, Collections.emptyList(),false,
+                    effects));
 
 
         effects = new LinkedHashMap<>();

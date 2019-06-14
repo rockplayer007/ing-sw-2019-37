@@ -607,27 +607,35 @@ public class Printer {
                 //dead times
                 int dead = player.getPlayerBoard().getDeathTimes();
                 if(dead > 0){
-                    playerInfo.append(colorToAnsi(AmmoColor.RED) + "DIED " + dead + " TIMES");
+                    playerInfo.append(colorToAnsi(AmmoColor.RED) + "DIED " + dead + (dead > 1 ? " TIMES": " TIME"));
                 }
 
 
                 playerInfo.append(colorToAnsi(Color.WHITE));
                 stringedInfo.add(playerInfo.toString());
 
+                //powerups
+                String delimiter = ""; //trick
                 if(player.getNickname().equals(cli.getMainClient().getUsername())){
                     stringedPowerups.append(colorToAnsi(Color.WHITE)).append("Powerups: ");
                     for(Powerup powerup : myPowerups){
+                        stringedWeapons.append(colorToAnsi(Color.WHITE)).append(delimiter);
+                        delimiter = ", ";
                         stringedPowerups.append(colorToAnsi(powerup.getAmmo())).append(powerup.getName());
-                        stringedPowerups.append(colorToAnsi(Color.WHITE)).append(" ");
                     }
                     stringedInfo.add(stringedPowerups.toString());
                 }
 
+                //weapons
                 stringedWeapons.append(colorToAnsi(Color.WHITE)).append("Weapons: ");
+                delimiter = ""; //trick
                 for(Weapon weapon : player.getWeapons()){
+                    stringedWeapons.append(colorToAnsi(Color.WHITE)).append(delimiter);
+                    delimiter = ", ";
                     stringedWeapons.append(weapon.getCharged() ? colorToAnsi(Color.GREEN) : colorToAnsi(Color.RED));
-                    stringedWeapons.append(weapon.getName()).append(colorToAnsi(Color.WHITE)).append(" ");
+                    stringedWeapons.append(weapon.getName());
                 }
+
                 stringedInfo.add(stringedWeapons.toString());
 
             }

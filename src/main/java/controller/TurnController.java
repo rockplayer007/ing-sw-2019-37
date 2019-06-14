@@ -104,6 +104,8 @@ public class TurnController {
 
                 //after taking the ammoCard set a new card
                 room.getBoard().fillAmmo();
+                room.getBoard().fillWeapons();
+                roomController.sendUpdate();
 
             } catch (TimeFinishedException e) {
                 //set the player as disconnected
@@ -116,6 +118,8 @@ public class TurnController {
                 //continue as normal
                 logger.log(Level.INFO,"player: {0} finished his time", player.getNickname());
                 room.getBoard().fillAmmo();
+                room.getBoard().fillWeapons();
+
                 roomController.sendUpdate();
             }
 

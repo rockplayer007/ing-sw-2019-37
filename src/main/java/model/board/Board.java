@@ -87,4 +87,23 @@ public class Board {
         }
     }
 
+    public void fillWeapons(){
+
+        for(GenerationSquare square : map.getGenPoints()){
+            int nWeapons = square.getWeaponDeck().size();
+            if(nWeapons < 3){
+                for(int i = nWeapons; i < 3; i ++){
+                    Weapon temp = weaponDeck.getCard();
+                    if(temp != null){
+                        square.addWeapon(temp);
+                    }
+                    else{
+                        return;
+                    }
+
+                }
+            }
+        }
+    }
+
 }

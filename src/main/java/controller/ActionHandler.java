@@ -137,10 +137,10 @@ public class ActionHandler {
             if (!weapons.isEmpty()){
                 //weapon to choose
                 Weapon weapon = MessageHandler.chooseCard(weapons, true, room, true,
-                        "Which card do you like to pick?");
+                        "Take a weapon!");
 
                 if (weapon==null){
-                    throw new NotExecutedException("No card has been chosen");
+                    throw new NotExecutedException("You didn't choose any card...");
                 }
 
                 //pay
@@ -148,7 +148,7 @@ public class ActionHandler {
                     List<AmmoColor> cost = weapon.getBuyCost();
                     payment(player,cost, room);
                 } catch (NotEnoughException e) {
-                    throw new NotExecutedException("Not enough ammo to pay");
+                    throw new NotExecutedException("You don't have enough ammo to pay!");
                 }
 
 
@@ -182,13 +182,8 @@ public class ActionHandler {
 
                 }
                 else{
-                    //replace the weapon in the deck with a new one if there are cards
-                Weapon temp = room.getBoard().getWeaponDeck().getCard();
-                    if( temp != null){
-                        currentSquare.getWeaponDeck()
-                                .set(currentSquare.getWeaponDeck().indexOf(weapon), temp);
-                    }
-                    // add it to the player
+                    //remove the card from the board and add it to the player
+                    currentSquare.getWeaponDeck().remove(weapon);
                     player.addWeapon(weapon);
 
                 }
