@@ -61,7 +61,7 @@ public class TurnController {
             Player player = room.getCurrentPlayer();
             //in case the timer finished reset the shoot for the next player
             roundController.resetShot();
-                timer = new CountDown(WAITING_TIME, () -> {
+            timer = new CountDown(WAITING_TIME, () -> {
                 roomController.stopWaiting();
                 System.out.println("timer stopped");
             });
