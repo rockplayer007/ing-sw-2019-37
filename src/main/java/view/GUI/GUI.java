@@ -8,18 +8,18 @@ import model.player.Player;
 import network.client.MainClient;
 import view.ViewInterface;
 
+import javax.sound.sampled.*;
 import javax.swing.*;
-import javax.xml.catalog.Catalog;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.NotBoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static javax.sound.sampled.Clip.LOOP_CONTINUOUSLY;
 
 
 public class GUI implements ViewInterface {
@@ -31,6 +31,7 @@ public class GUI implements ViewInterface {
     private boolean firstUpdate=true;
     private MapPanel mapPanel;
     private JFrame jDialog= new JFrame("TIMEOUT");
+    private Clip sound = null;
 
 
     public GUI(MainClient mainClient) {
@@ -39,12 +40,24 @@ public class GUI implements ViewInterface {
 
     @Override
     public void launch() throws NotBoundException, IOException {
-
+        addMusic("intro1");
         logIn(true);
-
     }
 
+public void addMusic(String name){
+    AudioInputStream audio;
+    if(sound !=null)
+        sound.stop();
+    try {
+        audio = AudioSystem.getAudioInputStream(new File("." + File.separatorChar + "src" + File.separatorChar
+                + "main" + File.separatorChar + "resources" + File.separatorChar + name +".wav"));
+         sound = AudioSystem.getClip();
+        sound.open(audio);
+        sound.loop(LOOP_CONTINUOUSLY);
+    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {}
 
+
+}
     public void logIn(boolean ask) {
         if (ask) {
             frame.getContentPane().removeAll();
@@ -185,10 +198,11 @@ public class GUI implements ViewInterface {
             mapPanel.createMapButton();
             frame.getContentPane().add(mapPanel);
             frame.setVisible(true);
+            addMusic("mapmusic");
             firstUpdate=false;
         }
 
-        mapPanel.updBoardGui(board,mainClient);
+        mapPanel.updBoardGui(board);
         mapPanel.updatePlayerBoard(board);
         mapPanel.updateWeapon(board,mainClient);
         mapPanel.updatePowerup(myPowerups);
