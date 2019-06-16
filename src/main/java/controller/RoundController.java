@@ -3,6 +3,7 @@ package controller;
 import model.board.Square;
 import model.card.Powerup;
 import model.card.Weapon;
+import model.exceptions.InterruptOperationException;
 import model.exceptions.NotExecutedException;
 
 import model.exceptions.TimeFinishedException;
@@ -99,13 +100,16 @@ public class RoundController {
     private void usePowerup(Powerup powerup, Player player) throws TimeFinishedException{
         //execute it
         try {
+            player.removePowerup(powerup);
             powerup.getEffect().execute(roomController.getRoom());
-        } catch (NotExecutedException e) {
+            //put used powerup to usedCard.
+            roomController.getRoom().getBoard().getPowerDeck().usedCard(powerup);
+        } catch (NotExecutedException|InterruptOperationException e) {
+            player.addPowerup(powerup);
             logger.log(Level.WARNING, "Powerup operation has no targets", e);
             MessageHandler.sendInfo(player, "Powerup operation has no targets", roomController.getRoom());
         }
-        //remove the powerup from the player
-        player.removePowerup(powerup);
+
         roomController.getRoom().getBoard().getPowerDeck().usedCard(powerup);
 
     }

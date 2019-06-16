@@ -219,7 +219,7 @@ public class ActionHandler {
             } catch (NotEnoughException e) {
                 //The player can continue to reload another
             }
-
+            weapons =  weapons.stream().filter(x->player.enoughAmmos(x.getChargeCost(),true)).collect(Collectors.toList());
         }
     }
 
@@ -285,6 +285,7 @@ public class ActionHandler {
             powerupToPay.forEach(x->{
                 player.removePowerup(x);
                 powerDeck.usedCard(x);
+                room.getBoard().getPowerDeck().usedCard(x);
             });
 
         }else

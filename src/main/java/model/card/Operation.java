@@ -446,7 +446,7 @@ class TargetOnEffectSquare implements Operation{
         AttackHandler attackHandler=room.getAttackHandler();
         if (attackHandler.getEffectSquare()==null)
             throw new InterruptOperationException("You are end of map have not next square");
-        List<Player> targets=new ArrayList<>(attackHandler.getEffectSquare().getPlayersOnSquare());
+        List<Player> targets = new ArrayList<>(attackHandler.getEffectSquare().getPlayersOnSquare());
         attackHandler.setPossibleTargets(targets);
     }
 }
@@ -537,7 +537,7 @@ class Repel implements Operation{
             throw new NotExecutedException("there are not possible players can be move ");
         Set<Square> validPosition = new HashSet<>();
         target.getPosition().directions(distance).forEach((key,value)->validPosition.addAll(value));
-        target.movePlayer(MessageHandler.chooseSquare(room.getCurrentPlayer(),validPosition, room,"Which player do you want to move?"));
+        target.movePlayer(MessageHandler.chooseSquare(room.getCurrentPlayer(),validPosition, room,"Which square do you want to move the target?"));
     }
 }
  class AllPossibleTargets implements Operation{
