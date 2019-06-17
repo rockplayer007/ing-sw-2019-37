@@ -1,6 +1,7 @@
 package network.server;
 
 import controller.RoomController;
+import model.exceptions.TooManyPlayerException;
 import model.player.HeroGenerator;
 import network.messages.Message;
 import network.messages.serverToClient.ServerToClient;
@@ -113,7 +114,12 @@ public class WaitingRoom {
         for(ClientOnServer waitingClient : waitingClients){
 
             waitingClient.getPersonalPlayer().setHero(heroGen.getHero());
-            playingRoom.addPlayer(waitingClient);
+            try {
+                playingRoom.addPlayer(waitingClient);
+            } catch (TooManyPlayerException e) {
+                //should never happen
+                logger.log(Level.WARNING, e.getMessage(), e);
+            }
             usernames.add(waitingClient.getUsername());
         }
 

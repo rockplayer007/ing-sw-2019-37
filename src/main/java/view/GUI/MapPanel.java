@@ -24,9 +24,8 @@ public class MapPanel extends JLayeredPane {
     private List<JMapButton> roomButton = new ArrayList<>();
     private List<JPlayerButton> playerIcon = new ArrayList<>();
     private List<WeaponButton> myWeapon = new ArrayList<>();
-    private List<JButton> myPowerup = new ArrayList<>();
+    private List<PowerupButton> myPowerup = new ArrayList<>();
     private List<WeaponButton> weaponIcon = new ArrayList<>();
-    private List<JButton> powerupButton = new ArrayList<>();
     private List<JLabel> ammoColors = new ArrayList<>();
     private int[] positionX = new int[4];
     private int[] positionY = new int[3];
@@ -40,7 +39,6 @@ public class MapPanel extends JLayeredPane {
     private List<JButton> actions = new ArrayList<>();
     private List<Weapon> weaponList = new ArrayList<>();
     private List<JLabel> infoWeapon=new ArrayList<>();
-    private Player myplayer = null;
     private Weapon weaponSelected;
     private List<JLabel> skullboard=new ArrayList<>();
     private JScrollPane messageScrollPane;
@@ -48,12 +46,14 @@ public class MapPanel extends JLayeredPane {
     private int rows =8;
     private JLabel help;
     private JLabel mypoint= new JLabel("");
+    private boolean first=true;
 
     public MapPanel(GameBoard board) {
         JButton pBoards;
         this.setLayout(null);
         this.board = board;
-        image = Toolkit.getDefaultToolkit().createImage(getUrlMap(board.getId()));
+        image = Toolkit.getDefaultToolkit().createImage("." + File.separatorChar + "src" + File.separatorChar + "main" + File.separatorChar + "resources" +
+                File.separatorChar + "maps" + File.separatorChar + "map" + board.getId() + ".png");
         loadImages(image);
         setRoomCoordinate();
         pBoards = new JButton("SHOW PLAYERS BOARDS");
@@ -86,7 +86,7 @@ public class MapPanel extends JLayeredPane {
         this.add(messageScrollPane);
         help=new JLabel();
         help.setLocation(168,107);
-        help.setSize(320,34);
+        help.setSize(340,34);
         help.setFont(new Font(null,Font.BOLD,12));
         help.setBackground(Color.WHITE);
         help.setOpaque(true);
@@ -114,20 +114,16 @@ public class MapPanel extends JLayeredPane {
         positionY[2] = 515;
     }
 
-    private String getUrlMap(int code) {
-
-        return "." + File.separatorChar + "src" + File.separatorChar + "main" + File.separatorChar + "resources" +
-                File.separatorChar + "maps" + File.separatorChar + "map" + code + ".png";
-
-    }
-
     public void getPlayer(List<Player> players, MainClient mainClient,String info) {
         resetRooms();
         resetPlayersEnabled();
+        StyleSheet styleSheet=new StyleSheet();
         for (int i = 0; i < players.size(); i++) {
             for (int j = 0; j < playerIcon.size(); j++) {
                 if (players.get(i).getNickname().equals(playerIcon.get(j).getPlayer().getNickname())) {
                     playerIcon.get(j).setEnabled(true);
+
+                    playerIcon.get(j).setBorder(BorderFactory.createLineBorder(styleSheet.stringToColor(playerIcon.get(j).getPlayer().getHero().getColor().name()),3));
                     int s = i;
                     playerIcon.get(j).addActionListener(new ActionListener() {
                         @Override
@@ -146,7 +142,7 @@ public class MapPanel extends JLayeredPane {
 
     private void removePlayerActions() {
         for (int i = 0; i < playerIcon.size(); i++) {
-            ActionListener actionListener[] = playerIcon.get(i).getActionListeners();
+            ActionListener [] actionListener= playerIcon.get(i).getActionListeners();
             for (int k = 0; k < actionListener.length; k++) {
                 playerIcon.get(i).removeActionListener(actionListener[k]);
             }
@@ -162,6 +158,7 @@ public class MapPanel extends JLayeredPane {
     private void enablePlayers() {
         for (int i = 0; i < playerIcon.size(); i++) {
             playerIcon.get(i).setEnabled(true);
+            playerIcon.get(i).setBorder(null);
         }
     }
 
@@ -171,11 +168,6 @@ public class MapPanel extends JLayeredPane {
         }
     }
 
-    private void setVisibleRooms() {
-        for (int i = 0; i < roomButton.size(); i++) {
-            roomButton.get(i).setVisible(true);
-        }
-    }
 
     public void addWeapon(Weapon weapon) {
         WeaponButton weaponButton = new WeaponButton(weapon);
@@ -253,9 +245,6 @@ public class MapPanel extends JLayeredPane {
         }
     }
 
-    private void updatePoints(){
-
-    }
 
     public void updateWeapon(GameBoard board, MainClient mainClient) {
         removeWeapon();
@@ -268,7 +257,15 @@ public class MapPanel extends JLayeredPane {
                     addWeapon(board.getPlayersOnMap().get(i).getWeapons().get(j));
                 }
                 mypoint.setText(String.valueOf(board.getPlayersOnMap().get(i).getPlayerBoard().getPoints()));
-            }
+                if(first){
+                JLabel heroIcon = new JLabel();
+                heroIcon.setSize(150,100);
+                heroIcon.setLocation(2,600);
+                heroIcon.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main" + File.separatorChar + "resources" +
+                        File.separatorChar + "heroes" + File.separatorChar + board.getPlayersOnMap().get(i).getHero().getName() + "big.png"));
+                this.add(heroIcon);
+                first=false;
+                }}
         }
     }
 
@@ -276,13 +273,12 @@ public class MapPanel extends JLayeredPane {
         for (int i = 0; i < myPowerup.size(); i++) {
             myPowerup.get(i).setVisible(false);
             this.remove(myPowerup.get(i));
-            //infoWeapon.get(i).setVisible(false);
         }
 
     }
 
     public void addPowerup(Powerup powerup) {
-        JButton pow = new JButton();
+        PowerupButton pow = new PowerupButton(powerup);
         pow.setSize(80, 120);
         int i = myPowerup.size();
         if (i > 0)
@@ -333,6 +329,8 @@ public class MapPanel extends JLayeredPane {
         }
         if (!created)
             createPlayerIcon(player);
+        else
+            icon.setVisible(true);
         if( !(icon.getX()>= roomButton.get(cell).getX() && icon.getY() >= roomButton.get(cell).getY()-14 &&
                 icon.getX()<=roomButton.get(cell).getX()+roomButton.get(cell).getWidth() &&
                 icon.getY() <= roomButton.get(cell).getY()-14+roomButton.get(cell).getHeight())) {
@@ -376,10 +374,7 @@ public class MapPanel extends JLayeredPane {
             MediaTracker track = new MediaTracker(this);
             track.addImage(imga, 1);
             track.waitForID(1);
-        } catch (InterruptedException err) {
-            err.printStackTrace();
-            //logger.log(Level.WARNING, "Unable to connect to server", e);
-        }
+        } catch (InterruptedException err) { }
     }
 
     @Override
@@ -413,10 +408,16 @@ public class MapPanel extends JLayeredPane {
         }
     }
 
-    public void updBoardGui(GameBoard board, MainClient mainClient) {
+    private void resetPlayersVisible(){
+        for(int i=0;i<playerIcon.size();i++){
+            playerIcon.get(i).setVisible(false);
+        }
+    }
+    public void updBoardGui(GameBoard board) {
         resetWeaponIcon();
         weaponIcon = new ArrayList<>();
         resetAmmo();
+        resetPlayersVisible();
         ammocards = new ArrayList<>();
         for (int i = 0; board.getSquare(i) != null; i++) {
             Square square = board.getSquare(i);
@@ -496,7 +497,7 @@ public class MapPanel extends JLayeredPane {
             roomButton.get(square.getId()).setEnabled(true);
             roomButton.get(square.getId()).setVisible(true);
             int x = i;
-            ActionListener actionListener[] = roomButton.get(square.getId()).getActionListeners();
+            ActionListener [] actionListener= roomButton.get(square.getId()).getActionListeners();
             for (int j = 0; j < actionListener.length; j++) {
                 roomButton.get(square.getId()).removeActionListener(actionListener[j]);
             }
@@ -511,14 +512,6 @@ public class MapPanel extends JLayeredPane {
         }
         addActionInfo(info);
     }
-/*
-    private void resetPowerups() {
-
-        for (int i = 0; i < powerupButton.size(); i++) {
-            powerupButton.get(i).setVisible(false);
-            powerupButton.get(i).setEnabled(false);
-        }
-    }*/
 
 
     public void getPowerupSelected(List<Powerup> powerups, boolean optional, MainClient mainClient,String info) {
@@ -560,8 +553,13 @@ public class MapPanel extends JLayeredPane {
         text.setHorizontalAlignment(SwingConstants.CENTER);
         text.setFont(new Font(null ,Font.BOLD,12));
         text.setSize(250, 20);
-        text.setLocation(1030, 66);
+        text.setLocation(1030, 68);
         this.add(text);
+        JLabel borderLabel = new JLabel();
+        borderLabel.setSize(250,152);
+        borderLabel.setLocation(1030,66);
+        borderLabel.setBorder(BorderFactory.createLineBorder(Color.YELLOW,3));
+        this.add(borderLabel);
         for (int i = 0; i < actionOptions.size(); i++) {
             JButton action = new JButton();
             action.setSize(124, 64);
@@ -575,7 +573,7 @@ public class MapPanel extends JLayeredPane {
                     + "action" + File.separatorChar + actionOptions.get(i).toString() + ".png"));
 
             if (actions.isEmpty())
-                action.setLocation(1030, 87);
+                action.setLocation(1030, 89);
             else {
                 if (actions.get(i - 1).getX() == 1155)
                     action.setLocation(1030, actions.get(i - 1).getY() + 64);
@@ -589,10 +587,12 @@ public class MapPanel extends JLayeredPane {
                     mainClient.sendSelectedBoard(x);
                     resetActions();
                     text.setVisible(false);
+                    borderLabel.setVisible(false);
                 }
             });
             this.add(action);
             actions.add(action);
+
 
         }
     }
@@ -613,7 +613,6 @@ public class MapPanel extends JLayeredPane {
         for (int i = 0; i < directions.size(); i++) {
             JButton dir = new JButton();
             dir.setSize(150, 150);
-            int s = i;
             dir.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar
                     + "main" + File.separatorChar + "resources" + File.separatorChar
                     + "directions" + File.separatorChar + directions.get(i).name() + ".jpg"));
@@ -666,7 +665,7 @@ public class MapPanel extends JLayeredPane {
     public void getEffect(List<Effect> effects, MainClient mainClient,boolean optional) {
         selectEffect.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         selectEffect.setLayout(new BorderLayout());
-        selectEffect.setSize(215, 300);
+        selectEffect.setSize(215, 315);
         selectEffect.setLocation(400,100);
         selectEffect.setResizable(false);
         selectEffect.getContentPane().removeAll();
@@ -766,13 +765,7 @@ public class MapPanel extends JLayeredPane {
                 JLabel point1 =new JLabel();
                 point1.setSize(37,35);
                 point1.setLocation(x,y-15);
-               // point1.setBackground(styleSheet.stringToColor(cells.get(i).getKillColor().name()));
-                if(skullBoard.getCells().get(i).getKillColor()==null)
-                    System.out.println("null");
-                else
-                    point1.setBackground(styleSheet.stringToColor(skullBoard.getCells().get(i).getKillColor().name()));
-
-
+                point1.setBackground(styleSheet.stringToColor(skullBoard.getCells().get(i).getKillColor().name()));
                 point1.setOpaque(true);
                 this.add(point1);
 

@@ -607,8 +607,14 @@ public class Printer {
                 //dead times
                 int dead = player.getPlayerBoard().getDeathTimes();
                 if(dead > 0){
-                    playerInfo.append(colorToAnsi(AmmoColor.RED) + "DIED " + dead + (dead > 1 ? " TIMES": " TIME"));
+                    playerInfo.append(colorToAnsi(AmmoColor.RED))
+                            .append("DIED ").append(dead).append(dead > 1 ? " TIMES" : " TIME");
                 }
+
+                //add points
+                int points = player.getPlayerBoard().getPoints();
+                playerInfo.append(colorToAnsi(Color.WHITE))
+                        .append("POINTS: ").append(colorToAnsi(Color.GREEN)).append(points);
 
 
                 playerInfo.append(colorToAnsi(Color.WHITE));
@@ -619,7 +625,7 @@ public class Printer {
                 if(player.getNickname().equals(cli.getMainClient().getUsername())){
                     stringedPowerups.append(colorToAnsi(Color.WHITE)).append("Powerups: ");
                     for(Powerup powerup : myPowerups){
-                        stringedWeapons.append(colorToAnsi(Color.WHITE)).append(delimiter);
+                        stringedPowerups.append(colorToAnsi(Color.WHITE)).append(delimiter);
                         delimiter = ", ";
                         stringedPowerups.append(colorToAnsi(powerup.getAmmo())).append(powerup.getName());
                     }

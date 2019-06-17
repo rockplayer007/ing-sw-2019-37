@@ -14,7 +14,6 @@ public class WeaponButton extends JButton {
         this.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //JFrame frame=new JFrame(weapon.getName());
                 ImageIcon imageIcon=new ImageIcon("." + File.separatorChar + "src" + File.separatorChar
                         + "main" + File.separatorChar + "resources" + File.separatorChar + "powerup" +
                         File.separatorChar + weapon.getName() + ".png");

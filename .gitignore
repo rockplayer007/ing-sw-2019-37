@@ -15,3 +15,5 @@ buildNumber.properties
 .idea/
 ing-sw-2019-37.iml
 
+#for the users data that will be created at every game for every user
+*_data.txt

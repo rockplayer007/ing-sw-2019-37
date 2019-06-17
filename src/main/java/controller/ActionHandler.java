@@ -15,6 +15,9 @@ import model.player.Player;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Class that contains static action methods
+ */
 public class ActionHandler {
 
     private ActionHandler(){
@@ -26,6 +29,8 @@ public class ActionHandler {
      * use the weapon to shoot
      * @param room of the player in
      * @param weapon that the player want to use
+     * @throws NotExecutedException when he didnt choose or the weapon is not possible to use
+     * @throws TimeFinishedException when the client takes too long for choosing
      */
     public static void shoot(Room room, Weapon weapon) throws NotExecutedException, TimeFinishedException {
         // reinitialization of AttackHandler,
@@ -92,6 +97,7 @@ public class ActionHandler {
      * @param player that do this action.
      * @param  distanceMax Max distance that the player can move
      * @param room needed for choosing running square
+     * @throws TimeFinishedException when the client takes too long for choosing
      */
     public static void run(Player player, int distanceMax, Room room) throws TimeFinishedException {
         Set<Square> validPositions = player.getPosition().getValidPosition(distanceMax);
@@ -105,6 +111,8 @@ public class ActionHandler {
      * @param player that do this action.
      * @param board that the player play.
      * @param room used to fill the square with new cards
+     * @throws NotExecutedException when there is nothing to grab, not enough ammo or he didnt choose
+     * @throws TimeFinishedException when the client takes too long for choosing
      */
     public static void grab(Player player, Board board, Room room) throws NotExecutedException, TimeFinishedException {
 
@@ -201,6 +209,7 @@ public class ActionHandler {
      * reload the weapon
      * @param player that do this action
      * @param room needed for the payment method
+     * @throws TimeFinishedException when the client takes too long for choosing
      */
     public static void reload(Player player, Room room) throws TimeFinishedException {
         List<Weapon> weapons = player.getWeapons().stream().filter(x->!x.getCharged()).collect(Collectors.toList());

@@ -1,7 +1,6 @@
 package controller;
 
 import model.board.Color;
-import model.card.Card;
 import model.card.Powerup;
 import model.exceptions.TimeFinishedException;
 import model.gamehandler.Room;
@@ -14,11 +13,7 @@ import network.messages.serverToClient.InfoMessage;
 import network.messages.serverToClient.TimeoutMessage;
 import network.server.Configs;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -138,7 +133,7 @@ public class TurnController {
     public void firstRound(Player currentPlayer, int cards) throws TimeFinishedException {
 
         List<Powerup> powerup = room.getBoard().getPowerDeck().getCard(cards);
-        AnswerRequest message = new AnswerRequest(roomController.toJsonCardList(powerup), Message.Content.POWERUP_REQUEST);
+        AnswerRequest message = new AnswerRequest(roomController.everythingToJson(powerup), Message.Content.POWERUP_REQUEST);
         //sends the cards and receives the chosen one
         if(cards > 1) {
             message.setInfo("Take a powerup and hide it! You will be spawned in the discarded one");
@@ -241,7 +236,7 @@ public class TurnController {
 
                 AnswerRequest message = new AnswerRequest(room
                         .getRoomController()
-                        .toJsonCardList(
+                        .everythingToJson(
                                 //sends only the tagback cards
                                 attackerPowerups),
                         //send message corresponding to the request

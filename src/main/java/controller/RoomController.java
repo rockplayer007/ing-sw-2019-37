@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.board.*;
 import model.card.AmmoColor;
-import model.card.Card;
 import model.card.Effect;
 import model.exceptions.NotExecutedException;
 import model.exceptions.TimeFinishedException;
@@ -23,6 +22,10 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Class that starts the game and sends messages to single or
+ * multiple players and receives answers
+ */
 public class RoomController {
 
     private List<Player> players;
@@ -31,8 +34,6 @@ public class RoomController {
     private Room room;
     private ClientToServer mockMessage;
     private String expectedReceiver;
-    private Message.Content expectedType;
-    private Thread askingThread;
     private TurnController turnController;
     private boolean wait;
     private boolean powerup;
@@ -41,7 +42,9 @@ public class RoomController {
 
     private static final Logger logger = Logger.getLogger(RoomController.class.getName());
 
-
+    /**
+     * Constructor that creats a new {@link Room} and a new {@link RoomController}
+     */
     public RoomController() {
         room = new Room(this);
         players = new ArrayList<>();
@@ -51,22 +54,27 @@ public class RoomController {
         powerup = true;
     }
 
+    /**
+     * Method that recives the messages from the clients
+     * @param message arrived message from the client
+     */
     public void handleMessages(ClientToServer message) {
-
 
         if(checkReceiver(message)) {
 
             mockMessage = message;
             //askingThread.interrupt();
         }
-        else {
-            System.out.println("CHEATER");
-        }
+        //otherwhise ignore the message
 
     }
 
 
-    //needed for starting a new room from waitingRoom
+    /**
+     * Allows to add players from the {@link network.server.WaitingRoom}
+     * @param client the client that needs to be added
+     * @throws TooManyPlayerException checks that the players are not too many
+     */
     public void addPlayer(ClientOnServer client) throws TooManyPlayerException {
         Player player = client.getPersonalPlayer();
         if (players.isEmpty()) {
@@ -80,6 +88,9 @@ public class RoomController {
             throw new TooManyPlayerException("cant add the 6th player");
     }
 
+    /**
+     * Called when the game needs to be started. Asks a board and starts the player's match
+     */
     public void matchSetup() {
 
         //add players to the room
@@ -102,7 +113,10 @@ public class RoomController {
 
     }
 
-
+    /**
+     * Method that asks the board to the first player and then to the next once if they disconnect
+     * @throws NotExecutedException thrown when there are not enough players to continue
+     */
     private void askBoard() throws NotExecutedException {
         ServerToClient boardRequest = new BoardRequest(room.getBoardGenerator().getMaps());
         boolean ask = true;
@@ -111,7 +125,7 @@ public class RoomController {
         while (ask){
             CountDown timer = new CountDown(BOARD_TIME, () -> {
                 stopWaiting();
-                System.out.println("timer stopped");
+                logger.log(Level.INFO, "TIMER STOPPED");
             });
             timer.startTimer();
 
@@ -131,7 +145,7 @@ public class RoomController {
                 try{
                     timer.cancelTimer();
                 }catch (IllegalStateException e){
-                    System.out.println("ooops, timer already stopped, dont worry");
+                    logger.log(Level.INFO,"ooops, timer already stopped, dont worry");
                     //nothing, just continue
                 }
             } catch (TimeFinishedException e) {
@@ -153,7 +167,12 @@ public class RoomController {
 
     }
 
-        public void sendMessage(Player player, ServerToClient message){
+    /**
+     * Sends a single message to a client
+     * @param player to send the message
+     * @param message the message that needs to be sent
+     */
+    void sendMessage(Player player, ServerToClient message){
         try{
             logger.log(Level.INFO, "Sending message to: {0}, for {1}",
                     new String[]{player.getNickname(), String.valueOf(message.getContent())});
@@ -166,7 +185,7 @@ public class RoomController {
             if(player.isConnected()){
                 disconnectPlayer(player);
                 //logger.log(Level.WARNING, "Player {0} disconnected", player.getNickname());
-                //TODO send message to all others
+
                 sendMessageToAll(new InfoMessage(player.getNickname() + " not online anymore"));
             }
 
@@ -174,23 +193,34 @@ public class RoomController {
 
     }
 
-
-    public void sendMessageToAll(ServerToClient message){
+    /**
+     * Sends a message to all connected players
+     * @param message
+     */
+    void sendMessageToAll(ServerToClient message){
         //send the message only to who is connected
         players.stream().filter(Player::isConnected).forEach(x -> sendMessage(x, message));
     }
 
+    /**
+     * send an update of the game to all connected players
+     */
     public void sendUpdate(){
         //send a message that includes the board and other things
 
         //sendMessageToAll(new BoardInfo(gson.toJson(room.getBoard().getMap())));
         players.stream().filter(Player::isConnected).forEach(p ->
                 sendMessage(p, new UpdateMessage(
-                toJsonGameBoard(), toJsonCardList(p.getPowerups()), toJsonSkullBoard())));
+                toJsonGameBoard(), everythingToJson(p.getPowerups()), toJsonSkullBoard())));
 
     }
 
-    public boolean checkReceiver(ClientToServer message) {
+    /**
+     * Checks if the message that arrived from the client is comes from the correct client
+     * @param message that contains the sender
+     * @return true if the receiver is the same as expected else is false
+     */
+    private boolean checkReceiver(ClientToServer message) {
         //still no idea how to check this
         if ((message.getSender().equals(expectedReceiver) /*&& message.getContent() == expectedType*/)){
             return true;
@@ -201,13 +231,20 @@ public class RoomController {
         }
     }
 
-    public ClientToServer sendAndReceive(Player player, ServerToClient message) throws TimeFinishedException {
+    /**
+     * Allows to send a message and wait for a response
+     * @param player to send the {@link Message}
+     * @param message that has to be sent to the {@link Player}
+     * @return the message from the client
+     * @throws TimeFinishedException
+     */
+    ClientToServer sendAndReceive(Player player, ServerToClient message) throws TimeFinishedException {
         mockMessage = null;
         expectedReceiver = player.getNickname();
         //expectedType = message.getContent();
 
         //timeout happens before sending
-        if(wait == false){
+        if(!wait /*wait == false*/){
             resetReceiver();
 
             wait = true;
@@ -221,13 +258,13 @@ public class RoomController {
             Thread.onSpinWait();
             //System.out.println("waiting");
         }
-        if(powerup == false){
+        if(!powerup /*powerup == false*/){
             powerup = true;
             return new ListResponse("", "", -1, Message.Content.CARD_RESPONSE);
         }
 
         //timeout happens after sending
-        if (wait == false){
+        if (!wait /*wait == false*/){
             resetReceiver();
             wait = true;
 
@@ -240,30 +277,48 @@ public class RoomController {
         return answer;
     }
 
-    public void stopWaiting(){
+    /**
+     * If there was a waiting, it will be stopped
+     */
+    void stopWaiting(){
         wait = false;
     }
 
-    public void stopPowerup(){
+    /**
+     * If there was a waiting for the powerup, it will be stopped
+     */
+    void stopPowerup(){
         powerup = false;
     }
 
-    public void resetReceiver(){
+    /**
+     * resets the arriving message and the receiver
+     */
+    private void resetReceiver(){
         mockMessage = null;
-        expectedType = null;
+        //not used for now
+        //expectedType = null;
         expectedReceiver = null;
     }
 
+    /**
+     * Disconnects the player by name
+     * @param playerName name of the player that needs to be disconnected
+     */
     public void disconnectPlayer(String playerName){
         for(Player player : players){
             if(player.getNickname().equals(playerName)){
                 disconnectPlayer(player);
+                break;
             }
-            break;
         }
     }
 
-    public void disconnectPlayer(Player player){
+    /**
+     * Disconnects a given {@link Player}
+     * @param player that will be disconnected
+     */
+    private void disconnectPlayer(Player player){
         player.setDisconnected();
         if(expectedReceiver != null && expectedReceiver.equals(player.getNickname())){
             stopWaiting();
@@ -271,19 +326,28 @@ public class RoomController {
         logger.log(Level.WARNING, "Player {0} disconnected", player.getNickname());
     }
 
-
-    //TODO check this
-    //public <T> List<String> toJsonCardList(List<T> cards){
-    public List<String> toJsonCardList(List<? extends Card> cards){
+    /**
+     * General method to transform a list into a string list
+     * @param elements every kind of list that needs to be transformed into a json list
+     * @param <T> general parameter
+     * @return a list with json elements
+     */
+    <T> List<String> everythingToJson(List<T> elements){
+    //public List<String> everythingToJson(List<? extends Card> cards){
         List<String> list = new ArrayList<>();
         Gson gson = new Gson();
 
-        cards.forEach(x -> list.add(gson.toJson(x)) );
+        elements.forEach(x -> list.add(gson.toJson(x)) );
 
         return list;
     }
 
-    public List<String> toJsonSquareList(Set<Square> squares){
+    /**
+     * method to transform a square set into a json list
+     * @param squares that needs to be transformed
+     * @return list of json elements
+     */
+    List<String> everythingToJson(Set<Square> squares){
         List<String> list = new ArrayList<>();
         //not making use of the adapter because no need in view
         Gson gson = new Gson();
@@ -293,7 +357,9 @@ public class RoomController {
         return list;
     }
 
-    public List<String> toJsonPlayerList(List<Player> players){
+    //IF EVERYTHING BREAKS DECOMMENT THIS
+    /*
+    List<String> everythingToJson(List<Player> players){
         List<String> list = new ArrayList<>();
         //not making use of the adapter because no need in view
         Gson gson = new Gson();
@@ -303,7 +369,7 @@ public class RoomController {
         return list;
     }
 
-    public List<String> toJsonEffectList(List<Effect> effects){
+    List<String> everythingToJson(List<Effect> effects){
         List<String> list = new ArrayList<>();
         //not making use of the adapter because no need in view
         Gson gson = new Gson();
@@ -313,7 +379,7 @@ public class RoomController {
         return list;
     }
 
-    public List<String> toJsonDirectionList(List<Square.Direction> directions){
+    List<String> everythingToJson(List<Square.Direction> directions){
         List<String> list = new ArrayList<>();
         //not making use of the adapter because no need in view
         Gson gson = new Gson();
@@ -323,7 +389,9 @@ public class RoomController {
         return list;
     }
 
-    public List<String> toJsonAmmoColorList(List<AmmoColor> ammo){
+
+
+    List<String> everythingToJson(List<AmmoColor> ammo){
         List<String> list = new ArrayList<>();
         //not making use of the adapter because no need in view
         Gson gson = new Gson();
@@ -333,7 +401,7 @@ public class RoomController {
         return list;
     }
 
-    public List<String> toJsonColorList(List<Color> color){
+    List<String> everythingToJson(List<Color> color){
         List<String> list = new ArrayList<>();
         //not making use of the adapter because no need in view
         Gson gson = new Gson();
@@ -343,7 +411,13 @@ public class RoomController {
         return list;
     }
 
-    public String toJsonGameBoard(){
+     */
+
+    /**
+     * Allows to to create a special json without breaking internal calls
+     * @return json element
+     */
+    private String toJsonGameBoard(){
         RuntimeTypeAdapterFactory<Square> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
                 .of(Square.class, "Square")
                 .registerSubtype(AmmoSquare.class, "AmmoSquare")
@@ -355,11 +429,19 @@ public class RoomController {
         return gson.toJson(room.getBoard().getMap());
     }
 
-    public String toJsonSkullBoard(){
+    /**
+     * Method to transform the {@link SkullBoard} into a json element
+     * @return a json element
+     */
+    private String toJsonSkullBoard(){
         Gson gson = new Gson();
         return gson.toJson(room.getBoard().getSkullBoard());
     }
 
+    /**
+     * gives the current {@link Room}
+     * @return the room where the game is playing
+     */
     public Room getRoom(){
         return room;
     }
