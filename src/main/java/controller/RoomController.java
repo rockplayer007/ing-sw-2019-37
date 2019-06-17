@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.board.*;
 import model.card.AmmoColor;
-import model.card.Card;
 import model.card.Effect;
 import model.exceptions.NotExecutedException;
 import model.exceptions.TimeFinishedException;
@@ -212,7 +211,7 @@ public class RoomController {
         //sendMessageToAll(new BoardInfo(gson.toJson(room.getBoard().getMap())));
         players.stream().filter(Player::isConnected).forEach(p ->
                 sendMessage(p, new UpdateMessage(
-                toJsonGameBoard(), toJsonCardList(p.getPowerups()), toJsonSkullBoard())));
+                toJsonGameBoard(), everythingToJson(p.getPowerups()), toJsonSkullBoard())));
 
     }
 
@@ -327,19 +326,28 @@ public class RoomController {
         logger.log(Level.WARNING, "Player {0} disconnected", player.getNickname());
     }
 
-
-    //TODO check this
-    public <T> List<String> toJsonCardList(List<T> cards){
-    //public List<String> toJsonCardList(List<? extends Card> cards){
+    /**
+     * General method to transform a list into a string list
+     * @param elements every kind of list that needs to be transformed into a json list
+     * @param <T> general parameter
+     * @return a list with json elements
+     */
+    <T> List<String> everythingToJson(List<T> elements){
+    //public List<String> everythingToJson(List<? extends Card> cards){
         List<String> list = new ArrayList<>();
         Gson gson = new Gson();
 
-        cards.forEach(x -> list.add(gson.toJson(x)) );
+        elements.forEach(x -> list.add(gson.toJson(x)) );
 
         return list;
     }
 
-    List<String> toJsonSquareList(Set<Square> squares){
+    /**
+     * method to transform a square set into a json list
+     * @param squares that needs to be transformed
+     * @return list of json elements
+     */
+    List<String> everythingToJson(Set<Square> squares){
         List<String> list = new ArrayList<>();
         //not making use of the adapter because no need in view
         Gson gson = new Gson();
@@ -349,7 +357,9 @@ public class RoomController {
         return list;
     }
 
-    List<String> toJsonPlayerList(List<Player> players){
+    //IF EVERYTHING BREAKS DECOMMENT THIS
+    /*
+    List<String> everythingToJson(List<Player> players){
         List<String> list = new ArrayList<>();
         //not making use of the adapter because no need in view
         Gson gson = new Gson();
@@ -359,7 +369,7 @@ public class RoomController {
         return list;
     }
 
-    List<String> toJsonEffectList(List<Effect> effects){
+    List<String> everythingToJson(List<Effect> effects){
         List<String> list = new ArrayList<>();
         //not making use of the adapter because no need in view
         Gson gson = new Gson();
@@ -369,7 +379,7 @@ public class RoomController {
         return list;
     }
 
-    List<String> toJsonDirectionList(List<Square.Direction> directions){
+    List<String> everythingToJson(List<Square.Direction> directions){
         List<String> list = new ArrayList<>();
         //not making use of the adapter because no need in view
         Gson gson = new Gson();
@@ -379,7 +389,9 @@ public class RoomController {
         return list;
     }
 
-    List<String> toJsonAmmoColorList(List<AmmoColor> ammo){
+
+
+    List<String> everythingToJson(List<AmmoColor> ammo){
         List<String> list = new ArrayList<>();
         //not making use of the adapter because no need in view
         Gson gson = new Gson();
@@ -389,7 +401,7 @@ public class RoomController {
         return list;
     }
 
-    List<String> toJsonColorList(List<Color> color){
+    List<String> everythingToJson(List<Color> color){
         List<String> list = new ArrayList<>();
         //not making use of the adapter because no need in view
         Gson gson = new Gson();
@@ -399,6 +411,12 @@ public class RoomController {
         return list;
     }
 
+     */
+
+    /**
+     * Allows to to create a special json without breaking internal calls
+     * @return json element
+     */
     private String toJsonGameBoard(){
         RuntimeTypeAdapterFactory<Square> runtimeTypeAdapterFactory = RuntimeTypeAdapterFactory
                 .of(Square.class, "Square")
@@ -411,11 +429,19 @@ public class RoomController {
         return gson.toJson(room.getBoard().getMap());
     }
 
+    /**
+     * Method to transform the {@link SkullBoard} into a json element
+     * @return a json element
+     */
     private String toJsonSkullBoard(){
         Gson gson = new Gson();
         return gson.toJson(room.getBoard().getSkullBoard());
     }
 
+    /**
+     * gives the current {@link Room}
+     * @return the room where the game is playing
+     */
     public Room getRoom(){
         return room;
     }

@@ -1,18 +1,13 @@
 package controller;
 
 import com.google.gson.Gson;
-import controller.RoomController;
 import model.board.*;
-import model.card.Card;
 import model.card.Powerup;
 import model.gamehandler.Room;
-import model.player.Player;
 import network.server.Configs;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,7 +37,7 @@ public class RoomControllerTest {
     public void toJsonListTest(){
         List<Powerup> powerups = room.getBoard().getPowerDeck().getCard(2);
 
-        List<String> list = roomController.toJsonCardList( powerups);
+        List<String> list = roomController.everythingToJson( powerups);
 
         Gson gson = new Gson();
         Powerup arrivedCard1 = gson.fromJson(list.get(0), Powerup.class);
@@ -55,7 +50,7 @@ public class RoomControllerTest {
 
 
         List<GenerationSquare> squares = room.getBoard().getMap().getGenPoints();
-        list = roomController.toJsonCardList(squares);
+        list = roomController.everythingToJson(squares);
 
 
         Square arrivedSquare1 = gson.fromJson(list.get(0), GenerationSquare.class);
