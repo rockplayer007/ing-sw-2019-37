@@ -20,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * contain the min actions t
+ * Contains methods to send specific messages
  */
 public class MessageHandler {
 
@@ -32,10 +32,13 @@ public class MessageHandler {
 
 
     /**
-     *  general way to let player chooses the Squere that he can go
-     * @param player current player
-     * @param  validPositions all square that you can choose.
-     * @return the Square that the player choose to move
+     * Sends messages to allow to choose a {@link Square}
+     * @param player player that has to choose the square
+     * @param validPositions all possible positions where the player can choose from
+     * @param room the room where the player is playing
+     * @param reason a string explaining why the player has to choose
+     * @return
+     * @throws TimeFinishedException
      */
     public static Square chooseSquare(Player player,Set<Square> validPositions, Room room, String reason) throws TimeFinishedException {
         RoomController roomController = room.getRoomController();
@@ -135,6 +138,7 @@ public class MessageHandler {
      * @param player player that needs to choose
      * @param directions possible directions that the current player can choose from
      * @param room where the player is playing
+     * @param info reason for choosing a direction
      * @return the chosen direction
      * @throws TimeFinishedException when the client finishes the time for choosing
      */
@@ -213,6 +217,7 @@ public class MessageHandler {
      * @param isOptional if true the player can decide whether to use the card or not
      * @param room wherethe player is playing
      * @param isWeapon indicates if the card is a weapon or a powerup
+     * @param reason a string explaining why the player needs to choose a card
      * @return position of card choose in the List
      * @throws TimeFinishedException when the client finishes the time for choosing
      */

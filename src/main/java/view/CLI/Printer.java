@@ -625,7 +625,7 @@ public class Printer {
                 if(player.getNickname().equals(cli.getMainClient().getUsername())){
                     stringedPowerups.append(colorToAnsi(Color.WHITE)).append("Powerups: ");
                     for(Powerup powerup : myPowerups){
-                        stringedWeapons.append(colorToAnsi(Color.WHITE)).append(delimiter);
+                        stringedPowerups.append(colorToAnsi(Color.WHITE)).append(delimiter);
                         delimiter = ", ";
                         stringedPowerups.append(colorToAnsi(powerup.getAmmo())).append(powerup.getName());
                     }

@@ -2,6 +2,7 @@ package controller;
 
 import com.google.gson.Gson;
 import controller.RoomController;
+import model.board.*;
 import model.card.Card;
 import model.card.Powerup;
 import model.gamehandler.Room;
@@ -21,6 +22,7 @@ public class RoomControllerTest {
 
     private Room room;
     private RoomController roomController;
+    private GameBoard map;
 
     @BeforeEach
     public void createBoard(){
@@ -28,6 +30,10 @@ public class RoomControllerTest {
 
         roomController = new RoomController();
         room = new Room(roomController);
+
+        map = new BoardGenerator(room.getBoard()).createMap(3);
+
+        room.getBoard().setMap(map);
 
     }
 
@@ -47,6 +53,17 @@ public class RoomControllerTest {
         assertEquals((powerups.get(1)).getAmmo(), (arrivedCard2).getAmmo());
 
 
+
+        List<GenerationSquare> squares = room.getBoard().getMap().getGenPoints();
+        list = roomController.toJsonCardList(squares);
+
+
+        Square arrivedSquare1 = gson.fromJson(list.get(0), GenerationSquare.class);
+        Square arrivedSquare2 = gson.fromJson(list.get(1), GenerationSquare.class);
+
+        assertEquals(( squares.get(0)).getColor(), arrivedSquare1.getColor());
+
+        assertEquals((squares.get(1)).getColor(), arrivedSquare2.getColor());
     }
 
     @Test
