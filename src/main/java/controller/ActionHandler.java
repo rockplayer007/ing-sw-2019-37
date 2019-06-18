@@ -32,7 +32,7 @@ public class ActionHandler {
      * @throws NotExecutedException when he didnt choose or the weapon is not possible to use
      * @throws TimeFinishedException when the client takes too long for choosing
      */
-    public static void shoot(Room room, Weapon weapon) throws NotExecutedException, TimeFinishedException {
+    static void shoot(Room room, Weapon weapon) throws NotExecutedException, TimeFinishedException {
         // reinitialization of AttackHandler,
         room.setAttackHandler(new AttackHandler());
         Map<Effect,Integer> effects = weapon.getEffects();
@@ -114,7 +114,7 @@ public class ActionHandler {
      * @throws NotExecutedException when there is nothing to grab, not enough ammo or he didnt choose
      * @throws TimeFinishedException when the client takes too long for choosing
      */
-    public static void grab(Player player, Board board, Room room) throws NotExecutedException, TimeFinishedException {
+    static void grab(Player player, Board board, Room room) throws NotExecutedException, TimeFinishedException {
 
         if (!player.getPosition().isGenerationPoint()){
 
@@ -211,7 +211,7 @@ public class ActionHandler {
      * @param room needed for the payment method
      * @throws TimeFinishedException when the client takes too long for choosing
      */
-    public static void reload(Player player, Room room) throws TimeFinishedException {
+    static void reload(Player player, Room room) throws TimeFinishedException {
         List<Weapon> weapons = player.getWeapons().stream().filter(x->!x.getCharged()).collect(Collectors.toList());
         weapons =  weapons.stream().filter(x->player.enoughAmmos(x.getChargeCost(),true)).collect(Collectors.toList());
         while (!weapons.isEmpty()) {
@@ -262,7 +262,7 @@ public class ActionHandler {
         while (!tempCost.isEmpty()) {
 
             //is optional only if has enough ammo to pay
-            Powerup chosenCard = null;
+            Powerup chosenCard;
             try {
                 chosenCard = MessageHandler
                         .chooseCard(possiblePowerups, true, room, false,

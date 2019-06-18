@@ -20,27 +20,46 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class RoundController {
+/**
+ * Allows to manage a round of a single player
+ */
+class RoundController {
 
     private RoomController roomController;
     private boolean shot;
 
     private static final Logger logger = Logger.getLogger(RoundController.class.getName());
 
-
-    public RoundController(RoomController roomController){
+    /**
+     * Constructor for the single round class
+     * @param roomController to keep a local reference
+     */
+    RoundController(RoomController roomController){
         this.roomController = roomController;
         this.shot = false;
     }
-    public void resetShot(){
+
+    /**
+     * It is like the player hasn't shot
+     */
+    void resetShot(){
         shot = false;
     }
-    public boolean shoot(){
+
+    /**
+     * Tells if the player has shot or not
+     * @return true if the player has shot
+     */
+    boolean shoot(){
         return shot;
     }
 
-
-    public void powerupController(Player player) throws TimeFinishedException {
+    /**
+     * Send to the player the powerups that he can use
+     * @param player the current player that can choose
+     * @throws TimeFinishedException when the player has finished the time to play
+     */
+    void powerupController(Player player) throws TimeFinishedException {
         boolean usePowerups = true;
         while (usePowerups){
             List<Powerup> powerups = possiblePowerups(player);
@@ -71,6 +90,12 @@ public class RoundController {
     }
 
     //check if the player can use the powerup
+
+    /**
+     * Checks which powerups the player can use
+     * @param player the current player that needs to choose
+     * @return all the possible powerups
+     */
     private List<Powerup> possiblePowerups(Player player){
 
         List<Powerup> usable = new ArrayList<>();
@@ -97,6 +122,12 @@ public class RoundController {
         return usable;
     }
 
+    /**
+     * Executes the powerup that the player has chosen
+     * @param powerup the powerup to execute
+     * @param player the current player that uses the card
+     * @throws TimeFinishedException when the player has finished the time to play the card
+     */
     private void usePowerup(Powerup powerup, Player player) throws TimeFinishedException{
         //execute it
         try {
@@ -114,8 +145,12 @@ public class RoundController {
 
     }
 
-
-    public void actionController(Player player) throws TimeFinishedException{
+    /**
+     * Allows the player to execute his current actions
+     * @param player the current player that is playing
+     * @throws TimeFinishedException when the player has finished the time to play his turn
+     */
+    void actionController(Player player) throws TimeFinishedException{
         //check action in player
         List<String> send = player.getActionStatus().getJsonChoices(player,
                 //if the there is only 1 player he cant shoot
@@ -315,6 +350,9 @@ public class RoundController {
 
                     actionController(player);
                 }
+                break;
+            default:
+                //nothing to execute
                 break;
 
         }

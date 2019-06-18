@@ -614,7 +614,7 @@ public class Printer {
                 //add points
                 int points = player.getPlayerBoard().getPoints();
                 playerInfo.append(colorToAnsi(Color.WHITE))
-                        .append("POINTS: ").append(colorToAnsi(Color.GREEN)).append(points);
+                        .append("  POINTS: ").append(colorToAnsi(Color.GREEN)).append(points);
 
 
                 playerInfo.append(colorToAnsi(Color.WHITE));
@@ -763,6 +763,7 @@ public class Printer {
 
             println(line.toString());
         }
+        println("\n");
 
 
     }

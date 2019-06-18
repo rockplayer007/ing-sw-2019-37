@@ -3,8 +3,6 @@ package controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.board.*;
-import model.card.AmmoColor;
-import model.card.Effect;
 import model.exceptions.NotExecutedException;
 import model.exceptions.TimeFinishedException;
 import model.exceptions.TooManyPlayerException;
@@ -68,7 +66,6 @@ public class RoomController {
         //otherwhise ignore the message
 
     }
-
 
     /**
      * Allows to add players from the {@link network.server.WaitingRoom}
@@ -142,12 +139,8 @@ public class RoomController {
 
                 ask = false;
 
-                try{
-                    timer.cancelTimer();
-                }catch (IllegalStateException e){
-                    logger.log(Level.INFO,"ooops, timer already stopped, dont worry");
-                    //nothing, just continue
-                }
+                timer.cancelTimer();
+
             } catch (TimeFinishedException e) {
                 //set the player as disconnected
                 room.getCurrentPlayer().setDisconnected();
@@ -162,6 +155,12 @@ public class RoomController {
                     throw new NotExecutedException("Sorry, not enough players anymore");
                 }
             }
+            catch(IllegalStateException i){
+                logger.log(Level.INFO,"ooops, timer already stopped, dont worry");
+                //nothing, just continue
+            }
+
+
         }
 
 
@@ -195,7 +194,7 @@ public class RoomController {
 
     /**
      * Sends a message to all connected players
-     * @param message
+     * @param message the message tha needs to be sent to everybody
      */
     void sendMessageToAll(ServerToClient message){
         //send the message only to who is connected
@@ -236,7 +235,7 @@ public class RoomController {
      * @param player to send the {@link Message}
      * @param message that has to be sent to the {@link Player}
      * @return the message from the client
-     * @throws TimeFinishedException
+     * @throws TimeFinishedException when the player finishes the time to choose
      */
     ClientToServer sendAndReceive(Player player, ServerToClient message) throws TimeFinishedException {
         mockMessage = null;
