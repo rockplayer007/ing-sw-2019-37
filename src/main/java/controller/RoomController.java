@@ -17,6 +17,7 @@ import network.server.Configs;
 
 import java.rmi.RemoteException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,7 +35,7 @@ public class RoomController {
     private String expectedReceiver;
     private TurnController turnController;
     private boolean wait;
-    private boolean powerup;
+    private AtomicBoolean powerup;
     private static final int MAX_PLAYERS = Configs.getInstance().getMaximumPlayers();
     private static final int BOARD_TIME = Configs.getInstance().getBoardRequestTime();
 
@@ -49,7 +50,7 @@ public class RoomController {
         connectionToClient = new HashMap<>();
         turnController = new TurnController(this, room);
         wait = true;
-        powerup = true;
+        powerup = new AtomicBoolean(true);
     }
 
     /**
@@ -243,7 +244,7 @@ public class RoomController {
         //expectedType = message.getContent();
 
         //timeout happens before sending
-        if(!wait /*wait == false*/){
+        if(!wait){
             resetReceiver();
 
             wait = true;
@@ -253,14 +254,10 @@ public class RoomController {
         sendMessage(player, message);
 
         //dont wait for the sending when wait is false
-        while (mockMessage == null && wait && powerup){
+        while (mockMessage == null && wait){
             Thread.onSpinWait();
-            //System.out.println("waiting");
         }
-        if(!powerup /*powerup == false*/){
-            powerup = true;
-            return new ListResponse("", "", -1, Message.Content.CARD_RESPONSE);
-        }
+
 
         //timeout happens after sending
         if (!wait /*wait == false*/){
@@ -277,6 +274,33 @@ public class RoomController {
     }
 
     /**
+     * Sends a message for using the TAGBACK GRANADE
+     * @param player who has to use the card
+     * @param message with the possible cards to use
+     * @return the selected card and if the waiting parameter is triggered returns a special response
+     */
+    ListResponse tagBack(Player player, ServerToClient message){
+        mockMessage = null;
+        expectedReceiver = player.getNickname();
+        powerup.set(true);
+        sendMessage(player, message);
+        while (mockMessage == null && powerup.get()){
+            Thread.onSpinWait();
+        }
+
+        //if it has to stop waiting for the powerup set it back to true and return this response
+        if(powerup.compareAndSet(false, true) /*powerup == false*/){
+            //powerup = true;
+            return new ListResponse("", "", -1, Message.Content.CARD_RESPONSE);
+        }
+
+        ListResponse answer = (ListResponse) mockMessage;
+        resetReceiver();
+
+        return answer;
+    }
+
+    /**
      * If there was a waiting, it will be stopped
      */
     void stopWaiting(){
@@ -287,7 +311,8 @@ public class RoomController {
      * If there was a waiting for the powerup, it will be stopped
      */
     void stopPowerup(){
-        powerup = false;
+        powerup.set(false);
+        //powerup = false;
     }
 
     /**

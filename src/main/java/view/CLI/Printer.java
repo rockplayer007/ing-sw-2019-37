@@ -703,6 +703,10 @@ public class Printer {
     }
 
     public void printAllInfo(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard){
+
+        //dont know, should clear the screen
+        //print("\u001b[2J");
+
         List<String> stringedBoard = printBoard(board);
         List<String> stringedWeapons = printWeaponsOnBoard(board);
         List<String> stringedPlayers = printPlayersInfo(board, myPowerups);
@@ -764,7 +768,6 @@ public class Printer {
             println(line.toString());
         }
         println("\n");
-
 
     }
 
