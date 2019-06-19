@@ -1,7 +1,6 @@
 package controller;
 
 import model.board.Color;
-import model.card.Card;
 import model.card.Powerup;
 import model.exceptions.TimeFinishedException;
 import model.gamehandler.Room;
@@ -14,19 +13,17 @@ import network.messages.serverToClient.InfoMessage;
 import network.messages.serverToClient.TimeoutMessage;
 import network.server.Configs;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeoutException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class TurnController {
+/**
+ * Allows to manage the turn from the first to the last player
+ */
+class TurnController {
     private RoomController roomController;
     private Room room;
-    private CountDown timer;
     private boolean gameFinished;
 
     private static final int WAITING_TIME = Configs.getInstance().getTurnTime();
@@ -36,7 +33,12 @@ public class TurnController {
 
     private static final Logger logger = Logger.getLogger(TurnController.class.getName());
 
-    public TurnController(RoomController roomController, Room room) {
+    /**
+     * Constructor that creates local {@link RoundController} and the main {@link RoomController}
+     * @param roomController useful to send messages and retrieve other data
+     * @param room where the players are playing
+     */
+    TurnController(RoomController roomController, Room room) {
         this.roomController = roomController;
         this.room = room;
         roundController = new RoundController(roomController);
@@ -53,8 +55,13 @@ public class TurnController {
          */
     }
 
-    public void startPlayerRound(){
+    /**
+     * Begins a round starting from the first player and looping until
+     * the game is finished or too many players are disconnected
+     */
+    void startPlayerRound(){
 
+        CountDown timer;
         //need to ckeck with currentPlayer
 
         while (!gameFinished){
@@ -63,14 +70,13 @@ public class TurnController {
             roundController.resetShot();
             timer = new CountDown(WAITING_TIME, () -> {
                 roomController.stopWaiting();
-                System.out.println("timer stopped");
+                logger.log(Level.INFO, "timer stopped for {0}", player);
             });
 
             timer.startTimer();
             try {
 
                 if(player.getRoundStatus() == Player.RoundStatus.FIRST_ROUND){
-
 
                     firstRound(player, 2);
 
@@ -94,18 +100,10 @@ public class TurnController {
                     normalRound(player);
                 }
 
-                try{
-                    timer.cancelTimer();
-                }catch (IllegalStateException e){
-                    System.out.println("ooops, timer already stopped, dont worry");
-                    //nothing, just continue
-                }
+                timer.cancelTimer();
 
-
-                //after taking the ammoCard set a new card
-                room.getBoard().fillAmmo();
-                room.getBoard().fillWeapons();
-                roomController.sendUpdate();
+                //after taking the ammoCard and weapons set a new card
+                cleanBoard();
 
             } catch (TimeFinishedException e) {
                 //set the player as disconnected
@@ -117,28 +115,36 @@ public class TurnController {
 
                 //continue as normal
                 logger.log(Level.INFO,"player: {0} finished his time", player.getNickname());
-                room.getBoard().fillAmmo();
-                room.getBoard().fillWeapons();
+                cleanBoard();
 
-                roomController.sendUpdate();
+            } catch (IllegalStateException e){
+                logger.log(Level.INFO, "ooops, timer already stopped, dont worry ");
+                //nothing, just continue
             }
 
-            if(room.endTurnControl()){
+            if(room.endTurnControl() || !room.setNextPlayer()){
                  //when return true means is end of game
                 break;
             }
             //when there are less than 3 connected players quit
-            if(!room.setNextPlayer()){
+            /*if(!room.setNextPlayer()){
                 break;
             }
+             */
 
         }
     }
 
-    public void firstRound(Player currentPlayer, int cards) throws TimeFinishedException {
+    /**
+     * Allows to spawn the player at the beginning or after dieing
+     * @param currentPlayer the player that will placed on the board
+     * @param cards number of cards he can choose from
+     * @throws TimeFinishedException when the player finishes time for choosing a card
+     */
+    private void firstRound(Player currentPlayer, int cards) throws TimeFinishedException {
 
         List<Powerup> powerup = room.getBoard().getPowerDeck().getCard(cards);
-        AnswerRequest message = new AnswerRequest(roomController.toJsonCardList(powerup), Message.Content.POWERUP_REQUEST);
+        AnswerRequest message = new AnswerRequest(roomController.everythingToJson(powerup), Message.Content.POWERUP_REQUEST);
         //sends the cards and receives the chosen one
         if(cards > 1) {
             message.setInfo("Take a powerup and hide it! You will be spawned in the discarded one");
@@ -188,8 +194,12 @@ public class TurnController {
         roomController.sendUpdate();
     }
 
-
-    public void normalRound(Player player) throws TimeFinishedException{
+    /**
+     * Round where the player can play his actions
+     * @param player current player that is playing
+     * @throws TimeFinishedException when the player finishes the time for playing
+     */
+    private void normalRound(Player player) throws TimeFinishedException{
         //in normal round do this 2 times
 
         int iterations = 2;
@@ -219,12 +229,17 @@ public class TurnController {
 
     }
 
+    /**
+     * Method that allows to ask a player if he wants to use a his TAGBACK GRANADE
+     * @param player who has this card
+     */
+    private void sendTagBack(Player player) {
+        String tagback = "TAGBACK GRENADE";
 
-    public void sendTagBack(Player player) throws TimeFinishedException {
         List<Player> haveTagBack = room.getAttackHandler().getDamaged()
                 .keySet().stream().filter(x -> x
                         .getPowerups().stream().anyMatch(y -> y
-                                .getName().equals("TAGBACK GRENADE"))).collect(Collectors.toList());
+                                .getName().equals(tagback))).collect(Collectors.toList());
 
 
         haveTagBack.remove(player);
@@ -233,43 +248,43 @@ public class TurnController {
         for(Player attacker : haveTagBack){
 
             int iterations = (int) attacker.getPowerups().stream()
-                    .filter(x -> x.getName().equals("TAGBACK GRENADE")).count();
+                    .filter(x -> x.getName().equals(tagback)).count();
             for(int i = 0; i < iterations; i++){
 
                 List<Powerup> attackerPowerups = attacker.getPowerups().stream()
-                        .filter(x -> x.getName().equals("TAGBACK GRENADE")).collect(Collectors.toList());
+                        .filter(x -> x.getName().equals(tagback)).collect(Collectors.toList());
 
                 AnswerRequest message = new AnswerRequest(room
                         .getRoomController()
-                        .toJsonCardList(
+                        .everythingToJson(
                                 //sends only the tagback cards
                                 attackerPowerups),
                         //send message corresponding to the request
                         Message.Content.POWERUP_REQUEST);
 
                 message.setIsOptional();
-                message.setInfo("You have a TAGBACK GRENADE, want to use one? Be fast!");
+                message.setInfo("You have a " + tagback +", want to use one? Be fast!");
 
                 //set timer for choosing
                 CountDown cd = new CountDown(POWERUP_TIME, () -> {
                     roomController.stopPowerup();
-                    roomController.sendMessage(attacker, new InfoMessage("Too slow! Use TAGBACK GRANADE next time"));
+                    roomController.sendMessage(attacker, new InfoMessage("Too slow! Use your " + tagback + " next time"));
 
                 });
 
                 cd.startTimer();
 
-                ListResponse chosenCard = (ListResponse) room
-                            .getRoomController().sendAndReceive(attacker, message);
+                //when the main player's timer stops before the attacker's
+                //all other players can attack as well
+                ListResponse chosenCard = room.getRoomController().tagBack(attacker, message);
 
                 try{
                     cd.cancelTimer();
-                }catch (IllegalStateException e){
-                    System.out.println("ooops, timer already stopped, dont worry");
+                }catch (IllegalStateException f){
+                    logger.log(Level.INFO, "ooops, timer already stopped, dont worry");
                     //nothing, just continue
                 }
 
-                    //-1 means the player doesnt want to use powerups
                 if (chosenCard.getSelectedItem() < attacker.getPowerups().size() && chosenCard.getSelectedItem() >= 0) {
                     //the chosen powerup will be executed
                     tempPowerup = attackerPowerups.get(chosenCard.getSelectedItem());
@@ -286,6 +301,15 @@ public class TurnController {
 
             }
         }
+
     }
 
+    /**
+     * sets missing ammocards and weapons back on the board and updates the players
+     */
+    private void cleanBoard(){
+        room.getBoard().fillAmmo();
+        room.getBoard().fillWeapons();
+        roomController.sendUpdate();
+    }
 }

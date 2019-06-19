@@ -20,10 +20,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * contain the min actions t
+ * Contains methods to send specific messages
  */
 public class MessageHandler {
 
+    private static final String CHEATER = "CHEATER DETECTED: {0}";
     private static final Logger logger = Logger.getLogger(MessageHandler.class.getName());
 
     private MessageHandler(){
@@ -32,15 +33,18 @@ public class MessageHandler {
 
 
     /**
-     *  general way to let player chooses the Squere that he can go
-     * @param player current player
-     * @param  validPositions all square that you can choose.
-     * @return the Square that the player choose to move
+     * Sends messages to allow to choose a {@link Square}
+     * @param player player that has to choose the square
+     * @param validPositions all possible positions where the player can choose from
+     * @param room the room where the player is playing
+     * @param reason a string explaining why the player has to choose
+     * @return the square that the player has chosen
+     * @throws TimeFinishedException when the client finishes the time for choosing
      */
     public static Square chooseSquare(Player player,Set<Square> validPositions, Room room, String reason) throws TimeFinishedException {
         RoomController roomController = room.getRoomController();
         List<String> send = roomController
-                .toJsonSquareList(validPositions);
+                .everythingToJson(validPositions);
         AnswerRequest message = new AnswerRequest(send, Message.Content.SQUARE_REQUEST);
         message.setInfo(reason);
         ListResponse square = (ListResponse) roomController
@@ -52,8 +56,8 @@ public class MessageHandler {
             tempSquares = new ArrayList<>(validPositions);
             return tempSquares.get(square.getSelectedItem());
         }catch (RuntimeException e){
-            //cheater
-            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
+            //CHEATER
+            logger.log(Level.WARNING, CHEATER, player.getNickname());
 
             List<Square> x = new ArrayList<>(validPositions);
             return x.get(0);
@@ -68,14 +72,14 @@ public class MessageHandler {
      * @return the effect that the player has chosen
      * @throws TimeFinishedException when the client finishes the time for choosing
      */
-    public static Effect chooseEffect(Player player, List<Effect> effects, Room room) throws TimeFinishedException {
+    static Effect chooseEffect(Player player, List<Effect> effects, Room room) throws TimeFinishedException {
         if(effects.isEmpty()){
             return null;
         }
 
         RoomController roomController = room.getRoomController();
         List<String> send = roomController
-                .toJsonEffectList(effects);
+                .everythingToJson(effects);
 
         AnswerRequest message = new AnswerRequest(send, Message.Content.EFFECT_REQUEST);
         message.setIsOptional();
@@ -111,7 +115,7 @@ public class MessageHandler {
         for (int i = 0; i < askIterations; i++){
 
             List<String> send = roomController
-                    .toJsonPlayerList(possiblePlayers);
+                    .everythingToJson(possiblePlayers);
             AnswerRequest message = new AnswerRequest(send, Message.Content.PLAYER_REQUEST);
             message.setInfo(info);
             ListResponse chosenPlayer = (ListResponse) roomController
@@ -122,8 +126,8 @@ public class MessageHandler {
                 playersToAttack.add(possiblePlayers.get(chosenPlayer.getSelectedItem()));
                 possiblePlayers.remove(chosenPlayer.getSelectedItem());
             }catch (RuntimeException e){
-                //cheater
-                logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
+                //CHEATER
+                logger.log(Level.WARNING, CHEATER, player.getNickname());
                 return null;
             }
         }
@@ -135,13 +139,14 @@ public class MessageHandler {
      * @param player player that needs to choose
      * @param directions possible directions that the current player can choose from
      * @param room where the player is playing
+     * @param info reason for choosing a direction
      * @return the chosen direction
      * @throws TimeFinishedException when the client finishes the time for choosing
      */
     public static Square.Direction chooseDirection(Player player, List<Square.Direction> directions, Room room, String info) throws TimeFinishedException {
         RoomController roomController = room.getRoomController();
         List<String> send = roomController
-                .toJsonDirectionList(directions);
+                .everythingToJson(directions);
 
         AnswerRequest message = new AnswerRequest(send, Message.Content.DIRECTION_REQUEST);
         message.setInfo(info);
@@ -151,8 +156,8 @@ public class MessageHandler {
         try{
             return directions.get(direction.getSelectedItem());
         }catch (RuntimeException e){
-            //cheater
-            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
+            //CHEATER
+            logger.log(Level.WARNING, CHEATER, player.getNickname());
             return null;
         }
     }
@@ -168,7 +173,7 @@ public class MessageHandler {
     public static AmmoColor chooseAmmoColor(Player player, List<AmmoColor> ammo, Room room) throws TimeFinishedException {
         RoomController roomController = room.getRoomController();
         List<String> send = roomController
-                .toJsonAmmoColorList(ammo);
+                .everythingToJson(ammo);
 
         ListResponse chosenAmmo = (ListResponse) roomController
                 .sendAndReceive(player, new AnswerRequest(send, Message.Content.AMMOCOLOR_REQUEST));
@@ -176,8 +181,8 @@ public class MessageHandler {
         try{
             return ammo.get(chosenAmmo.getSelectedItem());
         }catch (RuntimeException e){
-            //cheater
-            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
+            //CHEATER
+            logger.log(Level.WARNING, CHEATER, player.getNickname());
             return null;
         }
     }
@@ -193,7 +198,7 @@ public class MessageHandler {
     public static Color chooseRoom(Player player, List<Color> rooms, Room room) throws TimeFinishedException {
         RoomController roomController = room.getRoomController();
         List<String> send = roomController
-                .toJsonColorList(rooms);
+                .everythingToJson(rooms);
 
         ListResponse chosenRoom = (ListResponse) roomController
                 .sendAndReceive(player, new AnswerRequest(send, Message.Content.ROOM_REQUEST));
@@ -201,8 +206,8 @@ public class MessageHandler {
         try{
             return rooms.get(chosenRoom.getSelectedItem());
         }catch (RuntimeException e){
-            //cheater
-            logger.log(Level.WARNING, "CHEATER DETECTED: {0}", player.getNickname());
+            //CHEATER
+            logger.log(Level.WARNING, CHEATER, player.getNickname());
             return null;
         }
     }
@@ -213,15 +218,16 @@ public class MessageHandler {
      * @param isOptional if true the player can decide whether to use the card or not
      * @param room wherethe player is playing
      * @param isWeapon indicates if the card is a weapon or a powerup
+     * @param reason a string explaining why the player needs to choose a card
      * @return position of card choose in the List
      * @throws TimeFinishedException when the client finishes the time for choosing
      */
-    public static <T extends Card> T chooseCard(List<T> cards, boolean isOptional, Room room, boolean isWeapon, String reason) throws TimeFinishedException {
+    static <T extends Card> T chooseCard(List<T> cards, boolean isOptional, Room room, boolean isWeapon, String reason) throws TimeFinishedException {
         if (cards.isEmpty())
             return null;
         AnswerRequest message = new AnswerRequest(room
                 .getRoomController()
-                .toJsonCardList(cards),
+                .everythingToJson(cards),
                 //send message corresponding to the request
                 isWeapon ? Message.Content.WEAPON_REQUEST : Message.Content.POWERUP_REQUEST);
 
@@ -246,8 +252,8 @@ public class MessageHandler {
                 return null;
             }
             else{
-                //is a cheater
-                logger.log(Level.WARNING, "CHEATER DETECTED: {0}", room.getCurrentPlayer().getNickname());
+                //is a CHEATER
+                logger.log(Level.WARNING, CHEATER, room.getCurrentPlayer().getNickname());
                 return null;
             }
 
@@ -260,7 +266,7 @@ public class MessageHandler {
      * @param info the information to send to the player
      * @param room where the player is playing
      */
-    public static void sendInfo(Player player, String info, Room room){
+    static void sendInfo(Player player, String info, Room room){
         ServerToClient message = new InfoMessage(info);
         room.getRoomController().sendMessage(player, message);
     }
@@ -272,7 +278,7 @@ public class MessageHandler {
      * @param marks marks given to the players
      * @param room room where they are playing
      */
-    public static void sendAttack(Player attacker, Map<Player, Integer> hp, Map<Player, Integer> marks, Room room){
+    static void sendAttack(Player attacker, Map<Player, Integer> hp, Map<Player, Integer> marks, Room room){
         Gson gson = new Gson();
 
         //couldn't find any other way to make it work

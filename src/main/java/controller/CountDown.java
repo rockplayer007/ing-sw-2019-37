@@ -2,23 +2,32 @@ package controller;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.function.Consumer;
 
-public class CountDown {
+/**
+ * Creates a count down timer that can be started and stopped
+ * giving a time and a task to execute when it's finished
+ */
+class CountDown {
 
     private Timer timer;
     private int time;
     private Runnable timoutAction;
 
-
-    public CountDown(int time, Runnable timeoutAction){
+    /**
+     * Constructor of the timer
+     * @param time time in seconds of the timer
+     * @param timeoutAction action that will be executed at the end of the timer
+     */
+    CountDown(int time, Runnable timeoutAction){
         timer = new Timer();
         this.time = time*1000;
         this.timoutAction = timeoutAction;
     }
 
-
-    public void startTimer(){
+    /**
+     * Starts the count down
+     */
+    void startTimer(){
         timer.schedule(new TimerTask() {
             @Override
             public void run(){
@@ -29,7 +38,10 @@ public class CountDown {
 
     }
 
-    public void cancelTimer(){
+    /**
+     * Stops the timer
+     */
+    void cancelTimer(){
         timer.cancel();
         timer.purge();
     }

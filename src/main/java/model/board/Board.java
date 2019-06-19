@@ -19,8 +19,6 @@ public class Board {
         ammoDeck = new AmmoDeck();
         powerDeck = new PowerDeck();
         weaponDeck = new WeaponDeck();
-
-        //TODO fare l'utente a scegliere quandi skull mette.
         skullBoard = new SkullBoard(Configs.getInstance().getSkulls());
     }
 
@@ -57,10 +55,12 @@ public class Board {
      * Gives the current deck of weapon cards
      * @return The weapon deck
      */
-    public WeaponDeck getWeaponDeck() {
+    WeaponDeck getWeaponDeck() {
         return weaponDeck;
     }
 
+    //not useful for now
+    /*
     public void setAmmoDeck(AmmoDeck ammoDeck) {
         this.ammoDeck = ammoDeck;
     }
@@ -73,16 +73,18 @@ public class Board {
         this.weaponDeck = weaponDeck;
     }
 
+     */
+
     public SkullBoard getSkullBoard(){
         return skullBoard;
     }
 
     public void fillAmmo(){
         for(Square square : map.allSquares()){
-            if(!square.isGenerationPoint()){
-                if(((AmmoSquare) square).getAmmoCard() == null){
-                    ((AmmoSquare) square).setAmmoCard( ammoDeck.getCard());
-                }
+            if(!square.isGenerationPoint() && ((AmmoSquare) square).getAmmoCard() == null){
+
+                ((AmmoSquare) square).setAmmoCard( ammoDeck.getCard());
+
             }
         }
     }

@@ -34,8 +34,9 @@ public enum  ActionState {
 
             //remove all possible shoot options when the player doesnt have weapons
             noWeaponOption.remove(ActionOption.SHOOT);
-            noWeaponOption.remove(ActionOption.MOVE1_RELOAD_SHOOT);
-            noWeaponOption.remove(ActionOption.MOVE2_RELOAD_SHOOT);
+            //no need to remove these because its possible to reload first
+            //noWeaponOption.remove(ActionOption.MOVE1_RELOAD_SHOOT);
+            //noWeaponOption.remove(ActionOption.MOVE2_RELOAD_SHOOT);
             noWeaponOption.remove(ActionOption.MOVE1_SHOOT);
             return noWeaponOption;
         }
