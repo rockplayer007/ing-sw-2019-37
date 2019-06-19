@@ -60,6 +60,21 @@ public class MainClient {
 
         if (choice.equals("g")) {
             view = new GUI(mainClient);
+           /* Player p1 = new Player("anto");
+            p1.setHero(Heroes.D_STRUCT_OR);
+            Player p2 = new Player("mich");
+            p2.setHero(Heroes.VIOLET);
+            Player p3 = new Player("terzo");
+            p3.setHero(Heroes.BANSHEE);
+
+
+            Map<Player,Integer> score = new HashMap<>();
+
+
+            score.put(p3,6);
+            score.put(p1,30);
+            score.put(p2,25);
+            view.showScore(score);*/
 
         }
         else {

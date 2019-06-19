@@ -207,6 +207,7 @@ public void addMusic(String name){
         mapPanel.updateWeapon(board,mainClient);
         mapPanel.updatePowerup(myPowerups);
         mapPanel.updateSkullboard(skullBoard);
+
     }
 
     @Override
@@ -295,14 +296,15 @@ public void addMusic(String name){
 
     @Override
     public void showScore(Map<Player, Integer> score) {
-
-        frame.getContentPane().removeAll();
-        frame.setSize(750,800);
-        frame.setLocation(300,0);
-        frame.setResizable(false);
+        JFrame x= new JFrame();
+       // x=frame;
+        x.getContentPane().removeAll();
+        x.setSize(750,800);
+        x.setLocation(300,0);
+        x.setResizable(false);
         ScorePanel scorePanel= new ScorePanel(score);
-        frame.getContentPane().add(scorePanel);
-        frame.setVisible(true);
+        x.getContentPane().add(scorePanel);
+        x.setVisible(true);
         jDialog.setVisible(false);
 
     }
