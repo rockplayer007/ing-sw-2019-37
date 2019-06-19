@@ -617,14 +617,6 @@ public class MapPanel extends JLayeredPane {
                     + "main" + File.separatorChar + "resources" + File.separatorChar
                     + "directions" + File.separatorChar + directions.get(i).name() + ".jpg"));
             dir.addActionListener(new ChooseActionListener(mainClient,choose,i,this));
-            /*dir.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    mainClient.sendSelectedDirection(s);
-                    choose.setVisible(false);
-                }
-            });
-            */
             choose.add(dir);
         }
         choose.setTitle(info);
@@ -665,7 +657,7 @@ public class MapPanel extends JLayeredPane {
     public void getEffect(List<Effect> effects, MainClient mainClient,boolean optional) {
         selectEffect.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         selectEffect.setLayout(new BorderLayout());
-        selectEffect.setSize(215, 315);
+        selectEffect.setSize(215, 318);
         selectEffect.setLocation(400,100);
         selectEffect.setResizable(false);
         selectEffect.getContentPane().removeAll();

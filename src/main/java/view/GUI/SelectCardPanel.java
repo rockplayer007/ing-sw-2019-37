@@ -29,7 +29,8 @@ public class SelectCardPanel extends JPanel{
         if(optional) {
             JButton opt = new JButton("Don't use");
             opt.setSize(196, 264);
-            opt.setBackground(Color.darkGray);
+            opt.setBackground(Color.WHITE);
+            opt.setOpaque(false);
             int s = cards.size();
             opt.addActionListener(new ActionL(mainClient,s,frame,mapPanel));
             this.add(opt);

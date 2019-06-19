@@ -8,6 +8,7 @@ import model.player.Player;
 import network.client.MainClient;
 import view.ViewInterface;
 
+import javax.print.attribute.standard.Media;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
@@ -55,6 +56,7 @@ public void addMusic(String name){
         sound.open(audio);
         sound.loop(LOOP_CONTINUOUSLY);
     } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {}
+
 
 
 }
