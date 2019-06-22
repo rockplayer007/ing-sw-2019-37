@@ -4,6 +4,9 @@ import model.card.Weapon;
 
 import java.util.List;
 
+/**
+ * A square that has a weapon deck
+ */
 public class GenerationSquare extends Square {
 
     private List<Weapon> weaponDeck;
@@ -31,11 +34,19 @@ public class GenerationSquare extends Square {
         return weaponDeck;
     }
 
-    public void addWeapon(Weapon card) {
+    /**
+     * Adds a weapon to the square
+     * @param card the weapon card that has to be added
+     */
+    void addWeapon(Weapon card) {
         weaponDeck.add(card);
     }
 
-    public void removeWeapon(Weapon card){
+    /**
+     * Removes a weapon from the cards in the square
+     * @param card the weapon card that has to be removed
+     */
+    void removeWeapon(Weapon card){
         weaponDeck.remove(card);
     }
 

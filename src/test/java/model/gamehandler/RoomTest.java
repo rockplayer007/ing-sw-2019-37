@@ -1,7 +1,6 @@
 package model.gamehandler;
 
 import controller.RoomController;
-import model.board.Cell;
 import model.player.Heroes;
 import model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,8 +55,6 @@ public class RoomTest {
         assertSame(room.getBoard().getSkullBoard().getCells().get(0).getPoint(),1);
         assertSame(room.getPlayers().get(1).getPlayerBoard().getPoints(),9);
         assertSame(room.getCurrentPlayer().getPlayerBoard().getHp().size(),0);
-
-
     }
 
 }

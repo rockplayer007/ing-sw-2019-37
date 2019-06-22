@@ -24,5 +24,4 @@ public class HeroGenerator{
         return heroes.remove(0);
     }
 
-
 }

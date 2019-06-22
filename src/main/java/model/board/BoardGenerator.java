@@ -12,6 +12,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -21,14 +23,14 @@ public class BoardGenerator {
 
     private List<GenerationSquare> genPoints = new ArrayList<>();
     private Map<Integer,Square> allSquares = new HashMap<>();
-    private Map<Color, ArrayList<Square>> squaresInRoom = new HashMap<>();
+    private Map<Color, ArrayList<Square>> squaresInRoom = new EnumMap<>(Color.class);
     private Map<Integer, String> availableMaps = new HashMap<>();
     private Board board;
 
 
     /**
-     *
-     * @param board
+     * Constructor for loading boards
+     * @param board the current playing board
      */
     public BoardGenerator(Board board){
         super();
@@ -39,9 +41,9 @@ public class BoardGenerator {
     /**
      * Opens the file with all the boards
      * @return A NodeList with all the boards
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws IOException
+     * @throws ParserConfigurationException when there is an error in parsing
+     * @throws SAXException when there is an error in parsing
+     * @throws IOException when there is an error in opening the file
      */
     private NodeList openMapFile ()throws ParserConfigurationException, SAXException, IOException {
 
@@ -76,7 +78,8 @@ public class BoardGenerator {
 
         }
         catch (Exception e){
-            e.printStackTrace();
+            Logger logger = Logger.getLogger(BoardGenerator.class.getName());
+            logger.log(Level.WARNING, "Map not loaded", e);
         }
     }
 
@@ -108,9 +111,7 @@ public class BoardGenerator {
                 int x = Integer.parseInt(xy[0]);
                 int y = Integer.parseInt(xy[1]);
 
-                if(squaresInRoom.get(color) == null){
-                    squaresInRoom.put(color, new ArrayList<>());
-                }
+                squaresInRoom.computeIfAbsent(color, k -> new ArrayList<>());
 
                 if(((Element) square).getElementsByTagName("type").item(0).getTextContent().equals("generationSquare")){
                     GenerationSquare genSquare = new GenerationSquare(id,color,x, y, board.getWeaponDeck().getCard(3));
@@ -145,7 +146,8 @@ public class BoardGenerator {
             }
         }
         catch (Exception e){
-            e.printStackTrace();
+            Logger logger = Logger.getLogger(BoardGenerator.class.getName());
+            logger.log(Level.WARNING, "Problem in loading map", e);
         }
 
         return new GameBoard(genPoints, allSquares, squaresInRoom, mapNumber, availableMaps.get(mapNumber));

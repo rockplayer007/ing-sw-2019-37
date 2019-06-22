@@ -13,6 +13,4 @@ public enum ActionOption {
         this.explenation = label;
     }
 
-
-
 }

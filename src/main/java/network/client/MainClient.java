@@ -9,7 +9,6 @@ import model.card.Effect;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.player.ActionOption;
-import model.player.Heroes;
 import model.player.Player;
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;

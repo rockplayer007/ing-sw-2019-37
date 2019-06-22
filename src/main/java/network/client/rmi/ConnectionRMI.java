@@ -20,14 +20,13 @@ import java.util.logging.Logger;
 public class ConnectionRMI implements ConnectionInterface {
 
     private ServerInterface server;
-    private ClientInterface remoteClientRef;
     private static final Logger logger = Logger.getLogger(ConnectionRMI.class.getName());
 
     /**
      * Constructor to set up the connection
-     * @param c
-     * @throws RemoteException
-     * @throws NotBoundException
+     * @param c to keep a reference to the main client
+     * @throws RemoteException when the client disconnects
+     * @throws NotBoundException when there is an error in binding
      */
     public ConnectionRMI(MainClient c) throws RemoteException, NotBoundException {
         Registry registry = LocateRegistry.getRegistry(MainClient.getServerIp(), 1099);
@@ -35,13 +34,13 @@ public class ConnectionRMI implements ConnectionInterface {
         ClientImplementation client = new ClientImplementation(c);
 
         //userful for the server to be able to communicate with the client
-        remoteClientRef = (ClientInterface) UnicastRemoteObject.exportObject(client, 0);
+        ClientInterface remoteClientRef = (ClientInterface) UnicastRemoteObject.exportObject(client, 0);
         c.setClientInterface(remoteClientRef);
     }
 
     /**
      * Sends the message to the {@link network.server.MainServer}
-     * @param message
+     * @param message the message that arrives from the client
      */
     @Override
     public void sendMessage(ClientToServer message) {
