@@ -6,8 +6,9 @@ import javax.swing.*;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.io.File;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class ScorePanel extends JPanel {
 
@@ -29,7 +30,11 @@ public class ScorePanel extends JPanel {
         points[2]=new Point(512,140);
         int i=0;
         int y=550;
-        for(Map.Entry<Player,Integer> entry: score.entrySet()) {
+        Map<Player, Integer> sortedMap;
+        sortedMap = score.entrySet().stream()
+                .sorted((Map.Entry.<Player, Integer>comparingByValue().reversed()))
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+       for(Map.Entry<Player,Integer> entry: sortedMap.entrySet()) {
             Player key = entry.getKey();
             Integer value = entry.getValue();
             if(i<3){

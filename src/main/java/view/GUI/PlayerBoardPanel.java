@@ -4,6 +4,7 @@ import model.card.AmmoColor;
 import model.player.Player;
 import javax.swing.*;
 import javax.swing.text.html.StyleSheet;
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +100,10 @@ public class PlayerBoardPanel extends JPanel{
                 else
                     weaponButton.setLocation(580,board.getY()+21);
                 weaponButton.setContentAreaFilled(false);
-                weaponButton.setBorder(null);
+                if(players.get(i).getWeapons().get(c).getCharged())
+                    weaponButton.setBorder(BorderFactory.createLineBorder(Color.GREEN,3));
+                else
+                    weaponButton.setBorder(BorderFactory.createLineBorder(Color.RED,3));
                 weaponButton.setFocusPainted(false);
                 weaponButton.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main"
                         + File.separatorChar + "resources" + File.separatorChar + "weapon" + File.separatorChar +
