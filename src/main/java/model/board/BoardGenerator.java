@@ -1,7 +1,5 @@
 package model.board;
 
-import model.card.AmmoCard;
-import model.card.Weapon;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -25,12 +23,13 @@ public class BoardGenerator {
     private Map<Integer,Square> allSquares = new HashMap<>();
     private Map<Color, ArrayList<Square>> squaresInRoom = new HashMap<>();
     private Map<Integer, String> availableMaps = new HashMap<>();
-    private int chosenMap;
     private Board board;
 
-    private GameBoard gameBoard;
 
-
+    /**
+     *
+     * @param board
+     */
     public BoardGenerator(Board board){
         super();
         this.board = board;
@@ -69,10 +68,10 @@ public class BoardGenerator {
             NodeList boards  = openMapFile();
 
             for( int i = 0; i < boards.getLength(); i++){
-                Node board = boards.item(i);
+                Node loadedBoard = boards.item(i);
 
-                availableMaps.put(Integer.valueOf(((Element) board).getAttribute("n")),
-                        ((Element) board).getAttribute("description"));
+                availableMaps.put(Integer.valueOf(((Element) loadedBoard).getAttribute("n")),
+                        ((Element) loadedBoard).getAttribute("description"));
             }
 
         }
@@ -93,7 +92,6 @@ public class BoardGenerator {
      */
     public GameBoard createMap(int mapNumber){
         //first parse all the squares in the room then connect them
-        chosenMap = mapNumber;
         try {
 
 
@@ -150,8 +148,7 @@ public class BoardGenerator {
             e.printStackTrace();
         }
 
-        gameBoard = new GameBoard(genPoints, allSquares, squaresInRoom, chosenMap, availableMaps.get(chosenMap));
-        return gameBoard;
+        return new GameBoard(genPoints, allSquares, squaresInRoom, mapNumber, availableMaps.get(mapNumber));
     }
 
 
