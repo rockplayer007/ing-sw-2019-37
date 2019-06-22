@@ -45,7 +45,7 @@ public class RoomTest {
         room.getPlayers().get(2).getPlayerBoard().addPoints(12);//lol
         room.getPlayers().get(3).getPlayerBoard().addPoints(20);//kek
         room.getPlayers().get(4).getPlayerBoard().addPoints(5);//rip
-        room.endScoreboard().keySet().forEach(x->System.out.println(x.getNickname()));
+        room.endScoreboard().forEach(x->System.out.println(x.getPlayerBoard().getPoints() + " " + x.getNickname() ));
 
     }
 
@@ -59,4 +59,5 @@ public class RoomTest {
 
 
     }
+
 }

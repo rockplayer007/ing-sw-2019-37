@@ -235,7 +235,7 @@ class RoundController {
 
             case MOVE1_SHOOT:
                 goBackSquare = player.getPosition();
-                ActionHandler.run(player, 2, roomController.getRoom());
+                ActionHandler.run(player, 1, roomController.getRoom());
 
                 //ask card
                 usableWeapons = player.getWeapons().stream().filter(Weapon::getCharged).collect(Collectors.toList());

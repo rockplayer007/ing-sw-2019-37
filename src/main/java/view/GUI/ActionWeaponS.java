@@ -24,7 +24,7 @@ import java.awt.event.ActionListener;
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            mainClient.sendSelectedCard(n);
+            mainClient.sendSelectedItem(n);
             frame.setVisible(false);
             mapPanel.setWeaponSelected(name);
             mapPanel.addActionInfo("");

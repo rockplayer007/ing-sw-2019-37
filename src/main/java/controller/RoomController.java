@@ -99,11 +99,15 @@ public class RoomController {
             turnController.startPlayerRound();
 
             Gson gson = new Gson();
-            Map<Player, Integer> score = room.endScoreboard();
+
+            Map<Player, Integer> score = new HashMap<>();//room.endScoreboard();
             HashMap<String, Integer> messageMap = new HashMap<>();
+            List<String> scoreMessage = new ArrayList<>(everythingToJson(room.endScoreboard()));
+
             score.forEach((x, y) -> messageMap.put(gson.toJson(x), y));
 
-            sendMessageToAll(new ScoreMessage(messageMap));
+            sendMessageToAll(new AnswerRequest(scoreMessage, Message.Content.SCORE));
+            //sendMessageToAll(new ScoreMessage(scoreMessage));
 
         } catch (NotExecutedException e) {
             sendMessageToAll(new InfoMessage(e.getMessage()));
@@ -180,7 +184,7 @@ public class RoomController {
             connectionToClient.get(player).getClientInterface()
                     .notifyClient(message);
         } catch (RemoteException e) {
-            logger.log(Level.WARNING, "disconnection", e);
+            logger.log(Level.WARNING, "disconnection client: " + player.getNickname(), e);
 
             if(player.isConnected()){
                 disconnectPlayer(player);

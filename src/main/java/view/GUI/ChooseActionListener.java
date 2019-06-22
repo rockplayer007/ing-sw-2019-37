@@ -19,7 +19,7 @@ public class ChooseActionListener implements ActionListener {
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-            mainClient.sendSelectedAmmoColor(x);
+            mainClient.sendSelectedItem(x);
             frame.setVisible(false);
             mapPanel.addActionInfo("");
     }
