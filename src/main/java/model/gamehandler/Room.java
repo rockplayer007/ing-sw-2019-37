@@ -131,10 +131,6 @@ public class Room {
                     skullBoard.addCell(cell);
                     skullBoard.takeOneSkulls();
                 }
-                Powerup powerup = board.getPowerDeck().getCard();
-                Color color = Color.valueOf(powerup.getAmmo().toString());
-                x.movePlayer(board.getMap().getGenerationPoint(color));
-                board.getPowerDeck().usedCard(powerup);
             });
             if (diedPlayers.size()>1)
                 currentPlayer.getPlayerBoard().addPoints(1);
