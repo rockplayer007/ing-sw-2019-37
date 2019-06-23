@@ -7,12 +7,13 @@ import javax.swing.text.html.StyleSheet;
 import java.awt.*;
 import java.io.File;
 import java.util.*;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 public class ScorePanel extends JPanel {
 
-    public ScorePanel(Map<Player,Integer> score){
+    public ScorePanel(List<Player> score){
         JLabel podium;
         this.setLayout(null);
         this.setBackground(Color.CYAN);
@@ -30,13 +31,15 @@ public class ScorePanel extends JPanel {
         points[2]=new Point(512,140);
         int i=0;
         int y=550;
+        /*
         Map<Player, Integer> sortedMap;
         sortedMap = score.entrySet().stream()
                 .sorted((Map.Entry.<Player, Integer>comparingByValue().reversed()))
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-       for(Map.Entry<Player,Integer> entry: sortedMap.entrySet()) {
-            Player key = entry.getKey();
-            Integer value = entry.getValue();
+
+         */
+       for(Player key: score) {
+            int value = key.getPlayerBoard().getPoints();
             if(i<3){
                 JLabel playerIcon= new JLabel();
                 playerIcon.setSize(160,165);
@@ -63,7 +66,7 @@ public class ScorePanel extends JPanel {
             nickname.setSize(150,20);
             nickname.setFont(new Font("",Font.BOLD,16));
             this.add(nickname);
-            JLabel point =new JLabel("PT.    "+value.toString());
+            JLabel point =new JLabel("PT.    "+value);
             point.setLocation(450,y);
             point.setSize(100,20);
             this.add(point);

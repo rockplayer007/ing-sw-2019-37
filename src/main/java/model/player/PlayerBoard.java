@@ -93,7 +93,7 @@ public class PlayerBoard implements Serializable{
      *  remove all marks of that player
      * @param player that player's marks to remove
      */
-    public void removeMarks(Player player){
+    private void removeMarks(Player player){
         int c=playerMarks(player);
         if (c!=0)
             for (int i=0;i<c;i++) {
@@ -106,7 +106,7 @@ public class PlayerBoard implements Serializable{
      * @param player the player to count how mark is his.
      * @return  number of mark of that player marked
      */
-    public int playerMarks( Player player){
+    private int playerMarks( Player player){
         int i=0;
         for (Player p:marks){
             if (p==player)
@@ -138,7 +138,7 @@ public class PlayerBoard implements Serializable{
     /**
      * @return a Map whit player and his hit numbers
      */
-    public Map<Player,Integer> hitNumberOfPlayers(){
+    private Map<Player,Integer> hitNumberOfPlayers(){
         Map<Player,Integer> map=new LinkedHashMap<>();
         for (Player p:hp){
             if (map.containsKey(p))

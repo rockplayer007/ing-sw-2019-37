@@ -297,7 +297,7 @@ public void addMusic(String name){
     }
 
     @Override
-    public void showScore(Map<Player, Integer> score) {
+    public void showScore(List<Player> score) {
         JFrame x= new JFrame();
        // x=frame;
         x.getContentPane().removeAll();

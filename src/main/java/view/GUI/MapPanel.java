@@ -129,7 +129,7 @@ public class MapPanel extends JLayeredPane {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             removePlayerActions();
-                            mainClient.sendSelectedPlayer(s);
+                            mainClient.sendSelectedItem(s);
                             enablePlayers();
                         }
                     });
@@ -504,7 +504,7 @@ public class MapPanel extends JLayeredPane {
             roomButton.get(square.getId()).addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    mainClient.sendSelectedSquare(x);
+                    mainClient.sendSelectedItem(x);
                     resetRooms();
                     addActionInfo("");
                 }
@@ -644,7 +644,7 @@ public class MapPanel extends JLayeredPane {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     choose.setVisible(false);
-                    mainClient.sendSelectedAmmoColor(x);
+                    mainClient.sendSelectedItem(x);
                 }
             });*/
             choose.add(ammoColor);
@@ -672,7 +672,7 @@ public class MapPanel extends JLayeredPane {
             opt.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    mainClient.sendSelectedEffect(effects.size());
+                    mainClient.sendSelectedItem(effects.size());
                     selectEffect.setVisible(false);
                 }
             });
@@ -709,7 +709,7 @@ public class MapPanel extends JLayeredPane {
             /*color.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    mainClient.sendSelectedRoom(x);
+                    mainClient.sendSelectedItem(x);
                     choose.setVisible(false);
                 }
             });*/

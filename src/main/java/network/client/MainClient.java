@@ -9,7 +9,6 @@ import model.card.Effect;
 import model.card.Powerup;
 import model.card.Weapon;
 import model.player.ActionOption;
-import model.player.Heroes;
 import model.player.Player;
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
@@ -31,6 +30,7 @@ import java.rmi.NotBoundException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 
 /**
@@ -60,22 +60,6 @@ public class MainClient {
 
         if (choice.equals("g")) {
             view = new GUI(mainClient);
-           /* Player p1 = new Player("anto");
-            p1.setHero(Heroes.D_STRUCT_OR);
-            Player p2 = new Player("mich");
-            p2.setHero(Heroes.VIOLET);
-            Player p3 = new Player("terzo");
-            p3.setHero(Heroes.BANSHEE);
-
-
-            Map<Player,Integer> score = new HashMap<>();
-
-
-            score.put(p3,6);
-            score.put(p1,30);
-            score.put(p2,25);
-            view.showScore(score);*/
-
         }
         else {
             view = new CLI(mainClient);
@@ -128,33 +112,39 @@ public class MainClient {
         connection.sendMessage(new ListResponse(username, clientID, board, Message.Content.BOARD_RESPONSE));
     }
 
-    public void sendSelectedCard(int card){
+    public void sendSelectedItem(int card, Message.Content content){
+        connection.sendMessage(new ListResponse(username, clientID, card, content));
+    }
+    public void sendSelectedItem(int card){
         connection.sendMessage(new ListResponse(username, clientID, card, Message.Content.CARD_RESPONSE));
     }
 
-    public void sendSelectedSquare(int square){
+/*
+    public void sendSelectedItem(int square){
         connection.sendMessage(new ListResponse(username, clientID, square, Message.Content.SQUARE_RESPONSE));
     }
 
-    public void sendSelectedEffect(int effect){
+    public void sendSelectedItem(int effect){
         connection.sendMessage(new ListResponse(username, clientID, effect, Message.Content.EFFECT_RESPOSNSE));
     }
 
-    public void sendSelectedPlayer(int player){
+    public void sendSelectedItem(int player){
         connection.sendMessage(new ListResponse(username, clientID, player, Message.Content.PLAYER_RESPONSE));
     }
 
-    public void sendSelectedDirection(int direction){
+    public void sendSelectedItem(int direction){
         connection.sendMessage(new ListResponse(username, clientID, direction, Message.Content.DIRECTION_RESPONSE));
     }
 
-    public void sendSelectedAmmoColor(int ammo){
+    public void sendSelectedItem(int ammo){
         connection.sendMessage(new ListResponse(username, clientID, ammo, Message.Content.AMMO_RESPONSE));
     }
 
-    public void sendSelectedRoom(int room){
+    public void sendSelectedItem(int room){
         connection.sendMessage(new ListResponse(username, clientID, room, Message.Content.ROOM_RESPONSE));
     }
+
+ */
 
 
 
@@ -305,10 +295,18 @@ public class MainClient {
                 break;
             case SCORE:
 
+                List<Player> scorePlayers = ((AnswerRequest) message)
+                        .getRequests().stream().map(x -> gson.fromJson(x, Player.class))
+                        .collect(Collectors.toList());
+
+                view.showScore(scorePlayers);
+                /*
                 Map<Player, Integer> score = new HashMap<>();
                 Map<String, Integer> scoreMessage = ((ScoreMessage) message).getScore();//gson.fromJson(((ScoreMessage) message).getScore(), type);
                 scoreMessage.forEach((x, y) -> score.put(gson.fromJson(x, Player.class), y));
                 view.showScore(score);
+
+                 */
                 break;
             default:
                 logger.log(Level.WARNING, "Unregistered message");

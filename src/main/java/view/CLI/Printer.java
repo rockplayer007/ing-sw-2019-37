@@ -805,14 +805,14 @@ public class Printer {
 
     }
 
-    public void printScore(Map<Player, Integer> score) {
+    public void printScore(List<Player> score) {
         if(thread != null){
             closeRequest();
         }
-        Player winner = score.keySet().stream().findFirst().get();
+        Player winner = score.stream().findFirst().get();
         List<String> lines = new ArrayList<>();
-        score.forEach((x, y) -> lines.add(colorToAnsi(x.getColor())+ x.getNickname()
-                + colorToAnsi(Color.WHITE) + " points: " + y));
+        score.forEach(x -> lines.add(colorToAnsi(x.getColor())+ x.getNickname()
+                + colorToAnsi(Color.WHITE) + " points: " + x.getPlayerBoard().getPoints()));
 
         println( colorToAnsi(winner.getColor()) + winner.getNickname()
                 + colorToAnsi(AmmoColor.RED) + "  WON" + colorToAnsi(Color.WHITE));

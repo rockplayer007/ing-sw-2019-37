@@ -9,7 +9,6 @@ import model.player.Player;
 import network.server.Configs;
 
 import java.util.*;
-import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -54,7 +53,6 @@ public class Room {
             currentPlayer = players.get(0);
         }
 
-
         if(!currentPlayer.isConnected()){
             setNextPlayer();
         }
@@ -65,10 +63,9 @@ public class Room {
 
     public void createMap(int selection) {
         GameBoard gameBoard = boardGenerator.createMap(selection);
-        String description = gameBoard.getDescription();
         board.setMap(gameBoard);
 
-        logger.log(Level.INFO, "selected board is {0}", description);
+        logger.log(Level.INFO, "selected board is {0}", gameBoard.getDescription());
     }
 
     public RoomController getRoomController() {
@@ -149,13 +146,13 @@ public class Room {
 
         if (actionState==ActionState.FRENETICACTIONS1||actionState==ActionState.FRENETICACTIONS2) {
             frenzyCounter++;
-            return frenzyCounter==players.stream().filter(Player::isConnected).collect(Collectors.toList()).size();
+            return frenzyCounter== players.stream().filter(Player::isConnected).count();
         }
         return false;
 
     }
 
-    public void startFrenzy(){
+    void startFrenzy(){
         players.forEach(p->p.getPlayerBoard().setFrenzy(true));
         players.forEach(p->p.setActionStatus(ActionState.FRENETICACTIONS2));
         for (int i = players.indexOf(currentPlayer); i< players.size()-1; i++){
@@ -163,11 +160,14 @@ public class Room {
         }
     }
 
-    public Map<Player,Integer> endScoreboard(){
+    public List<Player> endScoreboard(){
         players.forEach(p->p.getPlayerBoard().liquidation());
-        Map<Player,Integer> map = new TreeMap<>((Player p1,Player p2)->p2.getPlayerBoard().getPoints()-p1.getPlayerBoard().getPoints());
-        players.stream().filter(Player::isConnected).forEach(x->map.put(x,x.getPlayerBoard().getPoints()));
-        return map;
+        return players.stream().filter(Player::isConnected)
+                .sorted((Player p1,Player p2)->p2.getPlayerBoard().getPoints()-p1.getPlayerBoard().getPoints())
+                .collect(Collectors.toList());
+
+        //players.stream().filter(Player::isConnected).forEach(x->map.put(x,x.getPlayerBoard().getPoints()));
+        //return map;
     }
 
     public void undoPayment(){

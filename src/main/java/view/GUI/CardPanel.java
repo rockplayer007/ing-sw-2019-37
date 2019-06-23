@@ -28,7 +28,7 @@ public class CardPanel extends JPanel {
             buttonEffect.get(effects.get(i).getId()).addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    mainClient.sendSelectedEffect(x);
+                    mainClient.sendSelectedItem(x);
                     frame.setVisible(false);
                 }
             });
