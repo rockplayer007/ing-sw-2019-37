@@ -537,6 +537,7 @@ class Repel implements Operation{
             throw new NotExecutedException("there are not possible players can be move ");
         Set<Square> validPosition = new HashSet<>();
         target.getPosition().directions(distance).forEach((key,value)->validPosition.addAll(value));
+        validPosition.add(target.getPosition());
         target.movePlayer(MessageHandler.chooseSquare(room.getCurrentPlayer(),validPosition, room,"Which square do you want to move the target?"));
     }
 }

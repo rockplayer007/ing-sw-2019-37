@@ -7,6 +7,7 @@ import model.board.Color;
 import java.io.Serializable;
 import java.util.*;
 
+
 /**
  * 
  */
@@ -14,6 +15,8 @@ public class PlayerBoard implements Serializable{
 
     private transient Player player;
     private transient List<Player> hp;
+    private static final int DEADPOINT = 11;
+    private static final int OVERKILL = 11;
     private List<Color> hpColor;
     private static int[] pointArray = {8, 6, 4, 2, 1, 1};
     private static int[] frenzyPoints = {2, 1, 1, 1};
@@ -165,15 +168,15 @@ public class PlayerBoard implements Serializable{
 
 
 
-        if (hp.size()==11&&hp.get(10)!=null) {
-            Player player1 = hp.get(10);
+        if (hp.size() > DEADPOINT-1) {
+            Player player1 = hp.get(deathTimes-1);
             cell.setKill(player1);
             player.setLive(false);
             deathTimes++;
         }
 
-        if (hp.size()==12&&hp.get(11)!=null) {
-            hp.get(11).getPlayerBoard().addMark(player,1);
+        if (hp.size() == OVERKILL) {
+            hp.get(OVERKILL -1).getPlayerBoard().addMark(player,1);
             cell.setOverKill();
         }
 

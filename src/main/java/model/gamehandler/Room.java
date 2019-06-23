@@ -2,6 +2,8 @@ package model.gamehandler;
 
 import controller.RoomController;
 import model.board.*;
+import model.card.PowerDeck;
+import model.card.Powerup;
 import model.player.ActionState;
 import model.player.Player;
 import network.server.Configs;
@@ -132,6 +134,10 @@ public class Room {
                     skullBoard.addCell(cell);
                     skullBoard.takeOneSkulls();
                 }
+                Powerup powerup = board.getPowerDeck().getCard();
+                Color color = Color.valueOf(powerup.getAmmo().toString());
+                x.movePlayer(board.getMap().getGenerationPoint(color));
+                board.getPowerDeck().usedCard(powerup);
             });
             if (diedPlayers.size()>1)
                 currentPlayer.getPlayerBoard().addPoints(1);
@@ -152,8 +158,8 @@ public class Room {
     public void startFrenzy(){
         players.forEach(p->p.getPlayerBoard().setFrenzy(true));
         players.forEach(p->p.setActionStatus(ActionState.FRENETICACTIONS2));
-        for (int i = players.indexOf(currentPlayer); i< frenzyCounter; i++){
-            players.get(i-1).setActionStatus(ActionState.FRENETICACTIONS1);
+        for (int i = players.indexOf(currentPlayer); i< players.size()-1; i++){
+            players.get(i+1).setActionStatus(ActionState.FRENETICACTIONS1);
         }
     }
 

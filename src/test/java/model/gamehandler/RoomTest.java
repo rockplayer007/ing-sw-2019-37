@@ -2,6 +2,7 @@ package model.gamehandler;
 
 import controller.RoomController;
 import model.board.Cell;
+import model.player.ActionState;
 import model.player.Heroes;
 import model.player.Player;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,6 +58,17 @@ public class RoomTest {
         assertSame(room.getPlayers().get(1).getPlayerBoard().getPoints(),9);
         assertSame(room.getCurrentPlayer().getPlayerBoard().getHp().size(),0);
 
+    }
+
+    @Test
+    void startFrenzy(){
+        room.setCurrentPlayer(room.getPlayers().get(2));
+        room.startFrenzy();
+        assertSame(room.getPlayers().get(0).getActionStatus(), ActionState.FRENETICACTIONS2);
+        assertSame(room.getPlayers().get(1).getActionStatus(), ActionState.FRENETICACTIONS2);
+        assertSame(room.getPlayers().get(2).getActionStatus(), ActionState.FRENETICACTIONS2);
+        assertSame(room.getPlayers().get(3).getActionStatus(), ActionState.FRENETICACTIONS1);
+        assertSame(room.getPlayers().get(4).getActionStatus(), ActionState.FRENETICACTIONS1);
 
     }
 }
