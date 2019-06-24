@@ -189,6 +189,4 @@ public class BoardTest {
         map.allSquares();
     }
 
-
-
 }

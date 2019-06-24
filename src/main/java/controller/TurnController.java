@@ -28,6 +28,8 @@ class TurnController {
 
     private static final int WAITING_TIME = Configs.getInstance().getTurnTime();
     private static final int POWERUP_TIME = Configs.getInstance().getTimeForTagBackRequest();
+    private static final int RESPAWN_TIME = Configs.getInstance().getRespawnTime();
+
 
     private RoundController roundController;
 
@@ -92,35 +94,34 @@ class TurnController {
 
                 }
                 else if (player.getRoundStatus() == Player.RoundStatus.NORMAL_ROUND){
-                    //if he is dead
-                    if(!player.isLive()){
-                        firstRound(player, 1);
-                        player.setLive(true);
-                    }
                     normalRound(player);
                 }
 
                 timer.cancelTimer();
 
-                //after taking the ammoCard and weapons set a new card
-                cleanBoard();
-
             } catch (TimeFinishedException e) {
-                //set the player as disconnected
-                player.setDisconnected();
-
-                //send message
-                roomController.sendMessage(room.getCurrentPlayer(), new TimeoutMessage());
-                roomController.sendMessageToAll(new InfoMessage(player.getNickname() + " has disconnected (time exceeded)"));
-
-                //continue as normal
-                logger.log(Level.INFO,"player: {0} finished his time", player.getNickname());
-                cleanBoard();
+                disconnectionCheckout(player);
 
             } catch (IllegalStateException e){
                 logger.log(Level.INFO, "ooops, timer already stopped, dont worry ");
                 //nothing, just continue
             }
+            finally {
+                //continue as normal
+                //after taking the ammoCard and weapons set a new card
+                cleanBoard();
+            }
+
+            //check for dead players
+            room.getPlayers().stream().filter(y -> !y.isLive()).forEach(x -> {
+                try {
+                    respawn(x);
+                } catch (TimeFinishedException e) {
+                    disconnectionCheckout(x);
+                } finally {
+                    player.setLive(true);
+                }
+            });
 
             if(room.endTurnControl() || !room.setNextPlayer()){
                  //when return true means is end of game
@@ -229,6 +230,43 @@ class TurnController {
 
     }
 
+    private void respawn(Player player) throws TimeFinishedException {
+        Powerup chosenCard = room.getBoard().getPowerDeck().getCard(1).get(0);
+        //takes one card and gives it to the player
+        player.addPowerup(chosenCard);
+
+        List<Powerup> powerup = player.getPowerups();
+        AnswerRequest message = new AnswerRequest(
+                roomController.everythingToJson(powerup), Message.Content.POWERUP_REQUEST);
+        message.setInfo("You got another powerup, discard one where you want to be respawned!");
+
+
+        try {
+            CountDown timer = new CountDown(RESPAWN_TIME, () -> {
+                roomController.stopWaiting();
+                logger.log(Level.INFO, "timer stopped while respawning for {0}", player);
+            });
+            timer.startTimer();
+            int index =  ((ListResponse) roomController.sendAndReceive(player, message)).getSelectedItem();
+            chosenCard = player.getPowerups().get(index);
+
+            timer.cancelTimer();
+
+        } catch (RuntimeException e) {
+            //cheater
+        }
+        finally {
+            //put the player on the generation square
+            Color spawnColor = Color.valueOf(chosenCard.getAmmo().toString());
+            player.movePlayer(room.getBoard().getMap().getGenerationPoint(spawnColor));
+
+            player.removePowerup(chosenCard);
+            room.getBoard().getPowerDeck().usedCard(chosenCard);
+
+            roomController.sendUpdate();
+        }
+    }
+
     /**
      * Method that allows to ask a player if he wants to use a his TAGBACK GRANADE
      * @param player who has this card
@@ -285,7 +323,7 @@ class TurnController {
                     //nothing, just continue
                 }
 
-                if (chosenCard.getSelectedItem() < attacker.getPowerups().size() && chosenCard.getSelectedItem() >= 0) {
+                if (chosenCard.getSelectedItem() < attackerPowerups.size() && chosenCard.getSelectedItem() >= 0) {
                     //the chosen powerup will be executed
                     tempPowerup = attackerPowerups.get(chosenCard.getSelectedItem());
 
@@ -311,5 +349,15 @@ class TurnController {
         room.getBoard().fillAmmo();
         room.getBoard().fillWeapons();
         roomController.sendUpdate();
+    }
+
+    private void disconnectionCheckout(Player player){
+        logger.log(Level.INFO,"player: {0} finished his time", player.getNickname());
+        //set the player as disconnected
+        player.setDisconnected();
+
+        //send message
+        roomController.sendMessage(room.getCurrentPlayer(), new TimeoutMessage());
+        roomController.sendMessageToAll(new InfoMessage(player.getNickname() + " has disconnected (time exceeded)"));
     }
 }
