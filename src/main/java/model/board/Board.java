@@ -3,10 +3,12 @@ package model.board;
 import model.card.*;
 import network.server.Configs;
 
+import java.io.Serializable;
+
 /**
  * Class for managing the cards and the boards
  */
-public class Board {
+public class Board implements Serializable {
 
     private transient AmmoDeck ammoDeck;
     private transient PowerDeck powerDeck;
@@ -64,22 +66,6 @@ public class Board {
     WeaponDeck getWeaponDeck() {
         return weaponDeck;
     }
-
-    //not useful for now
-    /*
-    public void setAmmoDeck(AmmoDeck ammoDeck) {
-        this.ammoDeck = ammoDeck;
-    }
-
-    public void setPowerDeck(PowerDeck powerDeck) {
-        this.powerDeck = powerDeck;
-    }
-
-    public void setWeaponDeck(WeaponDeck weaponDeck) {
-        this.weaponDeck = weaponDeck;
-    }
-
-     */
 
     /**
      * Gives the current skull board

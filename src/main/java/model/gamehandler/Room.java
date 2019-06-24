@@ -1,9 +1,8 @@
 package model.gamehandler;
 
+import controller.MessageHandler;
 import controller.RoomController;
 import model.board.*;
-import model.card.PowerDeck;
-import model.card.Powerup;
 import model.player.ActionState;
 import model.player.Player;
 import network.server.Configs;
@@ -132,8 +131,10 @@ public class Room {
                     skullBoard.takeOneSkulls();
                 }
             });
-            if (diedPlayers.size()>1)
+            if (diedPlayers.size()>1) {
                 currentPlayer.getPlayerBoard().addPoints(1);
+                MessageHandler.sendInfo(currentPlayer,"you killed "+diedPlayers.size()+"player, so you got 1 point for do",this);
+            }
             roomController.sendUpdate();
         }
         ActionState actionState = currentPlayer.getActionStatus();
@@ -157,13 +158,12 @@ public class Room {
     }
 
     public List<Player> endScoreboard(){
+        board.getSkullBoard().liquidation();
         players.forEach(p->p.getPlayerBoard().liquidation());
         return players.stream().filter(Player::isConnected)
                 .sorted((Player p1,Player p2)->p2.getPlayerBoard().getPoints()-p1.getPlayerBoard().getPoints())
                 .collect(Collectors.toList());
 
-        //players.stream().filter(Player::isConnected).forEach(x->map.put(x,x.getPlayerBoard().getPoints()));
-        //return map;
     }
 
     public void undoPayment(){

@@ -15,8 +15,10 @@ public class PlayerBoard implements Serializable{
 
     private transient Player player;
     private transient List<Player> hp;
-    private static final int DEADPOINT = 11;
-    private static final int OVERKILL = 11;
+    private static final int ADRENALINE1 = 3;
+    private static final int ADRENALINE2 = 6;
+    private static final int DEAD_POINT = 11;
+    private static final int OVERKILL = 12;
     private List<Color> hpColor;
     private static int[] pointArray = {8, 6, 4, 2, 1, 1};
     private static int[] frenzyPoints = {2, 1, 1, 1};
@@ -68,9 +70,9 @@ public class PlayerBoard implements Serializable{
             this.addDamage(player, c);
         }
         if (!isFrenzy){
-            if (hp.size()>5)
+            if (hp.size()>ADRENALINE2-1)
                 this.player.setActionStatus(ActionState.ADRENALINEACTIONS2);
-            else if (hp.size()>2)
+            else if (hp.size()>ADRENALINE1-1)
                 this.player.setActionStatus(ActionState.ADRENALINEACTIONS1);
         }
     }
@@ -168,8 +170,8 @@ public class PlayerBoard implements Serializable{
 
 
 
-        if (hp.size() > DEADPOINT-1) {
-            Player player1 = hp.get(deathTimes-1);
+        if (hp.size() > DEAD_POINT-1) {
+            Player player1 = hp.get(DEAD_POINT-1);
             cell.setKill(player1);
             player.setLive(false);
             deathTimes++;
