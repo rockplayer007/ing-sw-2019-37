@@ -16,7 +16,7 @@ public class PlayerBoard implements Serializable{
     private transient Player player;
     private transient List<Player> hp;
     private static final int DEADPOINT = 11;
-    private static final int OVERKILL = 11;
+    private static final int OVERKILL = 12;
     private List<Color> hpColor;
     private static int[] pointArray = {8, 6, 4, 2, 1, 1};
     private static int[] frenzyPoints = {2, 1, 1, 1};

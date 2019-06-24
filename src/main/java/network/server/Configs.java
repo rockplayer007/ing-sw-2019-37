@@ -13,6 +13,7 @@ public class Configs {
     private int timeForTagBackRequest;// = 10;
     private int waitingTime; // = 30;
     private int boardRequestTime; // = 10;
+    private int respawnTime; // = 15
     private int rmiPort; //1099
     private int socketPort; //
 
@@ -43,10 +44,11 @@ public class Configs {
 
         turnTime = fill("turn time",180, scanner.nextLine());
         minimumPlayers = fill("minimum players", 3, scanner.nextLine());
-        maximumPlayers = fill("maximum players", 3, scanner.nextLine());
+        maximumPlayers = fill("maximum players", 5, scanner.nextLine());
         timeForTagBackRequest = fill("time for TAGBACK GRANADE", 10, scanner.nextLine());
         waitingTime = fill("creating room time", 30, scanner.nextLine());
         boardRequestTime = fill("choosing board time", 10, scanner.nextLine());
+        respawnTime = fill("respawn time", 15, scanner.nextLine());
         skulls = fill("skulls", 8, scanner.nextLine());
         rmiPort = fill("RMI port", 1099, scanner.nextLine());
         socketPort = fill("Socket port", 8000, scanner.nextLine());
@@ -92,6 +94,10 @@ public class Configs {
 
     public int getBoardRequestTime() {
         return boardRequestTime;
+    }
+
+    public int getRespawnTime() {
+        return respawnTime;
     }
 
     public int getSkulls() {

@@ -1,13 +1,10 @@
-<<<<<<< HEAD
-turn time: 3000
-=======
 turn time: 6000
->>>>>>> 7a1d0c46992014fc502b3fb0f8d171957805425b
-minimum players: 3
+minimum players: 2
 maximum players: 5
 time for TAGBACK GRANADE: 200
 creating room time: 10
 choosing board time: 500
-skulls: 1
+respawn time: 15
+skulls: 2
 RMI port: 1099
 Socket port: 8000
