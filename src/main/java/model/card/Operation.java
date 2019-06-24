@@ -20,6 +20,16 @@ public interface Operation {
     void execute(Room room)throws NotExecutedException, TimeFinishedException, InterruptOperationException;
 }
 
+class InfoClass {
+    static final String NOT_POSSIBLE_PLAYERS_CAN_BE_SHOOT = "there are not possible players can be shoot ";
+    static final String CHOOSE_SQUARE = "Which square do you want to move the target?";
+    static final String CHOOSE_PLAYER = "Which player do you want to attack?";
+
+    private InfoClass() {
+        throw new IllegalStateException("Utility class");
+    }
+}
+
 class VisiblePlayers implements Operation{
 
     @Override
@@ -50,19 +60,21 @@ class SelectTargets implements Operation{
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> possibleTargets =attackHandler.getPossibleTargets();
         if (possibleTargets.isEmpty())
-            throw new NotExecutedException("there are not possible players can be shoot ");
+            throw new NotExecutedException(InfoClass.NOT_POSSIBLE_PLAYERS_CAN_BE_SHOOT);
         List<Player> targets=new ArrayList<>();
         if (distinctSquare) {
             for (int i = 0; i <numberTargets&&!possibleTargets.isEmpty(); i++){
-                targets.addAll(MessageHandler.choosePlayers(currentPlayer,possibleTargets,1,room,"Which player do you want to attack?"));
+                targets.addAll(Objects.requireNonNull(MessageHandler.choosePlayers(currentPlayer, possibleTargets, 1, room, InfoClass.CHOOSE_PLAYER)));
                 Square targetPostion = targets.get(i).getPosition();
                 possibleTargets = possibleTargets.stream().filter(x->x.getPosition()!=targetPostion).collect(Collectors.toList());
             }
 
         }else {
-           targets = MessageHandler.choosePlayers(currentPlayer,possibleTargets, numberTargets,room,"Which player do you want to attack?");
+           targets = MessageHandler.choosePlayers(currentPlayer,possibleTargets, numberTargets,room,InfoClass.CHOOSE_PLAYER);
         }
-        possibleTargets.removeAll(targets);
+        if (targets != null)
+            possibleTargets.removeAll(targets);
+
         attackHandler.setTargetsToShot(targets);
     }
 
@@ -80,9 +92,12 @@ class SelectFromSelectedTargets implements Operation{
         Player currentPlayer = room.getCurrentPlayer();
         List<Player> selectedTargets =attackHandler.getSelectedTargets();
         if (selectedTargets.isEmpty())
-            throw new NotExecutedException("there are not possible players can be shoot ");
-        List<Player> targets = MessageHandler.choosePlayers(currentPlayer,selectedTargets, numberTargets,room,"Which player do you want to attack?");
-        selectedTargets.removeAll(targets);
+            throw new NotExecutedException(InfoClass.NOT_POSSIBLE_PLAYERS_CAN_BE_SHOOT);
+        List<Player> targets = MessageHandler.choosePlayers(currentPlayer,selectedTargets, numberTargets,room,InfoClass.CHOOSE_PLAYER);
+
+        if (targets != null)
+            selectedTargets.removeAll(targets);
+
         attackHandler.setTargetsToShot(targets);
 
     }
@@ -249,12 +264,12 @@ class  MoveTargetToVisible implements Operation{
         Player currentPlayer = room.getCurrentPlayer();
         Player target = room.getAttackHandler().getTargetsToShot().get(0); // dovrebbe essere sempre uno solo quando lancia questo operazione
         if (target == null)
-            throw new NotExecutedException("there are not possible players can be shoot ");
+            throw new NotExecutedException(InfoClass.NOT_POSSIBLE_PLAYERS_CAN_BE_SHOOT);
         Set<Square> visibleSquare = currentPlayer.getPosition().visibleSquare(room.getBoard().getMap());
         Set<Square> validSquare;
         validSquare = target.getPosition().getValidPosition(distance).stream().filter(visibleSquare::contains).collect(Collectors.toSet());
 
-        target.movePlayer(MessageHandler.chooseSquare(currentPlayer,validSquare, room,"Which square do you want to move the target?"));
+        target.movePlayer(MessageHandler.chooseSquare(currentPlayer,validSquare, room,InfoClass.CHOOSE_SQUARE));
     }
 }
 
@@ -327,8 +342,8 @@ class Furance implements Operation{
             squares.remove(currentPlayer.getPosition());
             squares=squares.stream().filter(x->!x.getPlayersOnSquare().isEmpty()).collect(Collectors.toSet());
             if (squares.isEmpty())
-                throw new NotExecutedException("there are not possible players can be shoot ");
-            attackHandler.setTargetsToShot(MessageHandler.chooseSquare(currentPlayer,squares, room,"Which player do you want to attack?").getPlayersOnSquare());
+                throw new NotExecutedException(InfoClass.NOT_POSSIBLE_PLAYERS_CAN_BE_SHOOT);
+            attackHandler.setTargetsToShot(MessageHandler.chooseSquare(currentPlayer,squares, room,InfoClass.CHOOSE_PLAYER).getPlayersOnSquare());
         }
     }
 }
@@ -377,7 +392,7 @@ class DirectionTargets implements Operation{
                 .filter(x -> x.getValue().stream().anyMatch(s ->(!s.getPlayersOnSquare().isEmpty())&&s.getPlayersOnSquare().stream().anyMatch(p->p!=currentPlayer)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         if (map.isEmpty())
-            throw new NotExecutedException("there are not possible players can be shoot ");
+            throw new NotExecutedException(InfoClass.NOT_POSSIBLE_PLAYERS_CAN_BE_SHOOT);
 
         Square.Direction choice = MessageHandler.chooseDirection(currentPlayer,new ArrayList<>(map.keySet()),room,"Which direction do you want to attack?");
 
@@ -398,7 +413,7 @@ class SelectAllTarget implements Operation{
         AttackHandler attackHandler=room.getAttackHandler();
         List<Player> possibleTargets = attackHandler.getPossibleTargets();
         if (possibleTargets.isEmpty())
-            throw new NotExecutedException("there are not possible players can be shoot ");
+            throw new NotExecutedException(InfoClass.NOT_POSSIBLE_PLAYERS_CAN_BE_SHOOT);
         attackHandler.setTargetsToShot(new ArrayList<>(possibleTargets));
         attackHandler.setPossibleTargets(new ArrayList<>());
     }
@@ -425,7 +440,7 @@ class MoveTarget implements Operation{
             throw new NotExecutedException("there are not possible players can be move ");
         Set<Square> validSquare;
         validSquare=target.getPosition().getValidPosition(distance);
-        target.movePlayer(MessageHandler.chooseSquare(currentPlayer,validSquare, room,"Which square do you want to move the target?"));
+        target.movePlayer(MessageHandler.chooseSquare(currentPlayer,validSquare, room,InfoClass.CHOOSE_SQUARE));
     }
 }
 
@@ -500,7 +515,7 @@ class Flamethorwer implements Operation {
         Player currentPlayer = room.getCurrentPlayer();
         Map<Square.Direction, Set<Square>> map = currentPlayer.getPosition().directions(2)
                 .entrySet().stream()
-                .filter(x -> x.getValue().stream().anyMatch(s -> s.getPlayersOnSquare().isEmpty()))
+                .filter(x -> x.getValue().stream().anyMatch(s ->(!s.getPlayersOnSquare().isEmpty())&&s.getPlayersOnSquare().stream().anyMatch(p->p!=currentPlayer)))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         if (map.size() == 0)
             throw new NotExecutedException("haven't targets can be shot");
@@ -537,7 +552,8 @@ class Repel implements Operation{
             throw new NotExecutedException("there are not possible players can be move ");
         Set<Square> validPosition = new HashSet<>();
         target.getPosition().directions(distance).forEach((key,value)->validPosition.addAll(value));
-        target.movePlayer(MessageHandler.chooseSquare(room.getCurrentPlayer(),validPosition, room,"Which square do you want to move the target?"));
+        validPosition.add(target.getPosition());
+        target.movePlayer(MessageHandler.chooseSquare(room.getCurrentPlayer(),validPosition, room,InfoClass.CHOOSE_SQUARE));
     }
 }
  class AllPossibleTargets implements Operation{
@@ -559,7 +575,7 @@ class TargetingScope implements Operation{
         Set<Player> possibleTargets = new HashSet<>(attackHandler.getDamaged().keySet());
         possibleTargets.addAll(attackHandler.getMarked().keySet());
         if (possibleTargets.isEmpty())
-            throw new  NotExecutedException("there are not possible players can be shoot ");
+            throw new  NotExecutedException(InfoClass.NOT_POSSIBLE_PLAYERS_CAN_BE_SHOOT);
         if (ammoColors.isEmpty())
             throw new NotExecutedException("You have not enough ammo to pay");
         AmmoColor ammoColor = MessageHandler.chooseAmmoColor(currentPlayer,ammoColors,room);
@@ -578,7 +594,7 @@ class Teleporter implements Operation{
     @Override
     public void execute(Room room) throws TimeFinishedException{
         Player currentPlayer = room.getCurrentPlayer();
-        currentPlayer.movePlayer(MessageHandler.chooseSquare(currentPlayer,room.getBoard().getMap().allSquares(), room,"Which player do you want to attack?"));
+        currentPlayer.movePlayer(MessageHandler.chooseSquare(currentPlayer,room.getBoard().getMap().allSquares(), room,"Which square do you like to move?"));
 
     }
 }

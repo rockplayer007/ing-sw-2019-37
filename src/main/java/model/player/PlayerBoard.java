@@ -7,6 +7,7 @@ import model.board.Color;
 import java.io.Serializable;
 import java.util.*;
 
+
 /**
  * 
  */
@@ -14,6 +15,10 @@ public class PlayerBoard implements Serializable{
 
     private transient Player player;
     private transient List<Player> hp;
+    private static final int ADRENALINE1 = 3;
+    private static final int ADRENALINE2 = 6;
+    private static final int DEAD_POINT = 11;
+    private static final int OVERKILL = 12;
     private List<Color> hpColor;
     private static int[] pointArray = {8, 6, 4, 2, 1, 1};
     private static int[] frenzyPoints = {2, 1, 1, 1};
@@ -65,9 +70,9 @@ public class PlayerBoard implements Serializable{
             this.addDamage(player, c);
         }
         if (!isFrenzy){
-            if (hp.size()>5)
+            if (hp.size()>ADRENALINE2-1)
                 this.player.setActionStatus(ActionState.ADRENALINEACTIONS2);
-            else if (hp.size()>2)
+            else if (hp.size()>ADRENALINE1-1)
                 this.player.setActionStatus(ActionState.ADRENALINEACTIONS1);
         }
     }
@@ -90,7 +95,7 @@ public class PlayerBoard implements Serializable{
      *  remove all marks of that player
      * @param player that player's marks to remove
      */
-    public void removeMarks(Player player){
+    private void removeMarks(Player player){
         int c=playerMarks(player);
         if (c!=0)
             for (int i=0;i<c;i++) {
@@ -103,7 +108,7 @@ public class PlayerBoard implements Serializable{
      * @param player the player to count how mark is his.
      * @return  number of mark of that player marked
      */
-    public int playerMarks( Player player){
+    private int playerMarks( Player player){
         int i=0;
         for (Player p:marks){
             if (p==player)
@@ -135,7 +140,7 @@ public class PlayerBoard implements Serializable{
     /**
      * @return a Map whit player and his hit numbers
      */
-    public Map<Player,Integer> hitNumberOfPlayers(){
+    private Map<Player,Integer> hitNumberOfPlayers(){
         Map<Player,Integer> map=new LinkedHashMap<>();
         for (Player p:hp){
             if (map.containsKey(p))
@@ -165,15 +170,15 @@ public class PlayerBoard implements Serializable{
 
 
 
-        if (hp.size()==11&&hp.get(10)!=null) {
-            Player player1 = hp.get(10);
+        if (hp.size() > DEAD_POINT-1) {
+            Player player1 = hp.get(DEAD_POINT-1);
             cell.setKill(player1);
             player.setLive(false);
             deathTimes++;
         }
 
-        if (hp.size()==12&&hp.get(11)!=null) {
-            hp.get(11).getPlayerBoard().addMark(player,1);
+        if (hp.size() == OVERKILL) {
+            hp.get(OVERKILL -1).getPlayerBoard().addMark(player,1);
             cell.setOverKill();
         }
 

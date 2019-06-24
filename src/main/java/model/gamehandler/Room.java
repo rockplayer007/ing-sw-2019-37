@@ -1,5 +1,6 @@
 package model.gamehandler;
 
+import controller.MessageHandler;
 import controller.RoomController;
 import model.board.*;
 import model.player.ActionState;
@@ -7,7 +8,6 @@ import model.player.Player;
 import network.server.Configs;
 
 import java.util.*;
-import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -52,7 +52,6 @@ public class Room {
             currentPlayer = players.get(0);
         }
 
-
         if(!currentPlayer.isConnected()){
             setNextPlayer();
         }
@@ -63,10 +62,9 @@ public class Room {
 
     public void createMap(int selection) {
         GameBoard gameBoard = boardGenerator.createMap(selection);
-        String description = gameBoard.getDescription();
         board.setMap(gameBoard);
 
-        logger.log(Level.INFO, "selected board is {0}", description);
+        logger.log(Level.INFO, "selected board is {0}", gameBoard.getDescription());
     }
 
     public RoomController getRoomController() {
@@ -133,8 +131,10 @@ public class Room {
                     skullBoard.takeOneSkulls();
                 }
             });
-            if (diedPlayers.size()>1)
+            if (diedPlayers.size()>1) {
                 currentPlayer.getPlayerBoard().addPoints(1);
+                MessageHandler.sendInfo(currentPlayer,"you killed "+diedPlayers.size()+"player, so you got 1 point for do",this);
+            }
             roomController.sendUpdate();
         }
         ActionState actionState = currentPlayer.getActionStatus();
@@ -143,25 +143,27 @@ public class Room {
 
         if (actionState==ActionState.FRENETICACTIONS1||actionState==ActionState.FRENETICACTIONS2) {
             frenzyCounter++;
-            return frenzyCounter==players.stream().filter(Player::isConnected).collect(Collectors.toList()).size();
+            return frenzyCounter== players.stream().filter(Player::isConnected).count();
         }
         return false;
 
     }
 
-    public void startFrenzy(){
+    void startFrenzy(){
         players.forEach(p->p.getPlayerBoard().setFrenzy(true));
         players.forEach(p->p.setActionStatus(ActionState.FRENETICACTIONS2));
-        for (int i = players.indexOf(currentPlayer); i< frenzyCounter; i++){
-            players.get(i-1).setActionStatus(ActionState.FRENETICACTIONS1);
+        for (int i = players.indexOf(currentPlayer); i< players.size()-1; i++){
+            players.get(i+1).setActionStatus(ActionState.FRENETICACTIONS1);
         }
     }
 
-    public Map<Player,Integer> endScoreboard(){
+    public List<Player> endScoreboard(){
+        board.getSkullBoard().liquidation();
         players.forEach(p->p.getPlayerBoard().liquidation());
-        Map<Player,Integer> map = new TreeMap<>((Player p1,Player p2)->p2.getPlayerBoard().getPoints()-p1.getPlayerBoard().getPoints());
-        players.stream().filter(Player::isConnected).forEach(x->map.put(x,x.getPlayerBoard().getPoints()));
-        return map;
+        return players.stream().filter(Player::isConnected)
+                .sorted((Player p1,Player p2)->p2.getPlayerBoard().getPoints()-p1.getPlayerBoard().getPoints())
+                .collect(Collectors.toList());
+
     }
 
     public void undoPayment(){

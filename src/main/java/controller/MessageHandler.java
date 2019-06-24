@@ -266,7 +266,7 @@ public class MessageHandler {
      * @param info the information to send to the player
      * @param room where the player is playing
      */
-    static void sendInfo(Player player, String info, Room room){
+    public static void sendInfo(Player player, String info, Room room){
         ServerToClient message = new InfoMessage(info);
         room.getRoomController().sendMessage(player, message);
     }

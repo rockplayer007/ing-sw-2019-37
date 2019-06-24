@@ -3,10 +3,12 @@ package model.board;
 import model.card.*;
 import network.server.Configs;
 
+import java.io.Serializable;
+
 /**
  * Class for managing the cards and the boards
  */
-public class Board {
+public class Board implements Serializable {
 
     private transient AmmoDeck ammoDeck;
     private transient PowerDeck powerDeck;
@@ -15,6 +17,9 @@ public class Board {
     private GameBoard map;
     private SkullBoard skullBoard;
 
+    /**
+     * The constructor creates new decks and a new skull board
+     */
     public Board(){
         ammoDeck = new AmmoDeck();
         powerDeck = new PowerDeck();
@@ -30,7 +35,10 @@ public class Board {
         return map;
     }
 
-
+    /**
+     * Sets a new board mpa
+     * @param map the map where the players will play
+     */
     public void setMap(GameBoard map) {
         this.map = map;
     }
@@ -59,26 +67,17 @@ public class Board {
         return weaponDeck;
     }
 
-    //not useful for now
-    /*
-    public void setAmmoDeck(AmmoDeck ammoDeck) {
-        this.ammoDeck = ammoDeck;
-    }
-
-    public void setPowerDeck(PowerDeck powerDeck) {
-        this.powerDeck = powerDeck;
-    }
-
-    public void setWeaponDeck(WeaponDeck weaponDeck) {
-        this.weaponDeck = weaponDeck;
-    }
-
+    /**
+     * Gives the current skull board
+     * @return the skull board of the players
      */
-
     public SkullBoard getSkullBoard(){
         return skullBoard;
     }
 
+    /**
+     * Puts ammo cards in the squares where there are no cards
+     */
     public void fillAmmo(){
         for(Square square : map.allSquares()){
             if(!square.isGenerationPoint() && ((AmmoSquare) square).getAmmoCard() == null){
@@ -89,6 +88,9 @@ public class Board {
         }
     }
 
+    /**
+     * Puts back weapons where it's needed if it is possible
+     */
     public void fillWeapons(){
 
         for(GenerationSquare square : map.getGenPoints()){

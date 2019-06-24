@@ -2,9 +2,10 @@ package model.board;
 
 import model.player.Player;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class SkullBoard {
+public class SkullBoard implements Serializable {
 
     private static int[] pointArray = {8, 6, 4, 2, 1, 1};
     private int numberSkulls;

@@ -1,7 +1,13 @@
 package model.card;
+
+/**
+ * Class that allows to create an ammo card deck
+ */
 public class AmmoDeck extends Deck<AmmoCard>{
 
-
+    /**
+     * Creates all the cards and puts them in the deck
+     */
     public  AmmoDeck(){
         for (int i = 0; i < 4; i++) {
             addCard(new AmmoCard("RB",AmmoColor.RED, AmmoColor.BLUE));
@@ -24,5 +30,4 @@ public class AmmoDeck extends Deck<AmmoCard>{
        mixDeck();
 
     }
-
 }

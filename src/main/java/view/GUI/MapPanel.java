@@ -47,6 +47,7 @@ public class MapPanel extends JLayeredPane {
     private JLabel help;
     private JLabel mypoint= new JLabel("");
     private boolean first=true;
+    private JFrame rulesFrame = new JFrame("Game Rules");
 
     public MapPanel(GameBoard board) {
         JButton pBoards;
@@ -100,8 +101,16 @@ public class MapPanel extends JLayeredPane {
         mypoint.setSize(50,20);
         mypoint.setLocation(1180,45);
         this.add(mypoint);
-
-
+        JButton rules = new JButton("Game Rules");
+        rules.setLocation(250,680);
+        rules.setSize(100,20);
+        RulesPanel rulesPanel = new RulesPanel();
+        JScrollPane scrollPane=new JScrollPane(rulesPanel);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        rulesFrame.add(scrollPane);
+        rulesFrame.pack();
+        rules.addActionListener(new RulesActionListener(rulesFrame));
+        this.add(rules);
     }
 
     private void setRoomCoordinate() {
@@ -129,7 +138,7 @@ public class MapPanel extends JLayeredPane {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             removePlayerActions();
-                            mainClient.sendSelectedPlayer(s);
+                            mainClient.sendSelectedItem(s);
                             enablePlayers();
                         }
                     });
@@ -506,7 +515,7 @@ public class MapPanel extends JLayeredPane {
             roomButton.get(square.getId()).addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    mainClient.sendSelectedSquare(x);
+                    mainClient.sendSelectedItem(x);
                     resetRooms();
                     addActionInfo("");
                 }
@@ -662,7 +671,7 @@ public class MapPanel extends JLayeredPane {
             opt.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    mainClient.sendSelectedEffect(effects.size());
+                    mainClient.sendSelectedItem(effects.size());
                     selectEffect.setVisible(false);
                 }
             });

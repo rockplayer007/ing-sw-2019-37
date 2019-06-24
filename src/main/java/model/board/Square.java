@@ -14,6 +14,8 @@ public class Square implements Serializable {
     private int id;
     private int x;
     private int y;
+    private int currentX;
+    private int currentY;
     //needs to be transient otherwhise serialization doesnt work
     private transient List<Square> neighbourSquare = new ArrayList<>();
     private List<Integer> neighbourId = new ArrayList<>();
@@ -41,7 +43,7 @@ public class Square implements Serializable {
      * Adds a square that has distance 1 from the current square
      * @param next Near square
      */
-    public void addNextSquare(Square next){
+    void addNextSquare(Square next){
         neighbourSquare.add(next);
         neighbourId.add(next.getId());
     }
@@ -54,10 +56,18 @@ public class Square implements Serializable {
         return squareColor;
     }
 
+    /**
+     * Gives the squares that are one position away from this square
+     * @return all the close squares
+     */
     public List<Square> getNeighbourSquare(){
         return neighbourSquare;
     }
 
+    /**
+     * Gives the squares that are one position away from this square
+     * @return all the ids of the close squares
+     */
     public List<Integer> getNeighbourId() {
         return neighbourId;
     }
@@ -86,6 +96,10 @@ public class Square implements Serializable {
         return y;
     }
 
+    /**
+     * Gives the id of the current square
+     * @return the identification number of the square
+     */
     public int getId() {
         return id;
     }
@@ -96,12 +110,11 @@ public class Square implements Serializable {
      * @param maxDistance Distance from the square
      * @return All the squares with that distance
      */
-    public Set<Square> getAllPositions(int maxDistance){
+    private Set<Square> getAllPositions(int maxDistance){
         Set<Square> positions = new LinkedHashSet<>();
         if(maxDistance != 0){
             neighbourSquare.forEach(squares-> positions.
                     addAll(squares.getValidPosition(maxDistance-1)));
-            //positions.addAll(neighbourSquare);
         }
         else {
             positions.add(this);
@@ -110,6 +123,11 @@ public class Square implements Serializable {
         return positions;
     }
 
+    /**
+     * The positions where the player can move
+     * @param maxDistance the distance that the player can move
+     * @return a set of squares where the player can move
+     */
     public Set<Square> getValidPosition(int maxDistance){
         Set<Square> all = new LinkedHashSet<>();
         for(int i = 0; i <= maxDistance; i++){
@@ -118,6 +136,10 @@ public class Square implements Serializable {
         return all;
     }
 
+    /**
+     * Gives all the players on the square
+     * @return a list with all the players
+     */
     public List<Player> getPlayersOnSquare(){
         return playersOnSquare;
     }
@@ -154,10 +176,11 @@ public class Square implements Serializable {
         playersOnSquare.remove(player);
     }
 
-    public Boolean isThisSquare(int x,int y){
-        return (getX()==x && getY()==y);
-    }
-
+    /**
+     * Gives the all the squares in a given direction
+     * @param distance the maximum distance from this square to direction square
+     * @return a map with the direction and the the set of squares
+     */
     public Map<Direction,Set<Square>> directions(int distance){
 
         Map<Direction,Set<Square>> allSquares = new EnumMap<>(Direction.class);
@@ -173,6 +196,12 @@ public class Square implements Serializable {
         return allSquares;
     }
 
+    /**
+     * Gives a square with given coordinates that is one square away
+     * @param x X coordinate of the desired square
+     * @param y Y coordinate of the desired square
+     * @return the desired square if there is one otherwise null
+     */
     public Square getOneOfNeighbour(int x, int y){
         Square square = null;
         for (Square s:neighbourSquare){
@@ -182,29 +211,22 @@ public class Square implements Serializable {
         return square;
     }
 
+    /**
+     * Gives all the squares in a given direction considering walls as limiters
+     * @param direction where to look for squares
+     * @param distance maximum distance to look for squares
+     * @return all the squares if there are any
+     */
     private Set<Square> oneDirection(Direction direction, int distance){
 
         Set<Square> squares = new HashSet<>();
         Square currentSquare = this;
-        int currentX = x;
-        int currentY = y;
+        currentX = x;
+        currentY = y;
 
         while (distance > 0){
 
-            switch (direction){
-                case TOP:
-                    currentY--;
-                    break;
-                case DOWN:
-                    currentY++;
-                    break;
-                case RIGHT:
-                    currentX++;
-                    break;
-                case LEFT:
-                    currentX--;
-                    break;
-            }
+            changeDirection(direction);
 
             currentSquare = currentSquare.getOneOfNeighbour(currentX, currentY);
             if(currentSquare != null){
@@ -219,6 +241,11 @@ public class Square implements Serializable {
         return squares;
     }
 
+    /**
+     * Gives all the squares with directions ignoring walls
+     * @param gameBoard the current board where the players are playing
+     * @return a map with the directions and the relative squares in that direction
+     */
     public Map<Direction,Set<Square>> directionAbsolute(GameBoard gameBoard){
 
         Map<Direction,Set<Square>> allSquares = new EnumMap<>(Direction.class);
@@ -234,30 +261,22 @@ public class Square implements Serializable {
         return allSquares;
     }
 
+    /**
+     * Gives all the squares in a given direction ignoring walls
+     * @param direction considered from the current square
+     * @param gameBoard where the players are playing
+     * @return all the squares with the given direction
+     */
     private Set<Square> oneDirectionAbsolute(Direction direction, GameBoard gameBoard){
-
 
         Set<Square> squares = new HashSet<>();
         Square currentSquare = this;
-        int currentX = x;
-        int currentY = y;
+        currentX = x;
+        currentY = y;
 
         while (currentSquare != null){
 
-            switch (direction){
-                case TOP:
-                    currentY--;
-                    break;
-                case DOWN:
-                    currentY++;
-                    break;
-                case RIGHT:
-                    currentX++;
-                    break;
-                case LEFT:
-                    currentX--;
-                    break;
-            }
+            changeDirection(direction);
 
             currentSquare = gameBoard.getSquare(currentX, currentY);
             if(currentSquare != null){
@@ -269,21 +288,47 @@ public class Square implements Serializable {
         return squares;
     }
 
-    @Override
-    public String toString () {
-        return "X: " + x + " Y: " + y + " Color: " + squareColor;
+    /**
+     * Changes the x and y current coordinates
+     * @param direction the direction where to go
+     */
+    private void changeDirection(Direction direction){
+        switch (direction){
+            case TOP:
+                currentY--;
+                break;
+            case DOWN:
+                currentY++;
+                break;
+            case RIGHT:
+                currentX++;
+                break;
+            case LEFT:
+                currentX--;
+                break;
+        }
     }
 
+    /**
+     * Allows to define directions that can be chosen
+     */
     public enum Direction {
         //🠘 🠚 🠙 🠛
         TOP("\uD83E\uDC19"), DOWN("\uD83E\uDC1B"),LEFT("\uD83E\uDC18"),RIGHT("\uD83E\uDC1A");
-        //TOP, DOWN, LEFT, RIGHT;
         private String info;
 
+        /**
+         * Gives the arrow of the direction
+         * @param info the arrow of the direction
+         */
         Direction(String info){
             this.info = info;
         }
 
+        /**
+         * Allows to see the correct arrow
+         * @return a string of the arrow
+         */
         @Override
         public String toString() {
             return info;

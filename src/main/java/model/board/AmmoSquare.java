@@ -29,11 +29,18 @@ public class AmmoSquare extends Square {
         return ammoCard;
     }
 
+    /**
+     * Allows to remove the card that is in that square
+     */
     public void removeAmmoCard(){
         ammoCard = null;
     }
 
-    public void setAmmoCard(AmmoCard ammoCard){
+    /**
+     * Sets a given ammo card in the square
+     * @param ammoCard the card that has to be put on the square
+     */
+    void setAmmoCard(AmmoCard ammoCard){
         this.ammoCard = ammoCard;
     }
 }

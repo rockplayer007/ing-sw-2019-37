@@ -11,6 +11,7 @@ import model.card.Weapon;
 import model.player.ActionOption;
 import model.player.Player;
 import network.client.MainClient;
+import network.messages.Message;
 import view.ViewInterface;
 
 import java.io.BufferedReader;
@@ -137,47 +138,51 @@ public class CLI implements ViewInterface {
     public void chooseWeapon(List<Weapon> weapons, boolean optional, String info) {
         printer.askWeapon(weapons, weapon -> {
             if(weapon >= weapons.size()){
-                mainClient.sendSelectedCard(-1);
+                mainClient.sendSelectedItem(-1, Message.Content.CARD_RESPONSE);
             }
             else {
-                mainClient.sendSelectedCard(weapon);
+                mainClient.sendSelectedItem(weapon, Message.Content.CARD_RESPONSE);
             }
         }, optional, info);
     }
 
     @Override
     public void chooseEffect(List<Effect> effects, boolean optional) {
-        printer.askEffect(effects, effect -> mainClient.sendSelectedCard(effect), optional);
+        printer.askEffect(effects, effect -> mainClient
+                .sendSelectedItem(effect, Message.Content.EFFECT_RESPOSNSE), optional);
     }
 
     @Override
     public void choosePlayer(List<Player> players, String info) {
-        printer.askPlayer(players, player -> mainClient.sendSelectedPlayer(player), info);
+        printer.askPlayer(players, player -> mainClient
+                .sendSelectedItem(player, Message.Content.PLAYER_RESPONSE), info);
     }
 
     @Override
     public void chooseDirection(List<Square.Direction> directions, String info) {
-        printer.askDirection(directions, direction -> mainClient.sendSelectedDirection(direction), info);
+        printer.askDirection(directions, direction -> mainClient
+                .sendSelectedItem(direction, Message.Content.DIRECTION_RESPONSE), info);
     }
 
     @Override
     public void chooseAmmoColor(List<AmmoColor> ammoColors) {
-        printer.askAmmoColor(ammoColors, color -> mainClient.sendSelectedAmmoColor(color));
+        printer.askAmmoColor(ammoColors, color -> mainClient
+                .sendSelectedItem(color, Message.Content.AMMO_RESPONSE));
     }
 
     @Override
     public void chooseRoom(List<Color> rooms) {
-        printer.askRoom(rooms, room -> mainClient.sendSelectedRoom(room));
+        printer.askRoom(rooms, room -> mainClient.sendSelectedItem(room, Message.Content.ROOM_RESPONSE));
     }
 
 
     public void choosePowerup(List<Powerup> powerups, boolean optional, String info){
         printer.askPowerup(powerups, powerup -> {
             if(powerup >= powerups.size()){
-                mainClient.sendSelectedCard(-1);
+                mainClient.sendSelectedItem(-1, Message.Content.CARD_RESPONSE);
             }
             else {
-                mainClient.sendSelectedCard(powerup);
+                mainClient.sendSelectedItem(powerup, Message.Content.CARD_RESPONSE);
             }
         }, optional, info);
     }
@@ -193,7 +198,8 @@ public class CLI implements ViewInterface {
 
     @Override
     public void chooseSquare(List<Square> squares, String info) {
-        printer.askSquare(squares, square -> mainClient.sendSelectedSquare(square), info);
+        printer.askSquare(squares, square -> mainClient
+                .sendSelectedItem(square, Message.Content.SQUARE_RESPONSE), info);
     }
 
     @Override
@@ -220,7 +226,7 @@ public class CLI implements ViewInterface {
     }
 
     @Override
-    public void showScore(Map<Player, Integer> score) {
+    public void showScore(List<Player> score) {
         printer.printScore(score);
     }
 

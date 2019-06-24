@@ -22,7 +22,7 @@ public class ActionL implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-            mainClient.sendSelectedCard(n);
+            mainClient.sendSelectedItem(n);
             frame.setVisible(false);
             mapPanel.addActionInfo("");
 

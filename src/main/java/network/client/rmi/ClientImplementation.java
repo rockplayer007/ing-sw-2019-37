@@ -25,7 +25,7 @@ public class ClientImplementation implements ClientInterface {
 
     @Override
     public void closeConnection() {
-
+        //no need for rmi
     }
 
 }

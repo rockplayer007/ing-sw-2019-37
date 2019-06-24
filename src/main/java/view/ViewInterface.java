@@ -14,7 +14,6 @@ import model.player.Player;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
@@ -73,5 +72,5 @@ public interface ViewInterface {
 
     void showInfo(String info);
 
-    void showScore(Map<Player, Integer> score);
+    void showScore(List<Player> score);
 }

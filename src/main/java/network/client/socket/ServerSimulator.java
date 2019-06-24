@@ -18,11 +18,10 @@ import java.util.logging.Logger;
 public class ServerSimulator implements ServerInterface {
 
     private ClientInterface client;
-    private Socket connection;
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
-    Thread receiver;
+    private Thread receiver;
 
     private static final Logger logger = Logger.getLogger(ServerSimulator.class.getName());
 
@@ -35,7 +34,7 @@ public class ServerSimulator implements ServerInterface {
      */
     public ServerSimulator(ClientInterface client, String serverIp, int port) throws IOException{
         this.client = client;
-        connection = new Socket(serverIp, port);
+        Socket connection = new Socket(serverIp, port);
         this.out = new ObjectOutputStream(connection.getOutputStream());
         this.in = new ObjectInputStream(connection.getInputStream());
 

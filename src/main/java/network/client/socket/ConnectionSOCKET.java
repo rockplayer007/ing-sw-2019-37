@@ -18,18 +18,18 @@ public class ConnectionSOCKET implements ConnectionInterface, ClientInterface {
 
     /**
      * Constructor to start a {@link ServerSimulator}
-     * @param client
-     * @throws IOException
+     * @param client the player that wants to connect
+     * @throws IOException when there is an error in connecting
      */
     public ConnectionSOCKET(MainClient client) throws IOException {
         this.client = client;
-        serverSimulator = new ServerSimulator(this, client.getServerIp(), 8000);
+        serverSimulator = new ServerSimulator(this, MainClient.getServerIp(), 8000);
 
     }
 
     /**
      * Redirects the message to the {@link MainClient}
-     * @param message
+     * @param message the message that needs to be sent to the client
      */
     @Override
     public void notifyClient(ServerToClient message){
@@ -38,13 +38,13 @@ public class ConnectionSOCKET implements ConnectionInterface, ClientInterface {
 
     @Override
     public void closeConnection() {
-
+        //no need to close the connection for the client yet
     }
 
     /**
      * Redirects the message to the {@link ServerSimulator}
      * to send it to the {@link network.server.MainServer}
-     * @param message
+     * @param message the message that needs to be sent to the server
      */
     @Override
     public void sendMessage(ClientToServer message){

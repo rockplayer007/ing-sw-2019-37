@@ -182,15 +182,6 @@ public class Player implements Serializable {
     }
 
     /**
-     * @return a list of Ammocolor same as that player's powerups color
-     */
-    public List<AmmoColor> powerupAsAmmo(){
-        ArrayList<AmmoColor> bullets=new ArrayList<>();
-        powerups.forEach(i->bullets.add(i.getAmmo()));
-        return bullets;
-    }
-
-    /**
      * @return a map contain all ammos of player
      */
     public Map<AmmoColor,Integer> allAmmo(){
@@ -224,7 +215,7 @@ public class Player implements Serializable {
 
 
     public enum RoundStatus{
-    FIRST_ROUND, NORMAL_ROUND;
+    FIRST_ROUND, NORMAL_ROUND
     }
 
 

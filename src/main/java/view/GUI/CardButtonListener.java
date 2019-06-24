@@ -17,7 +17,7 @@ public class CardButtonListener implements ActionListener {
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        JTextArea textArea = new JTextArea(card.getName()+"\n"+card.getDescription(), 12, 60);
+        JTextArea textArea = new JTextArea(card.getName()+"\n"+card.getDescription(), 10, 60);
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
         textArea.setOpaque(false);

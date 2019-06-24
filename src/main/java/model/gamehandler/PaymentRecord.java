@@ -14,11 +14,11 @@ public class PaymentRecord {
         this.usedPowerups = usedPowerups;
     }
 
-    public List<Powerup> getUsedPowerups() {
+    List<Powerup> getUsedPowerups() {
         return usedPowerups;
     }
 
-    public List<AmmoColor> getUsedAmmo() {
+    List<AmmoColor> getUsedAmmo() {
         return usedAmmo;
     }
 

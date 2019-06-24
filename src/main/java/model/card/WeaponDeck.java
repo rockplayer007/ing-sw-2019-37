@@ -101,7 +101,7 @@ public class WeaponDeck extends Deck<Weapon>{
         operations = Arrays.asList(visiblePlayers, selectTarget1, damage2, setTargetToSelected);
         effects.put(new Effect(basicEffect, description, Collections.emptyList(), operations), 0);
         description = "Move 1 or 2 squares. This effect can be used either before or after the basic effect.\n";
-        operations = Collections.singletonList(run2);
+        operations = Arrays.asList(run2, update);
         effects.put(new Effect("Phase glide",description ,Collections.emptyList(), operations), -1);
         description = "Deal 1 additional damage to your target.\n";
         operations = Arrays.asList(selectFromSelectedTargets1, damage1);
@@ -250,7 +250,7 @@ public class WeaponDeck extends Deck<Weapon>{
         operations = Arrays.asList(visiblePlayers, minDistance0, selectTarget1, damage2, setTargetPositionAsEffectSquare, moveTarget1, setTargetToSelected);
         effects.put(new Effect(basicEffect,description, Collections.emptyList(), operations), 0);
         description = "Move 1 or 2 squares. This effect can be used either before or after the basic effect.\n";
-        operations = Collections.singletonList(run2);
+        operations = Arrays.asList(run2, update);
         effects.put(new Effect("Rocket jump",description, Collections.singletonList(AmmoColor.BLUE), operations), -1);
         description = "During the basic effect, deal 1 damage to " +
                 "every player on your target's original square – including the target, even if you move it.\n";
@@ -287,7 +287,7 @@ public class WeaponDeck extends Deck<Weapon>{
         operations = Arrays.asList(sameSquare, selectTarget1, damage2, setTargetToSelected);
         effects.put(new Effect(basicEffect,description, Collections.emptyList(), operations), 0);
         description = "Move 1 square before or after the basic effect.\n";
-        operations= Collections.singletonList(new Run(1));
+        operations= Arrays.asList(new Run(1), update);
         effects.put(new Effect("Shadowstep",description, Collections.emptyList(), operations), -1);
         description = "Deal 2 damage to a different target on your square. " +
                 "The shadowstep may be used before or after this effect.\n";
