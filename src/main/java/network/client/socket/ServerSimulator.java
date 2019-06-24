@@ -58,6 +58,7 @@ public class ServerSimulator implements ServerInterface {
 
                     } catch (IOException e) {
                         logger.log(Level.WARNING, "Exception on network:", e);
+                        client.notifyClient();
                     } catch (ClassNotFoundException e) {
                         throw new RuntimeException("Wrong deserialization/message: " + e.getMessage());
                     }

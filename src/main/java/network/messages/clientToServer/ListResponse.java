@@ -1,7 +1,5 @@
 package network.messages.clientToServer;
 
-import network.messages.Message;
-
 public class ListResponse extends ClientToServer {
 
     private int selectedItem;

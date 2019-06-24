@@ -21,6 +21,7 @@ public class LoginRequest extends ClientToServer {
         clientInterface = client;
     }
 
+    @Override
     public String getClientID() {
         return clientID;
     }
