@@ -7,8 +7,6 @@ import model.player.ActionOption;
 import model.player.Player;
 import network.client.MainClient;
 import view.ViewInterface;
-
-import javax.print.attribute.standard.Media;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
@@ -63,10 +61,11 @@ public void addMusic(String name){
     public void logIn(boolean ask) {
         if (ask) {
             frame.getContentPane().removeAll();
-            frame.setSize(1280, 1024);
+            frame.setSize(1280, 750);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setBackground(Color.DARK_GRAY);
             LoginPanel loginPanel = new LoginPanel();
+            loginPanel.setName("loginPanel");
             frame.getContentPane().add(loginPanel);
             JButton submitButton = new JButton("START THE GAME");
             Font f=new Font("Phosphate", Font.PLAIN, 20);
@@ -193,7 +192,7 @@ public void addMusic(String name){
     public void updateAll(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard) {
         if(firstUpdate){
             frame.getContentPane().removeAll();
-            frame.setSize(1280,1024);
+            frame.setSize(1300,750);
             frame.setResizable(false);
             mapPanel = new MapPanel(board);
             mapPanel.setName("mapPanel");
@@ -294,19 +293,20 @@ public void addMusic(String name){
             MapPanel mapPanel = (MapPanel) component;
             mapPanel.addInfo(info);
         }
+        else
+            JOptionPane.showMessageDialog(null,info,"INFO",JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
     public void showScore(Map<Player, Integer> score) {
-        JFrame x= new JFrame();
-       // x=frame;
-        x.getContentPane().removeAll();
-        x.setSize(750,800);
-        x.setLocation(300,0);
-        x.setResizable(false);
+
+        frame.getContentPane().removeAll();
+        frame.setSize(750,800);
+        frame.setLocation(300,0);
+        frame.setResizable(false);
         ScorePanel scorePanel= new ScorePanel(score);
-        x.getContentPane().add(scorePanel);
-        x.setVisible(true);
+        frame.getContentPane().add(scorePanel);
+        frame.setVisible(true);
         jDialog.setVisible(false);
 
     }
