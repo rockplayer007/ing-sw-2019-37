@@ -115,7 +115,6 @@ public class Square implements Serializable {
         if(maxDistance != 0){
             neighbourSquare.forEach(squares-> positions.
                     addAll(squares.getValidPosition(maxDistance-1)));
-            //positions.addAll(neighbourSquare);
         }
         else {
             positions.add(this);
@@ -310,21 +309,12 @@ public class Square implements Serializable {
         }
     }
 
-    /*
-    @Override
-    public String toString () {
-        return "X: " + x + " Y: " + y + " Color: " + squareColor;
-    }
-
-     */
-
     /**
      * Allows to define directions that can be chosen
      */
     public enum Direction {
         //🠘 🠚 🠙 🠛
         TOP("\uD83E\uDC19"), DOWN("\uD83E\uDC1B"),LEFT("\uD83E\uDC18"),RIGHT("\uD83E\uDC1A");
-        //TOP, DOWN, LEFT, RIGHT;
         private String info;
 
         /**

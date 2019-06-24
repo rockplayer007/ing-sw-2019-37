@@ -2,12 +2,13 @@ package model.board;
 
 import model.player.Player;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * Class for managing the generated board where the players will play
  */
-public class GameBoard {
+public class GameBoard implements Serializable {
 
     private List<GenerationSquare> genPoints;
     private Map<Integer,Square> allSquares;

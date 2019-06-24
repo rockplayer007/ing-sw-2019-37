@@ -29,10 +29,6 @@ public class Effect implements Serializable {
         }
     }
 
-    public List<Operation> getOperations() {
-        return operations;
-    }
-
     public String getName() {
         return name;
     }
