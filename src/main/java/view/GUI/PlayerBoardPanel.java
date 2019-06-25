@@ -55,7 +55,24 @@ public class PlayerBoardPanel extends JPanel{
                this.add(mark);
                x=x+25;
            }
-
+            JButton nickname = new JButton();
+           nickname.setLocation(50,y+2);
+           if(players.get(i).getNickname().length()>21)
+               nickname.setSize(230,20);
+           else
+            nickname.setSize(players.get(i).getNickname().length()*10,20);
+           nickname.setText(players.get(i).getNickname());
+           /*nickname.setFont(new Font(null,Font.BOLD,13));
+           nickname.setForeground(Color.white);
+           nickname.setBackground(Color.black);
+           */
+           nickname.setHorizontalAlignment(SwingConstants.CENTER);
+          // nickname.setBorder(BorderFactory.createLineBorder(Color.white,2));
+           nickname.setOpaque(true);
+           ImageIcon hero = new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"
+                   +File.separatorChar + "resources"+File.separatorChar + "heroes" + File.separatorChar+players.get(i).getHero().getName()+"big.png");
+           nickname.addActionListener(new HeroDescriptionListener(hero,players.get(i)));
+           this.add(nickname);
            JLabel board = new JLabel();
             board.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"
                     +File.separatorChar+"resources"+File.separatorChar +"heroes"+File.separatorChar+players.get(i).getHero().getName()+"board.png"));

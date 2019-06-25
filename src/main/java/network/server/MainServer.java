@@ -91,8 +91,14 @@ public class MainServer {
         if(message.getContent().equals(Message.Content.LOGIN_REQUEST)){
             addClient((LoginRequest) message);
         }
+        else if (message.getContent().equals(Message.Content.CONNECTION)){
+            //reconnect player
+            ClientOnServer client = allClients.stream()
+                    .filter(x -> x.getUsername().equals(message.getSender()))
+                    .findFirst().get();
+            client.getPersonalPlayer().setConnected();
+        }
         else {
-
             usernameInRoom.get(message.getSender()).handleMessages(message);
         }
 

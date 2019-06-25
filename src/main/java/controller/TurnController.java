@@ -10,6 +10,7 @@ import network.messages.Message;
 import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
 import network.messages.serverToClient.InfoMessage;
+import network.messages.serverToClient.ServerToClient;
 import network.messages.serverToClient.TimeoutMessage;
 import network.server.Configs;
 
@@ -100,7 +101,14 @@ class TurnController {
                 timer.cancelTimer();
 
             } catch (TimeFinishedException e) {
-                disconnectionCheckout(player);
+                if(room.getPlayers().stream().filter(Player::isConnected).count()
+                        < Configs.getInstance().getMinimumPlayers()){
+                    disconnectionCheckout(player, true);
+                }
+                else {
+                    disconnectionCheckout(player, false);
+                }
+
 
             } catch (IllegalStateException e){
                 logger.log(Level.INFO, "ooops, timer already stopped, dont worry ");
@@ -117,7 +125,7 @@ class TurnController {
                 try {
                     respawn(x);
                 } catch (TimeFinishedException e) {
-                    disconnectionCheckout(x);
+                    disconnectionCheckout(x, false);
                 } finally {
                     player.setLive(true);
                 }
@@ -351,12 +359,20 @@ class TurnController {
         roomController.sendUpdate();
     }
 
-    private void disconnectionCheckout(Player player){
+    private void disconnectionCheckout(Player player, boolean kick){
         logger.log(Level.INFO,"player: {0} finished his time", player.getNickname());
         //set the player as disconnected
         player.setDisconnected();
 
         //send message
+
+        if(kick){
+            ServerToClient message = new InfoMessage("You lost time, you lost the game...");
+            roomController.sendMessage(room.getCurrentPlayer(), message);
+        }
+        else {
+            roomController.sendMessage(room.getCurrentPlayer(), new TimeoutMessage());
+        }
         roomController.sendMessage(room.getCurrentPlayer(), new TimeoutMessage());
         roomController.sendMessageToAll(new InfoMessage(player.getNickname() + " has disconnected (time exceeded)"));
     }
