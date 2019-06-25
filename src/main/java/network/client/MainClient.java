@@ -188,8 +188,8 @@ public class MainClient {
                 view.timeout();
                 break;
             case DISCONNECTION:
-                view.showInfo("RECONNECT!!!");
-                //view.disconnection();
+                //view.showInfo("RECONNECT!!!");
+                view.disconnection();
                 break;
             case LOGIN_RESPONSE:
                 clientID = ((LoginResponse) message).getClientID();
