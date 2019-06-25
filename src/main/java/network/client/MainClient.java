@@ -48,7 +48,7 @@ public class MainClient {
     private ClientInterface clientInterface = null;
 
     private CountDown connectionTimer;
-    private static final int PING_TIMER = 5;
+    private static final int PING_TIMER = 60;
 
     private static ViewInterface view;
     private static boolean socket; //true uses socket false uses rmi
