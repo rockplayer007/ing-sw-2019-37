@@ -24,8 +24,12 @@ public class LoginPanel extends JPanel implements ActionListener {
  public LoginPanel()  {
         JLabel ipText;
         image = Toolkit.getDefaultToolkit().createImage("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"backgroundimage.png");
-        loadImage(image);
-        this.setLayout(new GridBagLayout());
+     try {
+         loadImage(image);
+     } catch (InterruptedException e) {
+         e.printStackTrace();
+     }
+     this.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         Font f;
         f = new Font("Phosphate", Font.BOLD, 40);
@@ -94,14 +98,10 @@ public class LoginPanel extends JPanel implements ActionListener {
      this.add(ip, gbc);
     }
 
-    private void loadImage(Image img) {
-        try {
-            MediaTracker track = new MediaTracker(this);
-            track.addImage(img, 0);
-            track.waitForID(0);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    private void loadImage(Image img) throws InterruptedException {
+        MediaTracker track = new MediaTracker(this);
+        track.addImage(img, 0);
+        track.waitForID(0);
     }
 
     @Override

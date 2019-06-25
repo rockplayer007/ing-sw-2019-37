@@ -54,7 +54,8 @@ public void addMusic(String name){
          sound = AudioSystem.getClip();
         sound.open(audio);
         sound.loop(LOOP_CONTINUOUSLY);
-    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {}
+    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ignored) {
+    }
 
 
 

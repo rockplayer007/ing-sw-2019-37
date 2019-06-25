@@ -55,7 +55,10 @@ public class MapPanel extends JLayeredPane {
         this.board = board;
         image = Toolkit.getDefaultToolkit().createImage("." + File.separatorChar + "src" + File.separatorChar + "main" + File.separatorChar + "resources" +
                 File.separatorChar + "maps" + File.separatorChar + "map" + board.getId() + ".png");
-        loadImages(image);
+        try {
+            loadImages(image);
+        } catch (Exception ignored) {
+        }
         setRoomCoordinate();
         pBoards = new JButton("SHOW PLAYER BOARDS");
         pBoards.setSize(250, 30);
@@ -379,12 +382,10 @@ public class MapPanel extends JLayeredPane {
         }
     }
 
-    private void loadImages(Image imga) {
-        try {
-            MediaTracker track = new MediaTracker(this);
-            track.addImage(imga, 1);
-            track.waitForID(1);
-        } catch (InterruptedException err) { }
+    private void loadImages(Image imga) throws Exception {
+        MediaTracker track = new MediaTracker(this);
+        track.addImage(imga, 1);
+        track.waitForID(1);
     }
 
     @Override
