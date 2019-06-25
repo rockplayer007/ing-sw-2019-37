@@ -3,7 +3,7 @@
 This is the project of course software engineering (2018-2019) of Politecnico di Milano.
 We are group-37 and group members is:
 
-- [Reylander Roland](https://github.com/rockplayer007): roland.reylander@mail.polimi.it
+- [Reylander Roland](https://github.com/rockplayer007): roland.gandini@mail.polimi.it
 - [Tarasco Antonio](https://github.com/tarascoant): antonio.tarasco@mail.polimi.it
 - [Xu Yijie](https://github.com/yijie0110):  yijie.xu@mail.polimi.it
 
