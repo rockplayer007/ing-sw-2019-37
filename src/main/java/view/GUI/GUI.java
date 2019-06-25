@@ -7,8 +7,6 @@ import model.player.ActionOption;
 import model.player.Player;
 import network.client.MainClient;
 import view.ViewInterface;
-
-import javax.print.attribute.standard.Media;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
@@ -33,6 +31,7 @@ public class GUI implements ViewInterface {
     private MapPanel mapPanel;
     private JFrame jDialog= new JFrame("TIMEOUT");
     private Clip sound = null;
+
 
 
     public GUI(MainClient mainClient) {
@@ -63,10 +62,11 @@ public void addMusic(String name){
     public void logIn(boolean ask) {
         if (ask) {
             frame.getContentPane().removeAll();
-            frame.setSize(1280, 1024);
+            frame.setSize(1280, 750);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setBackground(Color.DARK_GRAY);
             LoginPanel loginPanel = new LoginPanel();
+            loginPanel.setName("loginPanel");
             frame.getContentPane().add(loginPanel);
             JButton submitButton = new JButton("START THE GAME");
             Font f=new Font("Phosphate", Font.PLAIN, 20);
@@ -105,10 +105,7 @@ public void addMusic(String name){
                         if(first){
                             try {
                                 mainClient.connect();
-                            } catch (NotBoundException e1) {
-                                //e1.printStackTrace();
-                            } catch (IOException e1) {
-                                //e1.printStackTrace();
+                            } catch (NotBoundException | IOException ignored) {
                             }
                         }
                         first=false;
@@ -117,6 +114,19 @@ public void addMusic(String name){
                     }
                 }});
             loginPanel.add(submitButton, gbc);
+            JButton rules=new JButton("Game Rules");
+            gbc.gridy=10;
+            gbc.gridx=2;
+            if (first) {
+                JFrame rulesFrame=new JFrame("Game Rules");
+                RulesPanel rulesPanel = new RulesPanel();
+                JScrollPane scrollPane=new JScrollPane(rulesPanel);
+                scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+                rulesFrame.add(scrollPane);
+                rulesFrame.pack();
+                rules.addActionListener(new RulesActionListener(rulesFrame));
+            }
+            loginPanel.add(rules, gbc);
             frame.getContentPane().add(loginPanel);
             frame.setVisible(true);
 
@@ -175,16 +185,18 @@ public void addMusic(String name){
         });
         jDialog.add(reconnect,BorderLayout.SOUTH);
         jDialog.setVisible(true);
-        Component component =frame.getContentPane().getComponent(0);
-        if (component.getName().equals("chooseBoard")){
-            frame.getContentPane().removeAll();
-            LoadingPanel loadingPanel= new LoadingPanel();
-            frame.getContentPane().add(loadingPanel);
-            frame.setVisible(true);
-        }
-        if ((component.getName().equals("mapPanel"))){
-            MapPanel mapPanel = (MapPanel) component;
-            mapPanel.blockAll();
+        if(frame.getContentPane().getComponents().length>0) {
+            Component component = frame.getContentPane().getComponent(0);
+            if (component.getName().equals("chooseBoard")) {
+                frame.getContentPane().removeAll();
+                LoadingPanel loadingPanel = new LoadingPanel();
+                frame.getContentPane().add(loadingPanel);
+                frame.setVisible(true);
+            }
+            if (component.equals(mapPanel)) {
+                MapPanel mpl = (MapPanel) component;
+                mpl.blockAll();
+            }
         }
 
     }
@@ -193,7 +205,7 @@ public void addMusic(String name){
     public void updateAll(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard) {
         if(firstUpdate){
             frame.getContentPane().removeAll();
-            frame.setSize(1280,1024);
+            frame.setSize(1300,750);
             frame.setResizable(false);
             mapPanel = new MapPanel(board);
             mapPanel.setName("mapPanel");
@@ -214,122 +226,142 @@ public void addMusic(String name){
 
     @Override
     public void choosePowerup(List<Powerup> powerups, boolean optional, String info) {
-        Component component = frame.getContentPane().getComponent(0);
-          if ((component.getName().equals("mapPanel"))) {
-              MapPanel mapPanel = (MapPanel) component;
-              mapPanel.getPowerupSelected(powerups, optional, mainClient,info);
+        if(frame.getContentPane().getComponents().length>0){
+            Component component = frame.getContentPane().getComponent(0);
+        if(component.equals(mapPanel)){
+              MapPanel mpl = (MapPanel) component;
+                mpl.getPowerupSelected(powerups, optional, mainClient,info);
               jDialog.setVisible(false);
           }
+        }
     }
 
     @Override
     public void chooseWeapon(List<Weapon> weapons, boolean optional, String info) {
-
-        Component component = frame.getContentPane().getComponent(0);
-          if ((component.getName().equals("mapPanel"))) {
-              MapPanel mapPanel = (MapPanel) component;
-              mapPanel.getWeaponSelected(weapons,optional,mainClient,info);
-          }
+        if(frame.getContentPane().getComponents().length>0) {
+            Component component = frame.getContentPane().getComponent(0);
+            if (component.equals(mapPanel)) {
+                MapPanel mpl = (MapPanel) component;
+                mpl.getWeaponSelected(weapons, optional, mainClient, info);
+            }
+        }
     }
 
     @Override
     public void chooseEffect(List<Effect> effects, boolean optional) {
-        Component component =frame.getContentPane().getComponent(0);
-        if ((component.getName().equals("mapPanel"))){
-            MapPanel map = (MapPanel) component;
-            map.getEffect(effects,mainClient,optional);
+        if(frame.getContentPane().getComponents().length>0) {
+            Component component = frame.getContentPane().getComponent(0);
+            if (component.equals(mapPanel)) {
+                MapPanel mpl = (MapPanel) component;
+                mpl.getEffect(effects, mainClient, optional);
+            }
         }
     }
 
     @Override
     public void choosePlayer(List<Player> players, String info) {
-        Component component = frame.getContentPane().getComponent(0);
-        if ((component.getName().equals("mapPanel"))) {
-            MapPanel mapPanel = (MapPanel) component;
-            mapPanel.getPlayer(players,mainClient,info);
+        if(frame.getContentPane().getComponents().length>0) {
+            Component component = frame.getContentPane().getComponent(0);
+            if (component.equals(mapPanel)) {
+                MapPanel mpl = (MapPanel) component;
+                mpl.getPlayer(players, mainClient, info);
+            }
         }
     }
 
     @Override
     public void chooseDirection(List<Square.Direction> directions, String info) {
-        Component component = frame.getContentPane().getComponent(0);
-        if ((component.getName().equals("mapPanel"))) {
-            MapPanel mapPanel = (MapPanel) component;
-            mapPanel.getDirection(directions,mainClient,info);
+        if(frame.getContentPane().getComponents().length>0) {
+            Component component = frame.getContentPane().getComponent(0);
+            if (component.equals(mapPanel)) {
+                MapPanel mpl = (MapPanel) component;
+                mpl.getDirection(directions, mainClient, info);
+            }
         }
     }
 
     @Override
     public void chooseAmmoColor(List<AmmoColor> ammoColors) {
-        Component component = frame.getContentPane().getComponent(0);
-        if ((component.getName().equals("mapPanel"))) {
-            MapPanel mapPanel = (MapPanel) component;
-            mapPanel.getAmmoColor(ammoColors,mainClient);
+        if(frame.getContentPane().getComponents().length>0) {
+            Component component = frame.getContentPane().getComponent(0);
+            if (component.equals(mapPanel)) {
+                MapPanel mpl = (MapPanel) component;
+                mpl.getAmmoColor(ammoColors, mainClient);
+            }
         }
-
     }
 
     @Override
     public void chooseRoom(List<model.board.Color> rooms) {
-        Component component = frame.getContentPane().getComponent(0);
-        if ((component.getName().equals("mapPanel"))) {
-            MapPanel mapPanel = (MapPanel) component;
-            mapPanel.getRoom(rooms,mainClient);
+        if(frame.getContentPane().getComponents().length>0) {
+            Component component = frame.getContentPane().getComponent(0);
+            if (component.equals(mapPanel)) {
+                MapPanel mpl = (MapPanel) component;
+                mpl.getRoom(rooms, mainClient);
+            }
         }
     }
 
     @Override
     public void showAttack(Player attacker, Map<Player, Integer> hp, Map<Player, Integer> marks) {
-        Component component = frame.getContentPane().getComponent(0);
-        if ((component.getName().equals("mapPanel"))) {
-            MapPanel mapPanel = (MapPanel) component;
-            mapPanel.addAttack(attacker,hp,marks);
+        if(frame.getContentPane().getComponents().length>0) {
+            Component component = frame.getContentPane().getComponent(0);
+            if (component.equals(mapPanel)) {
+                MapPanel mpl = (MapPanel) component;
+                mpl.addAttack(attacker, hp, marks);
+            }
         }
     }
 
     @Override
     public void showInfo(String info) {
+        if(frame.getContentPane().getComponents().length>0) {
         Component component = frame.getContentPane().getComponent(0);
-        if ((component.getName().equals("mapPanel"))) {
-            MapPanel mapPanel = (MapPanel) component;
-            mapPanel.addInfo(info);
+        if(component.equals(mapPanel)){
+            MapPanel mpl = (MapPanel) component;
+            mpl.addInfo(info);
+        }
+        else
+            JOptionPane.showMessageDialog(null,info,"INFO",JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
     @Override
     public void showScore(List<Player> score) {
-        JFrame x= new JFrame();
-       // x=frame;
-        x.getContentPane().removeAll();
-        x.setSize(750,800);
-        x.setLocation(300,0);
-        x.setResizable(false);
+
+        frame.getContentPane().removeAll();
+        frame.setSize(750,800);
+        frame.setLocation(300,0);
+        frame.setResizable(false);
         ScorePanel scorePanel= new ScorePanel(score);
-        x.getContentPane().add(scorePanel);
-        x.setVisible(true);
+        frame.getContentPane().add(scorePanel);
+        frame.setVisible(true);
         jDialog.setVisible(false);
 
     }
 
     @Override
     public void chooseAction(List<ActionOption> actions) {
-        Component component = frame.getContentPane().getComponent(0);
-        if ((component.getName().equals("mapPanel"))) {
-            MapPanel mapPanel = (MapPanel) component;
-            mapPanel.getAction(actions, mainClient);
-            jDialog.setVisible(false);
+        if(frame.getContentPane().getComponents().length>0) {
+            Component component = frame.getContentPane().getComponent(0);
+            if (component.equals(mapPanel)) {
+                MapPanel mpl = (MapPanel) component;
+                mpl.getAction(actions, mainClient);
+                jDialog.setVisible(false);
+            }
         }
     }
 
     @Override
     public void chooseSquare(List<Square> squares, String info) {
-        Component component =frame.getContentPane().getComponent(0);
-        if ((component.getName().equals("mapPanel"))){
-            MapPanel map = (MapPanel) component;
-            map.getSquareSelected(squares,mainClient,info);
+        if(frame.getContentPane().getComponents().length>0) {
+            Component component = frame.getContentPane().getComponent(0);
+            if (component.equals(mapPanel)) {
+                MapPanel mpl = (MapPanel) component;
+                mpl.getSquareSelected(squares, mainClient, info);
+            }
         }
     }
-
 
     @Override
     public void disconnection(){
