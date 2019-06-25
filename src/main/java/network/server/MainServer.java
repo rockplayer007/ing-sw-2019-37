@@ -93,10 +93,11 @@ public class MainServer {
         }
         else if (message.getContent().equals(Message.Content.CONNECTION)){
             //reconnect player
-            ClientOnServer client = allClients.stream()
+            Optional<ClientOnServer> client = allClients.stream()
                     .filter(x -> x.getUsername().equals(message.getSender()))
-                    .findFirst().get();
-            client.getPersonalPlayer().setConnected();
+                    .findFirst();
+            client.ifPresent(clientOnServer -> clientOnServer.getPersonalPlayer().setConnected());
+
         }
         else {
             usernameInRoom.get(message.getSender()).handleMessages(message);

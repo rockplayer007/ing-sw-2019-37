@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 # ing-sw-2019-37
 This is the project of course software engineering (2018-2019) of Politecnico di Milano.
@@ -46,3 +47,21 @@ The external libraries we used to implement some game's features are linked belo
 License
 ----
 
+=======
+# ing-sw-2019-37
+
+# Features
+
+_Basic_
+- [x] CLI
+- [x] RMI
+- [x] Socket
+- [x] GUI
+- [x] Complete rules
+
+_Additional Functionalities_
+- [x] Multiple matches
+- [ ] Persistance
+- [ ] Domination or Turret mode
+- [ ] Terminator
+>>>>>>> 0dda4cf3dd303c003bdbf52003fac37f7f07f951

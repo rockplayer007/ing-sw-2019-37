@@ -198,7 +198,7 @@ public class MainClient {
                             "main" + File.separatorChar + "resources" + File.separatorChar + "data.txt";
                     FileWriter fw = new FileWriter(path);
                     fw.write(clientID);
-                    fw.close();
+
                 }catch(Exception e){
                     System.out.println("Couldn't write on file");
 
