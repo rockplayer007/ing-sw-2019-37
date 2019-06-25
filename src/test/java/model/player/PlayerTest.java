@@ -1,10 +1,15 @@
 package model.player;
 
 
+import model.card.AmmoColor;
+import model.card.Powerup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PlayerTest {
     private Player player;
@@ -29,7 +34,16 @@ public class PlayerTest {
         assertSame(badBoy.getPlayerBoard().getPoints(),9);
         assertSame(badBoy2.getPlayerBoard().getPoints(),6);
 
+    }
 
+    @Test
+    void ammoTest(){
+        player.addAmmo(AmmoColor.YELLOW);
+        player.addAmmo(AmmoColor.RED);
+        player.addAmmo(AmmoColor.BLUE);
 
+        player.addPowerup(new Powerup("","",null,AmmoColor.YELLOW));
+        assertTrue(player.enoughAmmos(Arrays.asList(AmmoColor.YELLOW,AmmoColor.YELLOW,AmmoColor.YELLOW,AmmoColor.RED,AmmoColor.BLUE),true));
+        assertFalse(player.enoughAmmos(Arrays.asList(AmmoColor.YELLOW,AmmoColor.YELLOW,AmmoColor.YELLOW,AmmoColor.RED,AmmoColor.BLUE),false));
     }
 }

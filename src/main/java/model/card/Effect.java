@@ -7,7 +7,6 @@ import model.gamehandler.Room;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 public class Effect implements Serializable {
     private String name;
