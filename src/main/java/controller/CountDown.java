@@ -27,7 +27,7 @@ public class CountDown {
     /**
      * Starts the count down
      */
-    void startTimer(){
+    public void startTimer(){
         timer.schedule(new TimerTask() {
             @Override
             public void run(){
@@ -41,7 +41,7 @@ public class CountDown {
     /**
      * Stops the timer
      */
-    void cancelTimer(){
+    public void cancelTimer(){
         timer.cancel();
         timer.purge();
     }

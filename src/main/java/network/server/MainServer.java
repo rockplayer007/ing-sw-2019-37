@@ -97,15 +97,8 @@ public class MainServer {
                     .filter(x -> x.getUsername().equals(message.getSender()))
                     .findFirst().get();
             client.getPersonalPlayer().setConnected();
-            try {
-                //client.getClientInterface().notifyClient(new InfoMessage("Welcome back"));
-            } catch (RemoteException e) {
-                logger.log(Level.WARNING, "disconnected in addClient", e);
-                disconnectPlayer(client.getClientInterface());
-            }
         }
         else {
-
             usernameInRoom.get(message.getSender()).handleMessages(message);
         }
 

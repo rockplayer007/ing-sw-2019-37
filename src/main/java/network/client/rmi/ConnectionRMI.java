@@ -3,7 +3,9 @@ package network.client.rmi;
 import network.client.MainClient;
 import network.client.ClientInterface;
 import network.client.ConnectionInterface;
+import network.messages.Message;
 import network.messages.clientToServer.ClientToServer;
+import network.messages.serverToClient.ServerToClient;
 import network.server.ServerInterface;
 
 import java.rmi.NotBoundException;
@@ -20,6 +22,7 @@ import java.util.logging.Logger;
 public class ConnectionRMI implements ConnectionInterface {
 
     private ServerInterface server;
+    private MainClient mainClient;
     private static final Logger logger = Logger.getLogger(ConnectionRMI.class.getName());
 
     /**
@@ -29,13 +32,14 @@ public class ConnectionRMI implements ConnectionInterface {
      * @throws NotBoundException when there is an error in binding
      */
     public ConnectionRMI(MainClient c) throws RemoteException, NotBoundException {
+        mainClient = c;
         Registry registry = LocateRegistry.getRegistry(MainClient.getServerIp(), 1099);
         server = (ServerInterface) registry.lookup("MainServer");
-        ClientImplementation client = new ClientImplementation(c);
+        ClientImplementation client = new ClientImplementation(mainClient);
 
         //userful for the server to be able to communicate with the client
         ClientInterface remoteClientRef = (ClientInterface) UnicastRemoteObject.exportObject(client, 0);
-        c.setClientInterface(remoteClientRef);
+        mainClient.setClientInterface(remoteClientRef);
     }
 
     /**
@@ -47,7 +51,8 @@ public class ConnectionRMI implements ConnectionInterface {
         try {
             server.notifyServer(message);
         } catch (RemoteException e){
-            logger.log(Level.WARNING, "Unable to send message", e);
+            //logger.log(Level.WARNING, "Unable to send message", e);
+            mainClient.handleMessage(new ServerToClient(Message.Content.DISCONNECTION));
         }
 
     }

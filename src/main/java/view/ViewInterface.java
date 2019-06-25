@@ -47,6 +47,7 @@ public interface ViewInterface {
      */
     void timeout();
 
+    void disconnection();
 
     void updateAll(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard);
 

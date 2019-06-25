@@ -8,12 +8,20 @@ public class Configs {
     private static Configs ourInstance = new Configs();
 
     private int turnTime;// = 180;
+
     private int minimumPlayers;// = 3;
     private int maximumPlayers;// = 5;
+
     private int timeForTagBackRequest;// = 10;
     private int waitingTime; // = 30;
     private int boardRequestTime; // = 10;
     private int respawnTime; // = 15
+
+    private int adrenalin1; // = 3;
+    private int adrenalin2; // = 6;
+    private int deadPoint; // = 11;
+    private int overKill; // = 12;
+
     private int rmiPort; //1099
     private int socketPort; //
 
@@ -43,13 +51,22 @@ public class Configs {
         }
 
         turnTime = fill("turn time",180, scanner.nextLine());
+
         minimumPlayers = fill("minimum players", 3, scanner.nextLine());
         maximumPlayers = fill("maximum players", 5, scanner.nextLine());
+
         timeForTagBackRequest = fill("time for TAGBACK GRANADE", 10, scanner.nextLine());
         waitingTime = fill("creating room time", 30, scanner.nextLine());
         boardRequestTime = fill("choosing board time", 10, scanner.nextLine());
         respawnTime = fill("respawn time", 15, scanner.nextLine());
+
         skulls = fill("skulls", 8, scanner.nextLine());
+
+        adrenalin1 = fill("points the first adrenalin actions", 3, scanner.nextLine());
+        adrenalin2 = fill("points the second adrenalin actions", 6, scanner.nextLine());
+        deadPoint = fill("points the dead point", 11, scanner.nextLine());
+        overKill = fill("points the over kill", 12, scanner.nextLine());
+
         rmiPort = fill("RMI port", 1099, scanner.nextLine());
         socketPort = fill("Socket port", 8000, scanner.nextLine());
 
@@ -102,6 +119,22 @@ public class Configs {
 
     public int getSkulls() {
         return skulls;
+    }
+
+    public int getAdrenalin1() {
+        return adrenalin1;
+    }
+
+    public int getAdrenalin2() {
+        return adrenalin2;
+    }
+
+    public int getDeadPoint() {
+        return deadPoint;
+    }
+
+    public int getOverKill() {
+        return overKill;
     }
 
     public int getRmiPort() {

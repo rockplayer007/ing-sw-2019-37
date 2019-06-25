@@ -48,6 +48,7 @@ public class MainClient {
     private ClientInterface clientInterface = null;
 
     private CountDown connectionTimer;
+    private static final int PING_TIMER = 5;
 
     private static ViewInterface view;
     private static boolean socket; //true uses socket false uses rmi
@@ -89,12 +90,13 @@ public class MainClient {
         else{
             connection = new ConnectionRMI(this);
         }
-        /*
+
         connectionTimer = new CountDown(60, () -> {
             connection.sendMessage(new ClientToServer(username, clientID, Message.Content.CONNECTION));
         });
+        connectionTimer.startTimer();
 
-         */
+
     }
 
     /**
@@ -165,13 +167,29 @@ public class MainClient {
      */
     public void handleMessage(ServerToClient message){
 
+        connectionTimer.cancelTimer();
+
+        if(message.getContent() !=  Message.Content.DISCONNECTION){
+            connectionTimer = new CountDown(PING_TIMER, () -> {
+                connection.sendMessage(new ClientToServer(username, clientID, Message.Content.CONNECTION));
+            });
+            connectionTimer.startTimer();
+        }
+
+
         Type type = new TypeToken<HashMap<String, Integer>>(){}.getType();
         Gson gson = new Gson();
         List<String> stringed;
 
+
+
         switch (message.getContent()){
             case TIMEOUT:
                 view.timeout();
+                break;
+            case DISCONNECTION:
+                view.showInfo("RECONNECT!!!");
+                //view.disconnection();
                 break;
             case LOGIN_RESPONSE:
                 clientID = ((LoginResponse) message).getClientID();
