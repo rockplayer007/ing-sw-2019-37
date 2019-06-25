@@ -3,6 +3,7 @@ package model.card;
 import controller.MessageHandler;
 import controller.RoomController;
 import model.card.*;
+import model.exceptions.InterruptOperationException;
 import model.exceptions.NotExecutedException;
 import model.exceptions.TimeFinishedException;
 import model.gamehandler.AttackHandler;
@@ -167,7 +168,11 @@ public class OperationTest {
 
         TargetOnEffectSquare targetOnEffectSquare = new TargetOnEffectSquare();
         attackHandler.getPossibleTargets().clear();
-        targetOnEffectSquare.execute(room);
+        try {
+            targetOnEffectSquare.execute(room);
+        } catch (InterruptOperationException e) {
+            //
+        }
         assertSame(attackHandler.getPossibleTargets().size(),1);
         assertSame(attackHandler.getPossibleTargets().get(0).getNickname(),"kek");
 

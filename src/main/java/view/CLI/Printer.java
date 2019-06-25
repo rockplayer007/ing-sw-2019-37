@@ -318,6 +318,7 @@ public class Printer {
                 }
             } catch (IOException e) {
                 //nothing to println for cli
+
             }
             thread.interrupt();
             //println("KILLING THREAD  " + thread.getName());
