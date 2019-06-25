@@ -121,7 +121,8 @@ public class Room {
      * @return true means is end of game.
      */
     public boolean endTurnControl (){
-        List<Player> diedPlayers = players.stream().filter(x->x.getPlayerBoard().getHp().size()>10).collect(Collectors.toList());
+        int deadPoint = Configs.getInstance().getDeadPoint()-1;
+        List<Player> diedPlayers = players.stream().filter(x->x.getPlayerBoard().getHp().size()> deadPoint).collect(Collectors.toList());
         SkullBoard skullBoard = board.getSkullBoard();
         if (!diedPlayers.isEmpty()){
             diedPlayers.forEach( x-> {

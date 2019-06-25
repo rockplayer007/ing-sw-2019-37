@@ -43,7 +43,7 @@ public class Square implements Serializable {
      * Adds a square that has distance 1 from the current square
      * @param next Near square
      */
-    void addNextSquare(Square next){
+    void addNeighbourSquare(Square next){
         neighbourSquare.add(next);
         neighbourId.add(next.getId());
     }

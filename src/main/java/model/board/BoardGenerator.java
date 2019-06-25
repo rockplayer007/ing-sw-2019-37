@@ -139,7 +139,7 @@ public class BoardGenerator {
                     Node connectionId = connectionIds.item(j);
                     int connId = Integer.parseInt(connectionId.getTextContent());
                     Square toAdd = allSquares.get(connId);
-                    allSquares.get(id).addNextSquare(toAdd);
+                    allSquares.get(id).addNeighbourSquare(toAdd);
                 }
 
 
