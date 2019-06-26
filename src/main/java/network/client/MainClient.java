@@ -85,7 +85,6 @@ public class MainClient {
     private void ping(){
         pingTimer = new CountDown(PING_TIMER, () -> {
             //logger.log(Level.INFO, "sending ping");
-            //if nothing comes back
             connection.sendMessage(new ConnectionMessage(username, clientInterface, clientID));
             ping();
         });
@@ -140,6 +139,9 @@ public class MainClient {
         }
          */
         online = true;
+        //just in case
+        closePing();
+        //start pinging
         ping();
         connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
 

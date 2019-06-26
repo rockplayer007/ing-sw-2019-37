@@ -3,6 +3,7 @@ package network.server.socket;
 import network.client.ClientInterface;
 import network.messages.Message;
 import network.messages.clientToServer.ClientToServer;
+import network.messages.clientToServer.ConnectionMessage;
 import network.messages.clientToServer.LoginRequest;
 import network.messages.serverToClient.ServerToClient;
 
@@ -52,8 +53,11 @@ public class ClientSimulator implements Runnable, ClientInterface{
         try {
             while (clientConnected){
                 ClientToServer message = (ClientToServer) in.readObject();
-                if(message.getContent() == Message.Content.LOGIN_REQUEST ){
+                if(message.getContent() == Message.Content.LOGIN_REQUEST){
                     ((LoginRequest) message).setClientInterface(this);
+                }
+                else if(message.getContent() == Message.Content.CONNECTION){
+                    ((ConnectionMessage) message).setClientInterface(this);
                 }
                 server.newMessage(message);
             }
