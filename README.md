@@ -3,11 +3,12 @@
 # Features
 
 _Basic_
-- [x] CLI
-- [x] RMI
-- [x] Socket
-- [x] GUI
 - [x] Complete rules
+- [x] Socket
+- [x] RMI
+- [x] CLI
+- [x] GUI
+
 
 _Additional Functionalities_
 - [x] Multiple matches

@@ -42,8 +42,13 @@ public class CountDown {
      * Stops the timer
      */
     public void cancelTimer(){
-        timer.cancel();
-        timer.purge();
+        try{
+            timer.cancel();
+            timer.purge();
+        }catch (Exception e){
+            //nothing, just continue
+        }
+
     }
 }
 
