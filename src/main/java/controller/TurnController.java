@@ -120,16 +120,7 @@ class TurnController {
                 cleanBoard();
             }
 
-            //check for dead players
-            room.getPlayers().stream().filter(y -> !y.isLive()).forEach(x -> {
-                try {
-                    respawn(x);
-                } catch (TimeFinishedException e) {
-                    disconnectionCheckout(x, false);
-                } finally {
-                    player.setLive(true);
-                }
-            });
+
 
             if(room.endTurnControl() || !room.setNextPlayer()){
                  //when return true means is end of game
@@ -140,6 +131,16 @@ class TurnController {
                 break;
             }
              */
+
+            //check for dead players
+            room.getPlayers().stream().filter(y -> !y.isLive()).forEach(x -> {
+                try {
+                    player.setLive(true);
+                    respawn(x);
+                } catch (TimeFinishedException e) {
+                    disconnectionCheckout(x, false);
+                }
+            });
 
         }
     }

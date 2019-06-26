@@ -77,6 +77,7 @@ public class MainClient {
             view.launch();
         } catch (Exception e) {
             logger.log(Level.WARNING, "Unable to connect to server", e);
+
         }
     }
 
@@ -202,7 +203,6 @@ public class MainClient {
         if(message.getContent() !=  Message.Content.DISCONNECTION){
             //logger.log(Level.INFO, "received ping");
             restartTimer();
-
         }
 
 

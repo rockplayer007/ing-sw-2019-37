@@ -144,7 +144,7 @@ public class MainServer {
                     try {
                         client.getClientInterface().notifyClient(new InfoMessage("Welcome back"));
                     } catch (RemoteException e) {
-                        logger.log(Level.WARNING, "disconnected in addClient", e);
+                        logger.log(Level.WARNING, "disconnected in addClient");
                         disconnectPlayer(message.getClientInterface());
                     }
                 }
