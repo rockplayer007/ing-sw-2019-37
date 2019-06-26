@@ -23,15 +23,16 @@ public class CardPanel extends JPanel {
         this.setLayout(null);
         createButtons();
         for(int i=0;i<effects.size();i++){
-            int x=i;
+            //int x=i;
             buttonEffect.get(effects.get(i).getId()).setVisible(true);
-            buttonEffect.get(effects.get(i).getId()).addActionListener(new ActionListener() {
+            buttonEffect.get(effects.get(i).getId()).addActionListener(new EffectListener(mainClient,frame,i));
+            /*buttonEffect.get(effects.get(i).getId()).addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     mainClient.sendSelectedItem(x);
                     frame.setVisible(false);
                 }
-            });
+            });*/
 
         }
 

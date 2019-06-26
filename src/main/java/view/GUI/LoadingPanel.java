@@ -3,17 +3,19 @@ package view.GUI;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import static javax.swing.SwingConstants.CENTER;
 
 public class LoadingPanel extends JPanel {
-    private JButton loading;
+
     public LoadingPanel(){
-        this.setLayout(new BorderLayout());
+        this.setLayout(new FlowLayout());
         this.setBackground(Color.darkGray);
-        loading = new JButton();
+        JLabel loading;
+        loading = new JLabel();
         loading.setOpaque(false);
         loading.setSize(300,300);
-        loading.setBorderPainted (false);
+        //loading.setBorderPainted (false);
         loading.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"loading.gif"));
-        this.add(loading, BorderLayout.CENTER);
+        this.add(loading,CENTER);
     }
 }

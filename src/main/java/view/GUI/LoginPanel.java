@@ -33,55 +33,55 @@ public class LoginPanel extends JPanel implements ActionListener {
         GridBagConstraints gbc = new GridBagConstraints();
         Font f;
         f = new Font("Phosphate", Font.BOLD, 40);
-        this.text = new JLabel("LOGIN");
-        this.text.setFont(f);
+        text = new JLabel("LOGIN");
+        text.setFont(f);
         gbc.gridx=2;
         gbc.gridy=0;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(5, 0, 0, 10);
         this.add(this.text, gbc);
 
-        this.nickname = new JLabel("Nickname:");
+        nickname = new JLabel("Nickname:");
         gbc.gridx = 1;
         gbc.gridy = 3;
         this.add(this.nickname, gbc);
 
-        this.insNickname = new JTextField(15);
+        insNickname = new JTextField(15);
         gbc.gridx = 2;
         gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.LINE_START;
         this.add(this.insNickname, gbc);
 
-        this.nicknameError = new JLabel("Please insert your Nickname.");
-        this.nicknameError.setForeground(Color.RED);
-        this.nicknameError.setVisible(false);
+        nicknameError = new JLabel("Please insert your Nickname.");
+        nicknameError.setForeground(Color.RED);
+        nicknameError.setVisible(false);
         gbc.gridx = 2;
         gbc.gridy = 4;
         gbc.anchor = GridBagConstraints.LINE_START;
         this.add(this.nicknameError, gbc);
 
-        this.text2=new JLabel("Select Connection :");
+        text2=new JLabel("Select Connection :");
         gbc.gridx=1;
         gbc.gridy=5;
         this.add(this.text2, gbc);
 
-        this.rmi = new JRadioButton("RMI");
+        rmi = new JRadioButton("RMI");
         gbc.gridx= 2;
         gbc.gridy=5;
         this.connGroup.add(rmi);
         rmi.addActionListener(this);
         this.add(this.rmi, gbc);
 
-        this.socket = new JRadioButton("SOCKET");
+        socket = new JRadioButton("SOCKET");
         gbc.gridx= 2;
         gbc.gridy=6;
-        this.connGroup.add(socket);
+        connGroup.add(socket);
         socket.addActionListener(this);
         this.add(this.socket, gbc);
 
-        this.connectionError = new JLabel("Please insert the connection type.");
-        this.connectionError.setForeground(Color.RED);
-        this.connectionError.setVisible(false);
+        connectionError = new JLabel("Please insert the connection type.");
+        connectionError.setForeground(Color.RED);
+        connectionError.setVisible(false);
         gbc.gridx = 2;
         gbc.gridy = 7;
         gbc.anchor = GridBagConstraints.LINE_START;
@@ -127,18 +127,18 @@ public class LoginPanel extends JPanel implements ActionListener {
 
     public void setNicknameErr(String err){
 
-        this.nicknameError.setText(err);
-        this.nicknameError.setVisible(true);
+        nicknameError.setText(err);
+        nicknameError.setVisible(true);
     }
 
     public void setNicknameError(Boolean err){
-        this.nicknameError.setVisible(err);
-        this.nicknameErr=!err;
+        nicknameError.setVisible(err);
+        nicknameErr=!err;
     }
 
     public void setConnectionError(Boolean err){
-        this.connectionError.setVisible(err);
-        this.connectionErr=!err;
+        connectionError.setVisible(err);
+        connectionErr=!err;
     }
     public String getIp(){
      return ip.getText();

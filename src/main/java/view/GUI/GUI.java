@@ -12,6 +12,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.NotBoundException;
@@ -64,7 +66,16 @@ public void addMusic(String name){
         if (ask) {
             frame.getContentPane().removeAll();
             frame.setSize(1280, 750);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            //frame.setIconImage();
+            frame.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent we) {
+                    int option = JOptionPane.showConfirmDialog(frame,"Do you want to Exit ?", "Exit Confirmation ", JOptionPane.YES_NO_OPTION);
+                    if (option == JOptionPane.YES_OPTION)
+                        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    else if (option == JOptionPane.NO_OPTION)
+                        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                }
+            });
             frame.setBackground(Color.DARK_GRAY);
             LoginPanel loginPanel = new LoginPanel();
             loginPanel.setName("loginPanel");
@@ -218,7 +229,7 @@ public void addMusic(String name){
         }
 
         mapPanel.updBoardGui(board);
-        mapPanel.updatePlayerBoard(board);
+        mapPanel.updatePlayerBoard(board.getPlayersOnMap());
         mapPanel.updateWeapon(board,mainClient);
         mapPanel.updatePowerup(myPowerups);
         mapPanel.updateSkullboard(skullBoard);
@@ -366,7 +377,25 @@ public void addMusic(String name){
 
     @Override
     public void disconnection(){
-
+        if(frame.getContentPane().getComponents().length>0) {
+            Component component = frame.getContentPane().getComponent(0);
+            if(component.equals(mapPanel)){
+                MapPanel mpl = (MapPanel) component;
+                mpl.addInfo("disctonnection");
+            }
+        }
+        JFrame esempio = new JFrame("Disconnection");
+        JButton label = new JButton("Close");
+        label.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                esempio.setVisible(false);
+            }
+        });
+        esempio.setLayout(new BorderLayout());
+        esempio.setSize(300,300);
+        esempio.add(label, BorderLayout.CENTER);
+        esempio.setVisible(true);
     }
 }
 

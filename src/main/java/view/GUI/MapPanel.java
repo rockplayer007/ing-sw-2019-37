@@ -47,7 +47,6 @@ public class MapPanel extends JLayeredPane {
     private JLabel help;
     private JLabel mypoint= new JLabel("");
     private boolean first=true;
-    private JFrame rulesFrame = new JFrame("Game Rules");
 
     public MapPanel(GameBoard board) {
         JButton pBoards;
@@ -110,6 +109,7 @@ public class MapPanel extends JLayeredPane {
         RulesPanel rulesPanel = new RulesPanel();
         JScrollPane scrollPane=new JScrollPane(rulesPanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        JFrame rulesFrame = new JFrame("Game Rules");
         rulesFrame.add(scrollPane);
         rulesFrame.pack();
         rules.addActionListener(new RulesActionListener(rulesFrame));
@@ -492,15 +492,15 @@ public class MapPanel extends JLayeredPane {
         }
     }
 
-    public void updatePlayerBoard(GameBoard board) {
-        playerboards.getContentPane().removeAll();
-        int height =board.getPlayersOnMap().size()*155 +20;
+    public void updatePlayerBoard(List<Player> players) {
+        int height =players.size()*155 +20;
         playerboards.setSize(830, height);
-        PlayerBoardPanel pbl = new PlayerBoardPanel(board.getPlayersOnMap());
+        playerboards.getContentPane().removeAll();
+        PlayerBoardPanel pbl = new PlayerBoardPanel(players);
         playerboards.getContentPane().add(pbl);
         playerboards.repaint();
+        playerboards.revalidate();
     }
-
 
     public void getSquareSelected(List<Square> squares, MainClient mainClient,String info) {
         resetRooms();
@@ -508,19 +508,20 @@ public class MapPanel extends JLayeredPane {
             Square square = squares.get(i);
             roomButton.get(square.getId()).setEnabled(true);
             roomButton.get(square.getId()).setVisible(true);
-            int x = i;
+            //int x = i;
             ActionListener [] actionListener= roomButton.get(square.getId()).getActionListeners();
             for (ActionListener actionListener1 : actionListener) {
                 roomButton.get(square.getId()).removeActionListener(actionListener1);
             }
-            roomButton.get(square.getId()).addActionListener(new ActionListener() {
+            roomButton.get(square.getId()).addActionListener(new SquareActionListener(this,mainClient,i));
+           /* roomButton.get(square.getId()).addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     mainClient.sendSelectedItem(x);
                     resetRooms();
                     addActionInfo("");
                 }
-            });
+            });*/
         }
         addActionInfo(info);
     }
@@ -593,7 +594,8 @@ public class MapPanel extends JLayeredPane {
                     action.setLocation(actions.get(i - 1).getX() + 125, actions.get(i - 1).getY());
             }
             final int x = i;
-            action.addActionListener(new ActionListener() {
+            action.addActionListener(new ActionResponseListener(this,mainClient,i,text,borderLabel));
+            /*action.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     mainClient.sendSelectedBoard(x);
@@ -601,7 +603,7 @@ public class MapPanel extends JLayeredPane {
                     text.setVisible(false);
                     borderLabel.setVisible(false);
                 }
-            });
+            });*/
             this.add(action);
             actions.add(action);
 
@@ -669,13 +671,14 @@ public class MapPanel extends JLayeredPane {
         if(optional){
             JButton opt=new JButton("Don't use effect");
             opt.setSize(220,20);
-            opt.addActionListener(new ActionListener() {
+            opt.addActionListener(new EffectListener(mainClient,selectEffect,effects.size()));
+          /*  opt.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     mainClient.sendSelectedItem(effects.size());
                     selectEffect.setVisible(false);
                 }
-            });
+            });*/
             selectEffect.getContentPane().add(opt,BorderLayout.SOUTH);
         }
         selectEffect.setVisible(true);

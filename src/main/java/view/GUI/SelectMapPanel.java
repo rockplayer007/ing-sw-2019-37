@@ -20,11 +20,12 @@ public class SelectMapPanel extends JPanel {
     public SelectMapPanel(Map<Integer, String> maps){
         JLabel text;
         this.setLayout(new GridBagLayout());
-        Color color= new Color(131,105,83);
-        this.setBackground(color);
+        //Color color= new Color(131,105,83);
+        this.setBackground(Color.DARK_GRAY);
         GridBagConstraints gbc = new GridBagConstraints();
         text = new JLabel("Select Map");
         Font f = new Font("Phosphate", Font.BOLD, 40);
+        text.setForeground(Color.white);
         text.setFont(f);
         gbc.gridx=0;
         gbc.gridy=0;
@@ -41,6 +42,7 @@ public class SelectMapPanel extends JPanel {
             gbc.gridy=y;
             gbc.anchor = GridBagConstraints.CENTER;
             map[i].addActionListener(this::actionPerformed);
+            map[i].setForeground(Color.white);
             this.add(this.map[i], gbc);
             mapGroup.add(map[i]);
             mapDescription[i]=new JLabel(value);
@@ -48,6 +50,7 @@ public class SelectMapPanel extends JPanel {
             gbc.gridy=y-2;
             gbc.insets = new Insets(0, 0, 20, 0);
             gbc.anchor = GridBagConstraints.CENTER;
+            mapDescription[i].setForeground(Color.white);
             this.add(this.mapDescription[i], gbc);
             imMap[i]= new JButton();
             gbc.gridx=x;
