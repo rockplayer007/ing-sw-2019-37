@@ -230,4 +230,10 @@ public class CLI implements ViewInterface {
         printer.printScore(score);
     }
 
+
+    @Override
+    public void disconnection(){
+        printer.print("CHECK YOUR CONNECTION");
+    }
+
 }

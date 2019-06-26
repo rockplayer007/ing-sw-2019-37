@@ -1,6 +1,5 @@
 package view.CLI;
 
-import com.sun.source.tree.WhileLoopTree;
 import model.board.*;
 
 import java.io.BufferedReader;
@@ -27,6 +26,9 @@ public class Printer {
     private static final String DROP = "X";
     private static final String SKULL = "$";
 
+    //makes the text white
+    private static final String RESET = "\u001B[0m";
+
     //private static final Logger logger = Logger.getLogger(Printer.class.getName());
 
     public Printer(CLI cli){
@@ -36,14 +38,14 @@ public class Printer {
     }
 
 
-    public void displayRequest(List<String> possibilities, Consumer<Integer> selection, String info){
+    void displayRequest(List<String> possibilities, Consumer<Integer> selection, String info){
         //bofore asking something else cancel the previous request
         if(thread != null){
             closeRequest();
         }
         thread = new Thread( () ->
         {
-            println(colorToAnsi(AmmoColor.RED) + info + colorToAnsi(Color.WHITE));
+            println(colorToAnsi(AmmoColor.RED) + info + RESET);
             int nRequests = possibilities.size();
             for(int i = 0; i < nRequests; i ++){
                 println((i + 1) + ") " + possibilities.get(i));
@@ -81,7 +83,7 @@ public class Printer {
         thread.start();
     }
 
-    public void displaySquares(List<String> possibilities, List<Integer> ids, Consumer<Integer> selection, String info){
+    private void displaySquares(List<String> possibilities, List<Integer> ids, Consumer<Integer> selection, String info){
         //bofore asking something else cancel the previous request
         if(thread != null){
             closeRequest();
@@ -89,7 +91,7 @@ public class Printer {
         thread = new Thread( () ->
         {
 
-            println(colorToAnsi(AmmoColor.RED) + info + colorToAnsi(Color.WHITE));
+            println(colorToAnsi(AmmoColor.RED) + info + RESET);
             for(String temp : possibilities){
                 println(temp);
             }
@@ -125,11 +127,11 @@ public class Printer {
         thread.start();
     }
 
-    public void askPowerup(List<Powerup> powerups, Consumer<Integer> selection, boolean optional, String info){
+    void askPowerup(List<Powerup> powerups, Consumer<Integer> selection, boolean optional, String info){
 
         List<String> printable = new ArrayList<>();
         for(Powerup powerup : powerups){
-            String temp =  colorToAnsi(powerup.getAmmo()) + powerup.getName() + colorToAnsi(Color.WHITE);
+            String temp =  colorToAnsi(powerup.getAmmo()) + powerup.getName() + RESET;
             printable.add(temp);
         }
         if(optional){
@@ -139,7 +141,7 @@ public class Printer {
         displayRequest(printable, selection, info);
     }
 
-    public void askWeapon(List<Weapon> weapons, Consumer<Integer> selection, boolean optional, String info){
+    void askWeapon(List<Weapon> weapons, Consumer<Integer> selection, boolean optional, String info){
         List<String> printable = new ArrayList<>();
         for(Weapon weapon : weapons){
             StringBuilder charge = new StringBuilder();
@@ -153,9 +155,9 @@ public class Printer {
                 charge.append(colorToAnsi(weapon.getChargeCost().get(n))).append(AMMO);
             }
             String temp = (weapon.getCharged() ? colorToAnsi(Color.GREEN) : colorToAnsi(Color.RED))
-                    + weapon.getName() + colorToAnsi(Color.WHITE)
-                    + " buy cost: " + buy.toString() + colorToAnsi(Color.WHITE)
-                    + " charge cost: " + charge.toString() + colorToAnsi(Color.WHITE);
+                    + weapon.getName() + RESET
+                    + " buy cost: " + buy.toString() + RESET
+                    + " charge cost: " + charge.toString() + RESET;
 
             printable.add(temp);
         }
@@ -166,11 +168,11 @@ public class Printer {
         displayRequest(printable, selection, info);
     }
 
-    public void askSquare(List<Square> squares, Consumer<Integer> selection, String info){
+    void askSquare(List<Square> squares, Consumer<Integer> selection, String info){
         List<String> printable = new ArrayList<>();
         List<Integer> ids = new ArrayList<>();
         for(Square square : squares){
-            String temp = "Move to square " + colorToAnsi(square.getColor()) + (square.getId() + 1) + colorToAnsi(Color.WHITE);
+            String temp = "Move to square " + colorToAnsi(square.getColor()) + (square.getId() + 1) + RESET;
             printable.add(temp);
             ids.add(square.getId());
         }
@@ -188,14 +190,14 @@ public class Printer {
         }, info);
     }
 
-    public void askEffect(List<Effect> effects, Consumer<Integer> selection, boolean optional){
+    void askEffect(List<Effect> effects, Consumer<Integer> selection, boolean optional){
         List<String> printable = new ArrayList<>();
         for(Effect effect : effects){
             StringBuilder temp = new StringBuilder();
-            temp.append(colorToAnsi(Color.WHITE)).append("Effect: ").append(effect.getDescription());
+            temp.append(RESET).append("Effect: ").append(effect.getDescription());
             temp.append("Extra cost: ");
             for(AmmoColor color : effect.getExtraCost()){
-                temp.append(colorToAnsi(color)).append(AMMO).append(colorToAnsi(Color.WHITE));
+                temp.append(colorToAnsi(color)).append(AMMO).append(RESET);
             }
 
             printable.add(temp.toString());
@@ -208,53 +210,53 @@ public class Printer {
         displayRequest(printable, selection, "How do you want to attack your enemies?");
     }
 
-    public void askPlayer(List<Player> players, Consumer<Integer> selection, String info){
+    void askPlayer(List<Player> players, Consumer<Integer> selection, String info){
         List<String> printable = new ArrayList<>();
         for(Player player : players){
-            String temp = colorToAnsi(Color.WHITE) + "Attack "
-                    + colorToAnsi(player.getColor()) + player.getNickname() + colorToAnsi(Color.WHITE);
+            String temp = RESET + "Attack "
+                    + colorToAnsi(player.getColor()) + player.getNickname() + RESET;
             printable.add(temp);
         }
 
         displayRequest(printable, selection, info);
     }
 
-    public void askAmmoColor(List<AmmoColor> ammoColors, Consumer<Integer> selection)   {
+    void askAmmoColor(List<AmmoColor> ammoColors, Consumer<Integer> selection)   {
         List<String> printable = new ArrayList<>();
         for(AmmoColor ammo : ammoColors){
-            String temp = colorToAnsi(Color.WHITE) + "Pay with: " + colorToAnsi(ammo) + AMMO + colorToAnsi(Color.WHITE);
+            String temp = RESET + "Pay with: " + colorToAnsi(ammo) + AMMO + RESET;
             printable.add(temp);
         }
 
         displayRequest(printable, selection, "What color do you want to use to pay TARGETING SCOPE?");
     }
 
-    public void askRoom(List<Color> rooms, Consumer<Integer> selection){
+    void askRoom(List<Color> rooms, Consumer<Integer> selection){
         List<String> printable = new ArrayList<>();
         for(Color room : rooms){
-            String temp = colorToAnsi(room) + room.toString() + colorToAnsi(Color.WHITE) + " room";
+            String temp = colorToAnsi(room) + room.toString() + RESET + " room";
             printable.add(temp);
         }
 
         displayRequest(printable, selection, "In which room do you want to fire?");
     }
 
-    public void askDirection(List<Square.Direction> directions, Consumer<Integer> selection, String info){
+    void askDirection(List<Square.Direction> directions, Consumer<Integer> selection, String info){
         List<String> printable = new ArrayList<>();
         for(Square.Direction direction : directions){
-            String temp = colorToAnsi(Color.WHITE) + "Shoot " + direction.toString();
+            String temp = RESET + "Shoot " + direction.toString();
             printable.add(temp);
         }
 
         displayRequest(printable, selection, info);
     }
 
-    public void askReconnect(Consumer<Boolean> reconnect){
+    void askReconnect(Consumer<Boolean> reconnect){
         if(thread != null){
             closeRequest();
         }
-        println(colorToAnsi(Color.RED) + "TIME IS FINISHED" + colorToAnsi(Color.WHITE));
-        println(colorToAnsi(Color.WHITE) + "Want to reconnect? [Y/N]");
+        println(colorToAnsi(Color.RED) + "TIME IS FINISHED" + RESET);
+        println(RESET + "Want to reconnect? [Y/N]");
 
         thread = new Thread( () ->
         {
@@ -307,7 +309,7 @@ public class Printer {
         thread.start();
     }
 
-    public void closeRequest(){
+    void closeRequest(){
         if(thread != null && !thread.isInterrupted()){
             BufferedReader tmp = new BufferedReader(new InputStreamReader(System.in));
             try {
@@ -316,6 +318,7 @@ public class Printer {
                 }
             } catch (IOException e) {
                 //nothing to println for cli
+
             }
             thread.interrupt();
             //println("KILLING THREAD  " + thread.getName());
@@ -326,7 +329,7 @@ public class Printer {
     public void println(String toPrint){
         AnsiConsole.out.println(toPrint);
     }
-    public void print(String toPrint){
+    void print(String toPrint){
         AnsiConsole.out.print(toPrint);
     }
 
@@ -384,7 +387,7 @@ public class Printer {
                                             for (int n = 0; n < 2; n++) {
                                                 line.append(colorToAnsi(((AmmoSquare) tempSquare).getAmmoCard().getAmmoList().get(n))).append(AMMO);
                                             }
-                                            line.append(colorToAnsi(Color.WHITE)).append("?");
+                                            line.append(RESET).append("?");
                                             line.append(colorToAnsi(tempSquare.getColor())).append(" |");
                                         } else {
                                             line.append(colorToAnsi(tempSquare.getColor())).append("| ");
@@ -461,7 +464,7 @@ public class Printer {
                                         line.append(colorToAnsi(tempSquare.getColor())).append(" ");
                                     }
                                 }
-                                line.append(colorToAnsi(Color.WHITE)).append(tempSquare.getId() + 1);
+                                line.append(RESET).append(tempSquare.getId() + 1);
                                 if(tempSquare.getId() + 1 < 10){
                                     line.append(colorToAnsi(tempSquare.getColor())).append(" |");
                                 }
@@ -502,7 +505,7 @@ public class Printer {
 
 
                 }
-                line.append(colorToAnsi(Color.WHITE));
+                line.append(RESET);
                 //println(line.toString());
                 allLines.add(line.toString());
                 //line.setLength(0);
@@ -513,7 +516,7 @@ public class Printer {
         return allLines;
     }
 
-    public List<String> printWeaponsOnBoard(GameBoard board){
+    List<String> printWeaponsOnBoard(GameBoard board){
 
         List<String> allLines = new ArrayList<>();
 
@@ -531,12 +534,12 @@ public class Printer {
                     line.append(colorToAnsi(color)).append(board.getGenerationPoint(color).getId() + 1).append(")  ");
                 }
 
-                line.append(colorToAnsi(Color.WHITE)).append(String.format("%-17s", weapon.getName()));
+                line.append(RESET).append(String.format("%-17s", weapon.getName()));
 
 
 
                 if(!weapon.getBuyCost().isEmpty()){
-                    line.append(colorToAnsi(Color.WHITE)).append(" Buy: ");
+                    line.append(RESET).append(" Buy: ");
                     for(int n = 0; n < weapon.getBuyCost().size(); n++){
                         line.append(colorToAnsi(weapon.getBuyCost().get(n))).append(AMMO);
                     }
@@ -545,10 +548,10 @@ public class Printer {
                     }
                 }
                 else{
-                    line.append(colorToAnsi(Color.WHITE)).append(" Buy:    ");
+                    line.append(RESET).append(" Buy:    ");
                 }
 
-                line.append(colorToAnsi(Color.WHITE)).append(" Charge: ");
+                line.append(RESET).append(" Charge: ");
                 for(int n = 0; n < weapon.getChargeCost().size(); n++){
                     line.append(colorToAnsi(weapon.getChargeCost().get(n))).append(AMMO);
                 }
@@ -556,7 +559,7 @@ public class Printer {
                 for(int n = weapon.getChargeCost().size(); n < 3; n++){
                     line.append(" ");
                 }
-                line.append(colorToAnsi(Color.WHITE));
+                line.append(RESET);
                 allLines.add(line.toString());
             }
         }
@@ -580,7 +583,7 @@ public class Printer {
                 playerInfo.append(colorToAnsi(player.getColor())).append(++playerCnt).append(") ");
                 playerInfo.append(colorToAnsi(player.getColor())).append(player.getNickname()).append(" ");
                 if(player.getNickname().equals(cli.getMainClient().getUsername())){
-                    playerInfo.append(colorToAnsi(Color.WHITE)).append("(YOU) ");
+                    playerInfo.append(RESET).append("(YOU) ");
                 }
 
                 //add the ammo
@@ -596,7 +599,7 @@ public class Printer {
                 for(Color hp : player.getPlayerBoard().getHpColor()){
                     playerInfo.append(colorToAnsi(hp)).append(DROP);
                 }
-                playerInfo.append(colorToAnsi(Color.WHITE)).append("   ");
+                playerInfo.append(RESET).append("   ");
 
                 //add marks
 
@@ -613,19 +616,19 @@ public class Printer {
 
                 //add points
                 int points = player.getPlayerBoard().getPoints();
-                playerInfo.append(colorToAnsi(Color.WHITE))
+                playerInfo.append(RESET)
                         .append("  POINTS: ").append(colorToAnsi(Color.GREEN)).append(points);
 
 
-                playerInfo.append(colorToAnsi(Color.WHITE));
+                playerInfo.append(RESET);
                 stringedInfo.add(playerInfo.toString());
 
                 //powerups
                 String delimiter = ""; //trick
                 if(player.getNickname().equals(cli.getMainClient().getUsername())){
-                    stringedPowerups.append(colorToAnsi(Color.WHITE)).append("Powerups: ");
+                    stringedPowerups.append(RESET).append("Powerups: ");
                     for(Powerup powerup : myPowerups){
-                        stringedPowerups.append(colorToAnsi(Color.WHITE)).append(delimiter);
+                        stringedPowerups.append(RESET).append(delimiter);
                         delimiter = ", ";
                         stringedPowerups.append(colorToAnsi(powerup.getAmmo())).append(powerup.getName());
                     }
@@ -633,10 +636,10 @@ public class Printer {
                 }
 
                 //weapons
-                stringedWeapons.append(colorToAnsi(Color.WHITE)).append("Weapons: ");
+                stringedWeapons.append(RESET).append("Weapons: ");
                 delimiter = ""; //trick
                 for(Weapon weapon : player.getWeapons()){
-                    stringedWeapons.append(colorToAnsi(Color.WHITE)).append(delimiter);
+                    stringedWeapons.append(RESET).append(delimiter);
                     delimiter = ", ";
                     stringedWeapons.append(weapon.getCharged() ? colorToAnsi(Color.GREEN) : colorToAnsi(Color.RED));
                     stringedWeapons.append(weapon.getName());
@@ -650,7 +653,7 @@ public class Printer {
         return stringedInfo;
     }
 
-    public List<String> printSkullBoard(SkullBoard skullBoard){
+    List<String> printSkullBoard(SkullBoard skullBoard){
         StringBuilder raw1 = new StringBuilder();
         StringBuilder raw2 = new StringBuilder();
         List<String> stringed = new ArrayList<>();
@@ -674,11 +677,11 @@ public class Printer {
                 drops.append(" ");
             }
 
-            raw2.append(colorToAnsi(Color.WHITE)).append(String.format("%2s", drops.toString()))
-                    .append(colorToAnsi(Color.WHITE));
+            raw2.append(RESET).append(String.format("%2s", drops.toString()))
+                    .append(RESET);
 
         }
-        raw2.append(colorToAnsi(Color.WHITE)).append("| ");
+        raw2.append(RESET).append("| ");
         raw1.append("+");
         if(nSkulls < skullBoard.getCells().size()){
             raw1.append("-");
@@ -690,7 +693,7 @@ public class Printer {
                 }
             }
             raw1.append("-+");
-            raw2.append(colorToAnsi(Color.WHITE)).append(" |");
+            raw2.append(RESET).append(" |");
         }
 
 
@@ -784,21 +787,21 @@ public class Printer {
         attack.append(colorToAnsi(AmmoColor.RED)).append(" attacked:\n");
         hp.forEach((x, y) -> {
             attack.append(colorToAnsi(x.getColor())).append(x.getNickname())
-                    .append(colorToAnsi(Color.WHITE)).append(" giving ");
+                    .append(RESET).append(" giving ");
             for(int i = 0; i < y; i ++){
                 attack.append(colorToAnsi(attacker.getColor())).append(DROP);
             }
 
-            attack.append(colorToAnsi(Color.WHITE)).append("\n");
+            attack.append(RESET).append("\n");
         });
 
         marks.forEach((x, y) -> {
             attack.append(colorToAnsi(x.getColor())).append(x.getNickname())
-                    .append(colorToAnsi(Color.WHITE)).append(" giving ");
+                    .append(RESET).append(" giving ");
             for(int i = 0; i < y; i ++){
                 attack.append(colorToAnsi(attacker.getColor())).append(MARK);
             }
-            attack.append(colorToAnsi(Color.WHITE)).append("\n");
+            attack.append(RESET).append("\n");
         });
 
         print(attack.toString());
@@ -812,10 +815,10 @@ public class Printer {
         Player winner = score.stream().findFirst().get();
         List<String> lines = new ArrayList<>();
         score.forEach(x -> lines.add(colorToAnsi(x.getColor())+ x.getNickname()
-                + colorToAnsi(Color.WHITE) + " points: " + x.getPlayerBoard().getPoints()));
+                + RESET + " points: " + x.getPlayerBoard().getPoints()));
 
         println( colorToAnsi(winner.getColor()) + winner.getNickname()
-                + colorToAnsi(AmmoColor.RED) + "  WON" + colorToAnsi(Color.WHITE));
+                + colorToAnsi(AmmoColor.RED) + "  WON" + RESET);
         int i = 1;
         for(String line : lines){
             println(i + " - " + line);
@@ -823,7 +826,7 @@ public class Printer {
         }
     }
 
-    public String colorToAnsi(AmmoColor color){
+    String colorToAnsi(AmmoColor color){
         switch (color){
             case BLUE:
                 return "\u001B[0;34m";
@@ -835,7 +838,7 @@ public class Printer {
                 return "\u001B[0;37m"; //white
         }
     }
-    public String colorToAnsi(Color color){
+    String colorToAnsi(Color color){
         switch (color){
             case BLUE:
                 return "\u001B[0;34m";
@@ -848,10 +851,8 @@ public class Printer {
             case PURPLE:
                 return "\u001B[0;36m"; //CYAN
             default:
-                return "\u001B[0;37m"; //white
+                return "\u001B[0;37m"; //white-gray
         }
     }
-
-
 
 }

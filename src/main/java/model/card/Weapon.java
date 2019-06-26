@@ -8,10 +8,10 @@ import java.util.stream.Collectors;
 
 public class Weapon extends Card {
 
-    private Boolean charged;
+    private boolean charged;
     private AmmoColor chargeCost;
     private List<AmmoColor> buyCost;
-    private Boolean optional;
+    private boolean optional;
     private transient Map<Effect,Integer> effects;
     private int numberOfEffect;
 

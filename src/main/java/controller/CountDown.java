@@ -7,7 +7,7 @@ import java.util.TimerTask;
  * Creates a count down timer that can be started and stopped
  * giving a time and a task to execute when it's finished
  */
-class CountDown {
+public class CountDown {
 
     private Timer timer;
     private int time;
@@ -18,7 +18,7 @@ class CountDown {
      * @param time time in seconds of the timer
      * @param timeoutAction action that will be executed at the end of the timer
      */
-    CountDown(int time, Runnable timeoutAction){
+    public CountDown(int time, Runnable timeoutAction){
         timer = new Timer();
         this.time = time*1000;
         this.timoutAction = timeoutAction;
@@ -27,7 +27,7 @@ class CountDown {
     /**
      * Starts the count down
      */
-    void startTimer(){
+    public void startTimer(){
         timer.schedule(new TimerTask() {
             @Override
             public void run(){
@@ -41,7 +41,7 @@ class CountDown {
     /**
      * Stops the timer
      */
-    void cancelTimer(){
+    public void cancelTimer(){
         timer.cancel();
         timer.purge();
     }

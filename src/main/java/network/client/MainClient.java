@@ -3,6 +3,7 @@ package network.client;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import controller.CountDown;
 import model.board.*;
 import model.card.AmmoColor;
 import model.card.Effect;
@@ -13,6 +14,7 @@ import model.player.Player;
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
 import network.messages.Message;
+import network.messages.clientToServer.ClientToServer;
 import network.messages.clientToServer.ListResponse;
 import network.messages.clientToServer.LoginRequest;
 import network.messages.serverToClient.*;
@@ -44,6 +46,9 @@ public class MainClient {
     private String username;
     private String clientID = "";
     private ClientInterface clientInterface = null;
+
+    private CountDown connectionTimer;
+    private static final int PING_TIMER = 60;
 
     private static ViewInterface view;
     private static boolean socket; //true uses socket false uses rmi
@@ -84,6 +89,12 @@ public class MainClient {
         else{
             connection = new ConnectionRMI(this);
         }
+
+        connectionTimer = new CountDown(60, () -> {
+            connection.sendMessage(new ClientToServer(username, clientID, Message.Content.CONNECTION));
+        });
+        connectionTimer.startTimer();
+
 
     }
 
@@ -155,23 +166,39 @@ public class MainClient {
      */
     public void handleMessage(ServerToClient message){
 
+        connectionTimer.cancelTimer();
+
+        if(message.getContent() !=  Message.Content.DISCONNECTION){
+            connectionTimer = new CountDown(PING_TIMER, () -> {
+                connection.sendMessage(new ClientToServer(username, clientID, Message.Content.CONNECTION));
+            });
+            connectionTimer.startTimer();
+        }
+
+
         Type type = new TypeToken<HashMap<String, Integer>>(){}.getType();
         Gson gson = new Gson();
         List<String> stringed;
 
+
+
         switch (message.getContent()){
             case TIMEOUT:
                 view.timeout();
+                break;
+            case DISCONNECTION:
+                //view.showInfo("RECONNECT!!!");
+                view.disconnection();
                 break;
             case LOGIN_RESPONSE:
                 clientID = ((LoginResponse) message).getClientID();
 
                 try{
                     String path = "."+ File.separatorChar + "src" + File.separatorChar+
-                            "main" + File.separatorChar + "resources" + File.separatorChar + username + "_data.txt";
+                            "main" + File.separatorChar + "resources" + File.separatorChar + "data.txt";
                     FileWriter fw = new FileWriter(path);
                     fw.write(clientID);
-                    fw.close();
+
                 }catch(Exception e){
                     System.out.println("Couldn't write on file");
 

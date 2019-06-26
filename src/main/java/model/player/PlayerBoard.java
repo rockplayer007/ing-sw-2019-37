@@ -3,6 +3,7 @@ package model.player;
 
 import model.board.Cell;
 import model.board.Color;
+import network.server.Configs;
 
 import java.io.Serializable;
 import java.util.*;
@@ -15,10 +16,10 @@ public class PlayerBoard implements Serializable{
 
     private transient Player player;
     private transient List<Player> hp;
-    private static final int ADRENALINE1 = 3;
-    private static final int ADRENALINE2 = 6;
-    private static final int DEAD_POINT = 11;
-    private static final int OVERKILL = 12;
+    private static final int ADRENALINE1 = Configs.getInstance().getAdrenalin1();
+    private static final int ADRENALINE2 = Configs.getInstance().getAdrenalin2();
+    private static final int DEAD_POINT = Configs.getInstance().getDeadPoint();
+    private static final int OVERKILL = Configs.getInstance().getOverKill();
     private List<Color> hpColor;
     private static int[] pointArray = {8, 6, 4, 2, 1, 1};
     private static int[] frenzyPoints = {2, 1, 1, 1};

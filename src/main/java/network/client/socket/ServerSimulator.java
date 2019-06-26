@@ -1,6 +1,7 @@
 package network.client.socket;
 
 import network.client.ClientInterface;
+import network.messages.Message;
 import network.messages.clientToServer.ClientToServer;
 import network.messages.serverToClient.ServerToClient;
 import network.server.ServerInterface;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,7 +46,7 @@ public class ServerSimulator implements ServerInterface {
     /**
      * Creates a thread to receive messages
      */
-    public void receiveMessages(){
+    private void receiveMessages(){
         receiver = new Thread(
                 () -> {
                     ServerToClient message;
@@ -57,9 +59,17 @@ public class ServerSimulator implements ServerInterface {
                         } while (message != null);
 
                     } catch (IOException e) {
-                        logger.log(Level.WARNING, "Exception on network:", e);
+                        //logger.log(Level.WARNING, "Exception on network:", e);
+                        try {
+                            client.notifyClient(new ServerToClient(Message.Content.DISCONNECTION));
+                        } catch (RemoteException ex) {
+                            logger.log(Level.WARNING, "Shouldn't happen actually... ", e);
+                            //shouldn't happen, only with rmi
+                        }
                     } catch (ClassNotFoundException e) {
-                        throw new RuntimeException("Wrong deserialization/message: " + e.getMessage());
+                        //do nothing, let the game continue
+                        receiveMessages();
+                        //throw new RuntimeException("Wrong deserialization/message: " + e.getMessage());
                     }
                 }
         );
@@ -81,7 +91,13 @@ public class ServerSimulator implements ServerInterface {
             out.writeObject(message);
             //oos.flush();
         } catch (IOException e) {
-            logger.log(Level.WARNING, "Exception on network, can't send message", e);
+            //logger.log(Level.WARNING, "Exception on network, can't send message", e);
+            try {
+                client.notifyClient(new ServerToClient(Message.Content.DISCONNECTION));
+            } catch (RemoteException ex) {
+                logger.log(Level.WARNING, "Exception on network, weird this shouldn't happen", ex);
+                //should not happen, only with rmi
+            }
         }
     }
 

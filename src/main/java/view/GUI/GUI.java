@@ -364,6 +364,10 @@ public void addMusic(String name){
         }
     }
 
+    @Override
+    public void disconnection(){
+
+    }
 }
 
 
