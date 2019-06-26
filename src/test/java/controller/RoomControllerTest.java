@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import model.board.*;
 import model.card.Powerup;
 import model.gamehandler.Room;
+import network.client.MainClient;
 import network.server.Configs;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

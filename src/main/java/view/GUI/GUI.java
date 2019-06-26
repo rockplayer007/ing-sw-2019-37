@@ -179,6 +179,7 @@ public void addMusic(String name){
         reconnect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                mainClient.resetTimout();
                 mainClient.sendCredentials();
                 jDialog.setVisible(false);
             }

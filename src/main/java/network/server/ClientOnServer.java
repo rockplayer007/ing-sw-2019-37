@@ -26,6 +26,10 @@ public class ClientOnServer {
     public ClientInterface getClientInterface(){
         return clientInterface;
     }
+    public void setClientInterface(ClientInterface clientInterface){
+        this.clientInterface = clientInterface;
+    }
+
 
     public Player getPersonalPlayer() {
         return personalPlayer;

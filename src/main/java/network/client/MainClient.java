@@ -14,7 +14,6 @@ import model.player.Player;
 import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
 import network.messages.Message;
-import network.messages.clientToServer.ClientToServer;
 import network.messages.clientToServer.ConnectionMessage;
 import network.messages.clientToServer.ListResponse;
 import network.messages.clientToServer.LoginRequest;
@@ -24,12 +23,14 @@ import view.CLI.CLI;
 import view.GUI.GUI;
 import view.ViewInterface;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
 import java.rmi.NotBoundException;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,6 +57,7 @@ public class MainClient {
     private static boolean socket; //true uses socket false uses rmi
 
     private boolean online = true;
+    private boolean timeout = true;
 
     private static final Logger logger = Logger.getLogger(MainServer.class.getName());
 
@@ -130,21 +132,14 @@ public class MainClient {
      * Sends the user's username and {@link ClientInterface} in case of RMI connection
      */
     public void sendCredentials(){
-        /*
-        if (socket) {
-            connection.sendMessage(new LoginRequest(username, null, clientID));
-        }
-        else {
-            connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
-        }
-         */
+
+        //needed for not asking again
         online = true;
         //just in case
         closePing();
         //start pinging
         ping();
-        connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
-
+        connection.sendMessage(new LoginRequest(username, clientInterface, readID(username)));
 
     }
 
@@ -162,36 +157,6 @@ public class MainClient {
     public void sendSelectedItem(int card){
         connection.sendMessage(new ListResponse(username, clientID, card, Message.Content.CARD_RESPONSE));
     }
-
-/*
-    public void sendSelectedItem(int square){
-        connection.sendMessage(new ListResponse(username, clientID, square, Message.Content.SQUARE_RESPONSE));
-    }
-
-    public void sendSelectedItem(int effect){
-        connection.sendMessage(new ListResponse(username, clientID, effect, Message.Content.EFFECT_RESPOSNSE));
-    }
-
-    public void sendSelectedItem(int player){
-        connection.sendMessage(new ListResponse(username, clientID, player, Message.Content.PLAYER_RESPONSE));
-    }
-
-    public void sendSelectedItem(int direction){
-        connection.sendMessage(new ListResponse(username, clientID, direction, Message.Content.DIRECTION_RESPONSE));
-    }
-
-    public void sendSelectedItem(int ammo){
-        connection.sendMessage(new ListResponse(username, clientID, ammo, Message.Content.AMMO_RESPONSE));
-    }
-
-    public void sendSelectedItem(int room){
-        connection.sendMessage(new ListResponse(username, clientID, room, Message.Content.ROOM_RESPONSE));
-    }
-
- */
-
-
-
 
 
     /**
@@ -216,7 +181,11 @@ public class MainClient {
 
         switch (message.getContent()){
             case TIMEOUT:
-                view.timeout();
+                if(timeout){
+                    timeout = false;
+                    view.timeout();
+                }
+
                 break;
             case DISCONNECTION:
                 //view.showInfo("RECONNECT!!!");
@@ -233,8 +202,15 @@ public class MainClient {
                 try{
                     String path = "."+ File.separatorChar + "src" + File.separatorChar+
                             "main" + File.separatorChar + "resources" + File.separatorChar + "data.txt";
-                    FileWriter fw = new FileWriter(path);
-                    fw.write(clientID);
+                    //FileWriter fw = new FileWriter(path);
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                    Date date = new Date();
+                    //fw.write(dateFormat.format(date) + username + ", " + clientID + ", ");
+                    //fw.write(username);
+                    if(!((LoginResponse) message).getStatus()) {
+                        insertCredentials(username, username + ", " +
+                                dateFormat.format(date) + ", " + clientID);
+                    }
 
                 }catch(Exception e){
                     System.out.println("Couldn't write on file");
@@ -377,7 +353,63 @@ public class MainClient {
         }
     }
 
+    private String readID(String username){
+        String path = "."+ File.separatorChar + "src" + File.separatorChar+
+                "main" + File.separatorChar + "resources" + File.separatorChar + "data.txt";
 
+        List<String> credentials = new ArrayList<>();
+        try{
+            FileReader temp = new FileReader(path);
+            BufferedReader in = new BufferedReader(temp);
+            String str;
+
+            while((str = in.readLine()) != null){
+                credentials.add(str);
+            }
+            temp.close();
+            in.close();
+
+        }catch (IOException e){
+            //fine if there isn't any file
+        }
+
+        String id = "";
+        for(String info : credentials){
+            String name = info.split(", ")[0];
+            if(username.equals(name)){
+                try {
+                    id = info.split(", ")[2];
+                } catch (Exception e){
+                    //wrong written
+                }
+
+            }
+        }
+
+        return id;
+    }
+
+    public void insertCredentials(String username, String cred) throws IOException {
+        String path = "."+ File.separatorChar + "src" + File.separatorChar+
+                "main" + File.separatorChar + "resources" + File.separatorChar + "data.txt";
+        File yourFile = new File(path);
+        yourFile.createNewFile();
+
+        File file = new File(path);
+
+        StringBuilder temp = new StringBuilder();
+        Files.lines(file.toPath())
+                .filter(line -> !username.contains(line.split(", ")[0]))
+                .forEach(x -> temp.append(x).append("\n"));
+
+        temp.append(cred).append("\n");
+
+        FileWriter fw = new FileWriter(path, false);
+
+        fw.write(temp.toString());
+        fw.close();
+
+    }
 
     public static String getServerIp() {
         return serverIp;
@@ -396,5 +428,8 @@ public class MainClient {
     }
     public static void setSocket(Boolean connection){
         socket = connection;
+    }
+    public void resetTimout(){
+        timeout = true;
     }
 }

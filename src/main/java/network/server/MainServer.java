@@ -141,6 +141,8 @@ public class MainServer {
                 if(optionalClient.isPresent()) {
                     ClientOnServer client = optionalClient.get();
                     client.getPersonalPlayer().setConnected();
+                    //setting a new client interface in case the client logs from somewhere else
+                    client.setClientInterface(message.getClientInterface());
                     try {
                         client.getClientInterface().notifyClient(new InfoMessage("Welcome back"));
                     } catch (RemoteException e) {
