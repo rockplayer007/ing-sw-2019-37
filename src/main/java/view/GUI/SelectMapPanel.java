@@ -20,7 +20,6 @@ public class SelectMapPanel extends JPanel {
     public SelectMapPanel(Map<Integer, String> maps){
         JLabel text;
         this.setLayout(new GridBagLayout());
-        //Color color= new Color(131,105,83);
         this.setBackground(Color.DARK_GRAY);
         GridBagConstraints gbc = new GridBagConstraints();
         text = new JLabel("Select Map");

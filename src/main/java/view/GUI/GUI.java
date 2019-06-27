@@ -33,6 +33,7 @@ public class GUI implements ViewInterface {
     private MapPanel mapPanel;
     private JFrame jDialog= new JFrame("TIMEOUT");
     private Clip sound = null;
+    private JFrame infof= new JFrame("INFO");
 
 
 
@@ -67,15 +68,17 @@ public void addMusic(String name){
             frame.getContentPane().removeAll();
             frame.setSize(1280, 750);
             //frame.setIconImage();
-            frame.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent we) {
-                    int option = JOptionPane.showConfirmDialog(frame,"Do you want to Exit ?", "Exit Confirmation ", JOptionPane.YES_NO_OPTION);
-                    if (option == JOptionPane.YES_OPTION)
-                        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                    else if (option == JOptionPane.NO_OPTION)
-                        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-                }
-            });
+            if(first) {
+                frame.addWindowListener(new WindowAdapter() {
+                    public void windowClosing(WindowEvent we) {
+                        int option = JOptionPane.showConfirmDialog(frame, "Do you want to Exit ?", "Exit Confirmation ", JOptionPane.YES_NO_OPTION);
+                        if (option == JOptionPane.YES_OPTION)
+                            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                        else if (option == JOptionPane.NO_OPTION)
+                            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                    }
+                });
+            }
             frame.setBackground(Color.DARK_GRAY);
             LoginPanel loginPanel = new LoginPanel();
             loginPanel.setName("loginPanel");
@@ -118,6 +121,7 @@ public void addMusic(String name){
                             try {
                                 mainClient.connect();
                             } catch (NotBoundException | IOException ignored) {
+                                disconnection();
                             }
                         }
                         first=false;
@@ -333,8 +337,16 @@ public void addMusic(String name){
             MapPanel mpl = (MapPanel) component;
             mpl.addInfo(info);
         }
-        else
-            JOptionPane.showMessageDialog(null,info,"INFO",JOptionPane.INFORMATION_MESSAGE);
+        else{
+            JLabel message = new JLabel(info);
+            infof.setLayout(new BorderLayout());
+            infof.getContentPane().removeAll();
+            infof.add(message,BorderLayout.CENTER);
+            infof.pack();
+            infof.setVisible(true);
+        }
+            //JOptionPane.showMessageDialog(null,info,"INFO",JOptionPane.INFORMATION_MESSAGE);
+
         }
     }
 
@@ -381,21 +393,10 @@ public void addMusic(String name){
             Component component = frame.getContentPane().getComponent(0);
             if(component.equals(mapPanel)){
                 MapPanel mpl = (MapPanel) component;
-                mpl.addInfo("disctonnection");
+                mpl.blockAll();
             }
         }
-        JFrame esempio = new JFrame("Disconnection");
-        JButton label = new JButton("Close");
-        label.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                esempio.setVisible(false);
-            }
-        });
-        esempio.setLayout(new BorderLayout());
-        esempio.setSize(300,300);
-        esempio.add(label, BorderLayout.CENTER);
-        esempio.setVisible(true);
+        JOptionPane.showMessageDialog(frame,"Check your connection. Then restart the game.","DISCONNECTION",JOptionPane.WARNING_MESSAGE);
     }
 }
 

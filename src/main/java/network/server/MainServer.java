@@ -4,9 +4,11 @@ import controller.RoomController;
 import network.client.ClientInterface;
 import network.messages.Message;
 import network.messages.clientToServer.ClientToServer;
+import network.messages.clientToServer.ConnectionMessage;
 import network.messages.clientToServer.LoginRequest;
 import network.messages.serverToClient.InfoMessage;
 import network.messages.serverToClient.LoginResponse;
+import network.messages.serverToClient.ServerToClient;
 import network.server.rmi.ServerRMI;
 import network.server.socket.ServerSOCKET;
 
@@ -84,19 +86,28 @@ public class MainServer {
      */
     public void handleMessage(ClientToServer message){
         //verify that the user corresponds with clientID
-        logger.log(Level.INFO, "arrived message type: {0}, from player: {1}",
-                new String[]{String.valueOf(message.getContent()), message.getSender()});
+        if(message.getContent() != Message.Content.CONNECTION){
+            logger.log(Level.INFO, "arrived message type: {0}, from player: {1}",
+                    new String[]{String.valueOf(message.getContent()), message.getSender()});
+        }
 
 
         if(message.getContent().equals(Message.Content.LOGIN_REQUEST)){
             addClient((LoginRequest) message);
         }
         else if (message.getContent().equals(Message.Content.CONNECTION)){
+
             //reconnect player
-            Optional<ClientOnServer> client = allClients.stream()
+            allClients.stream()
                     .filter(x -> x.getUsername().equals(message.getSender()))
-                    .findFirst();
-            client.ifPresent(clientOnServer -> clientOnServer.getPersonalPlayer().setConnected());
+                    .findFirst().ifPresent(clientOnServer -> {
+                clientOnServer.getPersonalPlayer().setConnected();
+            });
+            try {
+                ((ConnectionMessage) message).getClientInterface().notifyClient(new ServerToClient(Message.Content.CONNECTION));
+            } catch (RemoteException e) {
+                disconnectPlayer(((ConnectionMessage) message).getClientInterface());
+            }
 
         }
         else {
@@ -124,15 +135,18 @@ public class MainServer {
             if (oldClients.containsKey(message.getClientID())){
                 //client already exists
                 //let him continue
-                ClientOnServer client = allClients.stream()
+                Optional<ClientOnServer> optionalClient = allClients.stream()
                         .filter(x -> x.getUsername().equals(message.getSender()))
-                        .findFirst().get();
-                client.getPersonalPlayer().setConnected();
-                try {
-                    client.getClientInterface().notifyClient(new InfoMessage("Welcome back"));
-                } catch (RemoteException e) {
-                    logger.log(Level.WARNING, "disconnected in addClient", e);
-                    disconnectPlayer(message.getClientInterface());
+                        .findFirst();
+                if(optionalClient.isPresent()) {
+                    ClientOnServer client = optionalClient.get();
+                    client.getPersonalPlayer().setConnected();
+                    try {
+                        client.getClientInterface().notifyClient(new InfoMessage("Welcome back"));
+                    } catch (RemoteException e) {
+                        logger.log(Level.WARNING, "disconnected in addClient", e);
+                        disconnectPlayer(message.getClientInterface());
+                    }
                 }
 
             }

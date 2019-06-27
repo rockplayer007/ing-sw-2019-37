@@ -15,6 +15,7 @@ import network.client.rmi.ConnectionRMI;
 import network.client.socket.ConnectionSOCKET;
 import network.messages.Message;
 import network.messages.clientToServer.ClientToServer;
+import network.messages.clientToServer.ConnectionMessage;
 import network.messages.clientToServer.ListResponse;
 import network.messages.clientToServer.LoginRequest;
 import network.messages.serverToClient.*;
@@ -47,11 +48,14 @@ public class MainClient {
     private String clientID = "";
     private ClientInterface clientInterface = null;
 
-    private CountDown connectionTimer;
-    private static final int PING_TIMER = 60;
+    private CountDown connectionTimer = new CountDown(PING_TIMER, () -> {});
+    private CountDown pingTimer = new CountDown(PING_TIMER, () -> {});
+    private static final int PING_TIMER = 5;
 
     private static ViewInterface view;
     private static boolean socket; //true uses socket false uses rmi
+
+    private boolean online = true;
 
     private static final Logger logger = Logger.getLogger(MainServer.class.getName());
 
@@ -76,6 +80,35 @@ public class MainClient {
         }
     }
 
+
+    private void ping(){
+        pingTimer = new CountDown(PING_TIMER, () -> {
+            logger.log(Level.INFO, "sending ping");
+            //if nothing comes back
+            connection.sendMessage(new ConnectionMessage(username, clientInterface, clientID));
+            ping();
+        });
+        pingTimer.startTimer();
+
+    }
+    private void closePing(){
+        pingTimer.cancelTimer();
+    }
+
+    private void receiveTimer(){
+        connectionTimer = new CountDown(PING_TIMER + 5, () -> {
+            logger.log(Level.INFO, "not receiving ping");
+            //if nothing comes back
+            handleMessage(new ServerToClient(Message.Content.DISCONNECTION));
+        });
+        connectionTimer.startTimer();
+    }
+    private void restartTimer(){
+        connectionTimer.cancelTimer();
+        receiveTimer();
+    }
+
+
     /**
      * Connects the client to the server depending on which connection the Client chose
      * @throws NotBoundException
@@ -89,12 +122,7 @@ public class MainClient {
         else{
             connection = new ConnectionRMI(this);
         }
-
-        connectionTimer = new CountDown(60, () -> {
-            connection.sendMessage(new ClientToServer(username, clientID, Message.Content.CONNECTION));
-        });
-        connectionTimer.startTimer();
-
+        //ping();
 
     }
 
@@ -110,7 +138,10 @@ public class MainClient {
             connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
         }
          */
+        online = true;
+        ping();
         connection.sendMessage(new LoginRequest(username, clientInterface, clientID));
+
 
     }
 
@@ -167,12 +198,12 @@ public class MainClient {
     public void handleMessage(ServerToClient message){
 
         connectionTimer.cancelTimer();
+        logger.log(Level.INFO, "received: " + message.getContent());
 
         if(message.getContent() !=  Message.Content.DISCONNECTION){
-            connectionTimer = new CountDown(PING_TIMER, () -> {
-                connection.sendMessage(new ClientToServer(username, clientID, Message.Content.CONNECTION));
-            });
-            connectionTimer.startTimer();
+            logger.log(Level.INFO, "received ping");
+            restartTimer();
+
         }
 
 
@@ -188,7 +219,12 @@ public class MainClient {
                 break;
             case DISCONNECTION:
                 //view.showInfo("RECONNECT!!!");
-                view.disconnection();
+                closePing();
+                if(online){
+                    online = false;
+                    view.disconnection();
+                }
+
                 break;
             case LOGIN_RESPONSE:
                 clientID = ((LoginResponse) message).getClientID();

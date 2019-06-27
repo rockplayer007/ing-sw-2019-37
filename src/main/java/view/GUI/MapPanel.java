@@ -593,7 +593,7 @@ public class MapPanel extends JLayeredPane {
                 else
                     action.setLocation(actions.get(i - 1).getX() + 125, actions.get(i - 1).getY());
             }
-            final int x = i;
+
             action.addActionListener(new ActionResponseListener(this,mainClient,i,text,borderLabel));
             /*action.addActionListener(new ActionListener() {
                 @Override
@@ -641,7 +641,7 @@ public class MapPanel extends JLayeredPane {
 
     public void getAmmoColor(List<AmmoColor> ammoColors, MainClient mainClient) {
         choose.getContentPane().removeAll();
-        choose.setLayout(new GridLayout(2,2));
+        choose.setLayout(new GridLayout(1,3));
         choose.setLocation(300, 50);
         choose.setSize(300, 300);
         for (int i = 0; i < ammoColors.size(); i++) {

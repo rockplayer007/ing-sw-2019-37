@@ -58,7 +58,7 @@ public class CLI implements ViewInterface {
         mainClient.connect();
 
         //TODO doesnt work with rmi
-        printer.println("Connection successful!");
+        //printer.println("Connection successful!");
         logIn(true);
 
     }
