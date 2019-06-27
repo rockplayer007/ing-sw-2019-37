@@ -97,12 +97,15 @@ public class MainServer {
         }
         else if (message.getContent().equals(Message.Content.CONNECTION)){
 
+            //really bad idea! forget this
             //reconnect player
+            /*
             allClients.stream()
                     .filter(x -> x.getUsername().equals(message.getSender()))
                     .findFirst().ifPresent(clientOnServer -> {
                 clientOnServer.getPersonalPlayer().setConnected();
             });
+             */
             try {
                 ((ConnectionMessage) message).getClientInterface().notifyClient(new ServerToClient(Message.Content.CONNECTION));
             } catch (RemoteException e) {

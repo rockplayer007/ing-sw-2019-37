@@ -30,6 +30,7 @@ class TurnController {
     private static final int WAITING_TIME = Configs.getInstance().getTurnTime();
     private static final int POWERUP_TIME = Configs.getInstance().getTimeForTagBackRequest();
     private static final int RESPAWN_TIME = Configs.getInstance().getRespawnTime();
+    private static final int MINIMUM_PLAYERS = Configs.getInstance().getMinimumPlayers();
 
 
     private RoundController roundController;
@@ -101,8 +102,11 @@ class TurnController {
                 timer.cancelTimer();
 
             } catch (TimeFinishedException e) {
-                if(room.getPlayers().stream().filter(Player::isConnected).count()
-                        < Configs.getInstance().getMinimumPlayers() - 1){
+
+                player.setDisconnected();
+
+                int stillOnline = (int) room.getPlayers().stream().filter(Player::isConnected).count();
+                if( stillOnline < MINIMUM_PLAYERS ){
                     disconnectionCheckout(player, true);
                 }
                 else {
@@ -361,7 +365,7 @@ class TurnController {
     private void disconnectionCheckout(Player player, boolean kick){
         logger.log(Level.INFO,"player: {0} finished his time", player.getNickname());
         //set the player as disconnected
-        player.setDisconnected();
+        //player.setDisconnected();
 
         //send message
 
