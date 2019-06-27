@@ -151,13 +151,22 @@ public class RoomController {
                 room.getCurrentPlayer().setDisconnected();
 
                 //send message
-                sendMessage(room.getCurrentPlayer(), new TimeoutMessage());
-                sendMessageToAll(new InfoMessage(room.getCurrentPlayer().getNickname() + " has disconnected (time exceeded)"));
+
 
                 //continue as normal
                 logger.log(Level.INFO,"player: {0} finished his time", room.getCurrentPlayer().getNickname());
                 if(!room.setNextPlayer()){
-                    throw new NotExecutedException("Sorry, not enough players anymore");
+                    InfoMessage infoMessage = new InfoMessage("You lost time, you lost the game...");
+                    infoMessage.setConnection();
+                    sendMessage(room.getCurrentPlayer(), infoMessage);
+
+                    throw new NotExecutedException("Sorry " + room.getCurrentPlayer().getNickname()
+                            + " just disconnected and there are not enough players anymore");
+                }
+                else{
+                    sendMessage(room.getCurrentPlayer(), new TimeoutMessage());
+                    sendMessageToAll(new InfoMessage(room.getCurrentPlayer().getNickname()
+                            + " has disconnected (time exceeded)"));
                 }
             }
             catch(IllegalStateException i){
@@ -213,9 +222,19 @@ public class RoomController {
         //send a message that includes the board and other things
 
         //sendMessageToAll(new BoardInfo(gson.toJson(room.getBoard().getMap())));
-        players.stream().filter(Player::isConnected).forEach(p ->
-                sendMessage(p, new UpdateMessage(
-                toJsonGameBoard(), everythingToJson(p.getPowerups()), toJsonSkullBoard())));
+        players.stream().filter(Player::isConnected).forEach(this::sendUpdate);
+
+    }
+
+    /**
+     * send an update of the game to one player players
+     * @param player who needs to be updated
+     */
+    public void sendUpdate(Player player){
+        //send a message that includes the board and other things
+
+        sendMessage(player, new UpdateMessage(
+                toJsonGameBoard(), everythingToJson(player.getPowerups()), toJsonSkullBoard()));
 
     }
 

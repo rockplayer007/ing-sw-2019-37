@@ -28,7 +28,7 @@ public interface ViewInterface {
      * @throws NotBoundException
      * @throws IOException
      */
-    void launch() throws NotBoundException, IOException;
+    void launch();
 
     /**
      * Allows the client to log in with a username

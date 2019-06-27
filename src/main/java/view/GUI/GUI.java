@@ -42,7 +42,7 @@ public class GUI implements ViewInterface {
     }
 
     @Override
-    public void launch() throws NotBoundException, IOException {
+    public void launch(){
         addMusic("intro1");
         logIn(true);
     }

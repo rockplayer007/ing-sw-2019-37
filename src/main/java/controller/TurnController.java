@@ -370,7 +370,8 @@ class TurnController {
         //send message
 
         if(kick){
-            ServerToClient message = new InfoMessage("You lost time, you lost the game...");
+            InfoMessage message = new InfoMessage("You lost time, you lost the game...");
+            message.setConnection();
             roomController.sendMessage(room.getCurrentPlayer(), message);
         }
         else {

@@ -75,12 +75,7 @@ public class MainClient {
             view = new CLI(mainClient);
         }
 
-        try {
-            view.launch();
-        } catch (Exception e) {
-            logger.log(Level.WARNING, "Unable to connect to server", e);
-
-        }
+        view.launch();
     }
 
 
@@ -94,12 +89,13 @@ public class MainClient {
 
     }
     private void closePing(){
+
         pingTimer.cancelTimer();
     }
 
     private void receiveTimer(){
         connectionTimer = new CountDown(PING_TIMER + 5, () -> {
-            logger.log(Level.INFO, "not receiving ping");
+            //logger.log(Level.INFO, "not receiving ping");
             //if nothing comes back
             handleMessage(new ServerToClient(Message.Content.DISCONNECTION));
         });
@@ -166,10 +162,10 @@ public class MainClient {
     public void handleMessage(ServerToClient message){
 
         connectionTimer.cancelTimer();
-        logger.log(Level.INFO, "received: " + message.getContent());
+        //logger.log(Level.INFO, "received: " + message.getContent());
 
         if(message.getContent() !=  Message.Content.DISCONNECTION){
-            logger.log(Level.INFO, "received ping");
+            //logger.log(Level.INFO, "received ping");
             restartTimer();
         }
 
@@ -328,12 +324,19 @@ public class MainClient {
 
                 break;
             case INFO:
+                if((((InfoMessage) message)).getConnection()){
+                    online = false;
+                    closePing();
+                }
                 view.showInfo(((InfoMessage) message).getInfo());
                 break;
             case CONNECTION:
                 //if this message arrives, the connection is succesfull
                 break;
             case SCORE:
+                online = false;
+                closePing();
+                connectionTimer.cancelTimer();
 
                 List<Player> scorePlayers = ((AnswerRequest) message)
                         .getRequests().stream().map(x -> gson.fromJson(x, Player.class))

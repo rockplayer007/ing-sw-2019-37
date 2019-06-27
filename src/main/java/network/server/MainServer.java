@@ -147,7 +147,12 @@ public class MainServer {
                     //setting a new client interface in case the client logs from somewhere else
                     client.setClientInterface(message.getClientInterface());
                     try {
+                        if(usernameInRoom.get(client.getUsername()) != null){
+                            usernameInRoom.get(client.getUsername()).sendUpdate(client.getPersonalPlayer());
+                        }
+
                         client.getClientInterface().notifyClient(new InfoMessage("Welcome back"));
+
                     } catch (RemoteException e) {
                         logger.log(Level.WARNING, "disconnected in addClient");
                         disconnectPlayer(message.getClientInterface());
