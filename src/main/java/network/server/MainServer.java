@@ -141,10 +141,12 @@ public class MainServer {
                 if(optionalClient.isPresent()) {
                     ClientOnServer client = optionalClient.get();
                     client.getPersonalPlayer().setConnected();
+                    //setting a new client interface in case the client logs from somewhere else
+                    client.setClientInterface(message.getClientInterface());
                     try {
                         client.getClientInterface().notifyClient(new InfoMessage("Welcome back"));
                     } catch (RemoteException e) {
-                        logger.log(Level.WARNING, "disconnected in addClient", e);
+                        logger.log(Level.WARNING, "disconnected in addClient");
                         disconnectPlayer(message.getClientInterface());
                     }
                 }
@@ -202,6 +204,7 @@ public class MainServer {
             }
         }
     }
+
     /**
      * Defines which user is in which room
      * @param usernames

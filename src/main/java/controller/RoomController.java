@@ -127,7 +127,7 @@ public class RoomController {
         while (ask){
             CountDown timer = new CountDown(BOARD_TIME, () -> {
                 stopWaiting();
-                logger.log(Level.INFO, "TIMER STOPPED");
+                logger.log(Level.INFO, "TIMER STOPPED FOR BOARD");
             });
             timer.startTimer();
 
@@ -184,7 +184,7 @@ public class RoomController {
             connectionToClient.get(player).getClientInterface()
                     .notifyClient(message);
         } catch (RemoteException e) {
-            logger.log(Level.WARNING, "disconnection client: " + player.getNickname(), e);
+            logger.log(Level.WARNING, "disconnection client: " + player.getNickname());
 
             if(player.isConnected()){
                 disconnectPlayer(player);

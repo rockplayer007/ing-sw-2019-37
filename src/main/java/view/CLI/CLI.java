@@ -52,10 +52,14 @@ public class CLI implements ViewInterface {
      * @throws IOException
      */
     @Override
-    public void launch() throws NotBoundException, IOException {
+    public void launch()  {
 
         chooseConnection();
-        mainClient.connect();
+        try {
+            mainClient.connect();
+        } catch (NotBoundException|IOException e) {
+            disconnection();
+        }
 
         //TODO doesnt work with rmi
         //printer.println("Connection successful!");

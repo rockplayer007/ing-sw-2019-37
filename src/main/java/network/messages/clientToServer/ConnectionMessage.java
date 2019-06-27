@@ -15,4 +15,7 @@ public class ConnectionMessage extends ClientToServer{
     public ClientInterface getClientInterface() {
         return clientInterface;
     }
+    public void setClientInterface(ClientInterface client){
+        clientInterface = client;
+    }
 }

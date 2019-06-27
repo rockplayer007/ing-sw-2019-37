@@ -102,7 +102,7 @@ class TurnController {
 
             } catch (TimeFinishedException e) {
                 if(room.getPlayers().stream().filter(Player::isConnected).count()
-                        < Configs.getInstance().getMinimumPlayers()){
+                        < Configs.getInstance().getMinimumPlayers() - 1){
                     disconnectionCheckout(player, true);
                 }
                 else {
@@ -120,26 +120,25 @@ class TurnController {
                 cleanBoard();
             }
 
-            //check for dead players
-            room.getPlayers().stream().filter(y -> !y.isLive()).forEach(x -> {
-                try {
-                    respawn(x);
-                } catch (TimeFinishedException e) {
-                    disconnectionCheckout(x, false);
-                } finally {
-                    player.setLive(true);
-                }
-            });
 
-            if(room.endTurnControl() || !room.setNextPlayer()){
+            if(room.endTurnControl() ){
                  //when return true means is end of game
                 break;
             }
             //when there are less than 3 connected players quit
-            /*if(!room.setNextPlayer()){
+            if(!room.setNextPlayer()){
                 break;
             }
-             */
+
+            //check for dead players
+            room.getPlayers().stream().filter(y -> !y.isLive()).forEach(x -> {
+                try {
+                    player.setLive(true);
+                    respawn(x);
+                } catch (TimeFinishedException e) {
+                    disconnectionCheckout(x, false);
+                }
+            });
 
         }
     }
@@ -373,7 +372,7 @@ class TurnController {
         else {
             roomController.sendMessage(room.getCurrentPlayer(), new TimeoutMessage());
         }
-        roomController.sendMessage(room.getCurrentPlayer(), new TimeoutMessage());
+
         roomController.sendMessageToAll(new InfoMessage(player.getNickname() + " has disconnected (time exceeded)"));
     }
 }
