@@ -237,7 +237,10 @@ public class CLI implements ViewInterface {
 
     @Override
     public void disconnection(){
-        printer.print("CHECK YOUR CONNECTION");
+        printer.println(printer.colorToAnsi(AmmoColor.RED)
+                + "CHECK YOUR CONNECTION" + "\u001B[0m");
+        printer.println("Please open the game again and login with your username :)");
+        System.exit(-1);
     }
 
 }
