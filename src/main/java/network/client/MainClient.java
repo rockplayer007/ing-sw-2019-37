@@ -25,11 +25,11 @@ import view.ViewInterface;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.rmi.NotBoundException;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
@@ -157,7 +157,7 @@ public class MainClient {
 
     /**
      * New messages that arrive from the server are managed here
-     * @param message
+     * @param message the message that arrives from the server
      */
     public void handleMessage(ServerToClient message){
 
@@ -197,9 +197,7 @@ public class MainClient {
                 clientID = ((LoginResponse) message).getClientID();
 
                 try{
-                    String path = "."+ File.separatorChar + "src" + File.separatorChar+
-                            "main" + File.separatorChar + "resources" + File.separatorChar + "data.txt";
-                    //FileWriter fw = new FileWriter(path);
+
                     DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
                     Date date = new Date();
                     //fw.write(dateFormat.format(date) + username + ", " + clientID + ", ");
@@ -213,7 +211,6 @@ public class MainClient {
                     System.out.println("Couldn't write on file");
 
                 }
-
 
                 view.logIn(((LoginResponse) message).getStatus());
                 break;
@@ -324,7 +321,7 @@ public class MainClient {
 
                 break;
             case INFO:
-                if((((InfoMessage) message)).getConnection()){
+                if(((InfoMessage) message).getConnection()){
                     online = false;
                     closePing();
                 }
@@ -343,13 +340,6 @@ public class MainClient {
                         .collect(Collectors.toList());
 
                 view.showScore(scorePlayers);
-                /*
-                Map<Player, Integer> score = new HashMap<>();
-                Map<String, Integer> scoreMessage = ((ScoreMessage) message).getScore();//gson.fromJson(((ScoreMessage) message).getScore(), type);
-                scoreMessage.forEach((x, y) -> score.put(gson.fromJson(x, Player.class), y));
-                view.showScore(score);
-
-                 */
                 break;
             default:
                 logger.log(Level.WARNING, "Unregistered message");
@@ -358,8 +348,8 @@ public class MainClient {
     }
 
     private String readID(String username){
-        String path = "."+ File.separatorChar + "src" + File.separatorChar+
-                "main" + File.separatorChar + "resources" + File.separatorChar + "data.txt";
+
+        String path = getDataPath();
 
         List<String> credentials = new ArrayList<>();
         try{
@@ -390,12 +380,13 @@ public class MainClient {
             }
         }
 
+        //System.out.println("found id: "+ id);
         return id;
+
     }
 
     public void insertCredentials(String username, String cred) throws IOException {
-        String path = "."+ File.separatorChar + "src" + File.separatorChar+
-                "main" + File.separatorChar + "resources" + File.separatorChar + "data.txt";
+        String path = getDataPath();
         File yourFile = new File(path);
         yourFile.createNewFile();
 
@@ -413,6 +404,31 @@ public class MainClient {
         fw.write(temp.toString());
         fw.close();
 
+
+    }
+
+    private String getDataPath(){
+        String filename = "data.txt";
+        File inputFile;
+        String path;
+        try {
+            //takes the path that is in the parent folder of the jar
+            path = new File(MainServer.class.getProtectionDomain().getCodeSource().getLocation()
+                    .toURI()).getParent() + File.separatorChar + filename;
+
+            inputFile = new File(path);
+
+            if(!inputFile.exists()){
+                path = "."+ File.separatorChar + "src" + File.separatorChar+
+                        "main" + File.separatorChar + "resources" + File.separatorChar + filename;
+            }
+
+        } catch (URISyntaxException e) {
+            path = "."+ File.separatorChar + "src" + File.separatorChar+
+                    "main" + File.separatorChar + "resources" + File.separatorChar + filename;
+
+        }
+        return path;
     }
 
     public static String getServerIp() {

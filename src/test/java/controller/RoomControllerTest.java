@@ -4,12 +4,12 @@ import com.google.gson.Gson;
 import model.board.*;
 import model.card.Powerup;
 import model.gamehandler.Room;
-import network.client.MainClient;
 import network.server.Configs;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -72,6 +72,18 @@ public class RoomControllerTest {
         configs.getSkulls();
         configs.getTimeForTagBackRequest();
 
+    }
+
+    @Test
+    public void test(){
+        try {
+            String path = new File(getClass().getProtectionDomain().getCodeSource().getLocation()
+                    .toURI()).getParent();
+            File tempFile = new File(path + File.separatorChar + "data.txt");
+            System.out.println("exists.  " + tempFile.exists());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
 }

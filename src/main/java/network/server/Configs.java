@@ -2,6 +2,7 @@ package network.server;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
 import java.util.Scanner;
 
 public class Configs {
@@ -39,9 +40,26 @@ public class Configs {
     }
 
     private void readFile(){
-        String path = "."+ File.separatorChar + "src" + File.separatorChar+
-                "main" + File.separatorChar + "resources" + File.separatorChar + "configuration.txt";
-        File inputFile = new File(path);
+        String filename = "configuration.txt";
+        File inputFile;
+        String path;
+        try {
+            path = new File(MainServer.class.getProtectionDomain().getCodeSource().getLocation()
+                    .toURI()).getParent() + File.separatorChar + filename;
+
+            inputFile = new File(path);
+
+            if(!inputFile.exists()){
+                path = "."+ File.separatorChar + "src" + File.separatorChar+
+                        "main" + File.separatorChar + "resources" + File.separatorChar + filename;
+                inputFile = new File(path);
+            }
+
+        } catch (URISyntaxException e) {
+            path = "."+ File.separatorChar + "src" + File.separatorChar+
+                    "main" + File.separatorChar + "resources" + File.separatorChar + filename;
+            inputFile = new File(path);
+        }
 
         Scanner scanner;
         try {

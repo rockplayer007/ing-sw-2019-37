@@ -1,5 +1,4 @@
 package controller;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.board.*;
@@ -21,10 +20,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 /**
  * Class that starts the game and sends messages to single or
  * multiple players and receives answers
  */
+
 public class RoomController {
 
     private List<Player> players;
