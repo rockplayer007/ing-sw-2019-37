@@ -2,24 +2,33 @@ package view.GUI;
 
 import model.player.Player;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
-import java.io.File;
-import java.util.*;
+import java.io.IOException;
 import java.util.List;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ScorePanel extends JPanel {
+
+    private static final Logger logger = Logger.getLogger(MapPanel.class.getName());
 
     public ScorePanel(List<Player> score){
         JLabel podium;
         this.setLayout(null);
         this.setBackground(Color.CYAN);
         podium= new JLabel();
-        podium.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar
-                + "main" + File.separatorChar + "resources" + File.separatorChar + "podium.png"));
+        Image img= null;
+        try {
+            img= ImageIO.read(ScorePanel.class.getResourceAsStream("/podium.png"));
+        } catch (IOException e){
+            logger.log(Level.WARNING, "Image not loaded correctly", e);
+        }
+        podium.setIcon(new ImageIcon(img));
+        /*podium.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar
+                + "main" + File.separatorChar + "resources" + File.separatorChar + "podium.png"));*/
         podium.setLocation(0,200);
         podium.setSize(750,283);
         podium.setOpaque(false);
@@ -31,22 +40,23 @@ public class ScorePanel extends JPanel {
         points[2]=new Point(512,140);
         int i=0;
         int y=550;
-        /*
-        Map<Player, Integer> sortedMap;
-        sortedMap = score.entrySet().stream()
-                .sorted((Map.Entry.<Player, Integer>comparingByValue().reversed()))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-
-         */
        for(Player key: score) {
             int value = key.getPlayerBoard().getPoints();
             if(i<3){
                 JLabel playerIcon= new JLabel();
                 playerIcon.setSize(160,165);
                 playerIcon.setLocation(points[i]);
+                /*
                 playerIcon.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar
                         + "main" + File.separatorChar + "resources" + File.separatorChar + "heroes"+
-                        File.separatorChar+ key.getHero().getName()+ "big.png"));
+                        File.separatorChar+ key.getHero().getName()+ "big.png"));*/
+                img= null;
+                try {
+                    img= ImageIO.read(LoginPanel.class.getResourceAsStream("/heroes/"+key.getHero().getName()+"big.png"));
+                } catch (IOException e){
+                    logger.log(Level.WARNING, "Image not loaded correctly", e);
+                }
+                playerIcon.setIcon(new ImageIcon(img));
                 this.add(playerIcon);
             }
             JLabel ranking= new JLabel("Ranking");

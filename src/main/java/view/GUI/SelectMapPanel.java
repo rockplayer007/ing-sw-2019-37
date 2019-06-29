@@ -1,11 +1,15 @@
 package view.GUI;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SelectMapPanel extends JPanel {
 
@@ -15,7 +19,7 @@ public class SelectMapPanel extends JPanel {
     private JButton [] imMap = new JButton[4];
     private JLabel [] mapDescription = new JLabel[4];
     private int mapSel;
-
+    private static final Logger logger = Logger.getLogger(SelectMapPanel.class.getName());
 
     public SelectMapPanel(Map<Integer, String> maps){
         JLabel text;
@@ -55,9 +59,15 @@ public class SelectMapPanel extends JPanel {
             gbc.gridx=x;
             gbc.gridy=y-1;
             gbc.anchor = GridBagConstraints.CENTER;
-            ImageIcon img= new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar+"maps"+File.separatorChar +"map"+key+"icon.png");
+          //  ImageIcon img= new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar+"maps"+File.separatorChar +"map"+key+"icon.png");
+            Image img= null;
+            try {
+                img= ImageIO.read(SelectCardPanel.class.getResourceAsStream("/maps/map"+key+"icon.png"));
+            } catch (IOException e){
+                logger.log(Level.WARNING, "Image not loaded correctly", e);
+            }
             final int c=i;
-            this.imMap[i].setIcon(img);
+            this.imMap[i].setIcon(new ImageIcon(img));
             this.imMap[i].setOpaque(true);
             imMap[i].addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e) {

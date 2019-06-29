@@ -6,10 +6,12 @@ import model.player.ActionOption;
 import model.player.Player;
 import network.client.MainClient;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Color;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.border.*;
@@ -17,6 +19,8 @@ import javax.swing.text.html.StyleSheet;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class MapPanel extends JLayeredPane {
@@ -47,16 +51,20 @@ public class MapPanel extends JLayeredPane {
     private JLabel help;
     private JLabel mypoint= new JLabel("");
     private boolean first=true;
+    private static final Logger logger = Logger.getLogger(MapPanel.class.getName());
 
     public MapPanel(GameBoard board) {
         JButton pBoards;
         this.setLayout(null);
         this.board = board;
-        image = Toolkit.getDefaultToolkit().createImage("." + File.separatorChar + "src" + File.separatorChar + "main" + File.separatorChar + "resources" +
+       /* image = Toolkit.getDefaultToolkit().createImage("." + File.separatorChar + "src" + File.separatorChar + "main" + File.separatorChar + "resources" +
                 File.separatorChar + "maps" + File.separatorChar + "map" + board.getId() + ".png");
+       */
+       image=getImage("/maps/map"+board.getId()+".png");
         try {
             loadImages(image);
         } catch (Exception ignored) {
+            System.out.println("errrrr");
         }
         setRoomCoordinate();
         pBoards = new JButton("SHOW PLAYER BOARDS");
@@ -192,8 +200,10 @@ public class MapPanel extends JLayeredPane {
         weaponButton.setContentAreaFilled(false);
         weaponButton.setBorder(null);
         weaponButton.setFocusPainted(false);
-        weaponButton.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main"
+      /*  weaponButton.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main"
                 + File.separatorChar + "resources" + File.separatorChar + "weapon" + File.separatorChar + weapon.getName() + ".png"));
+       */
+      weaponButton.setIcon(new ImageIcon(getImage("/weapon/"+weapon.getName()+".png")));
         weaponButton.setOpaque(false);
         myWeapon.add(weaponButton);
         this.add(weaponButton);
@@ -274,8 +284,10 @@ public class MapPanel extends JLayeredPane {
                 JLabel heroIcon = new JLabel();
                 heroIcon.setSize(150,100);
                 heroIcon.setLocation(2,600);
-                heroIcon.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main" + File.separatorChar + "resources" +
+                /*heroIcon.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main" + File.separatorChar + "resources" +
                         File.separatorChar + "heroes" + File.separatorChar + board.getPlayersOnMap().get(i).getHero().getName() + "big.png"));
+                */
+                heroIcon.setIcon(new ImageIcon(getImage("/heroes/"+board.getPlayersOnMap().get(i).getHero().getName()+"big.png")));
                 this.add(heroIcon);
                 first=false;
                 }}
@@ -298,9 +310,10 @@ public class MapPanel extends JLayeredPane {
             pow.setLocation(myPowerup.get(i - 1).getX() + 82, 554);
         else
             pow.setLocation(1030, 554);
-        pow.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main"
+        /*pow.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main"
                 + File.separatorChar + "resources" + File.separatorChar + "powerup" + File.separatorChar + "pow" + File.separatorChar + powerup.getName() + powerup.getAmmo().toString() + ".png"));
-        pow.setOpaque(false);
+        */pow.setOpaque(false);
+        pow.setIcon(new ImageIcon(getImage("/powerup/pow/"+powerup.getName()+powerup.getAmmo().toString()+".png")));
         pow.setContentAreaFilled(false);
         pow.setBorder(null);
         pow.setFocusPainted(false);
@@ -322,8 +335,10 @@ public class MapPanel extends JLayeredPane {
         playerButton.setContentAreaFilled(false);
         playerButton.setBorder(null);
         playerButton.setFocusPainted(false);
-        playerButton.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main" + File.separatorChar + "resources" +
+        /*playerButton.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main" + File.separatorChar + "resources" +
                 File.separatorChar + "heroes" + File.separatorChar + player.getHero().getName() + ".png"));
+       */
+        playerButton.setIcon(new ImageIcon(getImage("/heroes/"+player.getHero().getName()+".png")));
         playerButton.setOpaque(false);
         playerButton.setVisible(true);
         this.add(playerButton);
@@ -440,22 +455,26 @@ public class MapPanel extends JLayeredPane {
                         if (board.getSquare(i).getX() == 0) {
                             weaponButton.setSize(148, 90);
                             weaponButton.setLocation(2, 253 + 110 * j);
-                            weaponButton.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main" +
+                           /* weaponButton.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main" +
                                     File.separatorChar + "resources" + File.separatorChar + "powerup" + File.separatorChar + "weaponmap" + File.separatorChar +
                                     "left" + File.separatorChar + weaponButton.getWeapon().getName() + ".png"));
+                            */
+                           weaponButton.setIcon(new ImageIcon(getImage("/powerup/weaponmap/left/"+weaponButton.getWeapon().getName()+".png")));
 
                         } else if (board.getSquare(i).getY() == 0) {
                             weaponButton.setSize(90, 148);
                             weaponButton.setLocation(536 + 110 * j, 2);
-                            weaponButton.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main" +
+                           /* weaponButton.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main" +
                                     File.separatorChar + "resources" + File.separatorChar + "powerup" + File.separatorChar + "weaponmap" + File.separatorChar
-                                    + weaponButton.getWeapon().getName() + ".png"));
+                                    + weaponButton.getWeapon().getName() + ".png"));*/
+                            weaponButton.setIcon(new ImageIcon(getImage("/powerup/weaponmap/"+weaponButton.getWeapon().getName()+".png")));
                         } else if (board.getSquare(i).getY() == 2) {
                             weaponButton.setSize(148, 90);
                             weaponButton.setLocation(880, 405 + 110 * j);
-                            weaponButton.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main" +
+                           /* weaponButton.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main" +
                                     File.separatorChar + "resources" + File.separatorChar + "powerup" + File.separatorChar + "weaponmap" + File.separatorChar +
-                                    "right" + File.separatorChar + weaponButton.getWeapon().getName() + ".png"));
+                                    "right" + File.separatorChar + weaponButton.getWeapon().getName() + ".png"));*/
+                            weaponButton.setIcon(new ImageIcon(getImage("/powerup/weaponmap/right/"+weaponButton.getWeapon().getName()+".png")));
 
                         }
                         weaponIcon.add(weaponButton);
@@ -468,13 +487,17 @@ public class MapPanel extends JLayeredPane {
                 ammo.setSize(46, 68);
                 ammo.setBorder(null);
                 if (ammoSquare.getAmmoCard() != null)
-                    ammo.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main" +
+                    ammo.setIcon(new ImageIcon(getImage("/ammocard/"+ammoSquare.getAmmoCard().getName()+".png")));
+                   /*ammo.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main" +
                             File.separatorChar + "resources" + File.separatorChar + "ammocard" + File.separatorChar
-                            + ammoSquare.getAmmoCard().getName() + ".png"));
+                            + ammoSquare.getAmmoCard().getName() + ".png"));*/
 
                 else
-                    ammo.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main"
-                            + File.separatorChar + "resources" + File.separatorChar + "ammocard" + File.separatorChar + "ammo.png"));
+                   ammo.setIcon(new ImageIcon(getImage("/ammocard/ammo.png")));
+                 /* ammo.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main"
+                            + File.separatorChar + "resources" + File.separatorChar + "ammocard" + File.separatorChar + "ammo.png"));*/
+
+
                 ammo.setOpaque(false);
                 StyleSheet s = new StyleSheet();
                 Border border = BorderFactory.createLineBorder(s.stringToColor(square.getColor().toString()));
@@ -581,10 +604,11 @@ public class MapPanel extends JLayeredPane {
             Border border = BorderFactory.createLineBorder(Color.black, 2);
             action.setBorder(border);
             action.setFocusPainted(false);
+            /*
             action.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar
                     + "main" + File.separatorChar + "resources" + File.separatorChar
-                    + "action" + File.separatorChar + actionOptions.get(i).toString() + ".png"));
-
+                    + "action" + File.separatorChar + actionOptions.get(i).toString() + ".png"));*/
+            action.setIcon(new ImageIcon(getImage("/action/"+actionOptions.get(i).toString()+".png")));;
             if (actions.isEmpty())
                 action.setLocation(1030, 89);
             else {
@@ -627,9 +651,11 @@ public class MapPanel extends JLayeredPane {
         for (int i = 0; i < directions.size(); i++) {
             JButton dir = new JButton();
             dir.setSize(150, 150);
+            /*
             dir.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar
                     + "main" + File.separatorChar + "resources" + File.separatorChar
-                    + "directions" + File.separatorChar + directions.get(i).name() + ".jpg"));
+                    + "directions" + File.separatorChar + directions.get(i).name() + ".jpg"));*/
+            dir.setIcon(new ImageIcon(getImage("/directions/"+directions.get(i).name()+".jpg")));
             dir.addActionListener(new ChooseActionListener(mainClient,choose,i,this));
             choose.add(dir);
         }
@@ -824,6 +850,16 @@ public class MapPanel extends JLayeredPane {
 
     public void addActionInfo(String info){
         help.setText("HELP: " + info);
+    }
+
+    public Image getImage (String images){
+        Image img= null;
+        try {
+             img= ImageIO.read(MapPanel.class.getResourceAsStream(images));
+        } catch (IOException e){
+            logger.log(Level.WARNING, "Image not loaded correctly", e);
+        }
+        return img;
     }
 }
 
