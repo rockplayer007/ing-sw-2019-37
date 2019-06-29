@@ -1,8 +1,11 @@
 package view.GUI;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
+import java.io.IOException;
+
 
 public class LoginPanel extends JPanel implements ActionListener {
 
@@ -20,10 +23,17 @@ public class LoginPanel extends JPanel implements ActionListener {
     private JTextField ip;
     private boolean nicknameErr;
     private boolean connectionErr;
+  //  private static final Logger logger = Logger.getLogger(LoginPanel.class.getName());
 
  public LoginPanel()  {
         JLabel ipText;
-        image = Toolkit.getDefaultToolkit().createImage("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"backgroundimage.png");
+      //  image = Toolkit.getDefaultToolkit().createImage("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"backgroundimage.png");
+     //InputStream inputStream =LoginPanel.class.getResourceAsStream("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"backgroundimage.png");
+     try {
+         image= ImageIO.read(LoginPanel.class.getResourceAsStream("/backgroundimage.png"));
+     } catch (IOException e){
+        // logger.log(Level.WARNING, "Image not loaded correctly", e);
+     }
      try {
          loadImage(image);
      } catch (InterruptedException e) {

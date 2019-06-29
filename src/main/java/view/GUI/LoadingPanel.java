@@ -1,11 +1,16 @@
 package view.GUI;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import static javax.swing.SwingConstants.CENTER;
 
 public class LoadingPanel extends JPanel {
+    private static final Logger logger = Logger.getLogger(LoadingPanel.class.getName());
 
     public LoadingPanel(){
         this.setLayout(new FlowLayout());
@@ -14,7 +19,14 @@ public class LoadingPanel extends JPanel {
         loading = new JLabel();
         loading.setOpaque(false);
         loading.setSize(300,300);
-        loading.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"loading.gif"));
+        Image image = null;
+        try {
+            image= ImageIO.read(LoadingPanel.class.getResourceAsStream("/loading.gif"));
+        } catch (IOException e){
+            logger.log(Level.WARNING, "Image not loaded correctly", e);
+        }
+       // loading.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"loading.gif"));
+        loading.setIcon(new ImageIcon(image));
         this.add(loading,CENTER);
     }
 }

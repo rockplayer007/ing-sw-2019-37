@@ -2,18 +2,23 @@ package view.GUI;
 
 import model.card.AmmoColor;
 import model.player.Player;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.html.StyleSheet;
 import java.awt.*;
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PlayerBoardPanel extends JPanel{
 
     private List<JLabel> ammoColors = new ArrayList<>();
     private List<WeaponButton> weaponButtons = new ArrayList<>();
+    private static final Logger logger = Logger.getLogger(PlayerBoardPanel.class.getName());
     public PlayerBoardPanel(List<Player> players) {
         this.setLayout(null);
         int y=0;
@@ -37,8 +42,10 @@ public class PlayerBoardPanel extends JPanel{
                JLabel death = new JLabel();
                death.setLocation(x,i*142+103);
                death.setSize(27,32);
+               /*
                death.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"
-                       +File.separatorChar + "resources"+File.separatorChar + "heroes" + File.separatorChar+"skull.png"));
+                       +File.separatorChar + "resources"+File.separatorChar + "heroes" + File.separatorChar+"skull.png"));*/
+               death.setIcon(new ImageIcon(getImage("/heroes/skull.png")));
                death.setOpaque(false);
                this.add(death);
                x=x+31;
@@ -69,17 +76,19 @@ public class PlayerBoardPanel extends JPanel{
            nickname.setHorizontalAlignment(SwingConstants.CENTER);
           // nickname.setBorder(BorderFactory.createLineBorder(Color.white,2));
            nickname.setOpaque(true);
-           ImageIcon hero = new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"
+           /*ImageIcon hero = new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"
                    +File.separatorChar + "resources"+File.separatorChar + "heroes" + File.separatorChar+players.get(i).getHero().getName()+"big.png");
+           */
+           ImageIcon hero= new ImageIcon(getImage("/heroes/"+players.get(i).getHero().getName()+"big.png"));
            nickname.addActionListener(new HeroDescriptionListener(hero,players.get(i)));
            this.add(nickname);
            JLabel board = new JLabel();
-            board.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"
-                    +File.separatorChar+"resources"+File.separatorChar +"heroes"+File.separatorChar+players.get(i).getHero().getName()+"board.png"));
+            /*board.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"
+                    +File.separatorChar+"resources"+File.separatorChar +"heroes"+File.separatorChar+players.get(i).getHero().getName()+"board.png"));*/
+           board.setIcon(new ImageIcon(getImage("/heroes/"+players.get(i).getHero().getName()+"board.png")));
             if(players.get(i).getActionStatus().name().equals("FRENETICACTIONS1") ||
                     players.get(i).getActionStatus().name().equals("FRENETICACTIONS2"))
-                board.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"
-                        +File.separatorChar+"resources"+File.separatorChar +"heroes"+File.separatorChar+players.get(i).getHero().getName()+"Freneticboard.png"));
+            board.setIcon(new ImageIcon(getImage("heroes/"+players.get(i).getHero().getName()+"Freneticboard.png")));
             board.setOpaque(false);
             board.setLocation(0,y);
             board.setSize(577,141);
@@ -122,9 +131,10 @@ public class PlayerBoardPanel extends JPanel{
                 else
                     weaponButton.setBorder(BorderFactory.createLineBorder(Color.RED,3));
                 weaponButton.setFocusPainted(false);
-                weaponButton.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main"
+               /* weaponButton.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main"
                         + File.separatorChar + "resources" + File.separatorChar + "weapon" + File.separatorChar +
-                        players.get(i).getWeapons().get(c).getName() + ".png"));
+                        players.get(i).getWeapons().get(c).getName() + ".png"));*/
+               weaponButton.setIcon(new ImageIcon(getImage("/weapon/"+players.get(i).getWeapons().get(c).getName()+".png")));
                 weaponButton.setOpaque(false);
                 weaponButtons.add(weaponButton);
                 this.add(weaponButton);
@@ -133,4 +143,15 @@ public class PlayerBoardPanel extends JPanel{
 
     }
 }
+    public Image getImage (String image){
+        Image img= null;
+        try {
+            img= ImageIO.read(PlayerBoardPanel.class.getResourceAsStream(image));
+        } catch (IOException e){
+
+            logger.log(Level.WARNING, "Image not loaded correctly", e);
+        }
+        return img;
+
+    }
 }

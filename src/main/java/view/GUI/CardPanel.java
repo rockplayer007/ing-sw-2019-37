@@ -4,19 +4,24 @@ import model.card.Effect;
 import model.card.Weapon;
 import network.client.MainClient;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CardPanel extends JPanel {
 
     private List<JButton> buttonEffect;
     private Weapon weapon;
+    private static final Logger logger = Logger.getLogger(CardPanel.class.getName());
 
     public CardPanel(Weapon weapon, List<Effect> effects, MainClient mainClient, JFrame frame){
         this.weapon=weapon;
@@ -40,7 +45,13 @@ public class CardPanel extends JPanel {
         image.setSize(196,264);
         image.setLocation(0,0);
         image.setBorder(null);
-        image.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"powerup"+File.separatorChar+weapon.getName()+".png"));
+        //image.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"powerup"+File.separatorChar+weapon.getName()+".png"));
+        Image img= null;
+        try {
+            img= ImageIO.read(CardPanel.class.getResourceAsStream("/powerup/"+weapon.getName()+".png"));
+        } catch (IOException e){
+            logger.log(Level.WARNING, "Image not loaded correctly", e);
+        }
         this.add(image);
     }
 
