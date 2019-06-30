@@ -1,7 +1,20 @@
+## Index of the README
+- [Team Adrenaline](#team-adrenaline)
+- [Adrenaline board game](#adrenaline-board-game)
+  - [Description of the game](#description-of-the-game)
+  - [How to play](#how-to-play)
+- [Run the game](#run-the-game)
+- [Feautures](#features)
+  - [Basic](#basic)
+  - [Additional functionalities](#additional-functionalities)
+  - [Extra functionalities](#extra-functionalities)
+- [External libraries used](#external-libraries-used)
 
-# ing-sw-2019-37
-This is the project of course software engineering (2018-2019) of Politecnico di Milano.
-We are group-37 and group members is:
+
+
+# Team Adrenaline
+This project is part of the course Software Engineering (2018-2019) of the Politecnico di Milano.
+We are Team Adrenaline (group-37) and the developers are:
 
 - [Reylander Roland](https://github.com/rockplayer007): roland.gandini@mail.polimi.it
 - [Tarasco Antonio](https://github.com/tarascoant): antonio.tarasco@mail.polimi.it
@@ -12,7 +25,7 @@ We are group-37 and group members is:
 
 <img src="https://www.boardgamequest.com/wp-content/uploads/2017/01/Adrenaline-Header.jpg" height="350"></img>
 
-### Description of game
+### Description of the game
 In the future, war has left the world in complete destruction and split the people into factions. The factions have decided to stop the endless war and settle their dispute in the arena. A new virtual bloodsport was created. The Adrenaline tournament. Every faction has a champion, every champion has a chance to fight and the chance to win. Will you take the chance of becoming the next champion of the Adrenaline tournament?
 
 Play a first-person shooter on your gaming table. Grab some ammo, grab a gun, and start shooting. Build up an arsenal for a killer turn. Combat resolution is quick and diceless. And if you get shot, you get faster!
@@ -20,18 +33,29 @@ Play a first-person shooter on your gaming table. Grab some ammo, grab a gun, an
 > A Game for 3 to 5 players that plays in about 30-60 minutes
 
 
-## Rules of mage
+### How to play
 
--[Rules-Link](https://czechgames.com/en/adrenaline/)
+The rules of the game can be found [here](https://czechgames.com/en/adrenaline/).
 
-## Index
-- [Features](#features)
-- [Run the game](#run-the-game)
-- [External libraries used](#external-libraries-used)
+## Run the game
+
+The game requires [Java 8](https://www.java.com/it/download/) or later. To play the game you first need to run the server on one machine like this:
+
+```sh
+$ java -jar server.jar
+```
+You can change the `configuration.txt` file that is in the same folder as the `server.jar` if you want to personalize the game. **Note** that in case the file is missing or corrupted, then the default options will be considered.
+
+Next you can run a user interface like this:
+```sh
+$ java -jar client.jar
+```
+You will be asked if you like to play with a cool `command line interface` (CLI) or an amazing `graphical user inteface` (GUI).
+**Note** that a `data.txt` file will be created where a unique id will be stored. If you delete this file it will not be possible for you to reconnect to the game in case your connection falls. Also you can not swap from CLI to GUI or vice versa.
 
 ## Features
 
-_Basic_
+### Basic
 - [x] Complete rules
 - [x] Socket
 - [x] RMI
@@ -39,18 +63,19 @@ _Basic_
 - [x] GUI
 
 
-_Additional Functionalities_
+### Additional functionalities
 - [x] Multiple matches
 - [ ] Persistance
 - [ ] Domination or Turret mode
 - [ ] Terminator
 
+### Extra functionalities
 
-## Run the game
-
-// TODO 
-
-
+- [x] Start match on one client and continue on another
+- [x] Set number of minimum and maximum players indipendently of the rules
+- [x] Set number of skulls and points as you wish, in case you want to speed up the game
+- [x] Configure all possible timers of the game, to have a speedy game or a strategy play
+- [x] Change RMI and Socket ports how you prefere
 
 
 ## External libraries used
@@ -59,10 +84,6 @@ The external libraries we used to implement some game's features are linked belo
 
 |      Library  |Link							 |Use                |
 |---------------|--------------------------------|-------------------|
-|GSON			|https://github.com/google/gson  |			  	     |
-
-
-License
-----
-
+|GSON			|https://github.com/google/gson  | We used this library to easily class objects from server to client |
+|Jansi    |https://github.com/fusesource/jansi  | Useful to have a colorful play experience on CLI |
 
