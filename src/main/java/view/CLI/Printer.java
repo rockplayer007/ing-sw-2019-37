@@ -708,7 +708,7 @@ public class Printer {
     public void printAllInfo(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard){
 
         //dont know, should clear the screen
-        //print("\u001b[2J");
+        print("\u001b[2J");
 
         List<String> stringedBoard = printBoard(board);
         List<String> stringedWeapons = printWeaponsOnBoard(board);
@@ -838,6 +838,7 @@ public class Printer {
                 return "\u001B[0;37m"; //white
         }
     }
+
     String colorToAnsi(Color color){
         switch (color){
             case BLUE:
