@@ -54,6 +54,7 @@ public class BoardGenerator {
         //        "main" + File.separatorChar + "resources" + File.separatorChar + "map.xml";
         //File inputFile = new File(path);
 
+
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(new InputSource(mapInput));

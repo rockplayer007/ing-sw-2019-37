@@ -708,19 +708,21 @@ public class Printer {
     public void printAllInfo(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard){
 
         //dont know, should clear the screen
-        print("\u001b[2J");
+        //print("\u001b[2J");
 
         List<String> stringedBoard = printBoard(board);
         List<String> stringedWeapons = printWeaponsOnBoard(board);
         List<String> stringedPlayers = printPlayersInfo(board, myPowerups);
         List<String> stringedSkullBoard = printSkullBoard(skullBoard);
 
+        String SPACE = " %45s";
+
         int nWeapons = stringedWeapons.size();
 
         String header = String.format("%19s %10s %22s %10s %10s %13s",
                 "GAME BOARD","|", "WEAPONS ON GAME BOARD", "COST", "|", "PLAYERS");
 
-        println(header);
+        println(RESET + header);
 
         int j = 0;
         int k = 0;
@@ -741,7 +743,7 @@ public class Printer {
                     w++;
                 }
                 else if (w < -1){
-                    line.append(String.format(" %45s", " "));
+                    line.append(String.format(SPACE, " "));
                     w++;
                 }
                 else {
@@ -753,11 +755,11 @@ public class Printer {
             else{
                 //add extra space when there are less weapons
                 if(nWeapons < 9){
-                    line.append(String.format(" %45s", " "));
+                    line.append(String.format(SPACE, " "));
                     nWeapons++;
                 }
                 else {
-                    line.append(String.format(" %45s", " "));
+                    line.append(String.format(SPACE, " "));
                     skullB = true;
                 }
             }
@@ -774,7 +776,7 @@ public class Printer {
 
     }
 
-    public void printAttack(Player attacker, Map<Player, Integer> hp, Map<Player, Integer> marks){
+    void printAttack(Player attacker, Map<Player, Integer> hp, Map<Player, Integer> marks){
         StringBuilder attack = new StringBuilder();
 
         attack.append(colorToAnsi(attacker.getColor()));
@@ -808,7 +810,7 @@ public class Printer {
 
     }
 
-    public void printScore(List<Player> score) {
+    void printScore(List<Player> score) {
         if(thread != null){
             closeRequest();
         }

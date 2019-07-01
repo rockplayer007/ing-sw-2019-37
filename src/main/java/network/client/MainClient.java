@@ -324,8 +324,13 @@ public class MainClient {
                 if(((InfoMessage) message).getConnection()){
                     online = false;
                     closePing();
+                    view.showInfo(((InfoMessage) message).getInfo());
+                    System.exit(-1);
                 }
-                view.showInfo(((InfoMessage) message).getInfo());
+                else {
+                    view.showInfo(((InfoMessage) message).getInfo());
+                }
+
                 break;
             case CONNECTION:
                 //if this message arrives, the connection is succesfull
