@@ -52,7 +52,7 @@ public class MainClient {
 
     private CountDown connectionTimer = new CountDown(PING_TIMER, () -> {});
     private CountDown pingTimer = new CountDown(PING_TIMER, () -> {});
-    private static final int PING_TIMER = 600;
+    private static final int PING_TIMER = 5;
 
     private static ViewInterface view;
     private static boolean socket; //true uses socket false uses rmi
