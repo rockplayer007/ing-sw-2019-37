@@ -38,7 +38,7 @@ public class CLI implements ViewInterface {
 
     public CLI(MainClient mainClient){
         this.mainClient = mainClient;
-        printer = new Printer(this);
+        printer = new Printer();
         firstTime = true;
     }
 
@@ -208,7 +208,7 @@ public class CLI implements ViewInterface {
 
     @Override
     public void showAttack(Player attacker, Map<Player, Integer> hp, Map<Player, Integer> marks) {
-        printer.printAttack(attacker, hp, marks);
+        printer.printAttack(attacker, hp, marks, mainClient.getUsername());
     }
 
     public void timeout(){
@@ -225,7 +225,7 @@ public class CLI implements ViewInterface {
 
     @Override
     public void updateAll(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard) {
-        printer.printAllInfo(board, myPowerups, skullBoard);
+        printer.printAllInfo(board, myPowerups, skullBoard, mainClient.getUsername());
 
     }
 

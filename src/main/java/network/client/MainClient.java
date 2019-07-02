@@ -19,6 +19,7 @@ import network.messages.clientToServer.ListResponse;
 import network.messages.clientToServer.LoginRequest;
 import network.messages.serverToClient.*;
 import network.server.MainServer;
+import view.BOT.BOT;
 import view.CLI.CLI;
 import view.GUI.GUI;
 import view.ViewInterface;
@@ -63,13 +64,16 @@ public class MainClient {
 
     public static void main(String[] args) {
         Scanner reader = new Scanner(System.in);
-        System.out.println("CLI or GUI?[C/G]");
+        System.out.println("CLI or GUI or BOT?[C/G/B]");
         String choice = reader.nextLine().toLowerCase();
 
         MainClient mainClient = new MainClient();
 
         if (choice.equals("g")) {
             view = new GUI(mainClient);
+        }
+        else if(choice.equals("b")){
+            view = new BOT(mainClient);
         }
         else {
             view = new CLI(mainClient);

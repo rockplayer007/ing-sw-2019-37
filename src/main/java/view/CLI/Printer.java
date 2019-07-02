@@ -20,7 +20,6 @@ public class Printer {
     private Thread thread;
     private int choice;
     private String decision;
-    private CLI cli;
     private static final String AMMO = "O";
     private static final String MARK = "@";
     private static final String DROP = "X";
@@ -31,10 +30,9 @@ public class Printer {
 
     //private static final Logger logger = Logger.getLogger(Printer.class.getName());
 
-    public Printer(CLI cli){
+    public Printer(){
         System.setProperty("jansi.passthrough", "true");
         AnsiConsole.systemInstall();
-        this.cli = cli;
     }
 
 
@@ -329,7 +327,7 @@ public class Printer {
     public void println(String toPrint){
         AnsiConsole.out.println(toPrint);
     }
-    void print(String toPrint){
+    public void print(String toPrint){
         AnsiConsole.out.print(toPrint);
     }
 
@@ -566,7 +564,7 @@ public class Printer {
         return allLines;
     }
 
-    public List<String> printPlayersInfo(GameBoard board, List<Powerup> myPowerups){
+    public List<String> printPlayersInfo(GameBoard board, List<Powerup> myPowerups, String username){
         int playerCnt = 0;
 
         List<String> stringedInfo = new ArrayList<>();
@@ -582,7 +580,7 @@ public class Printer {
 
                 playerInfo.append(colorToAnsi(player.getColor())).append(++playerCnt).append(") ");
                 playerInfo.append(colorToAnsi(player.getColor())).append(player.getNickname()).append(" ");
-                if(player.getNickname().equals(cli.getMainClient().getUsername())){
+                if(player.getNickname().equals(username)){
                     playerInfo.append(RESET).append("(YOU) ");
                 }
 
@@ -611,7 +609,7 @@ public class Printer {
                 int dead = player.getPlayerBoard().getDeathTimes();
                 if(dead > 0){
                     playerInfo.append(colorToAnsi(AmmoColor.RED))
-                            .append("DIED ").append(dead).append(dead > 1 ? " TIMES" : " TIME");
+                            .append("  DIED ").append(dead).append(dead > 1 ? " TIMES" : " TIME");
                 }
 
                 //add points
@@ -625,7 +623,7 @@ public class Printer {
 
                 //powerups
                 String delimiter = ""; //trick
-                if(player.getNickname().equals(cli.getMainClient().getUsername())){
+                if(player.getNickname().equals(username)){
                     stringedPowerups.append(RESET).append("Powerups: ");
                     for(Powerup powerup : myPowerups){
                         stringedPowerups.append(RESET).append(delimiter);
@@ -705,14 +703,14 @@ public class Printer {
         return stringed;
     }
 
-    public void printAllInfo(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard){
+    public void printAllInfo(GameBoard board, List<Powerup> myPowerups, SkullBoard skullBoard, String username){
 
         //dont know, should clear the screen
         //print("\u001b[2J");
 
         List<String> stringedBoard = printBoard(board);
         List<String> stringedWeapons = printWeaponsOnBoard(board);
-        List<String> stringedPlayers = printPlayersInfo(board, myPowerups);
+        List<String> stringedPlayers = printPlayersInfo(board, myPowerups, username);
         List<String> stringedSkullBoard = printSkullBoard(skullBoard);
 
         String SPACE = " %45s";
@@ -755,11 +753,11 @@ public class Printer {
             else{
                 //add extra space when there are less weapons
                 if(nWeapons < 9){
-                    line.append(String.format(SPACE, " "));
+                    line.append(String.format(" %44s", " "));
                     nWeapons++;
                 }
                 else {
-                    line.append(String.format(SPACE, " "));
+                    line.append(String.format(" %44s", " "));
                     skullB = true;
                 }
             }
@@ -776,19 +774,15 @@ public class Printer {
 
     }
 
-    void printAttack(Player attacker, Map<Player, Integer> hp, Map<Player, Integer> marks){
+    public void printAttack(Player attacker, Map<Player, Integer> hp, Map<Player, Integer> marks, String username){
         StringBuilder attack = new StringBuilder();
 
         attack.append(colorToAnsi(attacker.getColor()));
-        if(attacker.getNickname().equals(cli.getMainClient().getUsername())){
-            attack.append("YOU");
-        }
-        else{
-            attack.append(attacker.getNickname());
-        }
-        attack.append(colorToAnsi(AmmoColor.RED)).append(" attacked:\n");
+        attack.append(attacker.getNickname().equals(username) ? "YOU" : attacker.getNickname());
+
+        attack.append(colorToAnsi(AmmoColor.RED)).append(" attacked:\n").append(RESET);
         hp.forEach((x, y) -> {
-            attack.append(colorToAnsi(x.getColor())).append(x.getNickname())
+            attack.append(colorToAnsi(x.getColor())).append(username.equals(x.getNickname()) ? "YOU" : x.getNickname())
                     .append(RESET).append(" giving ");
             for(int i = 0; i < y; i ++){
                 attack.append(colorToAnsi(attacker.getColor())).append(DROP);
@@ -798,7 +792,7 @@ public class Printer {
         });
 
         marks.forEach((x, y) -> {
-            attack.append(colorToAnsi(x.getColor())).append(x.getNickname())
+            attack.append(colorToAnsi(x.getColor())).append(username.equals(x.getNickname()) ? "YOU" : x.getNickname())
                     .append(RESET).append(" giving ");
             for(int i = 0; i < y; i ++){
                 attack.append(colorToAnsi(attacker.getColor())).append(MARK);
@@ -810,7 +804,7 @@ public class Printer {
 
     }
 
-    void printScore(List<Player> score) {
+    public void printScore(List<Player> score) {
         if(thread != null){
             closeRequest();
         }
