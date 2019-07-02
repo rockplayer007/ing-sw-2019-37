@@ -50,7 +50,7 @@ Next you can run a user interface like this:
 ```sh
 $ java -jar client.jar
 ```
-You will be asked if you like to play with a cool `command line interface` (CLI) or an amazing `graphical user inteface` (GUI).
+You will be asked if you like to play with a cool `command line interface` (CLI) or an amazing `graphical user inteface` (GUI). In addition it is possible to run a BOT that will randomly play with higher probabilities to attack.
 **Note** that a `data.txt` file will be created where a unique id will be stored. If you delete this file it will not be possible for you to reconnect to the game in case your connection falls. Also you can not swap from CLI to GUI or vice versa.
 
 ## Features
@@ -71,6 +71,7 @@ You will be asked if you like to play with a cool `command line interface` (CLI)
 
 ### Extra functionalities
 
+- [x] Run a BOT that plays automatically 
 - [x] Start match on one client and continue on another
 - [x] Set number of minimum and maximum players indipendently of the rules
 - [x] Set number of skulls and points as you wish, in case you want to speed up the game
