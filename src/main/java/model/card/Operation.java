@@ -473,9 +473,11 @@ class ThorTargets implements Operation{
         this.index=index;
     }
     @Override
-    public void execute(Room room) {
+    public void execute(Room room) throws NotExecutedException {
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
+        if (index>attackHandler.getSelectedTargets().size()-1)
+            throw new NotExecutedException("You can not use this effect");
         Set<Square> visible = new HashSet<>(attackHandler.getSelectedTargets().get(index).getPosition().visibleSquare(room.getBoard().getMap()));
         ArrayList<Player> visiblePlayers = new ArrayList<>();
 
