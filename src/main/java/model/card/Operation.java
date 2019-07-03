@@ -17,6 +17,12 @@ import java.util.stream.Collectors;
 
 public interface Operation {
 
+    /**
+     * @param room the room that this operation is used
+     * @throws NotExecutedException when the effect is non execute
+     * @throws TimeFinishedException when the timer of players turn is finished during execution of effect
+     * @throws InterruptOperationException when the effect is interrupt but that effect worked.
+     */
     void execute(Room room)throws NotExecutedException, TimeFinishedException, InterruptOperationException;
 }
 
@@ -30,6 +36,9 @@ class InfoClass {
     }
 }
 
+/**
+ * Set the visiblePlayers as possibleTargets in the AttackHandler
+ */
 class VisiblePlayers implements Operation{
 
     @Override
@@ -45,6 +54,9 @@ class VisiblePlayers implements Operation{
     }
 }
 
+/**
+ * Select "numberTargets" targets form possibleTargets in the AttackHandler, and depend on the attribute "distinctSquare"
+ */
 class SelectTargets implements Operation{
     private int numberTargets;
     private Boolean distinctSquare;
@@ -75,11 +87,14 @@ class SelectTargets implements Operation{
         if (targets != null)
             possibleTargets.removeAll(targets);
 
-        attackHandler.setTargetsToShot(targets);
+        attackHandler.setTargetsToShoot(targets);
     }
 
 }
 
+/**
+ * Select "numberTargets" targets form selectedTargets in the AttackHandler
+ */
 class SelectFromSelectedTargets implements Operation{
     private int numberTargets;
     SelectFromSelectedTargets(int number) {
@@ -98,11 +113,14 @@ class SelectFromSelectedTargets implements Operation{
         if (targets != null)
             selectedTargets.removeAll(targets);
 
-        attackHandler.setTargetsToShot(targets);
+        attackHandler.setTargetsToShoot(targets);
 
     }
 }
 
+/**
+ * Give "points" damage to all targets form targetsToShoot in the AttackHandler
+ */
 class Damage implements Operation{
 
     private int points;
@@ -115,13 +133,16 @@ class Damage implements Operation{
     public void execute(Room room){
         AttackHandler attackHandler=room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
-        List<Player> targets = attackHandler.getTargetsToShot();
+        List<Player> targets = attackHandler.getTargetsToShoot();
         targets.forEach(x->attackHandler.addDamage(x,points));
         targets.forEach(x->x.getPlayerBoard().addDamage(currentPlayer,points));
 
     }
 }
 
+/**
+ * Give "points" marks to all targets form targetsToShoot in the AttackHandler
+ */
 class Mark implements Operation{
 
     private int points;
@@ -134,7 +155,7 @@ class Mark implements Operation{
     public void execute(Room room){
         AttackHandler attackHandler = room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
-        List<Player> targets = attackHandler.getTargetsToShot();
+        List<Player> targets = attackHandler.getTargetsToShoot();
         targets.forEach(x->attackHandler.addmark(x,points));
         targets.forEach(x->x.getPlayerBoard().addMark(currentPlayer,points));
 
@@ -142,12 +163,14 @@ class Mark implements Operation{
     }
 }
 
-
+/**
+ * Set the targetsToShoot as selectedTargets in the AttackHandler
+ */
 class SetTargetToSelected implements Operation{
     @Override
     public void execute(Room room) {
         AttackHandler attackHandler=room.getAttackHandler();
-        List<Player> targets =new ArrayList<>(attackHandler.getTargetsToShot());
+        List<Player> targets =new ArrayList<>(attackHandler.getTargetsToShoot());
         List<Player> selectedTargets = attackHandler.getSelectedTargets();
 
         for (Player p:targets) {
@@ -160,6 +183,9 @@ class SetTargetToSelected implements Operation{
 }
 
 
+/**
+ * This operation allow the player move depend by attribute "distance"
+ */
 class Run implements Operation{
     private int distance;
 
@@ -176,6 +202,7 @@ class Run implements Operation{
 
 
 /**
+ * This operation allow get and set possibleTargets depend attribute "distance"
  * if need to remove the target in base minDistance set "isMaxDistance" as false, and the other way around.
  */
 class MinOrMaxDistance implements Operation{
@@ -215,6 +242,7 @@ class SameSquare implements Operation{
 }
 
 /**
+ * This operation allow get possible targets before move "distance" and depend by attribute "yourSquare"
  * if yourSquare is false need launch first "VisiblePlayers"
  */
 class  AddPossibleTargetBeforeMove implements Operation{
@@ -251,7 +279,9 @@ class  AddPossibleTargetBeforeMove implements Operation{
     }
 }
 
-
+/**
+ * This operation allow to move the targets to visible whit max distance defined by attribute "distance"
+ */
 class  MoveTargetToVisible implements Operation{
     private int distance;
 
@@ -262,7 +292,7 @@ class  MoveTargetToVisible implements Operation{
     @Override
     public void execute(Room room) throws NotExecutedException, TimeFinishedException{
         Player currentPlayer = room.getCurrentPlayer();
-        Player target = room.getAttackHandler().getTargetsToShot().get(0); // dovrebbe essere sempre uno solo quando lancia questo operazione
+        Player target = room.getAttackHandler().getTargetsToShoot().get(0); // dovrebbe essere sempre uno solo quando lancia questo operazione
         if (target == null)
             throw new NotExecutedException(InfoClass.NOT_POSSIBLE_PLAYERS_CAN_BE_SHOOT);
         Set<Square> visibleSquare = currentPlayer.getPosition().visibleSquare(room.getBoard().getMap());
@@ -273,7 +303,9 @@ class  MoveTargetToVisible implements Operation{
     }
 }
 
-
+/**
+ * Set player position as effectSquare(attribute of AttackHandler)
+ */
 class SetPlayerPositionAsEffectSquare implements Operation{
     @Override
     public void execute(Room room) {
@@ -282,7 +314,9 @@ class SetPlayerPositionAsEffectSquare implements Operation{
     }
 }
 
-
+/**
+ * Select a square to set as effectSquare(attribute of AttackHandler) depend by attribute "zone"
+ */
 class SelectEffectSquare implements Operation{
     private int zone; // if zone=1 "vortex", if zone=0 "select effect square"
 
@@ -309,14 +343,20 @@ class SelectEffectSquare implements Operation{
     }
 }
 
+/**
+ * Move all targetToShoot to effectSquare(a attribute of AttackHandler)
+ */
 class MoveTargetToEffectSquare implements Operation{
     @Override
     public void execute(Room room) {
         AttackHandler attackHandler=room.getAttackHandler();
-        attackHandler.getTargetsToShot().forEach(x->x.movePlayer(attackHandler.getEffectSquare()));
+        attackHandler.getTargetsToShoot().forEach(x->x.movePlayer(attackHandler.getEffectSquare()));
     }
 }
 
+/**
+ * A operation for weapon Furance
+ */
 class Furance implements Operation{
     private Boolean selectSquare;
 
@@ -336,20 +376,21 @@ class Furance implements Operation{
                 throw new NotExecutedException("there are not possible room can be choose ");
             Color color = MessageHandler.chooseRoom(currentPlayer,new ArrayList<>(rooms),room);
             room.getBoard().getMap().getSquaresInRoom().get(color).forEach(x-> targets.addAll(x.getPlayersOnSquare()));
-            attackHandler.setTargetsToShot(targets);
+            attackHandler.setTargetsToShoot(targets);
         }else {
             Set<Square> squares=new HashSet<>(currentPlayer.getPosition().getNeighbourSquare());
             squares.remove(currentPlayer.getPosition());
             squares=squares.stream().filter(x->!x.getPlayersOnSquare().isEmpty()).collect(Collectors.toSet());
             if (squares.isEmpty())
                 throw new NotExecutedException(InfoClass.NOT_POSSIBLE_PLAYERS_CAN_BE_SHOOT);
-            attackHandler.setTargetsToShot(MessageHandler.chooseSquare(currentPlayer,squares, room,InfoClass.CHOOSE_PLAYER).getPlayersOnSquare());
+            attackHandler.setTargetsToShoot(MessageHandler.chooseSquare(currentPlayer,squares, room,InfoClass.CHOOSE_PLAYER).getPlayersOnSquare());
         }
     }
 }
 
 
 /**
+ *  A operation for weapon Heatseeker, for get the player that can not see on the map and set they as possibleTargets
  *  need launch first "VisiblePlayers"
  */
 class Heatseeker implements Operation{
@@ -365,7 +406,7 @@ class Heatseeker implements Operation{
 }
 
 /**
- *
+ * set PossibleTargets find on one direction depend by attributes "distance" and "penetrate"
  */
 class DirectionTargets implements Operation{
     private int distance;
@@ -405,8 +446,9 @@ class DirectionTargets implements Operation{
 }
 
 
-
-
+/**
+ * set all player in the possibleTarget as targetsToShoot
+ */
 class SelectAllTarget implements Operation{
     @Override
     public void execute(Room room) throws NotExecutedException {
@@ -414,19 +456,25 @@ class SelectAllTarget implements Operation{
         List<Player> possibleTargets = attackHandler.getPossibleTargets();
         if (possibleTargets.isEmpty())
             throw new NotExecutedException(InfoClass.NOT_POSSIBLE_PLAYERS_CAN_BE_SHOOT);
-        attackHandler.setTargetsToShot(new ArrayList<>(possibleTargets));
+        attackHandler.setTargetsToShoot(new ArrayList<>(possibleTargets));
         attackHandler.setPossibleTargets(new ArrayList<>());
     }
 }
 
+/**
+ * Move currentPlayer to target's position
+ */
 class MoveToTarget implements Operation{
     @Override
     public void execute(Room room) {
         Player currentPlayer = room.getCurrentPlayer();
-        currentPlayer.movePlayer(room.getAttackHandler().getTargetsToShot().get(0).getPosition());
+        currentPlayer.movePlayer(room.getAttackHandler().getTargetsToShoot().get(0).getPosition());
     }
 }
 
+/**
+ * Move the target depend by attributes "distance" and "penetrate"
+ */
 class MoveTarget implements Operation{
     private int distance;
     MoveTarget(int distance){
@@ -435,7 +483,7 @@ class MoveTarget implements Operation{
     @Override
     public void execute(Room room) throws NotExecutedException, TimeFinishedException{
         Player currentPlayer = room.getCurrentPlayer();
-        Player target = room.getAttackHandler().getTargetsToShot().get(0); // dovrebbe essere sempre uno solo quando lancia questo operazione
+        Player target = room.getAttackHandler().getTargetsToShoot().get(0); // dovrebbe essere sempre uno solo quando lancia questo operazione
         if (target == null)
             throw new NotExecutedException("there are not possible players can be move ");
         Set<Square> validSquare;
@@ -448,13 +496,16 @@ class SetTargetPositionAsEffectSquare implements Operation{
     @Override
     public void execute(Room room)throws NotExecutedException {
         AttackHandler attackHandler=room.getAttackHandler();
-        Player target = attackHandler.getTargetsToShot().get(0);
+        Player target = attackHandler.getTargetsToShoot().get(0);
         if (target == null)
             throw new NotExecutedException("there are not target choice");
         attackHandler.setEffectSquare(target.getPosition());
     }
 }
 
+/**
+ * Set all player on the effectSquare as possibleTargets
+ */
 class TargetOnEffectSquare implements Operation{
     @Override
     public void execute(Room room) throws InterruptOperationException{
@@ -467,6 +518,9 @@ class TargetOnEffectSquare implements Operation{
 }
 
 
+/**
+ * A operation for weapon T.H.O.R
+ */
 class ThorTargets implements Operation{
     private int index;
     ThorTargets(int index){
@@ -489,12 +543,15 @@ class ThorTargets implements Operation{
     }
 }
 
+/**
+ * set next square in direction currentPlayer to target as effectSquare
+ */
 class NextSquareInDirection implements Operation {
     @Override
     public void execute(Room room){
         AttackHandler attackHandler = room.getAttackHandler();
         Player currentPlayer = room.getCurrentPlayer();
-        Square targetPosition = attackHandler.getTargetsToShot().get(0).getPosition();
+        Square targetPosition = attackHandler.getTargetsToShoot().get(0).getPosition();
         Square currentPlayerPosition = currentPlayer.getPosition();
         int diffx = currentPlayerPosition.getX() - targetPosition.getX();
         int diffy = currentPlayerPosition.getY() - targetPosition.getY();
@@ -510,6 +567,9 @@ class NextSquareInDirection implements Operation {
     }
 }
 
+/**
+ * A operation for weapon Flamenthorwer
+ */
 class Flamethorwer implements Operation {
     @Override
     public void execute(Room room) throws NotExecutedException,TimeFinishedException {
@@ -541,6 +601,9 @@ class Flamethorwer implements Operation {
     }
 }
 
+/**
+ * A operation whit effect repel in a direction
+ */
 class Repel implements Operation{
     private int distance;
     Repel (int distance){
@@ -549,7 +612,7 @@ class Repel implements Operation{
     @Override
     public void execute(Room room) throws NotExecutedException, TimeFinishedException{
         AttackHandler attackHandler = room.getAttackHandler();
-        Player target = attackHandler.getTargetsToShot().get(0);
+        Player target = attackHandler.getTargetsToShoot().get(0);
         if (target == null)
             throw new NotExecutedException("there are not possible players can be move ");
         Set<Square> validPosition = new HashSet<>();
@@ -558,6 +621,10 @@ class Repel implements Operation{
         target.movePlayer(MessageHandler.chooseSquare(room.getCurrentPlayer(),validPosition, room,InfoClass.CHOOSE_SQUARE));
     }
 }
+
+/**
+ * set all players can find on the map as possiblePlayer
+ */
  class AllPossibleTargets implements Operation{
      @Override
      public void execute(Room room) {
@@ -568,6 +635,9 @@ class Repel implements Operation{
      }
  }
 
+/**
+ * a operation for powerup TargetingScope
+ */
 class TargetingScope implements Operation{
     @Override
     public void execute(Room room) throws NotExecutedException,TimeFinishedException {
@@ -592,6 +662,9 @@ class TargetingScope implements Operation{
 }
 
 
+/**
+ * Move the currentPlayer where he want
+ */
 class Teleporter implements Operation{
     @Override
     public void execute(Room room) throws TimeFinishedException{
@@ -601,6 +674,9 @@ class Teleporter implements Operation{
     }
 }
 
+/**
+ * Do a update for view
+ */
 class Update implements Operation{
 
     @Override
@@ -610,6 +686,9 @@ class Update implements Operation{
 }
 
 
+/**
+ * Launch InterruptOperationException
+ */
 class InterruptControll implements Operation{
     @Override
     public void execute(Room room) throws InterruptOperationException {
@@ -618,6 +697,9 @@ class InterruptControll implements Operation{
     }
 }
 
+/**
+ *  add all player in the selectedTarget to possibleTargets
+ */
 class AddselectedTargetToPossibleTarget implements Operation{
     @Override
     public void execute(Room room) {
@@ -625,10 +707,3 @@ class AddselectedTargetToPossibleTarget implements Operation{
         attackHandler.getSelectedTargets().stream().filter(p->!attackHandler.getPossibleTargets().contains(p)).forEach(x->attackHandler.getPossibleTargets().add(x));
     }
 }
-
-
-
-
-
-
-

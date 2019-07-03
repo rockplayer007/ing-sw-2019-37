@@ -3,6 +3,10 @@ import java.util.*;
 
 public class PowerDeck extends Deck<Powerup>{
 
+
+    /**
+     * Constructor
+     */
     public PowerDeck(){
         createPowerups();
         mixDeck();

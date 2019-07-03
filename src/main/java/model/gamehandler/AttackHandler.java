@@ -10,15 +10,18 @@ import java.util.Map;
 
 public class AttackHandler {
     private List<Player> possibleTargets;
-    private List<Player> targetsToShot;
+    private List<Player> targetsToShoot;
     private List<Player> selectedTargets;
     private Square effectSquare;
     private Map<Player,Integer> damaged;
     private Map<Player,Integer> marked;
 
+    /**
+     * Constructor
+     */
     public AttackHandler() {
         possibleTargets = new ArrayList<>();
-        targetsToShot = new ArrayList<>();
+        targetsToShoot = new ArrayList<>();
         selectedTargets = new ArrayList<>();
         damaged = new HashMap<>();
         marked = new HashMap<>();
@@ -32,12 +35,12 @@ public class AttackHandler {
         this.possibleTargets = targetPlayers;
     }
 
-    public List<Player> getTargetsToShot() {
-        return targetsToShot;
+    public List<Player> getTargetsToShoot() {
+        return targetsToShoot;
     }
 
-    public void setTargetsToShot(List<Player> targetsToShot) {
-        this.targetsToShot = targetsToShot;
+    public void setTargetsToShoot(List<Player> targetsToShoot) {
+        this.targetsToShoot = targetsToShoot;
     }
 
     public List<Player> getSelectedTargets() {
@@ -64,6 +67,11 @@ public class AttackHandler {
         return marked;
     }
 
+    /**
+     * For record damages
+     * @param player player that damaged
+     * @param point point that damaged
+     */
     public void addDamage(Player player, int point){
         if (damaged.containsKey(player))
             damaged.put(player, damaged.get(player)+point);
@@ -71,6 +79,11 @@ public class AttackHandler {
             damaged.put(player,point);
     }
 
+    /**
+     * For record marks
+     * @param player player that marked
+     * @param point point that marked
+     */
     public void addmark(Player player,int point){
         if (marked.containsKey(player))
             marked.put(player, marked.get(player)+point);

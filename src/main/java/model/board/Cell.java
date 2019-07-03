@@ -22,6 +22,9 @@ public class Cell implements Serializable {
         point = 1;
     }
 
+    /**
+     * when the player have overkill, he can get 2 "point" in the SkullsBoard
+     */
     public void setOverKill() {
         point = 2;
     }

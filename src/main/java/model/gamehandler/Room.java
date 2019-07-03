@@ -27,6 +27,10 @@ public class Room {
     private static final Logger logger = Logger.getLogger(Room.class.getName());
 
 
+    /**
+     * Constructor
+     * @param roomController roomController associate for thi
+     */
     public Room(RoomController roomController) {
         this.roomController = roomController;
         board = new Board();
@@ -39,6 +43,10 @@ public class Room {
 
     }
 
+    /**
+     * set next player for next turn
+     * @return true if success to set else false foe players connected< minimum player connected for a match
+     */
     public boolean setNextPlayer() {
         long connectedPlayers = players.stream().filter(Player::isConnected).count();
         if(connectedPlayers < Configs.getInstance().getMinimumPlayers()){
@@ -60,6 +68,10 @@ public class Room {
     }
 
 
+    /**
+     * for create the map
+     * @param selection  nember of map
+     */
     public void createMap(int selection) {
         GameBoard gameBoard = boardGenerator.createMap(selection);
         board.setMap(gameBoard);
@@ -150,6 +162,9 @@ public class Room {
 
     }
 
+    /**
+     *  for launch the frenzy mode
+     */
     void startFrenzy(){
         players.forEach(p->p.getPlayerBoard().setFrenzy(true));
         players.forEach(p->p.setActionStatus(ActionState.FRENETICACTIONS2));
@@ -158,6 +173,9 @@ public class Room {
         }
     }
 
+    /**
+     * @return scoreboard of the game
+     */
     public List<Player> endScoreboard(){
         board.getSkullBoard().liquidation();
         players.forEach(p->p.getPlayerBoard().liquidation());
@@ -167,6 +185,9 @@ public class Room {
 
     }
 
+    /**
+     *  Backtracking for the payment
+     */
     public void undoPayment(){
         paymentRecord.getUsedAmmo().forEach(currentPlayer::addAmmo);
         paymentRecord.getUsedPowerups().forEach(x->{

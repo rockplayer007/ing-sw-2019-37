@@ -4,7 +4,9 @@ import java.util.*;
 
 public class WeaponDeck extends Deck<Weapon>{
 
-
+    /**
+     * Constructor
+     */
     public WeaponDeck(){
         this.addAll(generationWeapons());
         mixDeck();

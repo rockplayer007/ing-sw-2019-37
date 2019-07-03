@@ -1,8 +1,6 @@
 package model.card;
 
-import controller.MessageHandler;
 import controller.RoomController;
-import model.card.*;
 import model.exceptions.InterruptOperationException;
 import model.exceptions.NotExecutedException;
 import model.exceptions.TimeFinishedException;
@@ -10,19 +8,10 @@ import model.gamehandler.AttackHandler;
 import model.gamehandler.Room;
 import model.player.Heroes;
 import model.player.Player;
-import network.client.MainClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import view.CLI.CLI;
-import view.CLI.Printer;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -87,18 +76,18 @@ public class OperationTest {
 //        selectTargets.execute(room);
 
 
-        room.getAttackHandler().setTargetsToShot(room.getAttackHandler().getPossibleTargets());
+        room.getAttackHandler().setTargetsToShoot(room.getAttackHandler().getPossibleTargets());
         Damage damage = new Damage(1);
         damage.execute(room);
-        assertSame(room.getAttackHandler().getTargetsToShot().get(0).getPlayerBoard().getHp().size(),1);
-        assertSame(room.getAttackHandler().getTargetsToShot().get(1).getPlayerBoard().getHp().size(),1);
-        assertSame(room.getAttackHandler().getTargetsToShot().get(2).getPlayerBoard().getHp().size(),1);
+        assertSame(room.getAttackHandler().getTargetsToShoot().get(0).getPlayerBoard().getHp().size(),1);
+        assertSame(room.getAttackHandler().getTargetsToShoot().get(1).getPlayerBoard().getHp().size(),1);
+        assertSame(room.getAttackHandler().getTargetsToShoot().get(2).getPlayerBoard().getHp().size(),1);
 
         Mark mark = new Mark(1);
         mark.execute(room);
-        assertSame(room.getAttackHandler().getTargetsToShot().get(0).getPlayerBoard().getMarks().size(),1);
-        assertSame(room.getAttackHandler().getTargetsToShot().get(1).getPlayerBoard().getMarks().size(),1);
-        assertSame(room.getAttackHandler().getTargetsToShot().get(2).getPlayerBoard().getMarks().size(),1);
+        assertSame(room.getAttackHandler().getTargetsToShoot().get(0).getPlayerBoard().getMarks().size(),1);
+        assertSame(room.getAttackHandler().getTargetsToShoot().get(1).getPlayerBoard().getMarks().size(),1);
+        assertSame(room.getAttackHandler().getTargetsToShoot().get(2).getPlayerBoard().getMarks().size(),1);
 
         SetTargetToSelected setTargetToSelected = new SetTargetToSelected();
         setTargetToSelected.execute(room);
@@ -135,16 +124,16 @@ public class OperationTest {
 //        room.getCurrentPlayer().movePlayer(room.getBoard().getMap().getSquare(5));
 //        assertSame(room.getCurrentPlayer().getPosition(),room.getBoard().getMap().getSquare(5));
         //set "rip" to move
-        room.getAttackHandler().getTargetsToShot().clear();
+        room.getAttackHandler().getTargetsToShoot().clear();
         sameSquare.execute(room);
-        room.getAttackHandler().setTargetsToShot(room.getAttackHandler().getPossibleTargets());
-        assertSame(attackHandler.getTargetsToShot().size(),1);
+        room.getAttackHandler().setTargetsToShoot(room.getAttackHandler().getPossibleTargets());
+        assertSame(attackHandler.getTargetsToShoot().size(),1);
         //set "rip" to move
-        attackHandler.getTargetsToShot().get(0).movePlayer(room.getBoard().getMap().getSquare(5));
-        assertSame(attackHandler.getTargetsToShot().get(0).getPosition(),room.getBoard().getMap().getSquare(5));
+        attackHandler.getTargetsToShoot().get(0).movePlayer(room.getBoard().getMap().getSquare(5));
+        assertSame(attackHandler.getTargetsToShoot().get(0).getPosition(),room.getBoard().getMap().getSquare(5));
         MoveTargetToEffectSquare moveTargetToEffectSquare = new MoveTargetToEffectSquare();
         moveTargetToEffectSquare.execute(room);
-        assertSame(attackHandler.getTargetsToShot().get(0).getPosition(),room.getBoard().getMap().getSquare(0));
+        assertSame(attackHandler.getTargetsToShoot().get(0).getPosition(),room.getBoard().getMap().getSquare(0));
 
         Heatseeker heatseeker = new Heatseeker();
         visiblePlayers.execute(room);
@@ -155,7 +144,7 @@ public class OperationTest {
         SelectAllTarget selectAllTarget = new SelectAllTarget();
         selectAllTarget.execute(room);
         assertSame(attackHandler.getPossibleTargets().size(),0);
-        assertSame(attackHandler.getTargetsToShot().get(0).getNickname(),"kek");
+        assertSame(attackHandler.getTargetsToShoot().get(0).getNickname(),"kek");
 
         MoveToTarget moveToTarget = new MoveToTarget();
         moveToTarget.execute(room);
@@ -189,7 +178,7 @@ public class OperationTest {
         NextSquareInDirection nextSquareInDirection = new NextSquareInDirection();
         sameSquare.execute(room);
         attackHandler.getPossibleTargets().get(0).movePlayer(room.getBoard().getMap().getSquare(1));
-        attackHandler.setTargetsToShot(attackHandler.getPossibleTargets());
+        attackHandler.setTargetsToShoot(attackHandler.getPossibleTargets());
         nextSquareInDirection.execute(room);
         assertSame(attackHandler.getEffectSquare(),room.getBoard().getMap().getSquare(2));
 

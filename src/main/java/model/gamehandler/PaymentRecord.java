@@ -9,6 +9,11 @@ public class PaymentRecord {
     private List<Powerup> usedPowerups;
     private List<AmmoColor> usedAmmo;
 
+    /**
+     * Constructor
+     * @param usedPowerups powerups used as ammo for payment
+     * @param usedAmmo ammo used for payment
+     */
     public PaymentRecord(List<Powerup> usedPowerups, List<AmmoColor> usedAmmo){
         this.usedAmmo = usedAmmo;
         this.usedPowerups = usedPowerups;
