@@ -10,9 +10,12 @@ import java.util.logging.Logger;
 import static javax.swing.SwingConstants.CENTER;
 
 public class LoadingPanel extends JPanel {
-    private static final Logger logger = Logger.getLogger(LoadingPanel.class.getName());
+    //private static final Logger logger = Logger.getLogger(LoadingPanel.class.getName());
 
     public LoadingPanel(){
+        JLabel label=new JLabel("Welcome");
+        this.setLayout(new BorderLayout());
+        /*
         this.setLayout(new FlowLayout());
         this.setBackground(Color.darkGray);
         JLabel loading;
@@ -26,7 +29,9 @@ public class LoadingPanel extends JPanel {
             logger.log(Level.WARNING, "Image not loaded correctly", e);
         }
        // loading.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"loading.gif"));
-        loading.setIcon(new ImageIcon(image));
-        this.add(loading,CENTER);
+        loading.setIcon(new ImageIcon(image));*/
+        //this.add(loading,CENTER);
+
+        this.add(label,BorderLayout.CENTER);
     }
 }

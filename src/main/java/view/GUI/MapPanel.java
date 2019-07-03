@@ -112,8 +112,8 @@ public class MapPanel extends JLayeredPane {
         mypoint.setLocation(1180,45);
         this.add(mypoint);
         JButton rules = new JButton("Game Rules");
-        rules.setLocation(250,680);
-        rules.setSize(100,20);
+        rules.setLocation(200,680);
+        rules.setSize(150,20);
         RulesPanel rulesPanel = new RulesPanel();
         JScrollPane scrollPane=new JScrollPane(rulesPanel);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -282,7 +282,7 @@ public class MapPanel extends JLayeredPane {
                 mypoint.setText(String.valueOf(board.getPlayersOnMap().get(i).getPlayerBoard().getPoints()));
                 if(first){
                 JLabel heroIcon = new JLabel();
-                heroIcon.setSize(150,100);
+                heroIcon.setSize(150,150);
                 heroIcon.setLocation(2,600);
                 /*heroIcon.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main" + File.separatorChar + "resources" +
                         File.separatorChar + "heroes" + File.separatorChar + board.getPlayersOnMap().get(i).getHero().getName() + "big.png"));

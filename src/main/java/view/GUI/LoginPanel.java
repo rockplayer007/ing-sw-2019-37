@@ -5,6 +5,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class LoginPanel extends JPanel implements ActionListener {
@@ -23,7 +25,7 @@ public class LoginPanel extends JPanel implements ActionListener {
     private JTextField ip;
     private boolean nicknameErr;
     private boolean connectionErr;
-  //  private static final Logger logger = Logger.getLogger(LoginPanel.class.getName());
+    private static final Logger logger = Logger.getLogger(LoginPanel.class.getName());
 
  public LoginPanel()  {
         JLabel ipText;
@@ -32,7 +34,7 @@ public class LoginPanel extends JPanel implements ActionListener {
      try {
          image= ImageIO.read(LoginPanel.class.getResourceAsStream("/backgroundimage.png"));
      } catch (IOException e){
-        // logger.log(Level.WARNING, "Image not loaded correctly", e);
+         logger.log(Level.WARNING, "Image not loaded correctly", e);
      }
      try {
          loadImage(image);

@@ -398,6 +398,9 @@ public void addMusic(String name){
             }
         }
         JOptionPane.showMessageDialog(frame,"Check your connection. Then restart the game.","DISCONNECTION",JOptionPane.WARNING_MESSAGE);
+        first=true;
+        firstUpdate=true;
+        logIn(true);
     }
 }
 
