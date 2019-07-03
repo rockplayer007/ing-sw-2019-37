@@ -163,7 +163,7 @@ public class PlayerBoard implements Serializable{
         if (listForLiquidation.isEmpty())
             return cell;
         for (Player p:listForLiquidation){
-            p.getPlayerBoard().addPoints(isFrenzy ? frenzyPoints[deathTimes+i] : pointArray[deathTimes+i]);
+            p.getPlayerBoard().addPoints(isFrenzy ? frenzyPoints[i] : pointArray[Math.min(deathTimes+i,pointArray.length-1)]);
             i++;
         }
         if (hp.get(0)!=null&&!isFrenzy)

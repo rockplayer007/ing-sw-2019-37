@@ -43,8 +43,10 @@ public class CountDown {
      */
     public void cancelTimer(){
         try{
+
             timer.cancel();
             timer.purge();
+
         }catch (Exception e){
             //nothing, just continue
         }

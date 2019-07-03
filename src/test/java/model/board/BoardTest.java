@@ -131,20 +131,20 @@ public class BoardTest {
         assertEquals(gameBoard.getGenerationPoint(Color.BLUE).getX(), 2);
         assertEquals(gameBoard.getGenerationPoint(Color.BLUE).getY(), 0);
 
-        Printer printer = new Printer(new CLI(new MainClient()));
+        Printer printer = new Printer();
         //((AmmoSquare) gameBoard.getSquare(0)).removeAmmoCard();
 
         //printer.printBoard(gameBoard);
         //printer.printWeaponsOnBoard(gameBoard);
-        printer.printAllInfo(gameBoard, player1.getPowerups(), board.getSkullBoard());
+        printer.printAllInfo(gameBoard, player1.getPowerups(), board.getSkullBoard(), player1.getNickname());
 
-        printer.printPlayersInfo(gameBoard, player1.getPowerups());
+        printer.printPlayersInfo(gameBoard, player1.getPowerups(), player1.getNickname());
 
     }
 
     @Test
     public void printBoardTest(){
-        Printer printer = new Printer(new CLI(new MainClient()));
+        Printer printer = new Printer();
 
         printer.printBoard(map);
     }
