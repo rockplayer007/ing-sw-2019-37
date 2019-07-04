@@ -4,27 +4,28 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 
 public class RulesActionListener implements ActionListener {
 
-    public RulesActionListener(){
-    }
+    public RulesActionListener(){}
     @Override
     public void actionPerformed(ActionEvent e) {
         if (Desktop.isDesktopSupported()) {
             try {
-               // File myFile = new File(getClass().getResourceAsStream("/rule.pdf"));
-                ClassLoader classLoader = getClass().getClassLoader();
-                File file = new File(classLoader.getResourceAsStream("/rule.pdf").toString());
-
-              //  "./src/main/resources/rule.pdf
-                Desktop.getDesktop().open(file);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+                InputStream is = getClass().getResourceAsStream("/rule.pdf");
+                String tempFile = "myFile";
+                Path tempOutput = null;
+                tempOutput = Files.createTempFile(tempFile, ".pdf");
+                tempOutput.toFile().deleteOnExit();
+                Files.copy(is,tempOutput, StandardCopyOption.REPLACE_EXISTING);
+                Desktop.getDesktop().open(tempOutput.toFile());
+            } catch (IOException e1) {}
         }
         else JOptionPane.showMessageDialog(null,"Desktop functionality does not work","RULES",JOptionPane.WARNING_MESSAGE);
     }
