@@ -11,4 +11,4 @@ points the second adrenalin actions: 6
 points the dead point: 11
 points the over kill: 12
 RMI port: 1099
-Socket port: 6000
+Socket port: 8000

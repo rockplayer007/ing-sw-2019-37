@@ -13,8 +13,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Creats an RMI connection to allow the {@link MainClient} to reach the {@link network.server.MainServer}
@@ -23,7 +21,6 @@ public class ConnectionRMI implements ConnectionInterface {
 
     private ServerInterface server;
     private MainClient mainClient;
-    private static final Logger logger = Logger.getLogger(ConnectionRMI.class.getName());
 
     /**
      * Constructor to set up the connection

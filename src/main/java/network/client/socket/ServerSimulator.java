@@ -23,18 +23,16 @@ public class ServerSimulator implements ServerInterface {
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
-    private Thread receiver;
-
     private static final Logger logger = Logger.getLogger(ServerSimulator.class.getName());
 
     /**
      * Constructor where the input and output stream is initialized
-     * @param client
-     * @param serverIp
-     * @param port
-     * @throws IOException
+     * @param client the client that is connecting
+     * @param serverIp the ip to connect to the server
+     * @param port the port to connect to the server
+     * @throws IOException error in connection
      */
-    public ServerSimulator(ClientInterface client, String serverIp, int port) throws IOException{
+    ServerSimulator(ClientInterface client, String serverIp, int port) throws IOException{
         this.client = client;
         Socket connection = new Socket(serverIp, port);
         this.out = new ObjectOutputStream(connection.getOutputStream());
@@ -47,7 +45,11 @@ public class ServerSimulator implements ServerInterface {
      * Creates a thread to receive messages
      */
     private void receiveMessages(){
-        receiver = new Thread(
+        //logger.log(Level.WARNING, "Exception on network:", e);
+        //shouldn't happen, only with rmi
+        //do nothing, let the game continue
+        //throw new RuntimeException("Wrong deserialization/message: " + e.getMessage());
+        Thread receiver = new Thread(
                 () -> {
                     ServerToClient message;
                     try {
@@ -100,7 +102,5 @@ public class ServerSimulator implements ServerInterface {
             }
         }
     }
-
-    //TODO add an receiver.interrupt()
 
 }

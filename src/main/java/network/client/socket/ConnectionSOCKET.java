@@ -23,7 +23,7 @@ public class ConnectionSOCKET implements ConnectionInterface, ClientInterface {
      */
     public ConnectionSOCKET(MainClient client) throws IOException {
         this.client = client;
-        serverSimulator = new ServerSimulator(this, MainClient.getServerIp(), 8000);
+        serverSimulator = new ServerSimulator(this, MainClient.getServerIp(), MainClient.getServerPort());
 
     }
 

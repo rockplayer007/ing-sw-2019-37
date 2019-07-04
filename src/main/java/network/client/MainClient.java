@@ -39,12 +39,13 @@ import java.util.stream.Collectors;
 
 
 /**
- * Allows to create a new Client who can choose GUI or CLI as interface
+ * Allows to create a new Client who can choose GUI or CLI or BOT as interface
  * and handles connection and messages
  */
 public class MainClient {
 
     private static String serverIp;
+    private static int serverPort = 8000;
     private ConnectionInterface connection;
     private String username;
     private String clientID = "";
@@ -53,6 +54,7 @@ public class MainClient {
     private CountDown connectionTimer = new CountDown(PING_TIMER, () -> {});
     private CountDown pingTimer = new CountDown(PING_TIMER, () -> {});
     private static final int PING_TIMER = 5;
+    private static final int PING_RECEIVER = PING_TIMER + 5;
 
     private static ViewInterface view;
     private static boolean socket; //true uses socket false uses rmi
@@ -62,6 +64,10 @@ public class MainClient {
 
     private static final Logger logger = Logger.getLogger(MainServer.class.getName());
 
+    /**
+     * Main method to choose CLI/GUI/BOT
+     * @param args no args needed
+     */
     public static void main(String[] args) {
         Scanner reader = new Scanner(System.in);
         System.out.println("CLI or GUI or BOT?[C/G/B]");
@@ -82,7 +88,9 @@ public class MainClient {
         view.launch();
     }
 
-
+    /**
+     * Starts a a countdown that sends connection messages
+     */
     private void ping(){
         pingTimer = new CountDown(PING_TIMER, () -> {
 
@@ -92,19 +100,30 @@ public class MainClient {
         pingTimer.startTimer();
 
     }
+
+    /**
+     * Turns off the ping timer
+     */
     private void closePing(){
 
         pingTimer.cancelTimer();
     }
 
+    /**
+     * Sets a timer of the time to wait before receiving a ping from the server
+     */
     private void receiveTimer(){
-        connectionTimer = new CountDown(PING_TIMER + 5, () -> {
+        connectionTimer = new CountDown(PING_RECEIVER, () ->
             //logger.log(Level.INFO, "not receiving ping");
             //if nothing comes back
-            handleMessage(new ServerToClient(Message.Content.DISCONNECTION));
-        });
+            handleMessage(new ServerToClient(Message.Content.DISCONNECTION))
+        );
         connectionTimer.startTimer();
     }
+
+    /**
+     * Stops the current receiver timer and starts it again
+     */
     private void restartTimer(){
         connectionTimer.cancelTimer();
         receiveTimer();
@@ -113,8 +132,8 @@ public class MainClient {
 
     /**
      * Connects the client to the server depending on which connection the Client chose
-     * @throws NotBoundException
-     * @throws IOException
+     * @throws NotBoundException when the socket doesn't connect properly
+     * @throws IOException when the input is not correct
      */
     public void connect() throws  NotBoundException, IOException {
 
@@ -129,7 +148,7 @@ public class MainClient {
     }
 
     /**
-     * Sends the user's username and {@link ClientInterface} in case of RMI connection
+     * Sends the user's username and {@link ClientInterface}
      */
     public void sendCredentials(){
 
@@ -145,19 +164,28 @@ public class MainClient {
 
     /**
      * Sends a message with the selected board to the server
-     * @param board
+     * @param board the selected board
      */
     public void sendSelectedBoard(int board){
         connection.sendMessage(new ListResponse(username, clientID, board, Message.Content.BOARD_RESPONSE));
     }
 
-    public void sendSelectedItem(int card, Message.Content content){
-        connection.sendMessage(new ListResponse(username, clientID, card, content));
+    /**
+     * Sends a message with the a number that the client selected
+     * @param item the item that the client selected
+     * @param content the type of the message the client sends
+     */
+    public void sendSelectedItem(int item, Message.Content content){
+        connection.sendMessage(new ListResponse(username, clientID, item, content));
     }
+
+    /**
+     * Sends a message with the a number that the client selected
+     * @param card a general item
+     */
     public void sendSelectedItem(int card){
         connection.sendMessage(new ListResponse(username, clientID, card, Message.Content.CARD_RESPONSE));
     }
-
 
     /**
      * New messages that arrive from the server are managed here
@@ -212,7 +240,7 @@ public class MainClient {
                     }
 
                 }catch(Exception e){
-                    System.out.println("Couldn't write on file");
+                    System.out.println("Couldn't write on file your credentials on file");
 
                 }
 
@@ -356,6 +384,11 @@ public class MainClient {
         }
     }
 
+    /**
+     * Reads the id of the player from the file
+     * @param username the name of the player
+     * @return the id of the player
+     */
     private String readID(String username){
 
         String path = getDataPath();
@@ -394,7 +427,13 @@ public class MainClient {
 
     }
 
-    public void insertCredentials(String username, String cred) throws IOException {
+    /**
+     * Writes name and id of the player on the file
+     * @param username name of the player
+     * @param cred all the data of the player
+     * @throws IOException exeption when writing on file
+     */
+    private void insertCredentials(String username, String cred) throws IOException {
         String path = getDataPath();
         File yourFile = new File(path);
         yourFile.createNewFile();
@@ -416,20 +455,24 @@ public class MainClient {
 
     }
 
+    /**
+     * Gives the path of the data.txt file
+     * @return the path inside the resources if it exists or in the same jar folder
+     */
     private String getDataPath(){
         String filename = "data.txt";
         File inputFile;
         String path;
         try {
-            //takes the path that is in the parent folder of the jar
-            path = new File(MainServer.class.getProtectionDomain().getCodeSource().getLocation()
-                    .toURI()).getParent() + File.separatorChar + filename;
+            path = "."+ File.separatorChar + "src" + File.separatorChar+
+                    "main" + File.separatorChar + "resources" + File.separatorChar + filename;
 
             inputFile = new File(path);
 
             if(!inputFile.exists()){
-                path = "."+ File.separatorChar + "src" + File.separatorChar+
-                        "main" + File.separatorChar + "resources" + File.separatorChar + filename;
+                //takes the path that is in the parent folder of the jar
+                path = new File(MainServer.class.getProtectionDomain().getCodeSource().getLocation()
+                        .toURI()).getParent() + File.separatorChar + filename;
             }
 
         } catch (URISyntaxException e) {
@@ -443,22 +486,32 @@ public class MainClient {
     public static String getServerIp() {
         return serverIp;
     }
+
     public static void setServerIp(String serverIp){
         MainClient.serverIp = serverIp;
     }
+
     public void setUsername(String username){
         this.username = username;
     }
+
     public String getUsername(){
         return username;
     }
+
     public void setClientInterface(ClientInterface clientInterface){
         this.clientInterface = clientInterface;
     }
+
     public static void setSocket(Boolean connection){
         socket = connection;
     }
+
     public void resetTimout(){
         timeout = true;
+    }
+
+    public static int getServerPort(){
+        return serverPort;
     }
 }

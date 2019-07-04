@@ -2,11 +2,13 @@ package network.server;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Scanner;
 
+/**
+ * Singleton class for loading the the configuration file
+ */
 public class Configs {
     private static Configs ourInstance = new Configs();
 
@@ -28,24 +30,31 @@ public class Configs {
     private int rmiPort; //1099
     private int socketPort; //
 
-
-
     private int skulls;// = 8;
 
-
+    /**
+     * Static instance of the configuration singleton
+     * @return the configuration class to access all the configurations
+     */
     public static Configs getInstance() {
         return ourInstance;
     }
 
+    /**
+     * Private constructor
+     */
     private Configs() {
         readFile();
     }
 
+    /**
+     * The method will read the configurations from the file and set them
+     */
     private void readFile(){
         String filename = "configuration.txt";
         File inputFile;
         String path;
-        Scanner scanner = null;
+        Scanner scanner;
         try {
             path = new File(getClass().getProtectionDomain().getCodeSource().getLocation()
                     .toURI()).getParent() + File.separatorChar + filename;
@@ -94,11 +103,22 @@ public class Configs {
 
     }
 
+    /**
+     * Tells if the string is a number
+     * @param maybeNumeric the string with the number
+     * @return true if it is a number
+     */
     private boolean isNumeric(String maybeNumeric) {
         return maybeNumeric != null && maybeNumeric.matches("[0-9]+");
     }
 
-
+    /**
+     * Reads the string and converts it to the parameter number or to the default
+     * @param type name of the configuration parameters
+     * @param def the default value
+     * @param line the full line
+     * @return the number of the parameter
+     */
     private int fill(String type, int def, String line){
         String[] fields = line.split(":");
 
@@ -126,7 +146,7 @@ public class Configs {
         return timeForTagBackRequest;
     }
 
-    public int getWaitingTime() {
+    int getWaitingTime() {
         return waitingTime;
     }
 
@@ -158,11 +178,11 @@ public class Configs {
         return overKill;
     }
 
-    public int getRmiPort() {
+    int getRmiPort() {
         return rmiPort;
     }
 
-    public int getSocketPort() {
+    int getSocketPort() {
         return socketPort;
     }
 

@@ -19,22 +19,21 @@ import java.util.logging.Logger;
  */
 public class ClientSimulator implements Runnable, ClientInterface{
 
-    private Socket socket;
     private final ObjectInputStream in;
     private final ObjectOutputStream out;
     private boolean clientConnected;
     private ServerSOCKET server;
 
-    private static final Logger logger = Logger.getLogger(ClientSimulator.class.getName());
+    //private static final Logger logger = Logger.getLogger(ClientSimulator.class.getName());
 
     /**
      * Constructor where the input and output stream is initialized
-     * @param socket
-     * @param server
-     * @throws IOException
+     * @param socket the socket that has been initialized
+     * @param server the server to of the socket
+     * @throws IOException when the input and output give problem
      */
-    public ClientSimulator(Socket socket, ServerSOCKET server) throws IOException {
-        this.socket = socket;
+    ClientSimulator(Socket socket, ServerSOCKET server) throws IOException {
+
         this.server = server;
 
         this.out = new ObjectOutputStream(socket.getOutputStream());
@@ -42,7 +41,6 @@ public class ClientSimulator implements Runnable, ClientInterface{
         this.clientConnected = true;
 
     }
-
 
     /**
      * Manages the messages that arrive from the client will be handle here
@@ -70,7 +68,7 @@ public class ClientSimulator implements Runnable, ClientInterface{
 
     /**
      * Sends messages to the client
-     * @param message
+     * @param message the message that has to be sent to the server
      */
     @Override
     public void notifyClient(ServerToClient message)  {
@@ -84,6 +82,9 @@ public class ClientSimulator implements Runnable, ClientInterface{
         }
     }
 
+    /**
+     * Needed to close the connection when the client is not online anymore
+     */
     @Override
     public void closeConnection() {
          clientConnected = false;
