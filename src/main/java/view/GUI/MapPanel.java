@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.border.*;
 import javax.swing.text.html.StyleSheet;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Map;
 import java.util.logging.Level;
@@ -73,14 +72,6 @@ public class MapPanel extends JLayeredPane {
         pBoards.setSize(250, 30);
         pBoards.setLocation(1030, 675);
         pBoards.setOpaque(false);
-        /*
-        pBoards.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                playerboards.setVisible(true);
-            }
-        });
-        */
         pBoards.addActionListener(new FrameSetVisibleActionListner(playerboards));
         add(pBoards);
         chooseCard = new JFrame();
@@ -89,12 +80,16 @@ public class MapPanel extends JLayeredPane {
         chooseCard.setMaximumSize(new Dimension(800, 285));
         chooseCard.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         chooseCard.setAlwaysOnTop(true);
+        chooseCard.setAlwaysOnTop(true);
+        setLogo(chooseCard);
         choose = new JFrame();
         choose.setLocation(300, 50);
         choose.setMinimumSize(new Dimension(300, 300));
         choose.setMaximumSize(new Dimension(450, 300));
         choose.setLayout(new GridLayout(2, 2));
         choose.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        choose.setAlwaysOnTop(true);
+        setLogo(choose);
         messagePanel =new JPanel();
         messagePanel.setLayout(new GridLayout(rows,1));
         messageScrollPane=new JScrollPane(messagePanel);
@@ -121,6 +116,9 @@ public class MapPanel extends JLayeredPane {
         rules.setSize(150,20);
         rules.addActionListener(new RulesActionListener());
         this.add(rules);
+        setLogo(selectEffect);
+        selectEffect.setAlwaysOnTop(true);
+        setLogo(playerboards);
     }
 
     private void setRoomCoordinate() {
@@ -143,18 +141,6 @@ public class MapPanel extends JLayeredPane {
                     playerButton.setEnabled(true);
 
                     playerButton.setBorder(BorderFactory.createLineBorder(styleSheet.stringToColor(playerButton.getPlayer().getHero().getColor().name()), 3));
-                    /*playerButton.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            removePlayerActions();
-                            mainClient.sendSelectedItem(s);
-                            enablePlayers();
-                            if(attack) {
-                                addSound("shoot");
-                                attack=false;
-                            }
-                        }
-                    });*/
                     playerButton.addActionListener(new PlayerActionListener(this,mainClient,i));
                 }
             }
@@ -617,7 +603,7 @@ public class MapPanel extends JLayeredPane {
         choose.getContentPane().removeAll();
         choose.setLayout(new GridLayout(1,3));
         choose.setLocation(300, 50);
-        choose.setSize(300, 300);
+        choose.setSize(300, 50);
         for (int i = 0; i < ammoColors.size(); i++) {
             JButton ammoColor = new JButton();
             ammoColor.setSize(150,150);
@@ -667,7 +653,7 @@ public class MapPanel extends JLayeredPane {
     public void getRoom(List<model.board.Color> rooms, MainClient mainClient){
         choose.getContentPane().removeAll();
         choose.setLayout(new GridLayout(2,3));
-        choose.setSize(450, 300);
+        choose.setSize(450, 100);
         choose.setLocation(300,50);
         choose.setResizable(false);
         StyleSheet s= new StyleSheet();
@@ -823,6 +809,13 @@ public class MapPanel extends JLayeredPane {
     }
     public void setAttack(boolean s){
         attack=s;
+    }
+    public void setLogo(JFrame frame) {
+        try {
+            frame.setIconImage(ImageIO.read(MapPanel.class.getResourceAsStream("/logo.png")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 turn time: 500
-minimum players: 2
+minimum players: 1
 maximum players: 5
 time for TAGBACK GRANADE: 100
 creating room time: 10

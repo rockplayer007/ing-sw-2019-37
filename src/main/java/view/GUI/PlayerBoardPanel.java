@@ -2,7 +2,6 @@ package view.GUI;
 
 import model.card.AmmoColor;
 import model.player.Player;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.html.StyleSheet;
@@ -15,12 +14,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PlayerBoardPanel extends JPanel{
-
-    private List<JLabel> ammoColors = new ArrayList<>();
-    private List<WeaponButton> weaponButtons = new ArrayList<>();
     private static final Logger logger = Logger.getLogger(PlayerBoardPanel.class.getName());
     public PlayerBoardPanel(List<Player> players) {
         this.setLayout(null);
+        List<JLabel> ammoColors;
+        List<WeaponButton> weaponButtons;
         int y=0;
         for(int i=0;i<players.size();i++){
            int x=52;
@@ -42,9 +40,6 @@ public class PlayerBoardPanel extends JPanel{
                JLabel death = new JLabel();
                death.setLocation(x,i*142+103);
                death.setSize(27,32);
-               /*
-               death.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"
-                       +File.separatorChar + "resources"+File.separatorChar + "heroes" + File.separatorChar+"skull.png"));*/
                death.setIcon(new ImageIcon(getImage("/heroes/skull.png")));
                death.setOpaque(false);
                this.add(death);
@@ -64,31 +59,23 @@ public class PlayerBoardPanel extends JPanel{
            }
             JButton nickname = new JButton();
            nickname.setLocation(50,y+2);
-           if(players.get(i).getNickname().length()>21)
+           if(players.get(i).getNickname().length()>17)
                nickname.setSize(230,20);
            else
-            nickname.setSize(players.get(i).getNickname().length()*10,20);
+            nickname.setSize(players.get(i).getNickname().length()*13,20);
+
            nickname.setText(players.get(i).getNickname());
-           /*nickname.setFont(new Font(null,Font.BOLD,13));
-           nickname.setForeground(Color.white);
-           nickname.setBackground(Color.black);
-           */
            nickname.setHorizontalAlignment(SwingConstants.CENTER);
-          // nickname.setBorder(BorderFactory.createLineBorder(Color.white,2));
-           nickname.setOpaque(true);
-           /*ImageIcon hero = new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"
-                   +File.separatorChar + "resources"+File.separatorChar + "heroes" + File.separatorChar+players.get(i).getHero().getName()+"big.png");
-           */
+           nickname.setOpaque(false);
            ImageIcon hero= new ImageIcon(getImage("/heroes/"+players.get(i).getHero().getName()+"big.png"));
            nickname.addActionListener(new HeroDescriptionListener(hero,players.get(i)));
            this.add(nickname);
            JLabel board = new JLabel();
-            /*board.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"
-                    +File.separatorChar+"resources"+File.separatorChar +"heroes"+File.separatorChar+players.get(i).getHero().getName()+"board.png"));*/
            board.setIcon(new ImageIcon(getImage("/heroes/"+players.get(i).getHero().getName()+"board.png")));
             if(players.get(i).getActionStatus().name().equals("FRENETICACTIONS1") ||
-                    players.get(i).getActionStatus().name().equals("FRENETICACTIONS2"))
-            board.setIcon(new ImageIcon(getImage("heroes/"+players.get(i).getHero().getName()+"Freneticboard.png")));
+                    players.get(i).getActionStatus().name().equals("FRENETICACTIONS2")) {
+                board.setIcon(new ImageIcon(getImage("heroes/"+players.get(i).getHero().getName()+"Freneticboard.png")));
+            }
             board.setOpaque(false);
             board.setLocation(0,y);
             board.setSize(577,141);
