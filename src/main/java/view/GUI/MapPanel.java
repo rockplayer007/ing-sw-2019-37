@@ -712,7 +712,7 @@ public class MapPanel extends JLayeredPane {
 
 
                 JLabel point2 =new JLabel();
-                point2.setSize(37,26);
+                point2.setSize(37,35);
                 point2.setLocation(x,y+23);
                 point2.setBackground(styleSheet.stringToColor(skullBoard.getCells().get(i).getKillColor().name()));
 
