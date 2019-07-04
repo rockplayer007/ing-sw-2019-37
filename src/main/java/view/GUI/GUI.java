@@ -7,6 +7,8 @@ import model.player.ActionOption;
 import model.player.Player;
 import network.client.MainClient;
 import view.ViewInterface;
+
+import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
@@ -14,8 +16,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.rmi.NotBoundException;
 import java.util.List;
 import java.util.Map;
@@ -51,25 +54,25 @@ public void addMusic(String name){
     AudioInputStream audio;
     if(sound !=null)
         sound.stop();
-    try {
-        audio = AudioSystem.getAudioInputStream(new File("." + File.separatorChar + "src" + File.separatorChar
-                + "main" + File.separatorChar + "resources" + File.separatorChar + name +".wav"));
-         sound = AudioSystem.getClip();
+    try {ClassLoader classLoader = GUI.class.getClassLoader();
+        InputStream is= classLoader.getResourceAsStream(name+".wav");
+        audio= AudioSystem.getAudioInputStream(new BufferedInputStream(is));
+        sound = AudioSystem.getClip();
         sound.open(audio);
         sound.loop(LOOP_CONTINUOUSLY);
-    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ignored) {
-    }
-
-
+        sound.start();
+    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ignored) {}
 
 }
-    public void logIn(boolean ask) {
+
+public void logIn(boolean ask) {
         if (ask) {
             frame.getContentPane().removeAll();
             frame.setSize(1280, 750);
-            //frame.setIconImage();
+
             if(first) {
                 frame.addWindowListener(new WindowAdapter() {
+                    @Override
                     public void windowClosing(WindowEvent we) {
                         int option = JOptionPane.showConfirmDialog(frame, "Do you want to Exit ?", "Exit Confirmation ", JOptionPane.YES_NO_OPTION);
                         if (option == JOptionPane.YES_OPTION)
@@ -78,6 +81,11 @@ public void addMusic(String name){
                             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
                     }
                 });
+                try {
+                    frame.setIconImage(ImageIO.read(MapPanel.class.getResourceAsStream("/logo.png")));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             frame.setBackground(Color.DARK_GRAY);
             LoginPanel loginPanel = new LoginPanel();
@@ -134,13 +142,7 @@ public void addMusic(String name){
             gbc.gridy=10;
             gbc.gridx=2;
             if (first) {
-                JFrame rulesFrame=new JFrame("Game Rules");
-                RulesPanel rulesPanel = new RulesPanel();
-                JScrollPane scrollPane=new JScrollPane(rulesPanel);
-                scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-                rulesFrame.add(scrollPane);
-                rulesFrame.pack();
-                rules.addActionListener(new RulesActionListener(rulesFrame));
+                rules.addActionListener(new RulesActionListener());
             }
             loginPanel.add(rules, gbc);
             frame.getContentPane().add(loginPanel);
@@ -346,8 +348,6 @@ public void addMusic(String name){
             infof.pack();
             infof.setVisible(true);
         }
-            //JOptionPane.showMessageDialog(null,info,"INFO",JOptionPane.INFORMATION_MESSAGE);
-
         }
     }
 
@@ -398,6 +398,9 @@ public void addMusic(String name){
             }
         }
         JOptionPane.showMessageDialog(frame,"Check your connection. Then restart the game.","DISCONNECTION",JOptionPane.WARNING_MESSAGE);
+        first=true;
+        firstUpdate=true;
+        logIn(true);
     }
 }
 

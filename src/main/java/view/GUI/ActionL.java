@@ -1,7 +1,6 @@
 package view.GUI;
 
 import network.client.MainClient;
-
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

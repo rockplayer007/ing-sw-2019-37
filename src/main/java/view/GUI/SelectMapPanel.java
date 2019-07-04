@@ -46,6 +46,8 @@ public class SelectMapPanel extends JPanel {
             gbc.anchor = GridBagConstraints.CENTER;
             map[i].addActionListener(this::actionPerformed);
             map[i].setForeground(Color.white);
+            map[i].setBackground(Color.DARK_GRAY);
+            map[i].setBorder(null);
             this.add(this.map[i], gbc);
             mapGroup.add(map[i]);
             mapDescription[i]=new JLabel(value);
@@ -59,7 +61,6 @@ public class SelectMapPanel extends JPanel {
             gbc.gridx=x;
             gbc.gridy=y-1;
             gbc.anchor = GridBagConstraints.CENTER;
-          //  ImageIcon img= new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar+"maps"+File.separatorChar +"map"+key+"icon.png");
             Image img= null;
             try {
                 img= ImageIO.read(SelectCardPanel.class.getResourceAsStream("/maps/map"+key+"icon.png"));

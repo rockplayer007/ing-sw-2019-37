@@ -131,10 +131,7 @@ public class PlayerBoardPanel extends JPanel{
                 else
                     weaponButton.setBorder(BorderFactory.createLineBorder(Color.RED,3));
                 weaponButton.setFocusPainted(false);
-               /* weaponButton.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar + "main"
-                        + File.separatorChar + "resources" + File.separatorChar + "weapon" + File.separatorChar +
-                        players.get(i).getWeapons().get(c).getName() + ".png"));*/
-               weaponButton.setIcon(new ImageIcon(getImage("/weapon/"+players.get(i).getWeapons().get(c).getName()+".png")));
+                weaponButton.setIcon(new ImageIcon(getImage("/weapon/"+players.get(i).getWeapons().get(c).getName()+".png")));
                 weaponButton.setOpaque(false);
                 weaponButtons.add(weaponButton);
                 this.add(weaponButton);

@@ -15,10 +15,10 @@ public class EffectListener implements ActionListener {
         this.jFrame=jFrame;
         this.mainClient=mainClient;
         this.x=x;
-
     }
     @Override
     public void actionPerformed(ActionEvent e) {
+
         mainClient.sendSelectedItem(x, Message.Content.EFFECT_RESPOSNSE);
         jFrame.setVisible(false);
     }

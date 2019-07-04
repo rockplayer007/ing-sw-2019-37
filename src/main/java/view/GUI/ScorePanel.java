@@ -27,8 +27,6 @@ public class ScorePanel extends JPanel {
             logger.log(Level.WARNING, "Image not loaded correctly", e);
         }
         podium.setIcon(new ImageIcon(img));
-        /*podium.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar
-                + "main" + File.separatorChar + "resources" + File.separatorChar + "podium.png"));*/
         podium.setLocation(0,200);
         podium.setSize(750,283);
         podium.setOpaque(false);
@@ -46,10 +44,6 @@ public class ScorePanel extends JPanel {
                 JLabel playerIcon= new JLabel();
                 playerIcon.setSize(160,165);
                 playerIcon.setLocation(points[i]);
-                /*
-                playerIcon.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar
-                        + "main" + File.separatorChar + "resources" + File.separatorChar + "heroes"+
-                        File.separatorChar+ key.getHero().getName()+ "big.png"));*/
                 img= null;
                 try {
                     img= ImageIO.read(LoginPanel.class.getResourceAsStream("/heroes/"+key.getHero().getName()+"big.png"));
