@@ -11,16 +11,11 @@ import java.util.logging.Logger;
 
 public class LoginPanel extends JPanel implements ActionListener {
 
-    private JLabel text;
-    private JLabel text2;
-    private JLabel nickname;
+
     private JTextField insNickname;
     private JLabel nicknameError;
     private JLabel connectionError;
-    private Image image;
-    private JRadioButton rmi;
-    private JRadioButton socket;
-    private ButtonGroup connGroup = new ButtonGroup();
+    private transient Image image;
     private String connSelected="null";
     private JTextField ip;
     private boolean nicknameErr;
@@ -28,18 +23,22 @@ public class LoginPanel extends JPanel implements ActionListener {
     private static final Logger logger = Logger.getLogger(LoginPanel.class.getName());
 
  public LoginPanel()  {
-        JLabel ipText;
-      //  image = Toolkit.getDefaultToolkit().createImage("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"backgroundimage.png");
-     //InputStream inputStream =LoginPanel.class.getResourceAsStream("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"backgroundimage.png");
-     try {
+     JLabel ipText;
+      JLabel text;
+      JLabel text2;
+      JLabel nickname;
+      JRadioButton rmi;
+      JRadioButton socket;
+      ButtonGroup connGroup = new ButtonGroup();
+      try {
          image= ImageIO.read(LoginPanel.class.getResourceAsStream("/backgroundimage.png"));
-     } catch (IOException e){
+        } catch (IOException e){
          logger.log(Level.WARNING, "Image not loaded correctly", e);
-     }
-     try {
+        }
+      try {
          loadImage(image);
-     } catch (InterruptedException e) {
-         e.printStackTrace();
+      } catch (InterruptedException e) {
+          logger.log(Level.WARNING, "Image not loaded correctly", e);
      }
      this.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -51,18 +50,18 @@ public class LoginPanel extends JPanel implements ActionListener {
         gbc.gridy=0;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.insets = new Insets(5, 0, 0, 10);
-        this.add(this.text, gbc);
+        this.add(text, gbc);
 
         nickname = new JLabel("Nickname:");
         gbc.gridx = 1;
         gbc.gridy = 3;
-        this.add(this.nickname, gbc);
+        this.add(nickname, gbc);
 
         insNickname = new JTextField(15);
         gbc.gridx = 2;
         gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.LINE_START;
-        this.add(this.insNickname, gbc);
+        this.add(insNickname, gbc);
 
         nicknameError = new JLabel("Please insert your Nickname.");
         nicknameError.setForeground(Color.RED);
@@ -70,26 +69,26 @@ public class LoginPanel extends JPanel implements ActionListener {
         gbc.gridx = 2;
         gbc.gridy = 4;
         gbc.anchor = GridBagConstraints.LINE_START;
-        this.add(this.nicknameError, gbc);
+        this.add(nicknameError, gbc);
 
         text2=new JLabel("Select Connection :");
         gbc.gridx=1;
         gbc.gridy=5;
-        this.add(this.text2, gbc);
+        this.add(text2, gbc);
 
         rmi = new JRadioButton("RMI");
         gbc.gridx= 2;
         gbc.gridy=5;
-        this.connGroup.add(rmi);
+        connGroup.add(rmi);
         rmi.addActionListener(this);
-        this.add(this.rmi, gbc);
+        this.add(rmi, gbc);
 
         socket = new JRadioButton("SOCKET");
         gbc.gridx= 2;
         gbc.gridy=6;
         connGroup.add(socket);
         socket.addActionListener(this);
-        this.add(this.socket, gbc);
+        this.add(socket, gbc);
 
         connectionError = new JLabel("Please insert the connection type.");
         connectionError.setForeground(Color.RED);

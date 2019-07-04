@@ -1,8 +1,6 @@
 package view.GUI;
 
 import model.board.Color;
-import model.board.Square;
-
 import javax.swing.*;
 
 public class JMapButton extends JButton {

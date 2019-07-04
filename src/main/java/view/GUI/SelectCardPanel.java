@@ -5,7 +5,6 @@ import network.client.MainClient;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -20,10 +19,6 @@ public class SelectCardPanel extends JPanel{
         for (int i=0;i<cards.size();i++){
             JButton button=new JButton();
             button.setSize(196, 264);
-              /*  button.setIcon(new ImageIcon("." + File.separatorChar + "src" + File.separatorChar
-                        + "main" + File.separatorChar + "resources" + File.separatorChar + "powerup" +
-                        File.separatorChar + cards.get(i) + ".png"));
-                        */
             Image img= null;
             try {
                 img= ImageIO.read(SelectCardPanel.class.getResourceAsStream("/powerup/"+cards.get(i)+".png"));

@@ -61,7 +61,6 @@ public class SelectMapPanel extends JPanel {
             gbc.gridx=x;
             gbc.gridy=y-1;
             gbc.anchor = GridBagConstraints.CENTER;
-          //  ImageIcon img= new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar+"maps"+File.separatorChar +"map"+key+"icon.png");
             Image img= null;
             try {
                 img= ImageIO.read(SelectCardPanel.class.getResourceAsStream("/maps/map"+key+"icon.png"));

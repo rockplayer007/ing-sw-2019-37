@@ -7,6 +7,8 @@ import model.player.ActionOption;
 import model.player.Player;
 import network.client.MainClient;
 import view.ViewInterface;
+
+import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
@@ -59,8 +61,7 @@ public void addMusic(String name){
         sound.open(audio);
         sound.loop(LOOP_CONTINUOUSLY);
         sound.start();
-    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ignored) {
-    }
+    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ignored) {}
 
 }
 
@@ -68,9 +69,10 @@ public void logIn(boolean ask) {
         if (ask) {
             frame.getContentPane().removeAll();
             frame.setSize(1280, 750);
-            //frame.setIconImage();
+
             if(first) {
                 frame.addWindowListener(new WindowAdapter() {
+                    @Override
                     public void windowClosing(WindowEvent we) {
                         int option = JOptionPane.showConfirmDialog(frame, "Do you want to Exit ?", "Exit Confirmation ", JOptionPane.YES_NO_OPTION);
                         if (option == JOptionPane.YES_OPTION)
@@ -79,6 +81,11 @@ public void logIn(boolean ask) {
                             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
                     }
                 });
+                try {
+                    frame.setIconImage(ImageIO.read(MapPanel.class.getResourceAsStream("/logo.png")));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             frame.setBackground(Color.DARK_GRAY);
             LoginPanel loginPanel = new LoginPanel();
@@ -135,13 +142,7 @@ public void logIn(boolean ask) {
             gbc.gridy=10;
             gbc.gridx=2;
             if (first) {
-                JFrame rulesFrame=new JFrame("Game Rules");
-                RulesPanel rulesPanel = new RulesPanel();
-                JScrollPane scrollPane=new JScrollPane(rulesPanel);
-                scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-                rulesFrame.add(scrollPane);
-                rulesFrame.pack();
-                rules.addActionListener(new RulesActionListener(rulesFrame));
+                rules.addActionListener(new RulesActionListener());
             }
             loginPanel.add(rules, gbc);
             frame.getContentPane().add(loginPanel);
@@ -347,8 +348,6 @@ public void logIn(boolean ask) {
             infof.pack();
             infof.setVisible(true);
         }
-            //JOptionPane.showMessageDialog(null,info,"INFO",JOptionPane.INFORMATION_MESSAGE);
-
         }
     }
 

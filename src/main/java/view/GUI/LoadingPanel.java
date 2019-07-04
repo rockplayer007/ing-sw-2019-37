@@ -11,7 +11,8 @@ public class LoadingPanel extends JPanel {
         JLabel loading;
         loading = new JLabel();
         loading.setOpaque(false);
-        loading.setSize(300,300); loading.setIcon(new ImageIcon(LoadingPanel.class.getResource("/loading.gif")));
+        loading.setSize(300,300);
+        loading.setIcon(new ImageIcon(LoadingPanel.class.getResource("/loading.gif")));
         this.add(loading,CENTER);
     }
 }

@@ -25,24 +25,14 @@ public class CardPanel extends JPanel {
         this.setLayout(null);
         createButtons();
         for(int i=0;i<effects.size();i++){
-            //int x=i;
             buttonEffect.get(effects.get(i).getId()).setVisible(true);
             buttonEffect.get(effects.get(i).getId()).addActionListener(new EffectListener(mainClient,frame,i));
-            /*buttonEffect.get(effects.get(i).getId()).addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    mainClient.sendSelectedItem(x);
-                    frame.setVisible(false);
-                }
-            });*/
-
         }
 
         JLabel image = new JLabel();
         image.setSize(196,264);
         image.setLocation(0,0);
         image.setBorder(null);
-        //image.setIcon(new ImageIcon("."+ File.separatorChar+"src"+File.separatorChar+"main"+File.separatorChar+"resources"+File.separatorChar +"powerup"+File.separatorChar+weapon.getName()+".png"));
         Image img= null;
         try {
             img= ImageIO.read(CardPanel.class.getResourceAsStream("/powerup/"+weapon.getName()+".png"));
