@@ -65,9 +65,9 @@ public class MainServer {
 
     /**
      * Starts RMI and Socket servers
-     * @param rmiPort
-     * @param socketPort
-     * @throws IOException
+     * @param rmiPort the port where the rmi connection will start
+     * @param socketPort the port where the socket connection will start
+     * @throws IOException when there is an error in the connection
      */
     private void startServer(int rmiPort, int socketPort) throws IOException {
         serverSocket.startServer(socketPort);
@@ -82,7 +82,7 @@ public class MainServer {
 
     /**
      * All messages that arrive from the client are managed here and sent where they need to go
-     * @param message
+     * @param message the message that arrives from the client
      */
     public void handleMessage(ClientToServer message){
         //verify that the user corresponds with clientID
@@ -119,18 +119,19 @@ public class MainServer {
 
     }
 
-    //TODO
+    /*
     private boolean checkUser(ClientToServer message){
         //not working when oldClients.get is null
 
         return message.getSender().equals(oldClients.get(message.getClientID()));
     }
+     */
 
     /**
      * Adds clients to a waiting queue if they never logged in, otherwise reconnects the disconnected clients
      * @param message
      */
-    public void addClient(LoginRequest message){
+    private void addClient(LoginRequest message){
         logger.log(Level.INFO, "{0} wants to login to the server", message.getSender());
 
         if(oldClients.containsValue(message.getSender())){
@@ -218,11 +219,11 @@ public class MainServer {
      * @param usernames
      * @param playingRoom
      */
-    public void setUsernameInRoom(List<String> usernames, RoomController playingRoom){
+    void setUsernameInRoom(List<String> usernames, RoomController playingRoom){
         usernames.forEach(name -> usernameInRoom.put(name, playingRoom));
     }
 
-    public void removeClientFromServer(List<String> usernames){
+    void removeClientFromServer(List<String> usernames){
 
         usernames.forEach(name -> {
             //remove from room map
@@ -248,7 +249,7 @@ public class MainServer {
 
     }
 
-    public void removeClient(ClientOnServer client){
+    void removeClient(ClientOnServer client){
         allClients.remove(client);
         oldClients.remove(client.getClientID());
 

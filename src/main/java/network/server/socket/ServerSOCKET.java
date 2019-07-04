@@ -32,8 +32,8 @@ public class ServerSOCKET extends Thread{
 
     /**
      * Creates a new socket on a specified port
-     * @param port
-     * @throws IOException
+     * @param port the port where to connect the socket
+     * @throws IOException thrown when there is an error in the connection
      */
     public void startServer(int port) throws IOException {
         connectionSocket = new ServerSocket(port);
@@ -60,24 +60,27 @@ public class ServerSOCKET extends Thread{
 
     /**
      * Sends a new arrived message to the {@link MainServer}
-     * @param message
+     * @param message the message to deliver to the server
      */
-    public void newMessage(ClientToServer message){
+    void newMessage(ClientToServer message){
         server.handleMessage(message);
     }
 
-    public void disconnectClient(ClientInterface client){
+    /**
+     * Needed to tell the server to disconnect the client
+     * @param client the client that needs to be disconnected
+     */
+    void disconnectClient(ClientInterface client){
         server.disconnectPlayer(client);
     }
 
-    /**
-     * Closes all the connections and interrupts all the working threads
-     * @throws IOException
-     */
+    /*
     public void closeServerSocket() throws IOException {
         connectionSocket.close();
         pool.shutdown();
         keepWakeup = false;
     }
+
+     */
 
 }

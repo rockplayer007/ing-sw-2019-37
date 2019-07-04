@@ -8,7 +8,13 @@ import network.messages.serverToClient.ServerToClient;
  * Implemets the {@link ClientInterface} to allow to execute the actions
  */
 public class ClientImplementation implements ClientInterface {
+
     private MainClient mainClient;
+
+    /**
+     * Default constructor
+     * @param mainClient the Client to send the messages to
+     */
     ClientImplementation(MainClient mainClient){
         this.mainClient = mainClient;
     }

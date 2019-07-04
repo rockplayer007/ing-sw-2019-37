@@ -14,7 +14,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
 
     private transient MainServer server;
 
-    public ServerImplementation(MainServer server) throws RemoteException {
+    ServerImplementation(MainServer server) throws RemoteException {
         this.server = server;
     }
 
@@ -22,7 +22,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
      * Sends the massage directly to the server to handle it
      * @param message message that arrives from the {@link network.client.MainClient}
      *                and is sent to the {@link MainServer}
-     * @throws RemoteException
+     * @throws RemoteException when there is a problem with the connection
      */
     @Override
     public void notifyServer(ClientToServer message) throws RemoteException{

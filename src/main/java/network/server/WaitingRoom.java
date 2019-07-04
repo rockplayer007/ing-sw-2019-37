@@ -26,7 +26,7 @@ public class WaitingRoom {
     private MainServer server;
     private static final Logger logger = Logger.getLogger(WaitingRoom.class.getName());
 
-    public WaitingRoom(MainServer server){
+    WaitingRoom(MainServer server){
         waitingClients = new LinkedList<>();
         this.server = server;
     }
@@ -36,7 +36,7 @@ public class WaitingRoom {
      * 3 players. The game starts when there are 5 players.
      * @param p Client to add to the queue
      */
-    public synchronized void addClient(ClientOnServer p){
+    synchronized void addClient(ClientOnServer p){
         if(waitingClients.size() < MAX_PLAYERS){
 
             waitingClients.add(p);

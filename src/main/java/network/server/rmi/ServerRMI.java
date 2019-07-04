@@ -12,14 +12,19 @@ import java.rmi.registry.Registry;
 public class ServerRMI {
 
     private MainServer server;
+
+    /**
+     * Constructor for the RMI server
+     * @param server where to send the messages to
+     */
     public ServerRMI(MainServer server){
         this.server = server;
     }
 
     /**
      * Starts the server on a specific port
-     * @param port
-     * @throws RemoteException
+     * @param port the port number where to connect the rmi
+     * @throws RemoteException the exception thrown when there is an error in the connection
      */
     public void startServer(int port) throws RemoteException {
         //System.setProperty("java.rmi.server.hostname", "localhost");

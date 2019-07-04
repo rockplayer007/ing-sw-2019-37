@@ -9,7 +9,7 @@ public interface ConnectionInterface {
 
     /**
      * Allows to send a message to the {@link network.server.MainServer}
-     * @param message
+     * @param message the message to send to the server
      */
     void sendMessage(ClientToServer message);
 }
