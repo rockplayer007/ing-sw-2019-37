@@ -12,12 +12,20 @@ public class SkullBoard implements Serializable {
     private int initSkulls;
     private List<Cell> cells;
 
+    /**
+     * Constructor
+     * @param numberSkulls number of skull in one match
+     */
     public SkullBoard(int numberSkulls){
         this.numberSkulls = numberSkulls;
         this.initSkulls = numberSkulls;
         cells = new ArrayList<>();
     }
 
+    /**
+     * add the cell to cells
+     * @param cell for ponit
+     */
     public void addCell(Cell cell){
         cells.add(cell);
     }
@@ -30,6 +38,9 @@ public class SkullBoard implements Serializable {
         return initSkulls;
     }
 
+    /**
+     * for when some player dies take a skull
+     */
     public void takeOneSkulls(){
         if (numberSkulls>0)
             numberSkulls--;

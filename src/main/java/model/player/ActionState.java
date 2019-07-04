@@ -24,6 +24,13 @@ public enum  ActionState {
         this.options = options;
 
     }
+
+    /**
+     * Get choices that the player can do
+     * @param player player that want to use any actions
+     * @param dontShoot if the player can do shoot action or no
+     * @return the actions that the player can do
+     */
     public List<ActionOption> getChoices(Player player, boolean dontShoot){
 
         List<Weapon> possibleWeapons = player.getWeapons().stream()

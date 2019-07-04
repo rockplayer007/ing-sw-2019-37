@@ -2,6 +2,8 @@ package network.server;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Scanner;
 
@@ -43,30 +45,31 @@ public class Configs {
         String filename = "configuration.txt";
         File inputFile;
         String path;
+        Scanner scanner = null;
         try {
-            path = new File(MainServer.class.getProtectionDomain().getCodeSource().getLocation()
+            path = new File(getClass().getProtectionDomain().getCodeSource().getLocation()
                     .toURI()).getParent() + File.separatorChar + filename;
 
             inputFile = new File(path);
 
             if(!inputFile.exists()){
-                path = "."+ File.separatorChar + "src" + File.separatorChar+
-                        "main" + File.separatorChar + "resources" + File.separatorChar + filename;
-                inputFile = new File(path);
+
+                InputStream inputStream = getClass().getResourceAsStream("/"+ filename);
+
+                scanner = new Scanner(inputStream);
+
+            }
+            else {
+
+                scanner = new Scanner(inputFile);
             }
 
-        } catch (URISyntaxException e) {
-            path = "."+ File.separatorChar + "src" + File.separatorChar+
-                    "main" + File.separatorChar + "resources" + File.separatorChar + filename;
-            inputFile = new File(path);
+        } catch (URISyntaxException| FileNotFoundException e) {
+
+            scanner = new Scanner(getConfigs());
+
         }
 
-        Scanner scanner;
-        try {
-            scanner = new Scanner(inputFile);
-        } catch (FileNotFoundException e) {
-            return;
-        }
 
         turnTime = fill("turn time",180, scanner.nextLine());
 
@@ -162,6 +165,24 @@ public class Configs {
     public int getSocketPort() {
         return socketPort;
     }
+
+    private String getConfigs(){
+        return "turn time: 180\n" +
+                "minimum players: 3\n" +
+                "maximum players: 5\n" +
+                "time for TAGBACK GRANADE: 10\n" +
+                "creating room time: 30\n" +
+                "choosing board time: 10\n" +
+                "respawn time: 15\n" +
+                "skulls: 8\n" +
+                "points the first adrenalin actions: 3\n" +
+                "points the second adrenalin actions: 6\n" +
+                "points the dead point: 11\n" +
+                "points the over kill: 12\n" +
+                "RMI port: 1099\n" +
+                "Socket port: 8000";
+    }
+
 }
 
 

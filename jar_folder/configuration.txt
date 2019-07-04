@@ -1,14 +1,14 @@
 turn time: 500
-minimum players: 3
+minimum players: 2
 maximum players: 5
-time for TAGBACK GRANADE: 200
+time for TAGBACK GRANADE: 100
 creating room time: 10
 choosing board time: 100
 respawn time: 15
 skulls: 5
-points the first adrenalin actions: 2
-points the second adrenalin actions: 4
-points the dead point: 6
-points the over kill: 7
+points the first adrenalin actions: 3
+points the second adrenalin actions: 6
+points the dead point: 11
+points the over kill: 12
 RMI port: 1099
-Socket port: 8000
+Socket port: 6000

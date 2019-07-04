@@ -46,6 +46,8 @@ public class SelectMapPanel extends JPanel {
             gbc.anchor = GridBagConstraints.CENTER;
             map[i].addActionListener(this::actionPerformed);
             map[i].setForeground(Color.white);
+            map[i].setBackground(Color.DARK_GRAY);
+            map[i].setBorder(null);
             this.add(this.map[i], gbc);
             mapGroup.add(map[i]);
             mapDescription[i]=new JLabel(value);

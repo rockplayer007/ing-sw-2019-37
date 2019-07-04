@@ -16,6 +16,15 @@ public class Weapon extends Card {
     private int numberOfEffect;
 
 
+    /**
+     * Constructor
+     * @param name name of weapon
+     * @param description description of weapon
+     * @param chargeCost basic cost for charge
+     * @param buyCost cost for buy
+     * @param optional it is optional or alternative mode for effect
+     * @param effects effects that have
+     */
     public Weapon(String name, String description, AmmoColor chargeCost, List<AmmoColor> buyCost,Boolean optional,Map<Effect,Integer> effects){
         super(name, description);
         this.buyCost = buyCost;
@@ -59,6 +68,9 @@ public class Weapon extends Card {
         return numberOfEffect;
     }
 
+    /**
+     * @return the cost for charge
+     */
     public List<AmmoColor> getChargeCost() {
         List<AmmoColor>cost=new ArrayList<>();
         cost.add(chargeCost);
@@ -66,6 +78,10 @@ public class Weapon extends Card {
         return cost;
     }
 
+    /**
+     * @param level level or grad of effect
+     * @return all effects that corresponds to level
+     */
     public List<Effect> getLevelEffects(int level){
         return effects.entrySet().stream().filter(x->x.getValue()==level).map(Map.Entry::getKey).collect(Collectors.toList());
     }

@@ -30,6 +30,10 @@ public class PlayerBoard implements Serializable{
     private List<Color> marksColor;
 
 
+    /**
+     * Constuctor
+     * @param player owner of board
+     */
     public PlayerBoard(Player player) {
         this.player = player;
         hp = new ArrayList<>(12);

@@ -7,11 +7,14 @@ import model.player.Player;
 import network.client.MainClient;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.Color;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.border.*;
@@ -21,6 +24,8 @@ import java.awt.event.ActionListener;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static javax.sound.sampled.Clip.LOOP_CONTINUOUSLY;
 
 
 public class MapPanel extends JLayeredPane {
@@ -52,6 +57,8 @@ public class MapPanel extends JLayeredPane {
     private JLabel mypoint= new JLabel("");
     private boolean first=true;
     private static final Logger logger = Logger.getLogger(MapPanel.class.getName());
+    private Clip sound = null;
+    private boolean attack=false;
 
     public MapPanel(GameBoard board) {
         JButton pBoards;
@@ -151,6 +158,10 @@ public class MapPanel extends JLayeredPane {
                             removePlayerActions();
                             mainClient.sendSelectedItem(s);
                             enablePlayers();
+                            if(attack) {
+                                addSound("shoot");
+                                attack=false;
+                            }
                         }
                     });
                 }
@@ -393,13 +404,13 @@ public class MapPanel extends JLayeredPane {
                     playerIcon.get(c).setLocation(positions[k]);
                 }
             }
-
+            addSound("run");
         }
     }
 
-    private void loadImages(Image imga) throws Exception {
+    private void loadImages(Image imgMp) throws Exception {
         MediaTracker track = new MediaTracker(this);
-        track.addImage(imga, 1);
+        track.addImage(imgMp, 1);
         track.waitForID(1);
     }
 
@@ -707,6 +718,8 @@ public class MapPanel extends JLayeredPane {
             });*/
             selectEffect.getContentPane().add(opt,BorderLayout.SOUTH);
         }
+        addSound("reload");
+        attack=true;
         selectEffect.setVisible(true);
     }
 
@@ -860,6 +873,20 @@ public class MapPanel extends JLayeredPane {
             logger.log(Level.WARNING, "Image not loaded correctly", e);
         }
         return img;
+    }
+
+    public void addSound(String name){
+        AudioInputStream audio;
+        if(sound !=null)
+            sound.stop();
+        try {ClassLoader classLoader = MapPanel.class.getClassLoader();
+            sound = AudioSystem.getClip();
+            InputStream is= classLoader.getResourceAsStream(name+".wav");
+            audio= AudioSystem.getAudioInputStream(new BufferedInputStream(is));
+            sound.open(audio);
+            sound.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ignored) {
+        }
     }
 }
 

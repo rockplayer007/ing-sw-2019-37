@@ -14,8 +14,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.rmi.NotBoundException;
 import java.util.List;
 import java.util.Map;
@@ -51,19 +52,19 @@ public void addMusic(String name){
     AudioInputStream audio;
     if(sound !=null)
         sound.stop();
-    try {
-        audio = AudioSystem.getAudioInputStream(new File("." + File.separatorChar + "src" + File.separatorChar
-                + "main" + File.separatorChar + "resources" + File.separatorChar + name +".wav"));
-         sound = AudioSystem.getClip();
+    try {ClassLoader classLoader = GUI.class.getClassLoader();
+        InputStream is= classLoader.getResourceAsStream(name+".wav");
+        audio= AudioSystem.getAudioInputStream(new BufferedInputStream(is));
+        sound = AudioSystem.getClip();
         sound.open(audio);
         sound.loop(LOOP_CONTINUOUSLY);
+        sound.start();
     } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ignored) {
     }
 
-
-
 }
-    public void logIn(boolean ask) {
+
+public void logIn(boolean ask) {
         if (ask) {
             frame.getContentPane().removeAll();
             frame.setSize(1280, 750);

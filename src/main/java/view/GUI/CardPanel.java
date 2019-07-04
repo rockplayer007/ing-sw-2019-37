@@ -8,9 +8,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +49,7 @@ public class CardPanel extends JPanel {
         } catch (IOException e){
             logger.log(Level.WARNING, "Image not loaded correctly", e);
         }
+        image.setIcon(new ImageIcon(img));
         this.add(image);
     }
 

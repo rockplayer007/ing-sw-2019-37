@@ -27,6 +27,10 @@ public class Player implements Serializable {
     private boolean live;
     private boolean connected;
 
+    /**
+     * Constructor
+     * @param nickname nickname for the player
+     */
     public Player(String nickname) {
         this.nickname = nickname;
         ammo = new EnumMap<>(AmmoColor.class);
@@ -41,8 +45,6 @@ public class Player implements Serializable {
         live = true;
         this.roundStatus = RoundStatus.FIRST_ROUND;
         connected = true;
-
-
     }
 
     private void setPosition(Square position) {
@@ -100,8 +102,6 @@ public class Player implements Serializable {
             if (actionStatus!=ActionState.FRENETICACTIONS1&&actionStatus!=ActionState.FRENETICACTIONS2)
                 actionStatus=ActionState.TURNACTIONS;
         }
-
-
     }
 
     public boolean isLive() {
@@ -128,6 +128,9 @@ public class Player implements Serializable {
         return connected;
     }
 
+    /**
+     * @param square Square that the player want to move
+     */
     public void movePlayer(Square square){
         if(position == null){
             square.addPlayer(this);

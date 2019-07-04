@@ -14870,7 +14870,7 @@
 											"top": 1207,
 											"width": 299.82421875,
 											"height": 14,
-											"text": "-targetsToShot: List<Player>",
+											"text": "-targetsToShoot: List<Player>",
 											"horizontalAlignment": 0
 										},
 										{
@@ -15040,7 +15040,7 @@
 											"top": 1359,
 											"width": 299.82421875,
 											"height": 14,
-											"text": "+setTargetsToShot(targetsToShot[*]): void",
+											"text": "+setTargetsToShot(targetsToShoot[*]): void",
 											"horizontalAlignment": 0
 										},
 										{
@@ -32463,7 +32463,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFriuYBohhpAZg="
 							},
-							"name": "targetsToShot",
+							"name": "targetsToShoot",
 							"visibility": "private",
 							"type": "List<Player>"
 						},
@@ -32637,7 +32637,7 @@
 									"_parent": {
 										"$ref": "AAAAAAFriuYBpRh+nmg="
 									},
-									"name": "targetsToShot",
+									"name": "targetsToShoot",
 									"tags": [
 										{
 											"_type": "Tag",
