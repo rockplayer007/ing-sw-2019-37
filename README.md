@@ -9,6 +9,7 @@
   - [Additional functionalities](#additional-functionalities)
   - [Extra functionalities](#extra-functionalities)
 - [External libraries used](#external-libraries-used)
+- [Test coverage](#test-coverage)
 
 
 
@@ -87,4 +88,9 @@ The external libraries we used to implement some game's features are linked belo
 |---------------|--------------------------------|-------------------|
 |GSON			|https://github.com/google/gson  | We used this library to easily class objects from server to client |
 |Jansi    |https://github.com/fusesource/jansi  | Useful to have a colorful play experience on CLI |
+
+## Test coverage
+
+Based on Intellij's line coverage we reached 71.2% on the model and 53% on the controller. Since the methods of the controller are stricly connected to the network, it was not possible to test all the methods completly. To do this we tested on a LAN as well as locally.
+In addition we run multiple bots that played the game fluently.
 
