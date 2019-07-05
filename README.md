@@ -94,3 +94,5 @@ The external libraries we used to implement some game's features are linked belo
 Based on Intellij's line coverage we reached 71.2% on the model and 53% on the controller. Since the methods of the controller are stricly connected to the network, it was not possible to test all the methods completly. To do this we tested on a LAN as well as locally.
 In addition we run multiple bots that played the game fluently.
 
+![Bots testing](https://github.com/rockplayer007/ing-sw-2019-37/blob/master/demo_pics/CLI_bots.png)
+
