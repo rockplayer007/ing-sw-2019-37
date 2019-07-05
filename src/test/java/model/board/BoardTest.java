@@ -81,6 +81,12 @@ public class BoardTest {
         ((AmmoSquare)map.getSquare(0)).removeAmmoCard();
         board.fillAmmo();
 
+        assertTrue(board.getMap().getPlayersOnMap().contains(player1));
+        assertTrue(board.getMap().getPlayersOnMap().contains(player2));
+        assertTrue(board.getMap().getPlayersOnMap().contains(player3));
+
+
+
         for(int i = 0; i < 3; i++){
             Cell cell = new Cell();
             cell.setKill(player1);
@@ -101,22 +107,12 @@ public class BoardTest {
             board.getSkullBoard().addCell(cell);
         }
 
+        board.getSkullBoard().liquidation();
+
         RuntimeTypeAdapterFactory<Square> rfSquare = RuntimeTypeAdapterFactory
                 .of(Square.class, "Square")
                 .registerSubtype(AmmoSquare.class, "AmmoSquare")
                 .registerSubtype(GenerationSquare.class, "GenerationSquare");
-        /*
-        RuntimeTypeAdapterFactory<Deck> rfDeck = RuntimeTypeAdapterFactory
-                .of(Deck.class, "Deck")
-                .registerSubtype(WeaponDeck.class, "Weapon")
-                .registerSubtype(PowerDeck.class, "GenerationSquare");
-
-        RuntimeTypeAdapterFactory<Card> rfCard = RuntimeTypeAdapterFactory
-                .of(Card.class, "Card")
-                .registerSubtype(Weapon.class, "Weapon")
-                .registerSubtype(Powerup.class, "GenerationSquare");
-
-         */
 
 
         Gson gson = new GsonBuilder()

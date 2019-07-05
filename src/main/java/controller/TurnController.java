@@ -10,7 +10,6 @@ import network.messages.Message;
 import network.messages.clientToServer.ListResponse;
 import network.messages.serverToClient.AnswerRequest;
 import network.messages.serverToClient.InfoMessage;
-import network.messages.serverToClient.ServerToClient;
 import network.messages.serverToClient.TimeoutMessage;
 import network.server.Configs;
 
@@ -106,12 +105,16 @@ class TurnController {
                 player.setDisconnected();
 
                 int stillOnline = (int) room.getPlayers().stream().filter(Player::isConnected).count();
+                disconnectionCheckout(player, stillOnline < MINIMUM_PLAYERS);
+                /*
                 if( stillOnline < MINIMUM_PLAYERS ){
                     disconnectionCheckout(player, true);
                 }
                 else {
                     disconnectionCheckout(player, false);
                 }
+
+                 */
 
 
             } catch (IllegalStateException e){
@@ -211,7 +214,7 @@ class TurnController {
      * @param player current player that is playing
      * @throws TimeFinishedException when the player finishes the time for playing
      */
-    private void normalRound(Player player) throws TimeFinishedException{
+    public void normalRound(Player player) throws TimeFinishedException{
         //in normal round do this 2 times
 
         int iterations = 2;
@@ -379,5 +382,9 @@ class TurnController {
         }
 
         roomController.sendMessageToAll(new InfoMessage(player.getNickname() + " has disconnected (time exceeded)"));
+    }
+
+    public RoundController getRoundController(){
+        return roundController;
     }
 }

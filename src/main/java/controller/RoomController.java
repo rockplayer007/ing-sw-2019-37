@@ -31,6 +31,9 @@ public class RoomController {
     private List<Player> players;
     private Map<Player, ClientOnServer> connectionToClient;
 
+    private boolean isTest;
+    private ClientToServer testMessage;
+
     private Room room;
     private ClientToServer mockMessage;
     private String expectedReceiver;
@@ -52,6 +55,7 @@ public class RoomController {
         turnController = new TurnController(this, room);
         wait = true;
         powerup = new AtomicBoolean(true);
+        isTest = false;
     }
 
     /**
@@ -99,13 +103,13 @@ public class RoomController {
 
             turnController.startPlayerRound();
 
-            Gson gson = new Gson();
+            //Gson gson = new Gson();
 
-            Map<Player, Integer> score = new HashMap<>();//room.endScoreboard();
-            HashMap<String, Integer> messageMap = new HashMap<>();
+            //Map<Player, Integer> score = new HashMap<>();//room.endScoreboard();
+            //HashMap<String, Integer> messageMap = new HashMap<>();
             List<String> scoreMessage = new ArrayList<>(everythingToJson(room.endScoreboard()));
 
-            score.forEach((x, y) -> messageMap.put(gson.toJson(x), y));
+            //score.forEach((x, y) -> messageMap.put(gson.toJson(x), y));
 
             sendMessageToAll(new AnswerRequest(scoreMessage, Message.Content.SCORE));
             //sendMessageToAll(new ScoreMessage(scoreMessage));
@@ -151,9 +155,6 @@ public class RoomController {
                 //set the player as disconnected
                 room.getCurrentPlayer().setDisconnected();
 
-                //send message
-
-
                 //continue as normal
                 logger.log(Level.INFO,"player: {0} finished his time", room.getCurrentPlayer().getNickname());
                 if(!room.setNextPlayer()){
@@ -187,22 +188,27 @@ public class RoomController {
      * @param message the message that needs to be sent
      */
     void sendMessage(Player player, ServerToClient message){
-        try{
-            logger.log(Level.INFO, "Sending message to: {0}, for {1}",
-                    new String[]{player.getNickname(), String.valueOf(message.getContent())});
+        if(isTest){
+            forTestSend(message);
+        }
+        else {
+            try{
+                logger.log(Level.INFO, "Sending message to: {0}, for {1}",
+                        new String[]{player.getNickname(), String.valueOf(message.getContent())});
 
-            connectionToClient.get(player).getClientInterface()
-                    .notifyClient(message);
-        } catch (RemoteException e) {
-            logger.log(Level.WARNING, "disconnection client: " + player.getNickname());
+                connectionToClient.get(player).getClientInterface()
+                        .notifyClient(message);
+            } catch (RemoteException e) {
+                logger.log(Level.WARNING, "disconnection client: " + player.getNickname());
 
-            if(player.isConnected()){
-                disconnectPlayer(player);
-                //logger.log(Level.WARNING, "Player {0} disconnected", player.getNickname());
+                if(player.isConnected()){
+                    disconnectPlayer(player);
+                    //logger.log(Level.WARNING, "Player {0} disconnected", player.getNickname());
 
-                sendMessageToAll(new InfoMessage(player.getNickname() + " not online anymore"));
+                    sendMessageToAll(new InfoMessage(player.getNickname() + " not online anymore"));
+                }
+
             }
-
         }
 
     }
@@ -233,9 +239,8 @@ public class RoomController {
      */
     public void sendUpdate(Player player){
         //send a message that includes the board and other things
-
         sendMessage(player, new UpdateMessage(
-                toJsonGameBoard(), everythingToJson(player.getPowerups()), toJsonSkullBoard()));
+                    toJsonGameBoard(), everythingToJson(player.getPowerups()), toJsonSkullBoard()));
 
     }
 
@@ -405,62 +410,6 @@ public class RoomController {
         return list;
     }
 
-    //IF EVERYTHING BREAKS DECOMMENT THIS
-    /*
-    List<String> everythingToJson(List<Player> players){
-        List<String> list = new ArrayList<>();
-        //not making use of the adapter because no need in view
-        Gson gson = new Gson();
-
-        players.forEach(x -> list.add(gson.toJson(x)) );
-
-        return list;
-    }
-
-    List<String> everythingToJson(List<Effect> effects){
-        List<String> list = new ArrayList<>();
-        //not making use of the adapter because no need in view
-        Gson gson = new Gson();
-
-        effects.forEach(x -> list.add(gson.toJson(x)) );
-
-        return list;
-    }
-
-    List<String> everythingToJson(List<Square.Direction> directions){
-        List<String> list = new ArrayList<>();
-        //not making use of the adapter because no need in view
-        Gson gson = new Gson();
-
-        directions.forEach(x -> list.add(gson.toJson(x)) );
-
-        return list;
-    }
-
-
-
-    List<String> everythingToJson(List<AmmoColor> ammo){
-        List<String> list = new ArrayList<>();
-        //not making use of the adapter because no need in view
-        Gson gson = new Gson();
-
-        ammo.forEach(x -> list.add(gson.toJson(x)) );
-
-        return list;
-    }
-
-    List<String> everythingToJson(List<Color> color){
-        List<String> list = new ArrayList<>();
-        //not making use of the adapter because no need in view
-        Gson gson = new Gson();
-
-        color.forEach(x -> list.add(gson.toJson(x)) );
-
-        return list;
-    }
-
-     */
-
     /**
      * Allows to to create a special json without breaking internal calls
      * @return json element
@@ -492,6 +441,50 @@ public class RoomController {
      */
     public Room getRoom(){
         return room;
+    }
+
+
+    ////////classes for making tests possible/////////////////
+    private void forTestSend(ServerToClient message){
+        //stopPowerup();
+        //stopWaiting();
+        if(isTest){
+            int size;
+            if(room.getBoard().getMap() == null){
+                size = 1;
+                mockMessage = new ListResponse(
+                        "", "", new Random().
+                        nextInt(size), Message.Content.CARD_RESPONSE );
+            }
+            else {
+                if(testMessage != null){
+                    mockMessage = testMessage;
+                }
+                else {
+                    stopWaiting();
+                    stopPowerup();
+                }
+
+            }
+
+
+        }
+
+
+    }
+
+    public void setTestMockMessage(int i){
+        testMessage = new ListResponse(
+                "", "",
+                i, Message.Content.CARD_RESPONSE );
+    }
+
+    void setTest(){
+        isTest = true;
+    }
+
+    TurnController getTurnController(){
+        return turnController;
     }
 
 }

@@ -1,9 +1,5 @@
 package model.board;
-;
-import model.board.Board;
-import model.board.BoardGenerator;
-import model.board.GameBoard;
-import model.board.Square;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -147,6 +143,15 @@ public class SquareTest {
         assertTrue(downSquares.containsAll(directionSquares.get(Square.Direction.DOWN)));
 
         assertTrue(topSquares.containsAll(directionSquares.get(Square.Direction.TOP)));
+    }
+
+    @Test
+    public void positionTest(){
+        map.getSquare(4).getValidPosition(1);
+        map.getSquare(4).visibleSquare(map);
+        map.getSquare(4).directions(1);
+        map.getSquare(4).getOneOfNeighbour(0,0);
+        map.getSquare(4).directionAbsolute(map);
     }
 
 

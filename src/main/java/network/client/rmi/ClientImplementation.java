@@ -15,7 +15,7 @@ public class ClientImplementation implements ClientInterface {
      * Default constructor
      * @param mainClient the Client to send the messages to
      */
-    ClientImplementation(MainClient mainClient){
+    public ClientImplementation(MainClient mainClient){
         this.mainClient = mainClient;
     }
 

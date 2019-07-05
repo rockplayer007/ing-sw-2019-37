@@ -70,7 +70,7 @@ public class Room {
 
     /**
      * for create the map
-     * @param selection  nember of map
+     * @param selection  number of map
      */
     public void createMap(int selection) {
         GameBoard gameBoard = boardGenerator.createMap(selection);

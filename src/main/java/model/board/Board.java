@@ -63,7 +63,7 @@ public class Board implements Serializable {
      * Gives the current deck of weapon cards
      * @return The weapon deck
      */
-    WeaponDeck getWeaponDeck() {
+    public WeaponDeck getWeaponDeck() {
         return weaponDeck;
     }
 

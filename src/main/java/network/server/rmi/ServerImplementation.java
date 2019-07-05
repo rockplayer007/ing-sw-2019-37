@@ -14,7 +14,7 @@ public class ServerImplementation extends UnicastRemoteObject implements ServerI
 
     private transient MainServer server;
 
-    ServerImplementation(MainServer server) throws RemoteException {
+    public ServerImplementation(MainServer server) throws RemoteException {
         this.server = server;
     }
 
