@@ -12,7 +12,7 @@ import java.util.Scanner;
 public class Configs {
     private static Configs ourInstance = new Configs();
 
-    private int turnTime;// = 180;
+    private int turnTime;// = 200;
 
     private int minimumPlayers;// = 3;
     private int maximumPlayers;// = 5;
@@ -80,7 +80,7 @@ public class Configs {
         }
 
 
-        turnTime = fill("turn time",180, scanner.nextLine());
+        turnTime = fill("turn time",200, scanner.nextLine());
 
         minimumPlayers = fill("minimum players", 3, scanner.nextLine());
         maximumPlayers = fill("maximum players", 5, scanner.nextLine());
@@ -187,7 +187,7 @@ public class Configs {
     }
 
     private String getConfigs(){
-        return "turn time: 180\n" +
+        return "turn time: 200\n" +
                 "minimum players: 3\n" +
                 "maximum players: 5\n" +
                 "time for TAGBACK GRANADE: 10\n" +

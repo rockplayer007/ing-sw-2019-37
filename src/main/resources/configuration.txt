@@ -1,11 +1,11 @@
-turn time: 30
+turn time: 200
 minimum players: 3
 maximum players: 5
-time for TAGBACK GRANADE: 100
-creating room time: 10
+time for TAGBACK GRANADE: 10
+creating room time: 30
 choosing board time: 10
 respawn time: 15
-skulls: 5
+skulls: 8
 points the first adrenalin actions: 3
 points the second adrenalin actions: 6
 points the dead point: 11

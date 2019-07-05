@@ -268,6 +268,7 @@ class TurnController {
 
         } catch (RuntimeException e) {
             //cheater
+            logger.log(Level.WARNING, "NOT SPAWNED CORRECTLY", e);
         }
         finally {
             //put the player on the generation square
