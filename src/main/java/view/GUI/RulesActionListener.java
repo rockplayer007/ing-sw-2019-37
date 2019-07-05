@@ -19,13 +19,13 @@ public class RulesActionListener implements ActionListener {
         if (Desktop.isDesktopSupported()) {
             try {
                 InputStream is = getClass().getResourceAsStream("/rule.pdf");
-                String tempFile = "myFile";
-                Path tempOutput = null;
+                String tempFile = "RulesGame";
+                Path tempOutput;
                 tempOutput = Files.createTempFile(tempFile, ".pdf");
                 tempOutput.toFile().deleteOnExit();
                 Files.copy(is,tempOutput, StandardCopyOption.REPLACE_EXISTING);
                 Desktop.getDesktop().open(tempOutput.toFile());
-            } catch (IOException e1) {}
+            } catch (IOException ignored) {}
         }
         else JOptionPane.showMessageDialog(null,"Desktop functionality does not work","RULES",JOptionPane.WARNING_MESSAGE);
     }

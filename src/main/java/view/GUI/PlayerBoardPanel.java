@@ -59,10 +59,10 @@ public class PlayerBoardPanel extends JPanel{
            }
             JButton nickname = new JButton();
            nickname.setLocation(50,y+2);
-           if(players.get(i).getNickname().length()>17)
-               nickname.setSize(230,20);
+           if(players.get(i).getNickname().length()>15)
+               nickname.setSize(225,20);
            else
-            nickname.setSize(players.get(i).getNickname().length()*13,20);
+            nickname.setSize(players.get(i).getNickname().length()*15,20);
 
            nickname.setText(players.get(i).getNickname());
            nickname.setHorizontalAlignment(SwingConstants.CENTER);

@@ -7,7 +7,6 @@ import model.player.ActionOption;
 import model.player.Player;
 import network.client.MainClient;
 import view.ViewInterface;
-
 import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
 import javax.swing.*;
@@ -47,6 +46,21 @@ public class GUI implements ViewInterface {
     @Override
     public void launch(){
         addMusic("intro1");
+            frame.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(WindowEvent we) {
+                    int option = JOptionPane.showConfirmDialog(frame, "Do you want to Exit ?", "Exit Confirmation ", JOptionPane.YES_NO_OPTION);
+                    if (option == JOptionPane.YES_OPTION)
+                        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    else if (option == JOptionPane.NO_OPTION)
+                        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+                }
+            });
+            try {
+                frame.setIconImage(ImageIO.read(MapPanel.class.getResourceAsStream("/logo.png")));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         logIn(true);
     }
 
@@ -69,24 +83,8 @@ public void logIn(boolean ask) {
         if (ask) {
             frame.getContentPane().removeAll();
             frame.setSize(1280, 750);
-
-            if(first) {
-                frame.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosing(WindowEvent we) {
-                        int option = JOptionPane.showConfirmDialog(frame, "Do you want to Exit ?", "Exit Confirmation ", JOptionPane.YES_NO_OPTION);
-                        if (option == JOptionPane.YES_OPTION)
-                            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                        else if (option == JOptionPane.NO_OPTION)
-                            frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-                    }
-                });
-                try {
-                    frame.setIconImage(ImageIO.read(MapPanel.class.getResourceAsStream("/logo.png")));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            frame.setMaximumSize(new Dimension(1280,1024));
+            frame.setMinimumSize(new Dimension(800,700));
             frame.setBackground(Color.DARK_GRAY);
             LoginPanel loginPanel = new LoginPanel();
             loginPanel.setName("loginPanel");
@@ -142,6 +140,9 @@ public void logIn(boolean ask) {
             gbc.gridy=10;
             gbc.gridx=2;
             if (first) {
+                for(int i=0;i<rules.getActionListeners().length;i++){
+                    rules.removeActionListener(rules.getActionListeners()[i]);
+                }
                 rules.addActionListener(new RulesActionListener());
             }
             loginPanel.add(rules, gbc);
