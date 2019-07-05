@@ -346,7 +346,8 @@ public void logIn(boolean ask) {
             infof.setLayout(new BorderLayout());
             infof.getContentPane().removeAll();
             infof.add(message,BorderLayout.CENTER);
-            infof.pack();
+            infof.setSize(new Dimension(300,300));
+            infof.setLocation(350,100);
             infof.setVisible(true);
         }
         }
