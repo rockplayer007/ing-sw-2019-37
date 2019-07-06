@@ -77,7 +77,7 @@ You will be asked if you like to play with a cool `command line interface` (CLI)
 - [x] Set number of minimum and maximum players indipendently of the rules
 - [x] Set number of skulls and points as you wish, in case you want to speed up the game
 - [x] Configure all possible timers of the game, to have a speedy game or a strategy play
-- [x] Change RMI and Socket ports how you prefere
+- [x] Change RMI and Socket ports how you prefer
 
 
 ## External libraries used
